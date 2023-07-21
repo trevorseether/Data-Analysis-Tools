@@ -540,73 +540,37 @@ df_resultado['Relación Laboral con la Cooperativa 13/'] = df_resultado.apply(cr
 '''
 #%% PROVISIONES
 'función para elaborar las provisiones'
-
+    
 def provision_SA(df_resultado):
-    '''
-    entra el dataframe df_resultado
-    ----------
-    df_resultado : 
-        va a calcular [Tasa de Provisión SA]
-
-    Returns
-    -------
-    None.
-
-    '''
-    # tasa de provisión genérica
-    if df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '06':
-        return 0.0070
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '07':
-        return 0.0070
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '08':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '09':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '10':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '11':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '12':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor 14/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '13':
-        return 0.0070    ## tasa de provisión específica
+    if df_resultado['Clasificación del Deudor 14/'] == 0:
+        if df_resultado['Tipo de Crédito 19/'] in ['12','11','10', '09','08']:                                                   
+            return 0.01
+        elif df_resultado['Tipo de Crédito 19/'] in ['13', '07', '06']:
+            return 0.007
     elif df_resultado['Saldo de Garantías Autoliquidables 35/'] > 0:
-        return 0.0100
-
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 1:
-        return 0.0250  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 1:
-        return 0.0500  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 2:
-        return 0.1250  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 2:
-        return 0.2500 
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 3:
-        return 0.3000  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 3:
-        return 0.6000 
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 4:
-        return 0.6000  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor 14/'] == 4:
-        return 1.0000
+        if df_resultado['Clasificación del Deudor 14/'] in [1,2,3,4]:
+            return 0.01
+    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0:
+        if df_resultado['Clasificación del Deudor 14/'] == 1:
+            return 0.025
+        if df_resultado['Clasificación del Deudor 14/'] == 2:
+            return 0.125
+        if df_resultado['Clasificación del Deudor 14/'] == 3:
+            return 0.30
+        if df_resultado['Clasificación del Deudor 14/'] == 4:
+            return 0.60
+    elif (df_resultado['Saldos de Garantías Preferidas 34/'] == 0) and \
+        (df_resultado['Saldo de Garantías Autoliquidables 35/'] == 0):
+        if df_resultado['Clasificación del Deudor 14/'] == 1:
+            return 0.05
+        if df_resultado['Clasificación del Deudor 14/'] == 2:
+            return 0.25
+        if df_resultado['Clasificación del Deudor 14/'] == 3:
+            return 0.6
+        if df_resultado['Clasificación del Deudor 14/'] == 4:
+            return 1.00
     else:
-        return 'revisar caso'
+        return ''
 
 df_resultado['Tasa de Provisión SA'] = df_resultado.apply(provision_SA, axis=1)
 
@@ -2626,7 +2590,7 @@ writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shap
 diferencias_porcentuales.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 9, startcol=0, index=True)
 writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 10, 0, 'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')
 
-espacio_entre_tablas.to_writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, startcol=0, index=False)
+espacio_entre_tablas.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, startcol=0, index=False)
 
 # Guarda y cierra el archivo Excel
 writer.save()
