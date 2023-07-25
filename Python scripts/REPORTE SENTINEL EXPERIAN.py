@@ -45,6 +45,7 @@ where
     FechaCorte1 = @fechacorte
 ''', conn)
 del conn
+
 #%%
 ##############################################
 #      REPORTE INSUMO PRINCIPAL
@@ -76,20 +77,107 @@ Identidad (*)  DNI o RUC''',
                    'Razon Social (*)',
                    'Apellido Paterno (*)'], inplace=True, how='all')
 
-#%%
-#descapitalizar saldos:
+#%% DESCAPITALIZACIÓN DE LOS SALDOS
+
 'ES SOLO SACAR ESTOS DATOS DEL ANEXO06'
+#######################################
+#   aquí ponemos el anexo06 final   ###
+#######################################
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO\\parte 2'
+nombre = 'Rpt_DeudoresSBS_Junio 2023 HT version 03.xlsx'
+anexo_06_descap = pd.read_excel(ubi + '\\' + nombre,
+                                skiprows= 2,
+                                dtype = {'Nro Prestamo \nFincore' : object,
+                                         'Numero de Crédito 18/': object}
+                                         )
+
+#nos quedamos con las columnas necesarias
+anexo_06_descap = anexo_06_descap[['Nro Prestamo \nFincore',
+                                   'Numero de Crédito 18/',
+                                   'Capital Vigente 26/',
+                                   'Capital Refinanciado 28/',
+                                   'Capital Vencido 29/',
+                                   'Capital en Cobranza Judicial 30/',
+                                   'Saldos de Créditos Castigados 38/']]
+
+anexo_06_descap.dropna(subset=['Nro Prestamo \nFincore',
+                               'Numero de Crédito 18/'], inplace=True, how='all')
+
+anexo_06_descap['Nro Prestamo \nFincore'] = anexo_06_descap['Nro Prestamo \nFincore'].str.strip()
+#%% descapitalización de los saldos
+
+df_fincore = df_fincore.rename(columns={'NumerodeCredito18': 
+                                        'cod pres para merge'})
+    
+df_sentinel['Cod. Prestamo'] = df_sentinel['Cod. Prestamo'].str.strip()
+df_fincore['cod pres para merge'] = df_fincore['cod pres para merge'].str.strip()
+
+# columna solo con el nro de prestamos 18/
+df_sentinel['cod pres para merge'] = df_sentinel['Cod. Prestamo'].str.split('-', expand=True)[1] #potente este código ah
+
+df_sentinel['cod pres para merge'] = df_sentinel['cod pres para merge'].str.strip()
+df_sentinel = df_sentinel.merge(df_fincore, 
+                                on='cod pres para merge', 
+                                how='left')
+
+df_sentinel.drop(['cod pres para merge'], axis=1, inplace=True)
+#%%
+sin_match = df_sentinel[pd.isna(df_sentinel['Nro_Fincore'])]
+print(sin_match.shape[0])
+print("si sale más de cero hay que revisar")
+
+# código para eliminar los que no han hecho match (no están en el anexo 06)
+#df_sentinel = df_sentinel.dropna(subset=['Nro_Fincore'])
+
+#%% ahora sí añadimos los montos descapitalizados
+anexo_06_descap = anexo_06_descap.rename(columns={'Nro Prestamo \nFincore': 
+                                                  'Nro_Fincore'})
+df_sentinel = df_sentinel.merge(anexo_06_descap, 
+                                on='Nro_Fincore', 
+                                how='left')
+
+df_sentinel['ME Deuda Directa Vigente (*)'] =                   0
+df_sentinel['ME Deuda Directa Refinanciada (*)'] =              0
+df_sentinel['ME Deuda Directa Venvida < = 30 (*)'] =            0
+df_sentinel['ME Deuda Directa Vencida > 30 (*)'] =              0
+df_sentinel['ME Deuda Directa Cobranza Judicial (*)'] =         0
+df_sentinel['ME Deuda Indirecta (avales,cartas fianza,credito) (*)'] = 0
+df_sentinel['ME Deuda Avalada (*)'] =               0
+df_sentinel['ME Linea de Credito (*)'] =            ''
+df_sentinel['ME Creditos Cartigados (*)'] =         0
+
+
+df_sentinel['MN Deuda Directa Vigente (*)']         = df_sentinel['Capital Vigente 26/'] 
+df_sentinel['MN Deuda Directa Refinanciada (*)']    = df_sentinel['Capital Refinanciado 28/'] 
+df_sentinel['MN Deuda Directa Venvida < = 30 (*)']  = 0 
+df_sentinel['MN Deuda Directa Vencida > 30 (*)']    = df_sentinel['Capital Vencido 29/'] 
+df_sentinel['MN Deuda Directa Cobranza Judicial (*)'] = df_sentinel['Capital en Cobranza Judicial 30/'] 
+df_sentinel['MN Deuda Indirecta (avales,cartas fianza,credito) (*)'] = 0 
+df_sentinel['MN Deuda Avalada (*)']                 = 0
+df_sentinel['MN Linea de Credito (*)']              = ''
+df_sentinel['MN Creditos Cartigados (*)']           = df_sentinel['Saldos de Créditos Castigados 38/']
+
+#%% ELIMINAMOS LAS COLUMNAS QUE YA NO NECESITAMOS
+df_sentinel.drop(["Nro_Fincore"], axis=1, inplace=True)
+df_sentinel.drop(["Numero de Crédito 18/"], axis=1, inplace=True)
+df_sentinel.drop(["Capital Vigente 26/"], axis=1, inplace=True)
+df_sentinel.drop(["Capital Refinanciado 28/"], axis=1, inplace=True)
+df_sentinel.drop(["Capital Vencido 29/"], axis=1, inplace=True)
+df_sentinel.drop(["Capital en Cobranza Judicial 30/"], axis=1, inplace=True)
+df_sentinel.drop(["Saldos de Créditos Castigados 38/"], axis=1, inplace=True)
+
+#%% le ponemos el nombre que tenía antes por si acaso
+df_fincore = df_fincore.rename(columns={'cod pres para merge': 
+                                        'NumerodeCredito18'})
 
 #%%
 #ya que todos los meses se duplican los datos del socio AGUILA	FEBRES	MIGUEL ALBERTO
 #antes de eliminar sus datos duplicados, vamos a etiquetar su 'Tipo Documento Identidad(*)' = 1
-df_sentinel.loc[(df_sentinel['''N° Documento
-Identidad (*)  DNI o RUC'''] == '02803330') & \
+df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '02803330') & \
                 (df_sentinel['Apellido Paterno (*)'] == 'AGUILA') & \
                 (df_sentinel['Apellido Paterno (*)'] == 'FEBRES'),
-                '''Tipo
-Documento
-Identidad (*)'''] = '1' #no funciona esta huevada
+                'Tipo\nDocumento\nIdentidad (*)'] = '1' #no funcionaaaaaaaaaaaa
+#verificar en el excel si ha funcionado
 
 #%%
 #AQUI DEBEMOS VERIFICAR SI EXISTEN DUPLICADOS
@@ -184,28 +272,28 @@ result = grouped[grouped['DIFERENTES PRODUCTOS'] > 1]
 print(result) #si sale vacío significa que está todo bien
 
 #%% EN CASO DE QUE LOS CRÉDITOS EN DÓLARES NO ESTÉN SOLARIZADOS
-'MULTIPLICACIÓN DE LOS SALDOS EN DÓLARES POR EL TIPO DE CAMBIO DEL MES'
+#456'MULTIPLICACIÓN DE LOS SALDOS EN DÓLARES POR EL TIPO DE CAMBIO DEL MES'
 
-tipo_cambio = 3.628
+#456tipo_cambio = 3.628
 
-df_sentinel['ME Deuda Directa Vigente (*)'] = \
-df_sentinel['ME Deuda Directa Vigente (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Directa Refinanciada (*)'] = \
-df_sentinel['ME Deuda Directa Refinanciada (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Directa Venvida < = 30 (*)'] = \
-df_sentinel['ME Deuda Directa Venvida < = 30 (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Directa Vencida > 30 (*)'] = \
-df_sentinel['ME Deuda Directa Vencida > 30 (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Directa Cobranza Judicial (*)'] = \
-df_sentinel['ME Deuda Directa Cobranza Judicial (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Indirecta (avales,cartas fianza,credito) (*)'] = \
-df_sentinel['ME Deuda Indirecta (avales,cartas fianza,credito) (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Deuda Avalada (*)'] = \
-df_sentinel['ME Deuda Avalada (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Linea de Credito (*)'] = \
-df_sentinel['ME Linea de Credito (*)'].fillna(0) * tipo_cambio
-df_sentinel['ME Creditos Cartigados (*)'] = \
-df_sentinel['ME Creditos Cartigados (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Directa Vigente (*)'] = \
+#456df_sentinel['ME Deuda Directa Vigente (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Directa Refinanciada (*)'] = \
+#456df_sentinel['ME Deuda Directa Refinanciada (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Directa Venvida < = 30 (*)'] = \
+#456df_sentinel['ME Deuda Directa Venvida < = 30 (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Directa Vencida > 30 (*)'] = \
+#456df_sentinel['ME Deuda Directa Vencida > 30 (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Directa Cobranza Judicial (*)'] = \
+#456df_sentinel['ME Deuda Directa Cobranza Judicial (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Indirecta (avales,cartas fianza,credito) (*)'] = \
+#456df_sentinel['ME Deuda Indirecta (avales,cartas fianza,credito) (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Deuda Avalada (*)'] = \
+#456df_sentinel['ME Deuda Avalada (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Linea de Credito (*)'] = \
+#456df_sentinel['ME Linea de Credito (*)'].fillna(0) * tipo_cambio
+#456df_sentinel['ME Creditos Cartigados (*)'] = \
+#456df_sentinel['ME Creditos Cartigados (*)'].fillna(0) * tipo_cambio
 
 
 #%%
@@ -223,6 +311,8 @@ df_sentinel['Calificación(*)'] = df_sentinel['calificacion final'] #esto import
 df_sentinel.drop(["cod socio para mergear"], axis=1, inplace=True)
 df_sentinel.drop(["calificacion para merge"], axis=1, inplace=True)
 df_sentinel.drop(['calificacion final'], axis=1, inplace=True)
+
+df_sentinel['Calificación(*)'] = df_sentinel['Calificación(*)'].astype(int)
 
 #%%
 #realizamos la suma horizontal
@@ -346,15 +436,17 @@ df_sentinel['MN Deuda Avalada (*)'] = 0
 df1['concatenacion'] = df1['Aval'].apply(str) + ' ' + df1['Numero'].apply(str)
 
 #creamos un nuevo dataframe solo con estas columnas
-df1_filtrado = df1[['''Nro Docto
-Aval''','Aval', 'Numero','''Nro Docto
-Socio''', 'concatenacion']]
+df1_filtrado = df1[['Nro Docto\nAval',
+                    'Aval', 
+                    'Numero',
+                    'Nro Docto\nSocio', 
+                    'concatenacion']]
 
 #le cambiamos de nombre a dos columnas
-df1_filtrado = df1_filtrado.rename(columns={'''Nro Docto
-Aval''': 'Dni - Asociado - indirecta2'})
-df1_filtrado = df1_filtrado.rename(columns={'''Nro Docto
-Socio''': 'dni socio'})
+df1_filtrado = df1_filtrado.rename(columns={'Nro Docto\nAval': 
+                                            'Dni - Asociado - indirecta2'})
+df1_filtrado = df1_filtrado.rename(columns={'Nro Docto\nSocio': 
+                                            'dni socio'})
 
 #eliminamos las filas duplicadas en función de la columna 'concatenación'
 valores_unicos = df1_filtrado.drop_duplicates(subset='concatenacion', keep='first')
@@ -380,6 +472,7 @@ df_sentinel.loc[:, 'credito18'] = df_sentinel['Cod. Prestamo'].str.split('-').st
 df_sentinel['credito18'] = df_sentinel['credito18'].str.strip()
 
 #ahora que tenemos el número de crédito 18, le hacemos un merge con la columna fincore
+    
 df_sentinel_fincore = df_sentinel.merge(df_fincore, ##########################################################
                          left_on=['credito18'], 
                          right_on=['NumerodeCredito18']
@@ -424,8 +517,6 @@ Documento
 Identidad (*)'''] = '1'
 #df_resultado = df_resultado.drop_duplicates(subset=['Cod. Prestamo', '''N° Documento
 #Identidad (*)  DNI o RUC'''], keep='first')
-
-
 
 #%%
 #colocamos el monto de la deuda en la columna 'MN Deuda Avalada (*)'
@@ -706,12 +797,19 @@ df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
 'se debe subir a HÁBITO PAGO'
 
 #%%
-
+nombre_archivo = 'sentinel_experian.xlsx'
 try:
-    ruta = "sentinel.xlsx"
+    ruta = nombre_archivo
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
+df_sentinel.to_excel(nombre_archivo, index=False)
 
-df_sentinel.to_excel('sentinel.xlsx', index=False)
+#%% por si necesitamos la ubicación actual
+
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
+
