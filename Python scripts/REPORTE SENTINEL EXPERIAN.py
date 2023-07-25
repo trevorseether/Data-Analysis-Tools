@@ -577,6 +577,9 @@ reporte['Fecha de Vencimiento (*)'] = pd.to_datetime(reporte['Fecha de Vencimien
 # Aplicar formato de fecha específico
 reporte['Fecha de Vencimiento (*)'] = reporte['Fecha de Vencimiento (*)'].dt.strftime('%d/%m/%Y')
 
+#%% ojo con esto
+df_sentinel = reporte.copy()
+
 #%%
 #correcciones variadas (datos malardos)
 #esta primera parte sirve para crear un dataframe y verificar si está filtrando bien
@@ -674,6 +677,29 @@ Identidad (*)  DNI o RUC''',
                             'NULL',
                             'NULL'] #ESTO TAMPOCO HA FUNCIONADO, INVESTIGAR
 
+#%% arreglo de ME Deuda Avalada (*) estaba quedando este valor para los no avales
+
+df_sentinel['Tipo Persona (*)'] = df_sentinel['Tipo Persona (*)'].astype(str).str.strip()
+
+def arreglo_me_deuda_avalada(df_sentinel):
+    if df_sentinel['Tipo Persona (*)'] in ['1', '2']:
+        return 0
+    else:
+        return df_sentinel['MN Deuda Avalada (*)']
+    
+df_sentinel['MN Deuda Avalada (*)'] = df_sentinel.apply(arreglo_me_deuda_avalada, axis=1)
+
+#%% debe ir 1 en Estado
+# si es castigado
+
+def estado_castigado(df_sentinel):
+    if df_sentinel['MN Creditos Cartigados (*)'] > 0:
+        return 1
+    else:
+        return ""
+    
+df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
+
 #%%
 
 try:
@@ -683,7 +709,7 @@ except FileNotFoundError:
     pass
 
 
-reporte.to_excel('sentinel.xlsx', index=False)
+df_sentinel.to_excel('sentinel.xlsx', index=False)
 
 
 #NO HA FUNCIONADO PONER LOS DATOS DE LOS AVALES
