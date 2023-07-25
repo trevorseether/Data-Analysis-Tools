@@ -715,6 +715,3 @@ except FileNotFoundError:
 
 
 df_sentinel.to_excel('sentinel.xlsx', index=False)
-
-
-#NO HA FUNCIONADO PONER LOS DATOS DE LOS AVALES
