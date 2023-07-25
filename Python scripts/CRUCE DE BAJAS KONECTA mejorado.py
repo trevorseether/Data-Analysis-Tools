@@ -32,9 +32,11 @@ bajas = pd.read_excel('Bajas al 21.07.xlsx',
 bajas['Documento'] = bajas['Documento'].str.strip()
 
 uwu = bajas[pd.isna(bajas['Documento'])]
+print('Documentos que se hayan convertido en Null:')
 print(uwu)
 bajas['Documento original'] =   bajas['Documento']
 bajas['Documento'] = bajas['Documento'].str.zfill(14)
+print('Documentos que se hayan convertido en Null:')
 print(uwu)
 del uwu
 
