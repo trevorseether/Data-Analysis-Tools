@@ -702,6 +702,11 @@ df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
 
 #%%
 
+'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
+'se debe subir a HÁBITO PAGO'
+
+#%%
+
 try:
     ruta = "sentinel.xlsx"
     os.remove(ruta)
