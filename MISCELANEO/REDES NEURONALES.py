@@ -137,5 +137,44 @@ model.fit(X, y, epochs=100, batch_size=1)
 
 # Hacer predicciones
 predictions = model.predict(X)
-print(predictions)
+
+#%% convertimos las predicciones a binario
+
+predictions_binary = (predictions > 0.68).astype(int)
+#print(predictions_binary)
+
+#%%
+# Convierte las predicciones binarias a un DataFrame
+df_predictions = pd.DataFrame({'Predicciones': list(predictions_binary)})
+
+# Imprime la tabla de conteo
+print('')
+print('predicción')
+print(df_predictions['Predicciones'].value_counts())
+print('')
+print('datos originales')
+print(base['MOROSO?'].value_counts())
+
+#%% creación de dataframe 
+
+base_dataframe = pd.DataFrame({'MOROSO?': base['MOROSO?']})
+predictions_dataframe = pd.DataFrame({'Predicciones': df_predictions['Predicciones']})
+
+# Concatenar los DataFrames horizontalmente
+df_comparacion = pd.concat([base_dataframe, predictions_dataframe], axis=1)
+
+df_comparacion['Predicciones'] = df_comparacion['Predicciones'].astype(str)
+df_comparacion['Predicciones'] = df_comparacion['Predicciones'].str.strip()
+
+df_comparacion['Predicciones'] = df_comparacion['Predicciones'].str.replace('[', '', regex=True)
+df_comparacion['Predicciones'] = df_comparacion['Predicciones'].str.replace(']', '', regex=True)
+df_comparacion = df_comparacion.astype(int)
+
+# Imprimir el DataFrame resultante
+print(df_comparacion[df_comparacion['MOROSO?'] != df_comparacion['Predicciones']]) #mal predecido
+
+print(df_comparacion[(df_comparacion['MOROSO?'] == 0) &
+                     (df_comparacion['MOROSO?'] == df_comparacion['Predicciones'])]) #morosos bien predecidos
+
+
 
