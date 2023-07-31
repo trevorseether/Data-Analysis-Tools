@@ -2,20 +2,16 @@
 """
 Created on Tue May  9 13:02:49 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 
 import os
 
 os.chdir('C:\\Users\\usuario\\Desktop') #cada carpeta se debe separar por doble \
 
-
-
-
 import pandas as pd
 
 datos = pd.read_excel('C:\\Users\\usuario\\Desktop\\archivo.xlsx')
-
 
 
 x = '\\\\\\'
