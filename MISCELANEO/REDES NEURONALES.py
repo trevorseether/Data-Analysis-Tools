@@ -12,9 +12,10 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
-#%%
+#%% DATOS
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
+# QUERY
 base = pd.read_sql_query('''
 
 SELECT
@@ -81,13 +82,14 @@ AND FechadeDesembolso21 IS NOT NULL
 AND Situacion_Credito is NOT NULL
 and MontodeDesembolso22 > 0
 and FechadeNacimiento3 < FechadeDesembolso21
-
+and FechaCorte1 = '20230630'
 ''', conn)
 
+# AGREGANDO LOGARITMOS
 base['log desembolsado'] = np.log(base['MontodeDesembolso22'])
 base['log edad'] = np.log(base['EDAD'])
 
-#%% reducción aleatoria del dataframe
+#%% REDUCCIÓN ALEATORIA DE FILAS EN EL DATAFRAME
 num_filas_aleatorias = 70000
 
 # Obtiene una muestra aleatoria de filas del DataFrame original
@@ -97,19 +99,24 @@ filas_aleatorias = base.sample(n=num_filas_aleatorias,
 # Crea el nuevo DataFrame a partir de las filas aleatorias seleccionadas
 df_aleatorio = pd.DataFrame(filas_aleatorias)
 
+df_aleatorio == filas_aleatorias
 # Restablece los índices del nuevo DataFrame para que sean consecutivos
 df_aleatorio.reset_index(drop=True, inplace=True)
 
+#%% DATAFRAME PARA TRABAJAR
+
+DATA = base.copy() #aquí se pone el dataframe que vamos a usar
+
 #%%
 # establecemos X y
-X = df_aleatorio[['LIMEÑO?', 'SEXOOO', 'ESTADO CIVIL', 
-                  'DOCUMENTO 1?', 'PERSONA 1?',
-                  'PRODUCTO DXP?', 'PRODUCTO PEQUEÑA?', 
-                  'PRODUCTO MICRO?', 'AFILIACIÓN NUEVO?',
-                  'REGIMEN CAS?']]
+X = DATA[['LIMEÑO?', 'SEXOOO', 'ESTADO CIVIL',
+          'DOCUMENTO 1?', 'PERSONA 1?',
+          'PRODUCTO DXP?', 'PRODUCTO PEQUEÑA?',
+          'PRODUCTO MICRO?', 'AFILIACIÓN NUEVO?',
+          'REGIMEN CAS?']]
 
-# Obtener la columna de la variable objetivo 'target'
-y = df_aleatorio['MOROSO?'].values
+# Obtener la columna de la variable objetivo
+y = DATA['MOROSO?'].values
 
 #%%
 

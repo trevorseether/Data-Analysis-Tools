@@ -101,14 +101,12 @@ and FechadeNacimiento3 < FechadeDesembolso21
 base['log desembolsado'] = np.log(base['MontodeDesembolso22'])
 base['log edad'] = np.log(base['EDAD'])
 
-#%%
-
+#%% ESTABLECEMOS X y
 X = base[['log edad', 'LIMEÑO?', 'SEXOOO', 'ESTADO CIVIL', 'DOCUMENTO 1?', 'PERSONA 1?',
           'log desembolsado', 'TasadeInteresAnual23', 'PRODUCTO DXP?',
           'PRODUCTO PEQUEÑA?', 'PRODUCTO MICRO?',
-          'AFILIACIÓN NUEVO?', 'REGIMEN CAS?'
-          
-          ]]
+          'AFILIACIÓN NUEVO?', 'REGIMEN CAS?']]
+
 X = sm.add_constant(X)
 #X['EDAD'] = X['EDAD'].astype(int)
 
