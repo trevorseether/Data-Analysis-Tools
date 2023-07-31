@@ -102,12 +102,11 @@ df_aleatorio.reset_index(drop=True, inplace=True)
 
 #%%
 # establecemos X y
-X = df_aleatorio[['LIMEÑO?', 'SEXOOO', 'ESTADO CIVIL', 'DOCUMENTO 1?', 'PERSONA 1?',
-          'PRODUCTO DXP?',
-          'PRODUCTO PEQUEÑA?', 'PRODUCTO MICRO?',
-          'AFILIACIÓN NUEVO?', 'REGIMEN CAS?'
-          
-          ]]
+X = df_aleatorio[['LIMEÑO?', 'SEXOOO', 'ESTADO CIVIL', 
+                  'DOCUMENTO 1?', 'PERSONA 1?',
+                  'PRODUCTO DXP?', 'PRODUCTO PEQUEÑA?', 
+                  'PRODUCTO MICRO?', 'AFILIACIÓN NUEVO?',
+                  'REGIMEN CAS?']]
 
 # Obtener la columna de la variable objetivo 'target'
 y = df_aleatorio['MOROSO?'].values
