@@ -171,10 +171,21 @@ df_comparacion['Predicciones'] = df_comparacion['Predicciones'].str.replace(']',
 df_comparacion = df_comparacion.astype(int)
 
 # Imprimir el DataFrame resultante
+'''
 print(df_comparacion[df_comparacion['MOROSO?'] != df_comparacion['Predicciones']]) #mal predecido
 
 print(df_comparacion[(df_comparacion['MOROSO?'] == 0) &
                      (df_comparacion['MOROSO?'] == df_comparacion['Predicciones'])]) #morosos bien predecidos
+'''
+#%% MATRIZ DE CONFUSIÓN
 
+clase_real = df_comparacion['MOROSO?'].values
+prediccion_modelo = df_comparacion['Predicciones'].values
 
+# Calcular la matriz de confusión
+confusion_matrix = pd.crosstab(clase_real, prediccion_modelo, 
+                               rownames=['Clase Real'], 
+                               colnames=['Prediccion Modelo'])
 
+# Imprimir la matriz de confusión
+print(confusion_matrix)
