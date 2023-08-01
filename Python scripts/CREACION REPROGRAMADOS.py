@@ -53,12 +53,9 @@ menos_bruto.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                    'Numero de Crédito 18/'], inplace=True, how='all') #eliminando las filas vacías
 
 menos_bruto['Código Socio 7/'] = menos_bruto['Código Socio 7/'].str.strip()
-menos_bruto['''Nro Prestamo 
-Fincore'''] = menos_bruto['''Nro Prestamo 
-Fincore'''].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
+menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
 
-mask = menos_bruto['''Nro Prestamo 
-Fincore'''].duplicated(keep=False)
+mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)
 df_duplicadoss = menos_bruto[mask]
 
 print('filas duplicadas:')
@@ -67,16 +64,11 @@ del df_duplicadoss
 
 print(menos_bruto.shape[0])
 
-menos_bruto = menos_bruto.drop_duplicates(subset='''Nro Prestamo 
-Fincore''') #por si acaso eliminamos duplicados
+menos_bruto = menos_bruto.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(menos_bruto.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
-#%%
-#BUSCAMOS DUPLICADOS
-duplicados = menos_bruto[menos_bruto['''Nro Prestamo 
-Fincore'''].duplicated()]
-print(duplicados) #investigar si sale algo
+df_mes_actual_copia = menos_bruto.copy()
 
 #%%
 #aquí el anexo06 del mes pasado, el que manda Cesar
@@ -101,19 +93,15 @@ anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                       'Tipo de Producto 43/': object,
                                       'Fecha de Vencimiento Origuinal del Credito 48/': object,
                                       'Fecha de Vencimiento Actual del Crédito 49/': object,
-                                      '''Nro Prestamo 
-Fincore''': object,
+                                      'Nro Prestamo \nFincore': object,
                                       'Refinanciado TXT': object}) #no está funcionando esta vaina, debería leer en str
 del ubicacion_anx06_anterior
 del nombre_anx06
 
 #agregando ceros al nro de fincore por si acaso
-anx06_anterior['''Nro Prestamo 
-Fincore'''] = anx06_anterior['''Nro Prestamo 
-Fincore'''].astype(str).str.zfill(8)
+anx06_anterior['Nro Prestamo \nFincore'] = anx06_anterior['Nro Prestamo \nFincore'].astype(str).str.zfill(8)
 
-mask = anx06_anterior['''Nro Prestamo 
-Fincore'''].duplicated(keep=False)
+mask = anx06_anterior['Nro Prestamo \nFincore'].duplicated(keep=False)
 df_duplicadossss = anx06_anterior[mask]
 print(df_duplicadossss)
 
@@ -125,8 +113,7 @@ anx06_anterior.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
 
 print(anx06_anterior.shape[0])
 
-anx06_anterior = anx06_anterior.drop_duplicates(subset='''Nro Prestamo 
-Fincore''') #por si acaso eliminamos duplicados
+anx06_anterior = anx06_anterior.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(anx06_anterior.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
@@ -277,13 +264,13 @@ Suspenso Total''',
 #PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO #chucha, tenemos que tener cuidado con esta huevada,
 #estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final ya se han cambiado estos datos y se han puesto en las columnas 'monto de garantías'
 
-garantias = anx06_anterior[['''Nro Prestamo 
-Fincore''','Saldos de Garantías Preferidas 34/', 'Saldo de Garantías Autoliquidables 35/']]
+garantias = anx06_anterior[['Nro Prestamo \nFincore',
+                            'Saldos de Garantías Preferidas 34/', 
+                            'Saldo de Garantías Autoliquidables 35/']]
 
 nuevos_nombres = {
-    '''Nro Prestamo 
-Fincore''':                                     'fincore para merge',
-    'Saldos de Garantías Preferidas 34/':       'garantias pref mes pasado',
+    'Nro Prestamo \nFincore'                :   'fincore para merge',
+    'Saldos de Garantías Preferidas 34/'    :   'garantias pref mes pasado',
     'Saldo de Garantías Autoliquidables 35/':   'garantias autoli mes pasado'}
 
 garantias = garantias.rename(columns=nuevos_nombres)
@@ -291,8 +278,7 @@ del nuevos_nombres
 
 ###################### merge para poner del mes pasado
 ordenado = ordenado.merge(garantias, 
-                         left_on=['''Nro Prestamo 
-Fincore'''], 
+                         left_on=['Nro Prestamo \nFincore'], 
                          right_on=['fincore para merge']
                          ,how='left')
                                   
@@ -326,8 +312,7 @@ para_enviar = filtrado_certificados[filtrado_certificados['Monto de Desembolso 2
 para_enviar = para_enviar[['Apellidos y Nombres / Razón Social 2/',
                            'Fecha de Desembolso 21/',
                            'Monto de Desembolso 22/',
-                           '''Nro Prestamo 
-Fincore''']]
+                           'Nro Prestamo \nFincore']]
 
 para_enviar['''Nro \nCert.Depósito \nFincore'''] = ''
 para_enviar['''Moneda e \nImporte'''] = ''
@@ -363,9 +348,7 @@ ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado.apply(nega
     
 ordenado['Código Socio 7/'] = ordenado['Código Socio 7/'].astype(str).str.strip()
 
-ordenado['''Nro Prestamo 
-Fincore'''] = ordenado['''Nro Prestamo 
-Fincore'''].str.strip()
+ordenado['Nro Prestamo \nFincore'] = ordenado['Nro Prestamo \nFincore'].str.strip()
 
 #%%
 #verificación del tipo de producto 19/
@@ -407,8 +390,7 @@ filtrado_credito_19 = filtrado_credito_19[['Registro 1/',
                                            'Apellidos y Nombres / Razón Social 2/',
                                            'Código Socio 7/',
                                            'Número de Documento 10/',
-                                           '''Nro Prestamo 
-Fincore''',
+                                           'Nro Prestamo \nFincore',
                                            'Tipo de Crédito 19/ (original)',
                                            'Tipo de Crédito 19/',
                                            'Monto de Desembolso Origuinal TXT',
@@ -416,8 +398,7 @@ Fincore''',
                                            'Moneda del crédito 17/'
                                            ]]
 ordenado.drop(['Tipo de Crédito 19/ (original)'], axis=1, inplace=True)
-filtrado_credito_19 = filtrado_credito_19.rename(columns={'''Nro Prestamo 
-Fincore''': "Fincore"})
+filtrado_credito_19 = filtrado_credito_19.rename(columns={'Nro Prestamo \nFincore': "Fincore"})
 
 #guardamos este excel para mandárselo a Cesar
 try:
@@ -656,22 +637,22 @@ anx06_ordenado = ordenado[columnas[0:57]+['FEC_ULT_REPROG',
                           columnas[57:129]]
 #%% ahora a sacar datos del mes pasado
 #los 3 primeros
-anterior_para_merge = anx06_anterior[['''Nro Prestamo 
-Fincore''', 'FEC_ULT_REPROG', 'PLAZO_REPR', 'TIPO_REPRO']]
+anterior_para_merge = anx06_anterior[['Nro Prestamo \nFincore', 
+                                      'FEC_ULT_REPROG', 
+                                      'PLAZO_REPR', 
+                                      'TIPO_REPRO']]
 
 nuevos_nombres = {
-    '''Nro Prestamo 
-Fincore'''             :   'fincore para merge',
-    'FEC_ULT_REPROG'   :   'FEC_ULT_REPROG para merge',
-    'PLAZO_REPR'       :   'PLAZO_REPR para merge',
-    'TIPO_REPRO'       :   'TIPO_REPRO para merge'}
+    'Nro Prestamo \nFincore'  :   'fincore para merge',
+    'FEC_ULT_REPROG'          :   'FEC_ULT_REPROG para merge',
+    'PLAZO_REPR'              :   'PLAZO_REPR para merge',
+    'TIPO_REPRO'              :   'TIPO_REPRO para merge'}
 
 anterior_para_merge = anterior_para_merge.rename(columns=nuevos_nombres)
 del nuevos_nombres
 
 anx06_ordenado = anx06_ordenado.merge(anterior_para_merge, 
-                         left_on=['''Nro Prestamo 
-Fincore'''], 
+                         left_on=['Nro Prestamo \nFincore'], 
                          right_on=['fincore para merge']
                          ,how='left')
 
@@ -871,8 +852,9 @@ anx06_repro = anx06_ordenado.copy() #creando una copia para el reporte de reprog
 
 menores = anx06_ordenado[(anx06_ordenado['Saldo de colocaciones (créditos directos) 24/'] < 100) & \
                          (anx06_ordenado['Saldo de colocaciones (créditos directos) 24/'] > 0)]
-menores = menores[['Código Socio 7/','Apellidos y Nombres / Razón Social 2/','''Nro Prestamo 
-Fincore''']]
+menores = menores[['Código Socio 7/',
+                   'Apellidos y Nombres / Razón Social 2/',
+                   'Nro Prestamo \nFincore']]
 
 # AÑADIMOS LA COLUMNITA DE CRÉDITOS MENORES AL PRINCIPIO
 menores_para_merge = menores[['Código Socio 7/','Apellidos y Nombres / Razón Social 2/']]
@@ -981,21 +963,19 @@ print(anx06_ordenado[['''fecha desemb (v)''', '''fecha término de gracia por de
 #%%
 #COL AMARILLA 3 y 4, primero datos del mes pasado
 
-col3_4 = anx06_anterior[['''Nro Prestamo 
-Fincore''', 'periodo de gracia por Reprog inicio', 
-            'periodo de gracia por Reprog Término']]
+col3_4 = anx06_anterior[['Nro Prestamo \nFincore', 
+                         'periodo de gracia por Reprog inicio', 
+                         'periodo de gracia por Reprog Término']]
 
 #cambio de nombre de las columnas para hacer un merge sin ambiguedades
-col3_4 = col3_4.rename(columns={'''Nro Prestamo 
-Fincore''': "Fincore merge 3 y 4"})
-col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog inicio': "3 merge"})
-col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog Término': "4 merge"})
+col3_4 = col3_4.rename(columns={'Nro Prestamo \nFincore'                : "Fincore merge 3 y 4"})
+col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog inicio'   : "3 merge"})
+col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog Término'  : "4 merge"})
 
 col3_4 = col3_4.drop_duplicates(subset="Fincore merge 3 y 4") #por si acaso eliminamos duplicados antes del merge
 #colocando los del mes pasado:
 anx06_ordenado = anx06_ordenado.merge(col3_4, 
-                                      left_on=['''Nro Prestamo 
-Fincore'''], 
+                                      left_on=['Nro Prestamo \nFincore'], 
                                      right_on=["Fincore merge 3 y 4"]
                                      ,how='left')
 del col3_4
@@ -1191,4 +1171,14 @@ except FileNotFoundError:
 
 reprogramados.to_excel(ruta,
                       index=False)    
+
+#%%
+###############################################################################
+######     verificamos si algún crédito no apareció el mes pasado        ######
+###############################################################################
+
+df_mes_actual_copia
+
+
+
 
