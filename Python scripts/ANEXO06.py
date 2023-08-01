@@ -3,7 +3,7 @@
 """
 Created on Wed Feb  8 11:37:33 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 #0
 import pandas as pd
@@ -509,7 +509,7 @@ calificacion_para_sentinel.to_excel(ruta,
 # CÓDIGO VERIFICADOR DEL ALINEAMIENTO 15 DEL ANEXO-06
 
 # Calcular el conteo de diferentes productos por NumerodeDocumento10
-grouped = df_resultado.groupby('Código Socio 7/').agg({'Clasificación del Deudor con Alineamiento 15/': 'nunique'})
+grouped = df_resultado.groupby('Código Socio 7/').agg({'Clasificación del Deudor con Alineamiento 15/': 'nunique'}) #contar el número de valores únicos
 grouped.columns = ['DIFERENTES PRODUCTOS']
 
 # Filtrar los grupos con más de un producto diferente
@@ -892,8 +892,7 @@ def producto_43(row): #aparentemente está funcionando, funciona cuando la aplic
     if ((len(str(row['Partida Registral 8/'])) > 2) and \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31'))) or \
      ((len(str(row['Partida Registral 8/'])) > 2) and \
-     (row['''Origen
- Prestamo'''] == 'POND')):
+     (row['Origen\nPrestamo'] == 'POND')):
         return 41
     else:
         return row['Tipo de Producto 43/ original']

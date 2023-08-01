@@ -2,7 +2,7 @@
 """
 Created on Wed May  3 09:29:52 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 import pandas as pd
 import pyodbc

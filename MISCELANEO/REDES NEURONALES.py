@@ -124,7 +124,7 @@ y = DATA['MOROSO?'].values
 model = Sequential()
 
 # Agregar capas al modelo
-model.add(Dense(40, input_dim=10, activation='relu'))
+model.add(Dense(20, input_dim=10, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 # Compilar el modelo

@@ -2,7 +2,7 @@
 """
 Created on Wed Apr  5 18:30:56 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 
 #!pip install pyautogui

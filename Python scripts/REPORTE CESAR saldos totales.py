@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+Created on Wed Jun  6 09:45:50 2023
 
-This is a temporary script file.
+@author: Joseph Montoya
 """
 import numpy as np
 import pandas as pd
@@ -324,7 +324,7 @@ df4.loc[mask2, 'SaldoCapital'] = round(df4.loc[mask2, 'MontoSolicitadoTXT'] - df
 df4['CRED CON CAPITALIZ'] = df4['CRED CON CAPITALIZ'].replace('revisar', '')
 
 
-df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)']+df4['InteresCompensatorioDeuda']+df4['InteresMoratorioDeuda']
+df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)'] + df4['InteresCompensatorioDeuda'] + df4['InteresMoratorioDeuda']
 #%%
 'siguiente fase'
 
@@ -338,8 +338,11 @@ df3_cobranza.columns
 
 #esto es del mes pasado
 #separo las columnas de nro de 'fincore' y 'IMPTE CASTIGADO (Asignado x PGB)' del mes pasado, para hacer un merge
-df_cosas_mes_pasado = df2[["NroPrestamoFC", 'IMPTE CASTIGADO (Asignado x PGB)', 'FECHA DE CASTIGO', 
-                           'Capital Amortizado', 'Int y Otros']]
+df_cosas_mes_pasado = df2[["NroPrestamoFC", 
+                           'IMPTE CASTIGADO (Asignado x PGB)', 
+                           'FECHA DE CASTIGO', 
+                           'Capital Amortizado', 
+                           'Int y Otros']]
 
 #este codigo es para comprobar que sí está bien el resultado
 #df_sum.where(df_sum['PagareFincore'] == '00083701').dropna(how='all')
@@ -388,7 +391,7 @@ df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros']+df6.loc[mascar
 
 #%%
 #sumar y restar
-df6['Total Amortizado'] = df6['Capital Amortizado']+ df6['Int y Otros']
+df6['Total Amortizado'] = df6['Capital Amortizado'] + df6['Int y Otros']
 df6['SALDO CASTIGADO'] = df6['IMPTE CASTIGADO (Asignado x PGB)'] - df6['Total Amortizado']
 df6.loc[mascara, 'SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.loc[mascara, 'Capital Amortizado']+df6.loc[mascara, 'Capital']
 

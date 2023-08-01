@@ -2,7 +2,7 @@
 """
 Created on Fri Jun 16 10:46:51 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 
 ###############################################################################
@@ -16,17 +16,17 @@ import numpy as np
 #%%
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
-FECHATXT = '24-07-2023'
+FECHATXT = '31-07-2023'
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 JULIO\\24 07 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 JULIO\\31 julio 2023')
 
 #%%
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('Bajas al 21.07.xlsx',
+bajas = pd.read_excel('1ER INFORME 08_23 GRUPO KONECTA.xlsx',
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].str.strip()
@@ -44,7 +44,7 @@ del uwu
 ######################################################
 #   REPORTE DE CRÉDITOS VIGENTES, ENVIADO POR CESAR
 ######################################################
-vigentes = pd.read_excel("creditos vigentes SM al 24-07-23 - para bajas Konecta corte 12_40am.xlsx", #aqui cambiar el nombre y/o ubicación del archivo
+vigentes = pd.read_excel("creditos vigentes SM al 31-07-23 - para bajas Konecta corte 6_00pm.xlsx", #aqui cambiar el nombre y/o ubicación del archivo
                       dtype={'Doc_Identidad': object,
                              'codigosocio': object,
                              'pagare_fincore': object,

@@ -2,7 +2,7 @@
 """
 Created on Tue Feb 21 12:37:47 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 #############################
 #   reporte para sentinel   #
