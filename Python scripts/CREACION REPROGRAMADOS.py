@@ -337,8 +337,24 @@ para_enviar.to_excel(ruta,
 #ahora hay que calcular alineamiento interno y tasa de provisión requerida (como en el anexo06)
 #arreglamos el saldo de cartera
 
+#%% HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
+'''
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+'''
+#%% solución provisional, nos quedamos con el menor monto de ambos.
+# de momento hay que esperar a que Oscar nos diga algo
+ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
+
+def mayor_saldo_cartera(ordenado):
+    if ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT'] <= ordenado['Saldo de colocaciones (créditos directos) 24/']:
+        return ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+    else:
+        return ordenado['Saldo de colocaciones (créditos directos) 24/']
+
+ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado.apply(mayor_saldo_cartera, axis=1)
+
+#%%
 def negativos_saldo_cartera(ordenado):
     if ordenado['Saldo de colocaciones (créditos directos) 24/'] < 0:
         return ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT']
@@ -606,6 +622,11 @@ def arreglo2_3(ordenado):
         return ordenado['Capital Refinanciado 28/']
 ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 
+#%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
+# (EN CASO DE QUE TENGAMOS SI O SI QUE TRABAJAR CON EL SALDO DESCAPITALIZADO QUE SALE MUY ALTO) 
+# depende de lo que nos dice oscar
+
+#%% VERIFICACIÓN DE QUE SE CUMPLA LA SUMA CORRECTAMENTE
 suma_saldo_cartera = ordenado['Saldo de colocaciones (créditos directos) 24/'].sum()
 
 suma_otros = ordenado['Capital Vigente 26/'].sum() + \
@@ -614,7 +635,8 @@ suma_otros = ordenado['Capital Vigente 26/'].sum() + \
              ordenado['Capital Vencido 29/'].sum() + \
              ordenado['Capital en Cobranza Judicial 30/'].sum()
              
-#VERIFICAR QUE ESTA COMPARACIÓN SALGA TRUE        
+#VERIFICAR QUE ESTA COMPARACIÓN SALGA TRUE
+print('DEBE SALIR TRUE:') 
 print(round(suma_saldo_cartera,2)  == round(suma_otros,2)) 
 
 #%%
@@ -1148,8 +1170,10 @@ anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 #%%
 #CREAMOS EL EXCEL
 df_vacío = pd.DataFrame({' ': ['', '', ''], '  ': ['', '', '']})
+
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
 try:
-    ruta = 'anexo experimental.xlsx'
+    ruta = nombre
     os.remove(ruta)
 except FileNotFoundError:
     pass
@@ -1160,7 +1184,7 @@ df_vacío.to_excel(ruta,
 ##################### ESCRIBIMOS EN ESE EXCEL VACÍO #####################
 
 # Crear un objeto ExcelWriter y especificar el archivo de salida
-excel_writer = pd.ExcelWriter('anexo experimental.xlsx')
+excel_writer = pd.ExcelWriter(nombre)
 
 # Guardar cada DataFrame en una hoja (sheet) diferente
 anx06_ordenado.to_excel(excel_writer, sheet_name = fecha_mes, index=False) ##
@@ -1178,7 +1202,7 @@ reprogramados = anx06_repro[(anx06_repro['TIPO_REPRO'] != '--') & \
 #%%
 # CREACIÓN DEL EXCEL DE REPROGRAMADOS
 try:
-    ruta = f'Créditos Reprogramados {fecha_mes}.xlsx'
+    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
     os.remove(ruta)
 except FileNotFoundError:
     pass
