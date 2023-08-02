@@ -1176,9 +1176,47 @@ reprogramados.to_excel(ruta,
 ###############################################################################
 ######     verificamos si algún crédito no apareció el mes pasado        ######
 ###############################################################################
+import pyodbc
 
 df_mes_actual_copia
 
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+#donde dice @fechacorte se debe poner el mes
 
+fecha_corte_actual  = '20230531' #mes actual
+fecha_corte_menos_1 = '20230430' #mes anterior
+fecha_corte_menos_2 = '20230331' #mes anterior del anterior
 
+query_sql = f'''
+SELECT 
+	FechaCorte1 as 'FECHA CORTE',
+	Nro_Fincore AS 'NRO FINCORE',
+	ApellidosyNombresRazonSocial2 AS 'SOCIO',
+	Saldodecolocacionescreditosdirectos24 AS 'SALDO CARTERA'
+FROM 
+	anexos_riesgos2..Anx06_preliminar
+WHERE FechaCorte1 = '{fecha_corte_menos_1}' --SE PONE LA DE HACE 3 MESES'''
+
+df_menos1 = pd.read_sql_query(query_sql, conn)
+
+query_sql = f'''
+SELECT 
+	FechaCorte1 as 'FECHA CORTE',
+	Nro_Fincore AS 'NRO FINCORE',
+	ApellidosyNombresRazonSocial2 AS 'SOCIO',
+	Saldodecolocacionescreditosdirectos24 AS 'SALDO CARTERA'
+FROM 
+	anexos_riesgos2..Anx06_preliminar
+WHERE FechaCorte1 = '{fecha_corte_menos_2}' --SE PONE LA DE HACE 3 MESES'''
+
+df_menos2 = pd.read_sql_query(query_sql, conn)
+del conn  #para limpiar el explorador de variables
+
+#%% filtramos y nos quedamos con los créditos que están en el mes actual, y el anterior del anterior
+
+creditos_en_3_meses = df_mes_actual_copia.loc[df_mes_actual_copia['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos2['NRO FINCORE'].str.strip()))]
+
+creditos_no_aparecidos = creditos_en_3_meses[~creditos_en_3_meses['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
+
+print(creditos_no_aparecidos)
 
