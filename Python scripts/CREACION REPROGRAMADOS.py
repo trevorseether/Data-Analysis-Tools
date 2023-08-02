@@ -16,13 +16,13 @@ import numpy as np
 #'FEC_ULT_REPROG'
 
 #%%
-fecha_mes = 'JUNIO 2023'
-fecha_corte = '2023-06-30'
+fecha_mes = 'JULIO 2023'
+fecha_corte = '2023-07-31'
 #%%
 #INSUMO PRINCIPAL, ANEXO06 SUPER PRELIMINAR
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JUNIO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO')
 
-bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Junio2023 - campos ampliados (original fincore).xlsx',
+bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados (original fincore).xlsx',
                       skiprows=4,
                       dtype=({'Registro 1/': object, 
                              'Fecha de Nacimiento 3/': object,
@@ -72,9 +72,9 @@ df_mes_actual_copia = menos_bruto.copy()
 
 #%%
 #aquí el anexo06 del mes pasado, el que manda Cesar
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 MAYO\\ANEXO 06'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO'
 
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06  - Mayo2023 - campos ampliados.xlsx'
+nombre_anx06 = 'ANEXO 06 CAMPOS AMPLIADOS JUNIO 2023 - validacion1.xlsx'
 
 anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                skiprows=2,
@@ -304,9 +304,9 @@ else:
 ## para que nos ayuden con los certificados de depósitos   ####
 ###############################################################
 
-#cambiar la fecha
-filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= 20230601] #aquí cambiar la fecha
-#cambiar la fecha
+#cambiar la fecha###################################################################################################
+filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= 20230701] #aquí cambiar la fecha
+#cambiar la fechaAAAAAAAAAAAAAAAAAAAAAAAA ##########################################################################
 
 para_enviar = filtrado_certificados[filtrado_certificados['Monto de Desembolso 22/'] >= 90000]
 para_enviar = para_enviar[['Apellidos y Nombres / Razón Social 2/',
@@ -690,7 +690,7 @@ def col5(anx06_ordenado):
         return anx06_ordenado['Nro Cuotas Canc Post Regro']
     else:
         return anx06_ordenado['NRO CUOTAS REPROG CANCELADAS']
-anx06_ordenado['NRO CUOTAS REPROG CANCELADAS'] = anx06_ordenado.apply(col4, axis=1)
+anx06_ordenado['NRO CUOTAS REPROG CANCELADAS'] = anx06_ordenado.apply(col5, axis=1)
 
 #añadimos datos a la col 6
 def col6(anx06_ordenado):
@@ -698,7 +698,7 @@ def col6(anx06_ordenado):
         return anx06_ordenado['Nro Reprogramaciones TXT']
     else:
         return anx06_ordenado['NRO REPROG']
-anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col4, axis=1)    
+anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col6, axis=1)    
 
 #%%
 #AÑADIENDO LOS REPROGRAMADOS DEL MES
@@ -744,9 +744,9 @@ print('######################################################')
 '##############################################################################'
 #AÑADIENDO NUEVOS REPROGRAMADOS
 #PONER AQUÍ EL INICIO DEL MES DE CORTE (habrá que cambiarlo cada mes)
-mes_inicio = pd.to_datetime('2023-05-01')
+mes_inicio = pd.to_datetime('2023-07-01')
 #PONER AQUÍ EL FINAL DEL MES DE CORTE (habrá que cambiarlo cada mes)
-mes_final = pd.to_datetime('2023-06-30')
+mes_final = pd.to_datetime('2023-07-31')
 '##############################################################################'
 
 def nueva_fec_ult_reprog(anx06_ordenado):
@@ -1128,8 +1128,22 @@ Devengado Total''']
 anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado['''Interes 
 Suspenso Total''']
 
-#%% ORDENAMIENTO DE LAS COLUMNAS ¿falta, no me acuerdo xd?
+#%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
+print(anx06_ordenado.shape[0])
+anx06_ordenado = anx06_ordenado.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
+print(anx06_ordenado.shape[0])
+print('si sale menos, es porque hubo duplicados')
+
+#%% ORDENAMIENTO DE LAS COLUMNAS LAS ÚLTIMAS 5 AÑADIDAS PARA CONTABILIDAD
 '#############################################################################'
+columnas = anx06_ordenado.columns
+columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
+                                   'fecha término de gracia por desembolso ["v" + dias gracia (av)]',
+                                   'periodo de gracia por Reprog inicio',
+                                   'periodo de gracia por Reprog Término',
+                                   'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:136])
+    
+anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
 #%%
 #CREAMOS EL EXCEL
@@ -1183,9 +1197,9 @@ df_mes_actual_copia
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 #donde dice @fechacorte se debe poner el mes
 
-fecha_corte_actual  = '20230531' #mes actual
-fecha_corte_menos_1 = '20230430' #mes anterior
-fecha_corte_menos_2 = '20230331' #mes anterior del anterior
+fecha_corte_actual  = '20230731' #mes actual
+fecha_corte_menos_1 = '20230630' #mes anterior
+fecha_corte_menos_2 = '20230531' #mes anterior del anterior
 
 query_sql = f'''
 SELECT 
