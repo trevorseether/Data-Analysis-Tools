@@ -1,6 +1,6 @@
 
-declare @fechacorte as datetime
-set @fechacorte = '20230531'
+DECLARE @fechacorte as datetime
+SET @fechacorte = '20230630'
 ---------------
 SELECT 
 	Nro_Fincore, CodigoSocio7, NumerodeCredito18, 
@@ -8,9 +8,8 @@ SELECT
 	Saldodecolocacionescreditosdirectos24, CapitalenCobranzaJudicial30,
 	CapitalVencido29, A.NUEVA_PLANILLA, 
 	a.Departamento, a.[Dpto Negocio],
-	ClasificaciondelDeudorconAlineamiento15, 
-	Nro, Situacion_Credito, Origen_Coopac, 
-	P.EMPRESA, P.PLANILLA_CORREGIDA,
+	Situacion_Credito, Origen_Coopac, 
+	P.EMPRESA, P.PLANILLA_CORREGIDA as 'PLANILLA_CORREGIDA (esta se copia y se pega en la recaudación de Cobranzas)',
 	
 	CASE
 		WHEN ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) = 1 
@@ -47,17 +46,18 @@ SELECT
 		THEN '=SUMA(U2:Y2)' ELSE '' END AS 'Desc_Pago',
 	CASE
 		WHEN ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) = 1 
-		THEN '=SI.ERROR(AA2/Z2;0)' ELSE '' END AS 'RECAUDACIÓN'
+		THEN '=SI.ERROR(AA2/Z2;0)' ELSE '' END AS 'RECAUDACIÓN',
+		a.Departamento
 
 FROM  
 	anexos_riesgos2..Anx06_preliminar A
 
 LEFT JOIN Anexos_Riesgos..PLANILLA2 P
-	ON (LTRIM(RTRIM(A. NUEVA_PLANILLA)) =  LTRIM(RTRIM(P.NUEVA_PLANILLA)))
+	ON (LTRIM(RTRIM(A.NUEVA_PLANILLA)) =  LTRIM(RTRIM(P.NUEVA_PLANILLA)))
 	WHERE FechaCorte1 = @fechacorte
-	and A.NUEVA_PLANILLA like '%uni%gest%'
-	--	and (A.NUEVA_PLANILLA like '%activ%' or A.NUEVA_PLANILLA like '%nombr%')
+--	and A.NUEVA_PLANILLA like '%03%' --esto solo sirve par verificar algunos cashitos
 	ORDER BY A.NUEVA_PLANILLA
+GO
 
 ---------------------------------------------------------------------------
 ------------SI SE ENCUENTRA ALGUNA CORRESPONDENCIA, LA COLUMNA PLANILLA_CORREGIDA SE PEGA EN
@@ -65,7 +65,7 @@ LEFT JOIN Anexos_Riesgos..PLANILLA2 P
 ----------------------------------------------------------------------------
 -- codigo para hacer la tablita que se subirá al SQL
 declare @fechacorte as datetime
-set @fechacorte = '20230531'
+set @fechacorte = '20230630'
 
 SELECT FechaCorte1 as 'FechaCorte',
 	CodigoSocio7 as 'CodSocio',
@@ -80,7 +80,7 @@ FROM  anexos_riesgos2..Anx06_preliminar A
 where FechaCorte1 = @fechacorte
 
 ---------------------------------------------------------------------------
-DECLARE @FECHACORTE AS DATETIME = '20230531'
+DECLARE @FECHACORTE AS DATETIME = '20230630'
 DECLARE @PLANILLAS AS VARCHAR(50) = '%inabif%'
 SELECT 
 	--EMPRESA, 
@@ -112,10 +112,8 @@ VALUES (
 ----------------------------------------------------------------------
 --para insertar la recaudación una vez creada
 insert into RECAUDACION..Cabecera_Pagos ---- ESTA TABLA ES NUEVA, SE HA CREADO PORQUE LA ORIGINAL YA SE LLENÓ
-select * from Anexos_Riesgos2.recaudacion.recaudacion20230531
+select * from RECAUDACION..recaudacion20230630
 ----------------------------------------------------------------------
-
-
 
 ----creando un esquema nuevo para más orden
 /*
@@ -124,12 +122,3 @@ go
 CREATE SCHEMA recaudacion
 go
 */
-
-
-SELECT NUEVA_PLANILLA,PLANILLA,* 
-FROM anexos_riesgos2..Anx06_preliminar
-WHERE Nro_Fincore = '00094300'
-AND FechaCorte1 = '20230531'
-
-SELECT * FROM 
-

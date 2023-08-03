@@ -17,18 +17,18 @@ import numpy as np
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '02-08-2023'
+FECHATXT = '03-08-2023'
 ############################################################################
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\02 AGOSTO 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\03 AGOSTO 2023')
 
 #%%
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('2DO INFORME 08_23 GRUPO KONECTA.xlsx',
+bajas = pd.read_excel('3ER INFORME 08_23 GRUPO KONECTA.xlsx',
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].str.strip()
