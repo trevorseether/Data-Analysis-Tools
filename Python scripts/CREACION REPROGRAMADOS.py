@@ -20,9 +20,9 @@ fecha_mes = 'JULIO 2023'
 fecha_corte = '2023-07-31'
 #%%
 #INSUMO PRINCIPAL, ANEXO06 SUPER PRELIMINAR
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
 
-bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados (original fincore).xlsx',
+bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados final (original fincore).xlsx',
                       skiprows=4,
                       dtype=({'Registro 1/': object, 
                              'Fecha de Nacimiento 3/': object,
@@ -299,6 +299,9 @@ else:
     print('habría que chequear si algún crédito se canceló \no quizás no hizo match')
 
 #%%
+ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombres / Razón Social 2/'].str.strip()
+
+#%%
 ###############################################################
 ## generamos el archivo para Oswald y/o Juan Carlos        ####
 ## para que nos ayuden con los certificados de depósitos   ####
@@ -338,11 +341,13 @@ para_enviar.to_excel(ruta,
 #arreglamos el saldo de cartera
 
 #%% HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
-'''
+
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+
+#%% 
 '''
-#%% solución provisional, nos quedamos con el menor monto de ambos.
+#solución provisional, nos quedamos con el menor monto de ambos.
 # de momento hay que esperar a que Oscar nos diga algo
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 
@@ -353,6 +358,7 @@ def mayor_saldo_cartera(ordenado):
         return ordenado['Saldo de colocaciones (créditos directos) 24/']
 
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado.apply(mayor_saldo_cartera, axis=1)
+'''
 
 #%%
 def negativos_saldo_cartera(ordenado):
@@ -622,9 +628,177 @@ def arreglo2_3(ordenado):
         return ordenado['Capital Refinanciado 28/']
 ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 
+#%%
+ordenado = ordenado.drop_duplicates(subset = 'Nro Prestamo \nFincore')
+
 #%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
-# (EN CASO DE QUE TENGAMOS SI O SI QUE TRABAJAR CON EL SALDO DESCAPITALIZADO QUE SALE MUY ALTO) 
-# depende de lo que nos dice oscar
+# ya determinamos con oscar y cesar que esto debemos hacer
+# buscar en CRONOGRAMA DE PRÉSTAMO:
+revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
+# corregimos, poniendo el saldo capital en el monto de saldo castigado
+ordenado.loc[(ordenado['Apellidos y Nombres / Razón Social 2/'] == 'CHUCUYA HERNANDEZ CLELIA MARIA') & \
+             (ordenado['Registro 1/'] == '004278'), 
+             'Saldos de Créditos Castigados 38/'] = 39.22
+
+###############################################################################
+# ahora sí nos aseguramos de quitar alguna vaina que no cuadra
+mask_castigado = ordenado['Saldos de Créditos Castigados 38/'] > 0
+
+ordenado.loc[mask_castigado, 'Saldo de colocaciones (créditos directos) 24/'] = 0
+ordenado.loc[mask_castigado, 'Capital Vigente 26/']                           = 0
+ordenado.loc[mask_castigado, 'Capital Reestrucutado 27/']                     = 0
+ordenado.loc[mask_castigado, 'Capital Refinanciado 28/']                      = 0
+ordenado.loc[mask_castigado, 'Capital Vencido 29/']                           = 0
+ordenado.loc[mask_castigado, 'Capital en Cobranza Judicial 30/']              = 0
+
+###############################################################################
+def caso_mediana_vencido1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['06', '07', '08']    \
+    and ordenado['Dias de Mora 33/']        > 15                \
+    and ordenado['Capital Vencido 29/']     > 0                 \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0       \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital Vencido 29/']
+    else:
+        return ordenado['Capital Vencido 29/']
+
+ordenado['Capital Vencido 29/'] = ordenado.apply(caso_mediana_vencido1, axis=1)
+
+def caso_mediana_vencido2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['06', '07', '08']    \
+    and ordenado['Dias de Mora 33/']        > 15                \
+    and ordenado['Capital Vencido 29/']     > 0                 \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0       \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_mediana_vencido2, axis=1)
+###############################################################################
+def caso_mediana_judicial1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['06', '07', '08']    \
+    and ordenado['Dias de Mora 33/']        > 15                \
+    and ordenado['Capital Vencido 29/']     == 0                \
+    and ordenado['Capital en Cobranza Judicial 30/'] > 0        \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital en Cobranza Judicial 30/']
+    else:
+        return ordenado['Capital en Cobranza Judicial 30/']
+
+ordenado['Capital en Cobranza Judicial 30/'] = ordenado.apply(caso_mediana_judicial1, axis=1)
+
+def caso_mediana_judicial2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['06', '07', '08']    \
+    and ordenado['Dias de Mora 33/']        > 15                \
+    and ordenado['Capital Vencido 29/']     == 0                \
+    and ordenado['Capital en Cobranza Judicial 30/'] > 0        \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_mediana_judicial2, axis=1)
+
+###############################################################################
+def caso_mype_vencid1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['09', '10']      \
+    and ordenado['Dias de Mora 33/']        > 30            \
+    and ordenado['Capital Vencido 29/']     > 0             \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0   \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital Vencido 29/']
+    else:
+        return ordenado['Capital Vencido 29/']
+    
+ordenado['Capital Vencido 29/'] = ordenado.apply(caso_mype_vencid1, axis=1)
+
+def caso_mype_vencid2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['09', '10']      \
+    and ordenado['Dias de Mora 33/']        > 30            \
+    and ordenado['Capital Vencido 29/']     > 0             \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0   \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_mype_vencid2, axis=1)
+
+###############################################################################
+def caso_mype_judicial1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['09', '10']      \
+    and ordenado['Dias de Mora 33/']        > 30            \
+    and ordenado['Capital Vencido 29/']     == 0            \
+    and ordenado['Capital en Cobranza Judicial 30/'] > 0    \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital en Cobranza Judicial 30/']
+    else:
+        return ordenado['Capital en Cobranza Judicial 30/']
+
+ordenado['Capital en Cobranza Judicial 30/'] = ordenado.apply(caso_mype_judicial1, axis=1)
+
+def caso_mype_judicial2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['09', '10']      \
+    and ordenado['Dias de Mora 33/']        > 30            \
+    and ordenado['Capital Vencido 29/']     == 0            \
+    and ordenado['Capital en Cobranza Judicial 30/'] > 0    \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_mype_judicial2, axis=1)
+
+###############################################################################
+def caso_consum_vencido1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['11', '12', '13']\
+    and ordenado['Dias de Mora 33/']        > 90            \
+    and ordenado['Capital Vencido 29/']     >  0            \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0   \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital Vencido 29/']
+    else:
+        return ordenado['Capital Vencido 29/']
+
+ordenado['Capital Vencido 29/'] = ordenado.apply(caso_consum_vencido1, axis=1)
+
+def caso_consum_vencido2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['11', '12', '13']\
+    and ordenado['Dias de Mora 33/']        > 90            \
+    and ordenado['Capital Vencido 29/']     > 0             \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0   \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_consum_vencido2, axis=1)
+
+###############################################################################
+def caso_consum_judicial1(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['11', '12', '13']\
+    and ordenado['Dias de Mora 33/']        > 90            \
+    and ordenado['Capital Vencido 29/']     == 0            \
+    and ordenado['Capital en Cobranza Judicial 30/'] > 0    \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return ordenado['Capital Vigente 26/'] + ordenado['Capital en Cobranza Judicial 30/']
+    else:
+        return ordenado['Capital en Cobranza Judicial 30/']
+
+ordenado['Capital en Cobranza Judicial 30/'] = ordenado.apply(caso_consum_judicial1, axis=1)
+
+def caso_consum_judicial2(ordenado):
+    if ordenado['Tipo de Crédito 19/'] in ['11', '12', '13']\
+    and ordenado['Dias de Mora 33/']        > 90            \
+    and ordenado['Capital Vencido 29/']     > 0             \
+    and ordenado['Capital en Cobranza Judicial 30/'] == 0   \
+    and ordenado['Capital Vigente 26/']     > 0:
+        return 0
+    else:
+        return ordenado['Capital Vigente 26/']
+
+ordenado['Capital Vigente 26/'] = ordenado.apply(caso_consum_judicial2, axis=1)
 
 #%% VERIFICACIÓN DE QUE SE CUMPLA LA SUMA CORRECTAMENTE
 suma_saldo_cartera = ordenado['Saldo de colocaciones (créditos directos) 24/'].sum()
