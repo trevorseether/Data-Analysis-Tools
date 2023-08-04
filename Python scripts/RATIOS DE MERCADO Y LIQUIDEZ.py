@@ -10,18 +10,20 @@ import calendar
 import os
 import pyodbc
 #%%
+######## UBICACIÓN ############################################################
+fecha_txt = 'Julio - 2023' #escribir el mes que estamos haciendo
 
-fecha_txt = 'Junio - 2023' #escribir el mes que estamos haciendo
-
-ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\ratios\\2023 JUNIO'
+ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\ratios\\2023 JULIO'
 os.chdir(ubicacion)
 
 #%%
-
-df = pd.read_excel('Ratios - Cronogramas de creditos vigentes al 30-Junio-23 - No incl castigados.xlsx',
+########### INSUMO ############################################################
+df = pd.read_excel('Ratios - Cronogramas de creditos vigentes al 31-Julio-23 - No incl castigados.xlsx',
                    skiprows= 0,
-                   dtype = {'NroPrestamo': object,
+                   dtype = {'NroPrestamoFincore': object,
                             'FechaVencimiento': object})
+
+df = df.rename(columns={'NroPrestamoFincore': 'NroPrestamo'})
 
 df['NroPrestamo'] = df['NroPrestamo'].str.strip()
 df = df.rename(columns={"Fecha Vencimiento": "FechaVencimiento"})
@@ -54,49 +56,23 @@ df_filtrado = df.query('FechaVencimiento >= "2023-01-01"')
 ''' ejemplo d un equivalente a Like, para el query
 df_filtrado = df.query('FechaVencimiento >= "2023-01-01" and MonedaPrestamo.str.contains("US")')
 '''
-
-#%% nos quedamos solo con aquellos cuyo nro de fincore esté vigente en el anexo06
-
-# esta consulta nos devuelve el nro de fincore del anexo más reciente
-# si queremos otro mes tendríamos que modificar la query
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-nro_fincore_vigentes = pd.read_sql_query('''
-SELECT Nro_Fincore 
-FROM anexos_riesgos2..Anx06_preliminar
-WHERE FechaCorte1 = (
-  SELECT MAX(FechaCorte1)
-  FROM anexos_riesgos2..Anx06_preliminar
-)
-                                           ''', conn)
-                                           
+                                         
 #%%
 ###############################################################################
-##  EN CASO DE QUE PIDAN ESTA VAINA Y NO TENGAMOS EL ANEXO06 SUBIDO AL SQL
+##  SACAMOS LA LISTA DE CRÉDITOS VIGENTES DEL ANEXO 06
 ###############################################################################
 #usamos este código
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 abril')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
 
-numeros_fincores = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Abril2023 - campos ampliados.xlsx',
+numeros_fincores = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx',
                                  skiprows = 2,
-                                 dtype = {'''Nro Prestamo 
-Fincore''' : object})
+                                 dtype = {'Nro Prestamo \nFincore' : object})
 
-fincores = numeros_fincores['''Nro Prestamo 
-Fincore'''].tolist()
+fincores = numeros_fincores['Nro Prestamo \nFincore'].tolist()
 df_filtrado_2 = df_filtrado[df_filtrado['NroPrestamo'].isin(fincores)]
 
 os.chdir(ubicacion)
-#%%
-#procedemos a filtrar los datos, (solo si extrajimos datos de SQL)
-
-fincores = nro_fincore_vigentes['Nro_Fincore'].tolist()
-df_filtrado_2 = df_filtrado[df_filtrado['NroPrestamo'].isin(fincores)]
-
-#para chequear si es que no hacen ningún match
-#print(nro_fincore_vigentes['Nro_Fincore'].tolist())
-#print(df_filtrado['NroPrestamo Fincore'])
-
 
 #%% creando columnas adicionales
 
@@ -110,6 +86,7 @@ df_filtrado['Fecha_Agrupada'] = df_filtrado['Año'].astype(str) + '/' + df_filtr
 'tabla pivote'
 df_filtrado
 df_filtrado['Fecha_Agrupada'] = pd.to_datetime(df_filtrado['Fecha_Agrupada'], format='%Y/%B')
+df_filtrado = df_filtrado[df_filtrado['Interes'] >= 0]
 pivot_table = df_filtrado.pivot_table(columns='MonedaPrestamo',
                                       values=['Capital','Interes'], 
                                       index=['Fecha_Agrupada'],                                      
