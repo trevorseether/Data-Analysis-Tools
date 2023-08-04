@@ -11,15 +11,15 @@ from datetime import datetime
 from openpyxl import load_workbook
 
 #%%
-FECHA = 'JUNIO-23' #servirá para el nombre del archivo
+FECHA = 'JULIO-23' #servirá para el nombre del archivo
 
 #%%
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 JUNIO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 JULIO')
 
-INSUMO = 'CarteraTotalSM13072023.xlsx'
-MES_PASADO = 'SALDO_COOPACSANMIGUEL - MAYO-23_INC_CVV_DETALLADO.xlsx'
-COBRANZA = 'Ingresos por Cobranza Junio-23 - General.xlsx'
+INSUMO = 'CARTERA_TOTAL_03082023.xlsx'
+MES_PASADO = 'SALDO_COOPACSANMIGUEL - JUNIO-23_INC_CVV_DETALLADO.xlsx'
+COBRANZA = 'Ingresos por Cobranza Julio-23 - General.xlsx'
 UTILIDAD_CASTIGO = 'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
 #IMPORTANDO LOS DATOS DE EXCEL

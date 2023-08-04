@@ -29,7 +29,7 @@ import calendar
 #%%
 #2
 #PONER LA FECHA DE CORTE
-fecha_corte = '2023-06-30' #ejemplo '2023-06-30'
+fecha_corte = '2023-07-31' #ejemplo '2023-06-30'
 
 #esta función nos permite obtener el número de días del mes de corte
 def dias_en_mes(fecha):
@@ -64,11 +64,11 @@ df['Fecha'] = df['Fecha'].apply(convertir_formato_fecha)
 #4
 
 #UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO')
 
 #%%
 #5
-anexo_del_mes = "ANEXO 06 CAMPOS AMPLIADOS JUNIO 2023 - validacion1.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx"
 df1=pd.read_excel(anexo_del_mes,
                  dtype={'Registro 1/': object, 
                         'Fecha de Nacimiento 3/': object,
@@ -128,7 +128,7 @@ Fincore'''] == '00092306', 'Tipo de Documento 9/'] = '1'
 tipo_cero = df1[(df1['Tipo de Documento 9/'] == 0) | \
                 (df1['Tipo de Documento 9/'] == '0')]
 
-print(tipo_cero) #si sale vacío, está todo bien
+print(tipo_cero.shape[0]) #si sale vacío, está todo bien
 
     
 #456 Ejemplo de código para realizar un update en función de múltiples condiciones
@@ -136,6 +136,7 @@ print(tipo_cero) #si sale vacío, está todo bien
 #456        (df1['sexo'] == 'M') & \
 #456        (df1['Refinanciado'] == 'TIPO 1') & \
 #456        (df1['producto'].isin([5, 7, 25, 0])), 'Tipo de Documento 9/'] = 1
+del tipo_cero
 
 #%%
 #arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
@@ -148,8 +149,9 @@ def cuenta_contable_castigados(df1):
         ''
 df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castigados, axis=1)
 
+print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
+
 #%%
-del tipo_cero
 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '''ESTA PARTE NO SE EJECUTA SI ENRIQUE NO PASA EL ARCHIVO DE CALIFICACIÓN DE REFINANCIADOS'''
@@ -162,7 +164,7 @@ del tipo_cero
 
 'este es el archivo de la calificación que añade Enrique manualmente'
 ########################################################################################################################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS junio.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 07 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 calif_ref = pd.read_excel(archivo_refinanciados,
@@ -170,7 +172,7 @@ calif_ref = pd.read_excel(archivo_refinanciados,
                           dtype={'Nº de Crédito FINCORE': object, })
 
 ############################################################################################
-mes_calif = 'Junio' #aqui debemos poner el mes donde esté la calificación más reciente ###
+mes_calif = 'Julio' #aqui debemos poner el mes donde esté la calificación más reciente ###
 ############################################################################################
 
 calif_ref[mes_calif] = calif_ref[mes_calif].astype(float)
@@ -190,13 +192,13 @@ del mes_calif
 'hay que tener cuidado con esta vaina, si las fechas no están en el formato indicado se pierden'
 
 df1['Fecha de Nacimiento 3/'] = pd.to_datetime(df1['Fecha de Nacimiento 3/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
-print(df1[df1['Fecha de Nacimiento 3/'].isnull()])
+print(df1[df1['Fecha de Nacimiento 3/'].isnull()].shape[0])
 df1['Fecha de Desembolso 21/'] = pd.to_datetime(df1['Fecha de Desembolso 21/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará 
-print(df1[df1['Fecha de Desembolso 21/'].isnull()])
+print(df1[df1['Fecha de Desembolso 21/'].isnull()].shape[0])
 df1['Fecha de Vencimiento Origuinal del Credito 48/'] = pd.to_datetime(df1['Fecha de Vencimiento Origuinal del Credito 48/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
 print(df1[df1['Fecha de Vencimiento Origuinal del Credito 48/'].isnull()])
 df1['Fecha de Vencimiento Actual del Crédito 49/'] = pd.to_datetime(df1['Fecha de Vencimiento Actual del Crédito 49/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará  
-print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()])
+print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()].shape[0])
                     
 #%%
 #quitando posibles espacios vacíos en el código del socio
@@ -678,9 +680,6 @@ def provision(df_resultado):
 df_resultado['Tasa de Provisión'] = df_resultado.apply(provision, axis=1)
 ###
 
-df_resultado.to_excel('asdasd.xlsx',
-                      index=False)
-
 #%%
 'tasa de interés anual'
 df_resultado['Tasa de Interés Anual 23/'].dtype
@@ -892,20 +891,21 @@ def producto_43(row): #aparentemente está funcionando, funciona cuando la aplic
     if ((len(str(row['Partida Registral 8/'])) > 2) and \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31'))) or \
      ((len(str(row['Partida Registral 8/'])) > 2) and \
-     (row['Origen\nPrestamo'] == 'POND')):
+     (row['Origen\n Prestamo'] == 'POND')):
         return 41
     else:
         return row['Tipo de Producto 43/ original']
 
 df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_43, axis=1)
 
-#% verificación
-x = df_resultado[(df_resultado['Tipo de Producto 43/'] != 41) & \
-             (len(str(df_resultado['Partida Registral 8/'])) > 2) & \
-             df_resultado['''Origen
- Prestamo'''] == 'POND']
-print(x)
+#% verificación, lo desactivo porque si funciona
 
+#x = df_resultado[(df_resultado['Tipo de Producto 43/'] != 41) & \
+#             (len(str(df_resultado['Partida Registral 8/'])) > 2) & \
+#             df_resultado['''Origen
+# Prestamo'''] == 'POND']
+#print(x) #no recuerdo pero imagino que debe salir vacío xd
+#'''
 #%%
 def producto_43(row): #aparentemente este sí funciona, seguir investigando
     if (row['Partida Registral 8/'] != '') & \
@@ -929,6 +929,9 @@ def producto_37(df_resultado):
         return df_resultado['Tipo de Producto 43/']
     # PROBAR SI FUNCIONAAAA
 df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_37, axis=1)
+
+print(df_resultado[df_resultado['Tipo de Producto 43/'] == 37][['Tipo de Producto 43/', 'Nombre PlanillaTXT']])
+#si salen 37s y la coopac es porque sí funciona
 
 #%%
 #import pyodbc 
@@ -1184,6 +1187,9 @@ def comprobac(df_resultado_2):
 df_resultado_2['dif_prod'] = df_resultado_2.apply(comprobac, axis=1)
 
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/ corregido']
+
+
+print('se reasignaron ' + str(df_resultado_2[df_resultado_2['dif_prod'] == 'diferente'].shape[0]) + ' créditos')
 
 #%%
 # VERIFICACIÓN DEL ALINEAMIENTO QUE ESTÉ IGUAL PARA TODOS LOS CRÉDITOS MYPE
@@ -2017,6 +2023,19 @@ for column in result:
 #al añadir estas columnas debemos modificar las formulas en excel
 anexo06_casi['Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/'] = '' 
 anexo06_casi['Rendimiento Devengado por Programa IMPULSO MYPERU 59/'] = ''
+
+#ORDENAMIENTOOOOOOOO
+lista_columnas = list(anexo06_casi.columns)
+
+lista_columnas.remove('Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/')
+lista_columnas.remove('Rendimiento Devengado por Programa IMPULSO MYPERU 59/')
+lista_columnas.remove('TIPO DE PRODUCTO TXT')
+
+ordenamiento_final = lista_columnas[0:65] + ['Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/',
+                                             'Rendimiento Devengado por Programa IMPULSO MYPERU 59/'] + \
+                                            lista_columnas[66:] + ['TIPO DE PRODUCTO TXT']
+
+anexo06_casi = anexo06_casi[ordenamiento_final]
 
 #%% 
 # AÑADIENDO EL NRO DE CRÉDITOS QUE TIENE EL SOCIO EN EL RESTO DEL SECTOR FINANCIERO

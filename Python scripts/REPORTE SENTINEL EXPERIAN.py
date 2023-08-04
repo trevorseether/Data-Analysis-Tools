@@ -32,7 +32,7 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
 df_fincore = pd.read_sql_query('''
 declare @fechacorte datetime
-set @fechacorte = '20230630' 
+set @fechacorte = '20230731' 
 
 select 
     NumerodeCredito18, 
@@ -46,16 +46,36 @@ where
 ''', conn)
 del conn
 
+#%% df_fincore en caso no haya subido esto al sql
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO'
+nombre = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados VERSIÓN 2.xlsx'
+
+df_fincore = pd.read_excel(ubi + '\\'  + nombre,
+                           dtype = {'Nro Prestamo \nFincore' : object,
+                                    'Numero de Crédito 18/': object},
+                           skiprows= 2)
+
+df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
+df_fincore['Nro_Fincore'] = df_fincore['Nro Prestamo \nFincore']
+
+df_fincore = df_fincore[['NumerodeCredito18', 'Nro_Fincore']]
+
+df_fincore['NumerodeCredito18'] = df_fincore['NumerodeCredito18'].str.strip()
+df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
+
+del ubi
+del nombre
+
 #%%
 ##############################################
 #      REPORTE INSUMO PRINCIPAL
 ##############################################
 #importamos el archivo sentinel bruto, que nos manda Cesar o Denisse
-ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JUNIO"
+ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO"
 os.chdir(ubicacion) #aqui se cambia la ubicación
 
 
-df_sentinel=pd.read_excel("descapitalizado SM_0623 - Sentinel-Experian Cart Vigente y Vencida - Junio-23.xlsx",    # aqui se cambia el nombre del archivo si es necesario
+df_sentinel=pd.read_excel("SM_0723 - Sentinel-Experian Cart Vigente y Vencida - Julio-23.xlsm",    # aqui se cambia el nombre del archivo si es necesario
                   dtype={
 '''Fecha del
 Periodo
@@ -77,14 +97,16 @@ Identidad (*)  DNI o RUC''',
                    'Razon Social (*)',
                    'Apellido Paterno (*)'], inplace=True, how='all')
 
+df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
+
 #%% DESCAPITALIZACIÓN DE LOS SALDOS
 
 'ES SOLO SACAR ESTOS DATOS DEL ANEXO06'
 #######################################
 #   aquí ponemos el anexo06 final   ###
 #######################################
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO\\parte 2'
-nombre = 'Rpt_DeudoresSBS_Junio 2023 HT version 03.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO'
+nombre = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados VERSIÓN 2.xlsx'
 anexo_06_descap = pd.read_excel(ubi + '\\' + nombre,
                                 skiprows= 2,
                                 dtype = {'Nro Prestamo \nFincore' : object,
@@ -190,7 +212,7 @@ mask = df_sentinel['Cod. Prestamo'].duplicated(keep=False)
 df_duplicados = df_sentinel[mask]
 
 # Imprimir el nuevo DataFrame
-print(df_duplicados)
+print(df_duplicados.shape[0])
 
 #si hay duplicados vamos a investigarlos y eliminarlos
 #si hay duplicados posiblemente está mal la columna 'Tipo Documento Identidad(*)'
@@ -223,9 +245,9 @@ Socio''': object,
 # ARCHIVO DE AVALES QUE NOS MANDA CESAR, LOS APELLIDOS Y NOMBRES ESTÁN EN COLUMNAS
 # es el archivo que contiene los datos de los avales, pero separados en columnas (apellido paterno, materno, nombres
 # domicilio, distrito, provincia, dpto, celulares)
-ruta = 'C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JUNIO'
-avales_datos_separados = pd.read_excel(ruta + '\\' +'Avales - corte 12-07-23.xlsx',
-                                       dtype={'NumeroDocIdentidad': object,
+ruta = 'C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO'
+avales_datos_separados = pd.read_excel(ruta + '\\' +'Avales SM - corte 04-08-23.xlsx',
+                                       dtype={'NumeroDocIdentidad': str,
                                               'Celular1': str,
                                               'Celular2': str,
                                               'TelefonoFijo1': str})
@@ -241,7 +263,7 @@ avales_datos_separados = avales_datos_separados.drop_duplicates(subset='NumeroDo
 ##############################################
 #REALIZANDO UNA CALIFICACIÓN UNIFICADA PARA EL REPORTE DE SENTINEL, EXPERIAN, CALIFICACIÓN QUE SALE DEL ANEXO 06
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JUNIO') #ponemos la ubicación del archivo de las calificaciones
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO') #ponemos la ubicación del archivo de las calificaciones
 calif_anx06 = pd.read_excel('calificacion para reporte experian.xlsx',
                             dtype={'cod socio para merge': str})
 
@@ -488,7 +510,7 @@ df_sentinel_fincore = df_sentinel.merge(df_fincore, ############################
 
 #codigo para verificar que haya habido un match completo
 match_incompleto = df_sentinel_fincore.loc[df_sentinel_fincore['Nro_Fincore'].isna()]
-print(match_incompleto)
+print(match_incompleto.shape[0])
 #si sale Empty DataFrame significa que hizo el match correctamente
 
 #si hay datos, hay que investigar quiapasau
@@ -533,6 +555,9 @@ df_resultado['MN Deuda Directa Cobranza Judicial (*)'] = 0
 
 
 #%% ordenando
+
+df_resultado['Estado'] = ''
+df_sentinel['Estado'] = ''
 columnas = ['Fecha del\nPeriodo\n(*)', 'Codigo\nEntidad\n(*)', 'Cod. Prestamo',
        'Tipo\nDocumento\nIdentidad (*)',
        'N° Documento\nIdentidad (*)  DNI o RUC', 'Razon Social (*)',
