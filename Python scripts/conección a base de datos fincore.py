@@ -17,21 +17,58 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 ########################################################
-###  donde dice @fechacorte se debe poner el mes  ######
+###                CAMBIAR LA FECHA               ######
 ########################################################
 
 #extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
-df_fincore = pd.read_sql_query('''
-select 
-s.codigosocio, iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS Socio,
-iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS Doc_Identidad, 
-RIGHT(CONCAT('0000000',p.numero),8) as pagare_fincore, iif(p.codmoneda=94,'S/','US$') as moneda, 
- p.fechadesembolso, p.montosolicitado as Otorgado, p.TEM, p.NroPlazos, p.CuotaFija,  p.codestado, tm.descripcion as Estado, p.fechaCancelacion, iif(p.codcategoria=351,'NVO','AMPL') as tipo_pre, p.flagrefinanciado, pro.descripcion as Funcionario, pla.descripcion as Planilla, gpo.descripcion as func_pla,
-CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as direcc_socio, d.nombre as distrito, pv.nombre as provincia, dp.nombre as departamento, iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS tipo_soc,
-tm2.descripcion as est_civil, pais.descripcion as pais, s.fechanacimiento, s.profesion, sc.celular1, SC.TelefonoFijo1, sc.Email, p.CodSituacion, tm3.Descripcion as Situacion, p.fechaventacartera, iif(p.flagponderosa=1,'POND','SM') as origen
-,tc.CODTIPOCREDITO AS ClaseTipoCredito, tc.Descripcion as TipoCredito, FI.CODIGO AS COD_FINALIDAD, FI.DESCRIPCION AS FINALIDAD, s.FechaNacimiento, s.fechaInscripcion, u.IdUsuario as User_Desemb, p.FechaVentaCartera, tm4.descripcion as EstadoSocio
+fecha_hoy = '20230807'
+query = f'''
+SELECT
+	s.codigosocio, 
+	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
+	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
+	p.fechadesembolso, 
+	p.montosolicitado as 'Otorgado', 
+	p.TEM, 
+	p.NroPlazos, 
+	p.CuotaFija,  
+	p.codestado, 
+	tm.descripcion as 'Estado',
+	p.fechaCancelacion, 
+	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
+	p.flagrefinanciado, 
+	pro.descripcion as 'Funcionario', 
+	pla.descripcion as 'Planilla', 
+	gpo.descripcion as 'func_pla',
+	CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as 'direcc_socio', 
+	d.nombre as 'distrito', 
+	pv.nombre as 'provincia', 
+	dp.nombre as 'departamento', 
+	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
+	tm2.descripcion as 'est_civil', 
+	pais.descripcion as 'pais', 
+	s.fechanacimiento, 
+	s.profesion, 
+	sc.celular1, 
+	SC.TelefonoFijo1, 
+	sc.Email, 
+	p.CodSituacion, 
+	tm3.Descripcion as 'Situacion', 
+	p.fechaventacartera, 
+	iif(p.flagponderosa=1,'POND','SM') as 'origen', 
+	tc.CODTIPOCREDITO AS 'ClaseTipoCredito', 
+	tc.Descripcion as 'TipoCredito', 
+	FI.CODIGO AS 'COD_FINALIDAD', 
+	FI.DESCRIPCION AS 'FINALIDAD', 
+	s.FechaNacimiento, 
+	s.fechaInscripcion, 
+	u.IdUsuario as 'User_Desemb', 
+	p.FechaVentaCartera, 
+	tm4.descripcion as 'EstadoSocio'
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
-from prestamo as p
+FROM prestamo as p
 
 inner join socio as s on s.codsocio = p.codsocio
 LEFT join sociocontacto as sc on sc.codsocio = s.codsocio
@@ -52,9 +89,11 @@ inner join usuario as u on p.CodUsuario = u.CodUsuario
 inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
-where CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20110101' AND '20230802' and s.codigosocio>0  and p.codestado = 341 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
+where CONVERT(VARCHAR(10),p.fechadesembolso,112) 
+BETWEEN '20110101' AND '{fecha_hoy}' and s.codigosocio>0  and p.codestado = 341 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
 order by socio asc, p.fechadesembolso desc
 
-''', conn)
+'''
+df_fincore = pd.read_sql_query(query, conn)
 del conn
