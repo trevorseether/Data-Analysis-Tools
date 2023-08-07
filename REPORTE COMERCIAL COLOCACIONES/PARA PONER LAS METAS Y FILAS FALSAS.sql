@@ -3,19 +3,18 @@ update top (1) reportes_diana..DIANA_REPORTE
 set  META_CUENTAS = 12,
 	 META_MONTO = 25000
 ----     select top 1 * from reportes_diana..DIANA_REPORTE
-where FECHA_CORTE = '20230630'
+where FECHA_CORTE = '20230731'
 and [ESTADO FINAL] = 'aprobado'
 and funcionario like '%ZAIRA%ASCUE%'
 ----------------------------------------------------
 -- LO MISMO PERO PARA MYPE
 update top (1) reportes_diana..DIANA_MYPE
-set  META_CUENTAS = 8,
-	 META_MONTO = 60000
+set  META_CUENTAS = 10,
+	 META_MONTO = 80000
 ----     select top 1 * from reportes_diana..DIANA_MYPE
-where FECHA_CORTE = '20230630'
+where FECHA_CORTE = '20230731'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%cesar%mer%'
-
+and funcionario like '%jessica%piscoya%'
 
 ---------------------------------------------------------------------------
 ----------------------------------------------------------------------------
@@ -34,8 +33,8 @@ MESES, AÑO, MONTO_DESEMBOLSADO, META_CUENTAS, META_MONTO,
 EMPRESA2, PLANILLA, [ESTADO FINAL], [CANAL OFICINA],
 PRODUCTO,OFICINA, FECHA_CORTE)
 values
-('20230630', 'AMERICA CAMA', 'MICROEMPRESA', 'NO EXISTE',
+('20230731', 'AMERICA CAMA', 'MICROEMPRESA', 'NO EXISTE',
 'Junio', 
 2023, 0, 8,50000, --estos son importantes, hay que cambiarlos según las metas
 'MICROEMPRESA', 'MICROEMPRESA', 'APROBADO', 'MICROEMPRESA',
-'MYPE', 'MICROEMPRESA', '20230630')
+'MYPE', 'MICROEMPRESA', '20230731')

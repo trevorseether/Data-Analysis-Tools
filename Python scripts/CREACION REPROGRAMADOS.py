@@ -1273,7 +1273,7 @@ def int_suspenso_y_devengados(anx06_ordenado):
         return anx06_ordenado['''Interes 
 Suspenso Total'''] + anx06_ordenado['''Interes
 Devengado Total''']
-    elif (anx06_ordenado['Número de Cuotas Pagadas 45/'] == 0) & \
+    elif (1 == 1) & \
     (anx06_ordenado['Tipo de Crédito 19/'] in ['09', '10', '11', '12', '13', 9, 10, 11, 12, 13]) & \
     (anx06_ordenado['Dias de Mora 33/'] > 30):
         return anx06_ordenado['''Interes 
@@ -1296,7 +1296,7 @@ def devengados_cero(anx06_ordenado):
     anx06_ordenado['Tipo de Crédito 19/'] == '08' and \
     anx06_ordenado['Dias de Mora 33/'] > 15:
         return 0
-    elif (anx06_ordenado['Número de Cuotas Pagadas 45/'] == 0) and \
+    elif (1 == 1) and \
     anx06_ordenado['Tipo de Crédito 19/'] in ['09', '10', '11', '12', '13', 9, 10, 11, 12, 13] and \
     anx06_ordenado['Dias de Mora 33/'] > 30:
         return 0
