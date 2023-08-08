@@ -1262,8 +1262,11 @@ Suspenso Total'''].sum())
 print('intereses devengados1:')
 print(anx06_ordenado['''Interes
 Devengado Total'''].sum())
+print('suma total (1):')
+print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
 #%% intereses en Suspenso + Devengados en caso de que tengan cero cuotas canceladas y tengan >30 días
 #se suman los intereses en suspenso y devengados
+
 anx06_ordenado['Dias de Mora 33/'] = anx06_ordenado['Dias de Mora 33/'].astype(int)
 
 def int_suspenso_y_devengados(anx06_ordenado):
@@ -1314,7 +1317,11 @@ Suspenso Total'''].sum())
 print('intereses devengados2:')
 print(anx06_ordenado['''Interes
 Devengado Total'''].sum())
-
+print('suma total (2):')
+print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
+print('')
+print('la suma total debe ser igual para ambos')
+                      
 #%% ASIGNACIÓN DE LOS DEVENGADOS A LAS COLUMNAS QUE SÍ IRÁN EN EL ANEXO 06 PARA LA SBS
 
 anx06_ordenado['''Rendimiento

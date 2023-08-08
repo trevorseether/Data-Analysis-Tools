@@ -2,12 +2,12 @@
 """
 Created on Wed May 24 18:33:42 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 import pandas as pd
 import os
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop') #ubicación
+os.chdir('C:\\Users\\user\\Desktop') #ubicación
 
 objeto_excel = pd.ExcelFile('ddatos.xlsx') #nombre del excel
 
