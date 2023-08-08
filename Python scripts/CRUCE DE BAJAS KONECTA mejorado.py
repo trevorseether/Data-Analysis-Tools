@@ -215,6 +215,11 @@ final = df_resultado[['Documento original','SOCIO', 'FECHA_DESEMBOLSO', 'SALDO A
 
 final = final.rename(columns={'Documento original': 'Documento'})
 
+#%% NOS QUEDAMOS SOLO CON LAS COLUMNAS NECESARIAS (ya lo que hacíamos a mano no hace falta)
+
+final = final[['Documento', 'SOCIO', 'FECHA_DESEMBOLSO',
+               'CUOTA MENSUAL', 'PAGARE_FINCORE', 'EMPRESA/PLANILLA']]
+
 #%%
 
 NOMBRE = 'BAJAS '+ FECHATXT +'.xlsx'

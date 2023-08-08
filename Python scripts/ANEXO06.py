@@ -2214,9 +2214,9 @@ print("La ubicación actual es: " + ubicacion_actual)
 #leyendo el excel que nos envía CONTABILIDAD
 import os
 import pandas as pd
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO\parte 2') #cambiar ubicación
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2') #cambiar ubicación
 
-df_diferidos = pd.read_excel('Rpt_DeudoresSBS_Junio 2023 HT version 01 CONT.xlsx',
+df_diferidos = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión 1 - CONT.xlsx',
                  dtype={'Registro 1/': object, 
                         'Fecha de Nacimiento 3/': object,
                         'Código Socio 7/':object, 
@@ -2303,8 +2303,8 @@ Fincore'''].str.strip() #quitando espacios por si acaso
 df_diferidos['Tipo de Producto 43/'] == df_diferidos['Tipo de Producto 43/'].astype(int)
 
 def prov_cons_37_FINAL(df_diferidos):
-    if (df_diferidos['''Nro Prestamo 
-Fincore'''] in ['00000681',
+    if (df_diferidos['Nro Prestamo \nFincore'] in 
+                ['00000681',
                 '00025314',
                 '00025678',
                 '00001346', #
@@ -2324,23 +2324,24 @@ Fincore'''] in ['00000681',
                 '00016572',
                 '00001147', #
                 '00001287', #
-                '00021994']) or \
-        (df_diferidos['''Nro Prestamo 
-Fincore'''] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
+                '00021994']) \
+    or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.54 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.623 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
+
+print(df_diferidos['Provisiones Constituidas 37/'].sum())
 
 #%%
 #comparando provisiones constituidas contra el del mes pasado
 'AQUI HAY QUE CAMBIAR LA FECHA PARA QUE VAYA DEL MES PASADO al que estamos elaborando'
 import pyodbc
 ##################################################################
-fechacorte_mes_pasado = "20230531" #  aqui cambiamos la fecha #### se pone la del mes pasado
+fechacorte_mes_pasado = "20230630" #  aqui cambiamos la fecha #### se pone la del mes pasado
 ##################################################################
 query = f'''
 declare @fechacorte as datetime
@@ -2422,7 +2423,7 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore','Cartera Neta',
 
 #%%
 
-fecha_corte = '30-06-2023'
+fecha_corte = '30-07-2023'
 'CREACIÓN DEL EXCEL'
 nombre = "anx06 columnas parte 2 - " + fecha_corte + ".xlsx"
 try:
@@ -2453,7 +2454,7 @@ import pyodbc
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20230531' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20230630' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 query = f'''
@@ -2588,7 +2589,7 @@ diferencias_porcentuales.fillna(0, inplace=True)
 
 import pandas as pd
 
-fecha = 'JUNIO 2023'
+fecha = 'JULIO 2023'
 # Crea un objeto ExcelWriter para guardar los dataframes en un solo archivo
 writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine='xlsxwriter')
 

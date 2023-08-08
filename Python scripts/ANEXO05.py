@@ -19,20 +19,20 @@ from decimal import Decimal
 'Y RECIÉN REDONDEADO LE PASAMOS EL ANEXO A RIESGOS Y CONTABILIDAD'
 
 #%%
-
-fecha_corte = 'JUNIO 2023'
-
+##############################################
+fecha_corte = 'JULIO 2023'         ###########
+##############################################
 #%%
-#ubicación
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO\\parte 2')
+#ubicación ####################################################################
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2')
+###############################################################################
 #%%
 #PONER EL ANEXO 06 FINAL
-df1=pd.read_excel("Rpt_DeudoresSBS_Junio 2023 HT version 03.xlsx",
+df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx",
                  dtype={'Código Socio 7/': object, 
                         'Número de Documento 10/': object,
                         'Numero de Crédito 18/':object, 
-                        '''Nro Prestamo 
-Fincore''': object,
+                        'Nro Prestamo \nFincore': object,
                        'Moneda del crédito 17/':object, 
                        'Tipo de Crédito 19/': object,
                        'Clasificación del Deudor con Alineamiento 15/': object,

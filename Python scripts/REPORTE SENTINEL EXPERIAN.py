@@ -705,9 +705,7 @@ df_sentinel = reporte.copy()
 df_sentinel['Apellido Paterno (*)'] = df_sentinel['Apellido Paterno (*)'].str.strip()
 df_sentinel['Apellido Materno (*)'] = df_sentinel['Apellido Materno (*)'].str.strip()
 df_sentinel['Nombres (*)'] = df_sentinel['Nombres (*)'].str.strip()
-df_sentinel['''N° Documento
-Identidad (*)  DNI o RUC'''] = df_sentinel['''N° Documento
-Identidad (*)  DNI o RUC'''].str.strip()
+df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] = df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'].str.strip()
 
 x_nulos = df_sentinel[df_sentinel['''N° Documento
 Identidad (*)  DNI o RUC'''].isnull()]
