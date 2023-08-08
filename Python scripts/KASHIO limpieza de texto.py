@@ -69,7 +69,7 @@ kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis=1)
 
 kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 
-kashio = kashio[kashio.columns[0:11]]
+kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesarias
 
 #%%
 try:
