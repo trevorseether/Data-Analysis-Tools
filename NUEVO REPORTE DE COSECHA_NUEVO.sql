@@ -10,7 +10,7 @@ go
 /*
 drop table [dbo].[cosecha_COPIA_MAYO23]
 select * 
-into [dbo].[cosecha_COPIA_MAYO23]
+into [dbo].[cosecha_COPIA_JUNIO23]
 from [dbo].[cosecha_nuevo]
 
 
@@ -18,7 +18,7 @@ drop table cosecha..cosecha_nuevo
 
 select * 
 into cosecha..cosecha_nuevo
-from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20220101'
+from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20220601'
 update cosecha..cosecha_nuevo ----esta parte creo que no hace falta ejecutarla, (investigar si hace falta recuperar los castigados incluyendo los vendidos)
 set MCastigadoxM = 0 ---
 --    [DESEMBOLSO_AGREGADO]
@@ -49,17 +49,11 @@ alter table cosecha..cosecha_nuevo
 add cuotas_pagadas_auxiliar int
 */
 ------------------------------------------------------------------------------------
----------------ANTES DE AÑADIR UN NUEVO MES SE DEBE AÑADIR DEL ANEXO6---------------
+----AÑADIMOS LOS DE MESES PASADOS PARA REALIZAR LA COMPARACIÓN INTERTEMPORAL--------
 ------------------------------------------------------------------------------------
-/*
-SELECT * 
-into cosecha..cosecha_nuevo
-FROM anexos_riesgos2.[dbo].[Anx06_preliminar] AS A
-WHERE A.FechaCorte1 = '20230331'  -- AQUÍ VA LA MÁS RECIENTE
---pero esto a no va a funcionar porque ahora no tienen exactamente las mismas columnas, deberíamos agregar esas nuevas columnas al anx06
-*/
+
 declare @fechaactual as datetime
-set @fechaactual = '20220731' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20220831' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha..cosecha_nuevo (
 nro_fincore,
