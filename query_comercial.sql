@@ -704,6 +704,11 @@ and TipodeProducto43 in (30,31,32,33)
 ----------------------------------------------------------------------------------
 
 ----para unificar los nombres de los funcionarios::::
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'DAVID BORJA'
+where originador like '%DAVID%BORJA%'
+
 update anexos_riesgos2..Anx06_preliminar
 set originador = 'ALICIA OVIEDO'
 where originador like '%ALICIA OVIEDO VELASQUEZ%'

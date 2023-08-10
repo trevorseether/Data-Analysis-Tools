@@ -230,7 +230,10 @@ prov_requeridas_agrupadas = para_excel.groupby('Número de Documento 10/')['Prov
 prov_requeridas_agrupadas = prov_requeridas_agrupadas.rename(columns={'Provisiones Requeridas A.EXTERNO': 'Provisiones Requeridas A.EXTERNO AGRUPADO'})
 
 #merge cuando la primary key en ambos dataframes tiene el mismo nombre
-resultado = pd.merge(para_excel, prov_requeridas_agrupadas, on='Número de Documento 10/', how='left')
+resultado = pd.merge(para_excel, #dataframe1
+                     prov_requeridas_agrupadas, #dataframe2
+                     on='Número de Documento 10/', #llave de unión
+                     how='left') #tipo de unión
 
 #%%
 para_excel = resultado.copy()

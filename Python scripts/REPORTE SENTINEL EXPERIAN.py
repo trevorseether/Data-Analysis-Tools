@@ -231,12 +231,10 @@ df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 # REPORTES / CREDITO /PRESTAMOS OTORGADOS / REGISTRO DE AVALES Y-O GARANTÍAS 
 ruta = "Rpt_Avales.xlsx"
 df1=pd.read_excel(ruta,
-                  dtype={'''Nro Docto
-Aval''': object,
-                            '''Nro Docto
-Socio''': object,
-'Numero':object},
-                     skiprows=8)
+                  dtype={'Nro Docto\nAval': object,
+                         'Nro Docto\nSocio': object,
+                         'Numero':object},
+                         skiprows=8)
 
 #%%
 ##############################################
@@ -527,16 +525,13 @@ df_resultado = df_sentinel_fincore.merge(valores_unicos,
 #ESTA ES LA PARTE EN LA QUE ARREGLAMOS EL DNI DEL AVAL, CREO QUE AQUÍ TAMBIÉN DEBERÍAMOS PONER
 #LOS DATOS PERSONALES DE LOS AVALES CUANDO TENGAMOS ESE REPORTE
 #
-df_resultado['''N° Documento
-Identidad (*)  DNI o RUC'''] = df_resultado['Dni - Asociado - indirecta2']
+df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'] = df_resultado['Dni - Asociado - indirecta2']
 
 #%%
 #a esta tabla de avales le ponemos 3 en 'Tipo Persona (*)'
 df_resultado['Tipo Persona (*)'] = '3'
 
-df_resultado['''Tipo
-Documento
-Identidad (*)'''] = '1'
+df_resultado['Tipo\nDocumento\nIdentidad (*)'] = '1'
 #df_resultado = df_resultado.drop_duplicates(subset=['Cod. Prestamo', '''N° Documento
 #Identidad (*)  DNI o RUC'''], keep='first')
 
@@ -645,9 +640,12 @@ avales_datos_separados = avales_datos_separados.rename(columns={'Provincia': 'pr
 avales_datos_separados = avales_datos_separados.rename(columns={'Dpto': 'dpto para merge'})
 
 #UNIMOS LOS DATAFRAMES
+
+df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(int).astype(str)
+avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(int).astype(str)
+
 df_avales_mergeado = df_avales.merge(avales_datos_separados,
-                                     left_on=['''N° Documento
-Identidad (*)  DNI o RUC'''], 
+                                     left_on=['dni para merge'], 
                                      right_on=['dni para merge']
                                      ,how='left')
                                               
