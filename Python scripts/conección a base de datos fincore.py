@@ -2,7 +2,7 @@
 """
 Created on Fri Aug  4 18:58:42 2023
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 
 import pyodbc

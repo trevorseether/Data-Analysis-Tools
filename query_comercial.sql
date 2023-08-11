@@ -706,6 +706,38 @@ and TipodeProducto43 in (30,31,32,33)
 ----para unificar los nombres de los funcionarios::::
 
 update anexos_riesgos2..Anx06_preliminar
+set administrador = 'MIGUEL TITO'
+where administrador like '%MIGUEL%TITO%'
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'MIGUEL TITO'
+where originador like '%MIGUEL%TITO%'
+
+update anexos_riesgos2..Anx06_preliminar
+set administrador = 'VICTOR VARGAS'
+where administrador like '%VICTOR%VARGAS%'
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'VICTOR VARGAS'
+where originador like '%VICTOR%VARGAS%'
+
+update anexos_riesgos2..Anx06_preliminar
+set administrador = 'SUSAN ROJAS'
+where administrador like '%SUSAN%ROJAS%'
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'SUSAN ROJAS'
+where originador like '%SUSAN%ROJAS%'
+
+update anexos_riesgos2..Anx06_preliminar
+set administrador = 'ELBER ALVARADO'
+where administrador like '%ELBER%ALVARADO%'
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'ELBER ALVARADO'
+where originador like '%ELBER%ALVARADO%'
+
+update anexos_riesgos2..Anx06_preliminar
 set originador = 'DAVID BORJA'
 where originador like '%DAVID%BORJA%'
 

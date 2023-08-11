@@ -71,12 +71,47 @@ kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 
 kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesarias
 
-#%%
+#%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
+nombre = "correo corregido.xlsx"
 try:
-    ruta = "correo corregido.xlsx"
+    ruta = nombre
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
-kashio.to_excel("correo corregido.xlsx", index=False)   
+kashio.to_excel(nombre, index=False)
+
+#%% ponemos los correos corregidos en el otro reporte (el más grande)
+
+#PONEMOS EL NOMBRE DEL OTRO ARCHIVO
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230810.xlsx',
+                                dtype = {'ID CLIENTE (*)': str,
+                                         'REFERENCIA': str,
+                                         'ID ORDEN DE PAGO': str})
+
+print(kashio_ampliado.shape[0])
+kashio_correos = kashio[['ID CLIENTE', 'EMAIL']]
+
+kashio_ampliado = kashio_ampliado.merge(kashio_correos, 
+                                        left_on=['ID CLIENTE (*)'],
+                                        right_on=['ID CLIENTE'],
+                                        how='left')
+print(kashio_ampliado.shape[0])
+print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
+
+#%% nos quedamos solo con las columnas necesarias
+
+kashio_ampliado['EMAIL DEL CLIENTE (*)'] = kashio_ampliado['EMAIL']
+
+kashio_ampliado = kashio_ampliado[list(kashio_ampliado.columns)[0:10]]
+
+nombre = 'segundo reporte.xlsx'
+try:
+    ruta = nombre
+    os.remove(ruta)
+except FileNotFoundError:
+    pass
+
+kashio.to_excel(nombre, index=False)
+
 
