@@ -197,11 +197,10 @@ df_fincore = df_fincore.rename(columns={'cod pres para merge':
 #antes de eliminar sus datos duplicados, vamos a etiquetar su 'Tipo Documento Identidad(*)' = 1
 df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '02803330') & \
                 (df_sentinel['Apellido Paterno (*)'] == 'AGUILA') & \
-                (df_sentinel['Apellido Paterno (*)'] == 'FEBRES'),
-                'Tipo\nDocumento\nIdentidad (*)'] = '1' #no funcionaaaaaaaaaaaa
-#verificar en el excel si ha funcionado
+                (df_sentinel['Apellido Materno (*)'] == 'FEBRES'),
+                'Tipo\nDocumento\nIdentidad (*)'] = '1'
 
-#%%
+    #%%
 #AQUI DEBEMOS VERIFICAR SI EXISTEN DUPLICADOS
 #SI EXISTE DEBEMOS HACER UNA CORRECCIÓN MANUAL
 
@@ -764,22 +763,26 @@ df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'JUMBO') & \
                 (df_sentinel['''N° Documento
 Identidad (*)  DNI o RUC'''] == '42908481'), 'Nombres (*)'] = 'DARWIN'
 
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'RAMIREZ') & \
+                (df_sentinel['Apellido Materno (*)'] == 'VILA') & \
+                (df_sentinel['''N° Documento
+Identidad (*)  DNI o RUC'''] == '06594892'), 'N° Documento\nIdentidad (*)  DNI o RUC'] = '06594882'
+
 #CAMBIANDO EL AVAL DE UN CRÉDITO EN ESPECÍFICO
 mascara_booleana =  (df_sentinel['Apellido Paterno (*)'] == 'DURAND') & \
                     (df_sentinel['Apellido Materno (*)'] == 'SERNAQUE') & \
                     (df_sentinel['Nombres (*)'] == 'MARIA ISABEL') & \
                     (df_sentinel['Cod. Prestamo'] == '00031413-00079529')
                     
-df_sentinel.loc[mascara_booleana, ['''N° Documento
-Identidad (*)  DNI o RUC''', 
-                                    'Apellido Paterno (*)', 
-                                    'Apellido Materno (*)',
-                                    'Nombres (*)',
-                                    'Dirección',
-                                    'Distrito',
-                                    'Provincia',
-                                    'Departamento',
-                                    'Telefono']] = ['18125475', 
+df_sentinel.loc[mascara_booleana, ['N° Documento\nIdentidad (*)  DNI o RUC', 
+                                   'Apellido Paterno (*)', 
+                                   'Apellido Materno (*)',
+                                   'Nombres (*)',
+                                   'Dirección',
+                                   'Distrito',
+                                   'Provincia',
+                                   'Departamento',
+                                   'Telefono']] = ['18125475', 
                             'GUEVARA', 
                             'RODRIGUEZ DE MUÑOZ',
                             'RUBY LIZ',

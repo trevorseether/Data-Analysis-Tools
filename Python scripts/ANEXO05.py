@@ -86,9 +86,13 @@ pivot_A_A = pivot_A_A.reset_index()
 pivot_A_A.fillna(0, inplace=True)
 
 #%%
+# aquí hay algo bien raro, en el mes de junio(trimestral) debió ser el saldo de cartera
+# y en julio nos está podiendo que vaya '24 - 42'
+# que raro (ಠ_ಠ)
+###################  'Saldo de colocaciones (créditos directos) 24/'    #######
 'TABLA A'
 pivot_A = anexo06.pivot_table(columns='Clasificación del Deudor con Alineamiento 15/',
-                                      values=['Saldo de colocaciones (créditos directos) 24/'], 
+                                      values=['24 - 42'], 
                                       index=['Tipo de Crédito 19/'],
                                       margins=True, margins_name='Total', #para sacar las sumatorias totales                                      
                                       aggfunc='sum'

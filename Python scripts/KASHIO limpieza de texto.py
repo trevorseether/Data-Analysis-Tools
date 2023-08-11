@@ -51,10 +51,12 @@ def limpieza(kashio): #revisar si esta vaina del pd.isna funciona
     
 kashio['EMAIL ANTERIOR'] = kashio.apply(limpieza, axis=1)
 
+kashio['EMAIL ANTERIOR'] = kashio['EMAIL ANTERIOR'].str.strip()
 #%% LIMPIEZA DE DATOS:  
 def correccion(row):
     palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
-                         'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM']
+                         'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM',
+                         'Ñ', ' ']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
