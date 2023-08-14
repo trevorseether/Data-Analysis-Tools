@@ -18,18 +18,18 @@ import pyodbc
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '07-08-2023'
+FECHATXT = '14-08-2023'
 ############################################################################
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\07 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\14 agosto 2023')
 
 #%%
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('VF 4TO INFORME DE BAJAS GRUPO - AGOSTO 2023.xlsx',
+bajas = pd.read_excel('5TO INFORME 08_23 GRUPO KONECTA.xlsx',
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].str.strip()
@@ -43,21 +43,6 @@ print('Documentos que se hayan convertido en Null:')
 print(uwu)
 del uwu
 
-#%%
-######################################################
-#   REPORTE DE CRÉDITOS VIGENTES, ENVIADO POR CESAR
-######################################################
-'''
-vigentes = pd.read_excel("creditos vigentes SM al 02-08-23 - para bajas Konecta corte 10_45am.xlsx", #aqui cambiar el nombre y/o ubicación del archivo
-                      dtype={'Doc_Identidad': object,
-                             'codigosocio': object,
-                             'pagare_fincore': object,
-                             'fechadesembolso': object
-                             })
-
-#La función "str.strip()" se utiliza para quitar los espacios en blanco en el principio y al final de cada valor en la columna "Doc_Identidad"
-vigentes["Doc_Identidad"] = vigentes["Doc_Identidad"].str.strip()
-''' #obsoleto porque ahora se extraeran los datos desde sql server
 
 #%%
 server = '172.16.1.19\SQL_SANMIGUEL'
@@ -73,7 +58,7 @@ conn = pyodbc.connect(conn_str)
 ########################################################
 
 ###############################################################################
-fecha_hoy = '20230807' ########## NO OLVIDAAAAAAAAAAAAAAAAAAAAARRRRRRR ########
+fecha_hoy = '20230814' ########## NO OLVIDAAAAAAAAAAAAAAAAAAAAARRRRRRR ########
 ###############################################################################
 query = f'''
 SELECT

@@ -9,9 +9,9 @@ import pandas as pd
 import os
 
 #%% #LEYENDO EL DEL DÍA ACTUAL
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\10 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\11 agosto 2023')
 
-kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230810.xlsx',
+kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230811.xlsx',
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
                               'NUMERO DOCUMENTO': str})
@@ -21,8 +21,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
 #%% #LEYENDO EL DEL DÍA ANTERIOR
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\09 agosto 2023'
-nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230809.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\10 agosto 2023'
+nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230810.xlsx'
 
 kashio_anterior = pd.read_excel(ubi + '\\' + nombre,
                                 dtype={'ID CLIENTE': str,
@@ -56,7 +56,7 @@ kashio['EMAIL ANTERIOR'] = kashio['EMAIL ANTERIOR'].str.strip()
 def correccion(row):
     palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
                          'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM',
-                         'Ñ', ' ']
+                         'Ñ', ' ', '  ', '   ']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
@@ -74,6 +74,7 @@ kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesarias
 
 #%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
+'''
 nombre = "correo corregido.xlsx"
 try:
     ruta = nombre
@@ -82,38 +83,32 @@ except FileNotFoundError:
     pass
 
 kashio.to_excel(nombre, index=False)
-
+'''
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
 #PONEMOS EL NOMBRE DEL OTRO ARCHIVO
-kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230810.xlsx',
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230811.xlsx',
                                 dtype = {'ID CLIENTE (*)': str,
                                          'REFERENCIA': str,
                                          'ID ORDEN DE PAGO': str})
 
+kashio_ampliado = kashio_ampliado.rename(columns={"NOMBRE": "NOMBRE_1"})
 print(kashio_ampliado.shape[0])
-kashio_correos = kashio[['ID CLIENTE', 'EMAIL']]
 
-kashio_ampliado = kashio_ampliado.merge(kashio_correos, 
+
+kashio_ampliado = kashio_ampliado.merge(kashio, 
                                         left_on=['ID CLIENTE (*)'],
                                         right_on=['ID CLIENTE'],
                                         how='left')
 print(kashio_ampliado.shape[0])
 print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
 
-#%% nos quedamos solo con las columnas necesarias
+#%% ARCHIVO FINAL PARA CONVERTIR A CSV
 
-kashio_ampliado['EMAIL DEL CLIENTE (*)'] = kashio_ampliado['EMAIL']
+kashio_para_csv = kashio_ampliado[['ID CLIENTE', 'DOCUMENTO', 'NUMERO DOCUMENTO', 'NOMBRE', 'EMAIL',
+                                   'TELEFONO', 'ESTADO', 'ID ORDEN DE PAGO', 'REFERENCIA', 'NOMBRE_1',
+                                   'DESCRIPCION', 'MONEDA', 'MONTO', 'VENCIMIENTO', 'EXPIRACION']]
 
-kashio_ampliado = kashio_ampliado[list(kashio_ampliado.columns)[0:10]]
-
-nombre = 'segundo reporte.xlsx'
-try:
-    ruta = nombre
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
-
-kashio.to_excel(nombre, index=False)
+kashio_para_csv.to_csv('datos.csv', index=False)
 
 

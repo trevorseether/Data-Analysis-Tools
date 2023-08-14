@@ -25,8 +25,8 @@ conn = pyodbc.connect(conn_str)
 ###                CAMBIAR LAS FECHAS               ######
 ########################################################
 
-fecha1 = '20230810' 
-fecha2 = '20230810'
+fecha1 = '20230811' 
+fecha2 = '20230812'
 ################################################################
 ## si estamos de martes a vienes, ponemos el día anterior en ambos
 ## si es lunes, ponemos la fecha del viernes(1) y sábado(2) anterior
