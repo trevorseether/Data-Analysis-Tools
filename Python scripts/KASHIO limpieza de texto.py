@@ -9,9 +9,9 @@ import pandas as pd
 import os
 
 #%% #LEYENDO EL DEL DÍA ACTUAL
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\11 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\14 agosto 2023')
 
-kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230811.xlsx',
+kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230814.xlsx',
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
                               'NUMERO DOCUMENTO': str})
@@ -21,8 +21,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
 #%% #LEYENDO EL DEL DÍA ANTERIOR
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\10 agosto 2023'
-nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230810.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\11 agosto 2023'
+nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230811.xlsx'
 
 kashio_anterior = pd.read_excel(ubi + '\\' + nombre,
                                 dtype={'ID CLIENTE': str,
@@ -74,7 +74,7 @@ kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesarias
 
 #%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
-'''
+'''esto habrá que comentarlo una vez que asumamos al 100% las funciones'''
 nombre = "correo corregido.xlsx"
 try:
     ruta = nombre
@@ -83,11 +83,11 @@ except FileNotFoundError:
     pass
 
 kashio.to_excel(nombre, index=False)
-'''
+
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
 #PONEMOS EL NOMBRE DEL OTRO ARCHIVO
-kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230811.xlsx',
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230814.xlsx',
                                 dtype = {'ID CLIENTE (*)': str,
                                          'REFERENCIA': str,
                                          'ID ORDEN DE PAGO': str})
@@ -109,6 +109,29 @@ kashio_para_csv = kashio_ampliado[['ID CLIENTE', 'DOCUMENTO', 'NUMERO DOCUMENTO'
                                    'TELEFONO', 'ESTADO', 'ID ORDEN DE PAGO', 'REFERENCIA', 'NOMBRE_1',
                                    'DESCRIPCION', 'MONEDA', 'MONTO', 'VENCIMIENTO', 'EXPIRACION']]
 
-kashio_para_csv.to_csv('datos.csv', index=False)
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Á', 'A')
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('É', 'E')
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Í', 'I')
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ó', 'O')
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
+
+#%% EXPORTAR A CSV 
+
+kashio_para_csv.to_csv('datos.csv', 
+                       index=False, 
+                       encoding='utf-8')
+
+'''
+nombre_archivo = 'datos.csv'
+df = pd.read_csv(nombre_archivo, encoding='utf-8',
+                 dtype = {'ID CLIENTE': str,
+                          'TELEFONO': str,
+                          'REFERENCIA': str})
+
+
+df.to_csv('datos.csv', index=False, encoding='utf-8')
+#BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
+'''
+
 
 
