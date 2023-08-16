@@ -11,7 +11,7 @@ import pyodbc
 #%%
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE APORTE Y ADMISIO\\2023 AGOSTO') #si cambiamos de mes, creamos la carpeta manualmente
-hora = '9am'
+hora = '10am'
 
 #%%
 server = '172.16.1.19\SQL_SANMIGUEL'
@@ -25,8 +25,8 @@ conn = pyodbc.connect(conn_str)
 ###                CAMBIAR LAS FECHAS               ######
 ########################################################
 
-fecha1 = '20230811' 
-fecha2 = '20230812'
+fecha1 = '20230815' 
+fecha2 = '20230815'
 ################################################################
 ## si estamos de martes a vienes, ponemos el día anterior en ambos
 ## si es lunes, ponemos la fecha del viernes(1) y sábado(2) anterior

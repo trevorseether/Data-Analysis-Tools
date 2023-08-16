@@ -53,6 +53,7 @@ menos_bruto.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                    'Numero de Crédito 18/'], inplace=True, how='all') #eliminando las filas vacías
 
 menos_bruto['Código Socio 7/'] = menos_bruto['Código Socio 7/'].str.strip()
+menos_bruto['Apellidos y Nombres / Razón Social 2/'] = menos_bruto['Apellidos y Nombres / Razón Social 2/'].str.strip()
 menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
 
 mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)
@@ -1397,7 +1398,7 @@ reprogramados.to_excel(ruta,
 ###############################################################################
 import pyodbc
 
-df_mes_actual_copia
+df_mes_actual_copia #original antes de procesarlo
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 #donde dice @fechacorte se debe poner el mes
@@ -1431,11 +1432,31 @@ WHERE FechaCorte1 = '{fecha_corte_menos_2}' --SE PONE LA DE HACE 3 MESES'''
 df_menos2 = pd.read_sql_query(query_sql, conn)
 del conn  #para limpiar el explorador de variables
 
-#%% filtramos y nos quedamos con los créditos que están en el mes actual, y el anterior del anterior
+#%% créditos que aparecen hace 2 meses, pero NO el més pasado
 
 creditos_en_3_meses = df_mes_actual_copia.loc[df_mes_actual_copia['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos2['NRO FINCORE'].str.strip()))]
 
 creditos_no_aparecidos = creditos_en_3_meses[~creditos_en_3_meses['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
 
 print(creditos_no_aparecidos)
+
+#%% ahora vamos a buscar respecto al excel original antes de eliminar los cancelados
+'FILTRAMOS AQUELLOS CRÉDITOS QUE TENGAN FECHA DE DESEMBOLSO DE HACE DOS MESES AL CORTE ACTUAL'
+antiguos_aparecen = df_mes_actual_copia[df_mes_actual_copia['Fecha de Desembolso 21/'].astype(int) <= int(fecha_corte_menos_2)]
+
+no_aparecen = antiguos_aparecen[~antiguos_aparecen['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
+
+para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 2/',
+                            'Nro Prestamo \nFincore', 'Saldo de colocaciones (créditos directos) 24/']]
+
+#%% ahora vamos a buscar respecto al anexo06 final
+'FILTRAMOS AQUELLOS CRÉDITOS QUE TENGAN FECHA DE DESEMBOLSO DE HACE DOS MESES AL CORTE ACTUAL'
+antiguos_aparecen = anx06_ordenado[anx06_ordenado['Fecha de Desembolso 21/'].astype(int) <= int(fecha_corte_menos_2)]
+
+no_aparecen = antiguos_aparecen[~antiguos_aparecen['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
+
+para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 2/',
+                            'Nro Prestamo \nFincore', 'Saldo de colocaciones (créditos directos) 24/']]
+
+
 
