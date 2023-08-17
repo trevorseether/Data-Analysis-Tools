@@ -9,9 +9,9 @@ import pandas as pd
 import os
 
 #%% #LEYENDO EL DEL DÍA ACTUAL
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\14 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\16 agosto 2023')
 
-kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230814.xlsx',
+kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230816.xlsx',
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
                               'NUMERO DOCUMENTO': str})
@@ -21,8 +21,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
 #%% #LEYENDO EL DEL DÍA ANTERIOR
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\11 agosto 2023'
-nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230811.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\15 agosto 2023'
+nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230815.xlsx'
 
 kashio_anterior = pd.read_excel(ubi + '\\' + nombre,
                                 dtype={'ID CLIENTE': str,
