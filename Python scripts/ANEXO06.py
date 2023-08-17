@@ -5,7 +5,8 @@ Created on Wed Feb  8 11:37:33 2023
 
 @author: Joseph Montoya
 """
-#0
+# IMPORTACIÓN DE MÓDULOS
+
 import pandas as pd
 import os
 import datetime
@@ -14,19 +15,16 @@ from datetime import datetime, timedelta
 import pyodbc
 import numpy as np
 
-#%%
-#1
+#%% importación de módulos
 import datetime
-import calendar
-
-#%%
+#%% ADVERTENCIA
 #REVISAR EN EL EXCEL ANTES DE EMPEZAR A PROCESAR:
 
 "periodo de gracia por Reprog inicio"
 "periodo de gracia por Reprog Término"
 
 #deben estar en formato de fecha
-#%%
+#%% ESTABLECER FECHA CORTE
 #2
 #PONER LA FECHA DE CORTE
 fecha_corte = '2023-07-31' #ejemplo '2023-06-30'
@@ -44,7 +42,7 @@ def dias_en_mes(fecha):
 
 dias_corte = dias_en_mes(fecha_corte)
 
-#%%
+#%% FUNCIÓN PARA FORMATEAR FECHAS
 #3
 #función que transforma fechas en formato '18/01/2023 y devuelve 20230118'
 '''
@@ -60,13 +58,13 @@ df = pd.DataFrame({'Fecha': ['18/01/2023', '19/01/2023', '20/01/2023']})
 df['Fecha'] = df['Fecha'].apply(convertir_formato_fecha)
 '''
 
-#%%
+#%% DIRECTORIO DE TRABAJO
 #4
 
 #UBICACIÓN DE LOS ARCHIVOS
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO')
 
-#%%
+#%% IMPORTACIÓN DE ARCHIVOS
 #5
 anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx"
 df1=pd.read_excel(anexo_del_mes,
@@ -87,10 +85,9 @@ df1=pd.read_excel(anexo_del_mes,
                         'Tipo de Producto 43/': object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        '''Nro Prestamo 
-Fincore''': object,
-'Refinanciado TXT': object},
-                     skiprows=2)
+                        'Nro Prestamo \nFincore': object,
+                        'Refinanciado TXT': object},
+                 skiprows=2)
 
 #eliminando las filas con NaN en las siguiente columnas al mismo tiempo:
 df1.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
@@ -109,15 +106,18 @@ anexo06 = df1.columns  ; socios_menor_100 = df_100.columns
 del anexo_del_mes
 x = df1.columns
 
-#%% POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
+#%% CRÉDITOS EN LA COOPAC
+#POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
 creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', case=False) | 
-                      (df1['Nombre PlanillaTXT'].str.contains('san miguel', case=False) & (df1['Nombre PlanillaTXT'].str.contains('coopac', case=False)))]
+                      (df1['Nombre PlanillaTXT'].str.contains('san miguel', case=False) & 
+                      (df1['Nombre PlanillaTXT'].str.contains('coopac', case=False)))]
 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos a ver las planillas
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas
 
-#%%
+#%% CORRECCIÓN DEL TIPO DE DOCUMENTO
+
 #pequeña corrección al anexo06
 
 # Reemplazar el valor de 'Tipo de Documento 9/' donde 'Nro Prestamo Fincore' sea '00092306'
@@ -138,7 +138,8 @@ print(tipo_cero.shape[0]) #si sale vacío, está todo bien
 #456        (df1['producto'].isin([5, 7, 25, 0])), 'Tipo de Documento 9/'] = 1
 del tipo_cero
 
-#%%
+#%% CORRECCIÓN CUENTA CONTABLE CASTIGADOS
+
 #arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
 df1['Cuenta Contable Crédito Castigado 39/'] = df1['Cuenta Contable Crédito Castigado 39/'].str.strip()
 
@@ -151,16 +152,14 @@ df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castig
 
 print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
 
-#%%
+#%% CLASIFICACIÓN DE LOS REFINANCIADOS
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'''ESTA PARTE NO SE EJECUTA SI ENRIQUE NO PASA EL ARCHIVO DE CALIFICACIÓN DE REFINANCIADOS'''
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'ahora tiene que pasarlo obligatoriamente, o bien lo pasa Cesar'
+###############################################################################
+####        LEER EL ARCHIVO DE LA CLASIFICACIÓN DE LOS REFINANCIADOS    #######
+###############################################################################
+
 #ahora vamos a leer el archivo donde Enrique manualmente elabora la clasificación de los refinanciados
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
-
-'eliminar #456' #si se desea reactivar esta celda
 
 'este es el archivo de la calificación que añade Enrique manualmente'
 ########################################################################################################################
@@ -180,14 +179,15 @@ calif_ref = calif_ref.rename(columns={mes_calif: 'calificacion especial'})
 calif_ref = calif_ref.rename(columns={'Nº de Crédito FINCORE': 'fincore ref'})
 calif_ref = calif_ref[['fincore ref','calificacion especial']]
 
-calif_ref = calif_ref.dropna()
+calif_ref.dropna(subset=['fincore ref', 
+                         'calificacion especial'], inplace=True, how='all')
 
 del archivo_refinanciados
 del mes_calif
 
 #de aqui esta tabla se usará después de aplicar la calificación con alineamiento de manera individual (linea )
                                         
-#%%
+#%% parseo de fechas
 'parseando datos de fechas'
 'hay que tener cuidado con esta vaina, si las fechas no están en el formato indicado se pierden'
 
@@ -200,7 +200,7 @@ print(df1[df1['Fecha de Vencimiento Origuinal del Credito 48/'].isnull()])
 df1['Fecha de Vencimiento Actual del Crédito 49/'] = pd.to_datetime(df1['Fecha de Vencimiento Actual del Crédito 49/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará  
 print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()].shape[0])
                     
-#%%
+#%% limpieza de datos
 #quitando posibles espacios vacíos en el código del socio
 df1['Código Socio 7/'] = df1['Código Socio 7/'].str.strip()
 
@@ -211,7 +211,7 @@ Fincore'''].str.strip()
 df1['Número de Documento 10/'] = df1['Número de Documento 10/'].str.strip()
 df1['Tipo de Documento 9/'] = df1['Tipo de Documento 9/'].astype(int).astype(str).str.strip()
 
-#%%
+#%% COMPROBACIÓN DE SOCIOS CON MENOS DE UN CRÉDITO
 # resultado_1
 # haciendo un merge en realidad innecesario pero es para comprobar la primera columna 
 # 'Socios al menos con un cred < 100 soles
@@ -219,7 +219,7 @@ df1['Tipo de Documento 9/'] = df1['Tipo de Documento 9/'].astype(int).astype(str
 # rosado =  cred >= 100
 # PROV.REQUERIDA A SER EVALUADA.'
 
-df100_merge = df_100.copy()
+df100_merge = df_100.copy() #que raro, el nro fincore es número int (ಥ_ಥ)
 df100_merge = df100_merge.rename(columns={"Código Socio 7/": "codigo de socio"})
 df100_merge.drop_duplicates(subset='codigo de socio', inplace=True)
 df100_merge = df100_merge["codigo de socio"]
@@ -229,6 +229,10 @@ df_resultado = df1.merge(df100_merge,
                          right_on=["codigo de socio"]
                          ,how='left')
 
+print(df_resultado.shape[0])
+df_resultado.drop_duplicates(subset='Nro Prestamo \nFincore', inplace=True)
+print(df_resultado.shape[0])
+print('si sale menos, es porque hubo duplicados')
 df_resultado = df_resultado.rename(columns={"codigo de socio": "al menos 1 crédito < 100"})
 
 dataframe = df_resultado.copy()
@@ -236,8 +240,7 @@ dataframe = df_resultado.copy()
 # del df_resultado
 # df_resultado = dataframe 
 
-#%%
-'creando dataframe auxiliar con los refinanciados'
+#%%% limpieza refinanciados
 
 #ojo que aquí estamos reemplazando el calif_ref de la lectura del archivo que manda enrique
 
@@ -247,26 +250,9 @@ df_resultado['Refinanciado TXT'] = df_resultado['Refinanciado TXT'].str.strip()
 df_resultado['Refinanciado TXT'] = df_resultado['Refinanciado TXT'].astype(str)
 print(df_resultado['Refinanciado TXT'].unique())
 
-#%%
-'''este código está comentado porque no se volverá a usar, por lo tanto si o si 
-Enrique debe enviar el archivo de CALIFICACIÓN de los refinanciados''' 
-#456datos_refinanciados = df_resultado[df_resultado['Refinanciado TXT'] == 'REFINANCIADO']
-#456datos_refinanciados = datos_refinanciados[['''Nro Prestamo 
-#456Fincore''', 'Clasificación del Deudor 14/']]
-
-#456datos_refinanciados = datos_refinanciados.rename(columns={'''Nro Prestamo 
-#456Fincore''': 'fincore ref'})
-#456datos_refinanciados = datos_refinanciados.rename(columns={'Clasificación del Deudor 14/': 'calificacion especial'})
-
-#456calif_ref = datos_refinanciados.copy()
-#456
-
-#%%
-
-df_resultado['Refinanciado TXT'] = df_resultado['Refinanciado TXT'].str.strip()
-df_resultado['''Nro Prestamo 
-Fincore'''] = df_resultado['''Nro Prestamo 
-Fincore'''].str.strip()
+#%% CLASIFICACIÓN POR CRÉDITO SIN ALINEAMIENTO (14/)
+df_resultado['Refinanciado TXT']        =   df_resultado['Refinanciado TXT'].str.strip()
+df_resultado['Nro Prestamo \nFincore']  =   df_resultado['Nro Prestamo \nFincore'].str.strip()
 
 'hora de calcular la clasificación con alineamiento interno:'
 
@@ -321,13 +307,7 @@ df_resultado['alineamiento14 provisional'] = df_resultado['alineamiento14 provis
 #este resultado se debería asignar a la columna 14/
 df_resultado['Clasificación del Deudor 14/'] = df_resultado['alineamiento14 provisional']
 
-
-#para almacenar el alineamiento 14
-#456df_resultado.to_excel('anx06 solo para ver el alinemaiento 14.xlsx',
-#456                      index=False)
-#posiblemente esto no lo necesitaremos nunca xd
-
-#%%
+#%%% CLASIFICACIÓN SIN ALINEAMIENTO, TOMANDO EN CUENTA LOS REFINANCIADOS (14/)
 #HASTA AQUÍ HEMOS CREADO EL ALINEAMIENTO POR LA LÓGICA ESTABLECIDA
 #FALTA PONERLE LA CLASIFICACIÓN MANUAL QUE ELABORA ENRIQUE A LOS CRÉDITOS REFINANCIADOS
 
@@ -336,8 +316,7 @@ calif_ref['fincore'] = calif_ref['fincore ref'].str.strip()
 #hacemos un merge
 df_resultado = df_resultado.merge(calif_ref, 
                           how='left', 
-                          left_on=['''Nro Prestamo 
-Fincore'''], 
+                          left_on=['Nro Prestamo \nFincore'], 
                           right_on=['fincore ref'])
 
 fincores = df_resultado[['fincore ref', 'calificacion especial']].copy()                                   
@@ -345,8 +324,7 @@ fincores = fincores.dropna()
 fincores = fincores['fincore ref'].tolist()
                                    
 def asignacion_calif_refinanciados(df_resultado):
-    if df_resultado['''Nro Prestamo 
-Fincore'''] in fincores:
+    if df_resultado['Nro Prestamo \nFincore'] in fincores:
         return df_resultado['calificacion especial']
     else:
         return df_resultado['alineamiento14 provisional']
@@ -356,7 +334,7 @@ df_resultado['alineamiento 14 final'] = df_resultado.apply(asignacion_calif_refi
 df_resultado['alineamiento14 provisional'] = df_resultado['alineamiento 14 final']
 df_resultado['Clasificación del Deudor 14/'] = df_resultado['alineamiento 14 final']   
 
-#%%
+#%% CLASIFICACIÓN CON ALINEAMIENTO 15/
 'ALINEAMIENTO 15/'
 #primero que nada, debemos sumar todo el saldo de cartera para que sirva para hacer un merge
 saldo_total = df_resultado.groupby('Código Socio 7/')['Saldo de colocaciones (créditos directos) 24/'].sum().reset_index()
@@ -445,7 +423,7 @@ filtro_experian = filtro_experian.rename(columns={"Código Socio 7/": 'cod socio
 
 # hice algo para el reporte de experian pero ya no sirve, solo sirve el de abajo
 
-#%%
+#%% ASIGNACIÓN DE CLASIFICACIÓN CON ALINEAMIENTO PARA EXCEPCIONES
 #SE ASIGNA LA CALIFICACIÓN, EXCEPTO PARA LOS PUCHITOS Y LOS REFINANCIADOS, LOS REFINANCIADOS, CREO QUE YA ESTÁN BIEN ASIGNADOS xd
 def asignacion_15(df_resultado):
     if df_resultado['credito menor'] == 'mayor':
@@ -471,8 +449,7 @@ df_resultado['Clasificación del Deudor con Alineamiento 15/'] = df_resultado['a
 
 # HASTA AQUÍ YA LA CALIFICACIÓN ESTÁ CORRECTAMENTE ASIGNADA
 
-#%%
-#ahora sí, calificación para SENTINEL-Experian
+#%% ALINEAMIENTO PARA SENTINEL - EXPERIAN
 
 filtrados_sentinel = df_resultado[((df_resultado['credito menor'] == 'mayor') | \
                                   (df_resultado['nro de préstamos'] == 1)) 
@@ -504,10 +481,10 @@ except FileNotFoundError:
     pass
 
 calificacion_para_sentinel.to_excel(ruta,
-                      index=False)
+                                    index=False)
 #este excel será usado por experian  
 
-#%%
+#%% VERIFIACIÓN QUE NO VERIFICA XD
 # CÓDIGO VERIFICADOR DEL ALINEAMIENTO 15 DEL ANEXO-06
 
 # Calcular el conteo de diferentes productos por NumerodeDocumento10
@@ -517,29 +494,9 @@ grouped.columns = ['DIFERENTES PRODUCTOS']
 # Filtrar los grupos con más de un producto diferente
 result = grouped[grouped['DIFERENTES PRODUCTOS'] > 1]
 #EL RESULTADO NO TIENE PORQUÉ SER UN DATAFRAME VACÍO, por lo tanto esta verificación no sirve xd
+print('simplemente muestra los socios que tienen diferentes clasificaciones si tienen más de un crédito')
 print(result)
 
-#%% esyo ya no porque ya se hace en la primera parte
-'''
-# añadimos 2 a la columna de relación laboral con la cooperativa
-def creditos_administrativos(df_resultado):
-    if df_resultado['Nombre PlanillaTXT'] == 'COOPERATIVA DE AHORRO Y CREDITO SAN MIGUEL LTDA.':
-        return '2'
-    else:
-        return '0'
-
-df_resultado['Relación Laboral con la Cooperativa 13/'] = df_resultado.apply(creditos_administrativos, axis=1)
-#%% OTRA FORMA DE HACER LO MISMO, POR SI ACASO, HAY QUE VER LA MEJOR FORMA
-# añadimos 2 a la columna de relación laboral con la cooperativa
-def creditos_administrativos(df_resultado):
-    if (df_resultado['Nombre PlanillaTXT'].str.contains('COOPERATIVA DE AHORRO Y CREDITO SAN MIGUEL LTDA.')) | \
-    (df_resultado['Nombre PlanillaTXT'].str.contains('coopac', case=False) & df_resultado['Nombre PlanillaTXT'].str.contains('san miguel', case=False)):
-        return '2'
-    else:
-        return '0'
-
-df_resultado['Relación Laboral con la Cooperativa 13/'] = df_resultado.apply(creditos_administrativos, axis=1)
-'''
 #%% PROVISIONES
 'función para elaborar las provisiones'
     
@@ -576,7 +533,7 @@ def provision_SA(df_resultado):
 
 df_resultado['Tasa de Provisión SA'] = df_resultado.apply(provision_SA, axis=1)
 
-#%%%
+#%%% PROVISIONES P2
 '''
 def provision(df_resultado):
     
@@ -680,7 +637,7 @@ def provision(df_resultado):
 df_resultado['Tasa de Provisión'] = df_resultado.apply(provision, axis=1)
 ###
 
-#%%
+#%% TASA DE INTERÉS CONVERTIDA A DIARIA
 'tasa de interés anual'
 df_resultado['Tasa de Interés Anual 23/'].dtype
 
@@ -692,7 +649,7 @@ df_resultado['Tasa Diaria'] = df_resultado.apply(int_diario, axis=1)
 #%%
 #tal vez aquí debería ir 'Fecha Ultimo Pago'
 #creo que no realmente
-#%%
+#%% ASIGNACIÓN DE GARANTÍAS
 'garantías preferidas'
 #para asignar las garantías preferidas, tenemos una lista de créditos con garantías preferidas,
 #solo si estos créditos del anexo 06 están en esta lista se le va a asignar el saldo de crédito24
@@ -724,7 +681,7 @@ Fincore'''] in ['00025314'	,
     
 df_resultado['Saldos de Garantías Preferidas 34/'] = df_resultado.apply(garant_pref, axis=1)   
 
-#%%
+#%% GARANTÍAS AUTOLIQUIDABLES
 'garantías autoliquidables'
 #para las garantías autoliquidables 
 
@@ -738,7 +695,7 @@ def garant_autoliqui(df_resultado):
     
 df_resultado['Saldo de Garantías Autoliquidables 35/'] = df_resultado.apply(garant_autoliqui, axis=1)
 
-#%%
+#%% VERIFICACIÓN DE GARANTÍAS
 # VERIFICACIÓN DE GARANTÍAS (NO DEBE HABER GARANTÍAS AUTOLIQUIDABLES Y PREFERIDAS)
 
 verificacion_garantías = df_resultado[(df_resultado['Saldo de Garantías Autoliquidables 35/'] > 0) &
@@ -748,7 +705,7 @@ print('hay ' + str(verificacion_garantías.shape[0]) + ' filas con garantías au
 
 #%% eliminación de la tabla que ya no necesitamos
 del verificacion_garantías
-#%%
+#%% CARTERA ATRASADA
 'CARTERA ATRASADA'
 
 def cartera_atrasada(df_resultado):
@@ -756,7 +713,7 @@ def cartera_atrasada(df_resultado):
 
 df_resultado['Cartera Atrasada'] = df_resultado.apply(cartera_atrasada, axis=1)   
 
-#%%
+#%% RANGO DÍAS MORA
 'rango días mora'
 
 def rango_dias_mora(df_resultado):
@@ -784,7 +741,7 @@ def rango_dias_mora(df_resultado):
 
 df_resultado['Rango Días de Mora'] = df_resultado.apply(rango_dias_mora, axis=1) 
 
-#%%
+#%% SITUACIÓN DEL SOCIO
 'columna auxiliar que indica si es vigente, refinanciado, vencido o judicial'
 'servirá para asignar la cuenta contbale 25'
 
@@ -810,7 +767,7 @@ def situacion(df_resultado):
     
 df_resultado['AUXILIAR_SITUACION'] = df_resultado.apply(situacion, axis=1) 
 
-#%%
+#%% ASIGNACIÓN DE CUENTAS CONTABLES
 'CREACIÓN DE LAS TABLAS DE LAS CUENTAS CONTABLES'
 
 cuentas_01 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
@@ -847,7 +804,7 @@ cuentas_02 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
                                        '','',
                                        '']})
 
-#%%
+#%% ASIGNACIÓN DE CUENTAS CONTABLES P2
 'asignación de la cuenta contable 25'
 
 def asignacion_25(df_resultado):
@@ -875,7 +832,7 @@ df_resultado['Cuenta Contable 25/'] = df_resultado.apply(asignacion_25, axis=1)
 
 # cuentas_02.loc[cuentas_02['TIPO CREDITO'] == '08', 'REFINANCIADO'].values[0]
 
-#%%
+#%% RECALCULANDO EL TIPO DE PRODUCTO PARA MYPE
 'vamos a calcular el tipo de producto, principalmente para mype'
 #primero que nada creamos la columna que nos servirá de comparación cuando terminemos
 df_resultado['Tipo de Producto 43/ original'] = df_resultado['Tipo de Producto 43/']
@@ -906,7 +863,7 @@ df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_43, axis=1)
 # Prestamo'''] == 'POND']
 #print(x) #no recuerdo pero imagino que debe salir vacío xd
 #'''
-#%%
+#%% PRODUCTO 43
 def producto_43(row): #aparentemente este sí funciona, seguir investigando
     if (row['Partida Registral 8/'] != '') & \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31')) | \
@@ -919,8 +876,7 @@ def producto_43(row): #aparentemente este sí funciona, seguir investigando
 
 df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_43, axis=1)
 
-
-#%%
+#%% 37 PARA TRABAJADORES DE LA COOPERATIVA
 #AHORA VAMOS A ASIGNAR 37 A LOS CRÉDITOS QUE TENGAN PLANILLA = COOPAC SAN MIGUEL
 def producto_37(df_resultado):
     if df_resultado['Nombre PlanillaTXT'] == 'COOPERATIVA DE AHORRO Y CREDITO SAN MIGUEL LTDA.':
@@ -933,131 +889,12 @@ df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_37, axis=1)
 print(df_resultado[df_resultado['Tipo de Producto 43/'] == 37][['Tipo de Producto 43/', 'Nombre PlanillaTXT']])
 #si salen 37s y la coopac es porque sí funciona
 
-#%%
-#import pyodbc 
-
-#conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-#df_mype = pd.read_sql_query('''
-#declare @fechacorte as datetime
-#set @fechacorte = '20221231'
-#
-#select 
-#
-#FechaCorte1, ApellidosyNombresRazonSocial2,
-#FechadeDesembolso21, MontodeDesembolso22, Saldodecolocacionescreditosdirectos24,
-#NumerodeCredito18, Nro_Fincore, CodigoSocio7, TipodeProducto43
-#
-#from anexos_riesgos2..Anx06_preliminar as a
-#
-#where TipodeProducto43 in (15,16,17,18,19,
-#						   21,22,23,24,25,29,
-#						   95,96,97,98,99)
-#
-#and Nro_Fincore in (SELECT Nro_Fincore
-#					FROM anexos_riesgos2..Anx06_preliminar
-#					WHERE fechacorte1 = @fechacorte)
-#
-#order by FechaCorte1, FechadeDesembolso21''', conn)
-#
-
-
-'''
-############################################################################################
-#############    no olvidar que ya tenemos la fecha de corte del desembolso    #############
-############################################################################################
-'''
-
-#%%
-'con esta pivot mype vamos a asignar el tipo de producto43 en función de la sumatoria del saldo de cartera'
-
-#pivot_mype = df_mype.pivot_table(columns='FechaCorte1',
-#                                      values=['Saldodecolocacionescreditosdirectos24'], 
-#                                      index=['CodigoSocio7'], 
-#                                      
-#                                      aggfunc='sum'
-#                                      )
-
-# Obtener el valor para un socio y fecha específicos
-#pivot_mype.loc['00033668', ('Saldodecolocacionescreditosdirectos24', '2022-05-31')]
-
-#'elimina el indice secundario'
-#pivot_mype.columns = pivot_mype.columns.droplevel()
-#pivot_mype = pivot_mype.reset_index()
-
-'con esta función se puede acceder a una celda del dataframe'
-#pivot_mype.loc[pivot_mype['CodigoSocio7'] == '00034420', '2022-07-31'].values[0]
-
-'esto podría servir para crear un excel e importarlo si es que no se puede acceder bien al dataframe'
-#'CREACIÓN DEL EXCEL AUXILIAR'
-#nombre = "pivot.xlsx"
-#try:
-#    ruta = nombre
-#    os.remove(ruta)
-#except FileNotFoundError:
-#    pass
-#
-#pivot_mype.to_excel(nombre,
-#                      index=False)       
-
-
-#%%
+#%%% limpieza
 'por si acaso quitando espacios a la columna del código del socio'
 
 df_resultado['Código Socio 7/'] = df_resultado['Código Socio 7/'].str.strip()
 
-#%%
-'creamos un diccionarios a partir del dataframe de pivot_mype'
-#esto ya no hace falta pero lo dejo ahí porque no estorba
-#dic_pivot_mype = pivot_mype.to_dict(orient='records')
-
-#%%
-#usamos la función melt para convertir pivot_mype en tabla larga
-#df = pivot_mype.melt(id_vars='CodigoSocio7', var_name='fecha', value_name='monto')
-
-#HACEMOS UN MERGE, FINALMENTE, ESTA SERÁ LA SOLUCIÓN
-#df_resultado = df_resultado.merge(df[['CodigoSocio7', 'fecha', 'monto']], 
-#                          how='left', 
-#                          left_on=['Código Socio 7/', 'fecha corte del desembolso'], 
-#                          right_on=['CodigoSocio7', 'fecha'])
-#df_resultado['monto'] = df_resultado['monto'].fillna(0)
-
-#%%
-#bacán y todo eso pero según Enrique esta no es la solución, igual lo dejo porque estaba bueno el código
-
-#%%
-#eliminamos estas columnas de más
-#df_resultado.drop(['fecha', 'CodigoSocio7', '''Nro Prestamo 
-#Fincore2'''], axis=1, inplace=True)
-
-    
-#%%lo mismo pero en función del tipo de producto
-#df_resultado['Tipo de Producto 43/'] = df_resultado['Tipo de Producto 43/'].astype(float)
-#def asignacion_mype(df_resultado):
-#    if df_resultado['Tipo de Producto 43/'] in [15,16,17,18,19,
-#    						                            21,22,23,24,25,29, 
-#    						                            95,96,97,98,99]:
-#        if df_resultado['monto'] <= 20000:
-#            return 20
-#        elif df_resultado['monto'] <= 300000:
-#            return 10
-#        else:
-#            return 90
-#    else:
-#        return df_resultado.loc['Tipo de Producto 43/']
-
-#df_resultado['producto_mype'] = df_resultado.apply(asignacion_mype, axis=1)
-#df_resultado['Tipo de Producto 43/'] = df_resultado['Tipo de Producto 43/'].astype(int)
-#%%
-#nos muestra si hay alguna diferencia en la parte de las decenas de la asignación del tipo de producto 43
-#df_resultado['resta_decenas'] = ((df_resultado['producto_mype'] // 10) - (df_resultado['Tipo de Producto 43/'] // 10))
- 
-#%%
-
-['15','16','17','18','19',
-'21','22','23','24','25','29',
-'95','96','97','98','99']
-
-#%%
+#%% RECALCULAR PROD 43
 #vamos a volver a calcular el tipo de producto43
 
 df_corto = df_resultado[['Tipo de Producto 43/',
@@ -1082,7 +919,7 @@ tabla_resumen = tabla_resumen.reset_index()
 #rename
 tabla_resumen = tabla_resumen.rename(columns={"Código Socio 7/": "socio mype"})
 
-#%%
+#%%% asignación del monto mype sumado
 #asignamos
 df_resultado_2 = df_resultado.copy()
 
@@ -1093,7 +930,7 @@ df_resultado_2 = df_resultado_2.merge(tabla_resumen[['socio mype','monto mype']]
 
 df_resultado_2['monto mype'] = df_resultado_2['monto mype'].fillna(0)
 
-#%%
+#%%% asignación mype
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].astype(float)
 def asignacion_mype(df_resultado_2):
     if df_resultado_2['Tipo de Producto 43/'] in [15,16,17,18,19,
@@ -1112,11 +949,11 @@ def asignacion_mype(df_resultado_2):
 df_resultado_2['producto_mype_2'] = df_resultado_2.apply(asignacion_mype, axis=1)
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].truncate(0) #no está haciendo nada este código xd
 
-#%%
+#%%% resta decenas
 #nos muestra si hay alguna diferencia en la parte de las decenas de la asignación del tipo de producto 43
 df_resultado_2['resta_decenas'] = ((df_resultado_2['producto_mype_2'] // 10) - (df_resultado_2['Tipo de Producto 43/'] // 10))
 
-#%%
+#%%% asignación mype
 'ahora que ya tenemos la diferencia del tipo de producto, asignamos el tipo de producto que deben de tener'
 def asign_mype(df_resultado_2):
 #    if (df_resultado_2['resta_decenas'] == 1):
@@ -1172,7 +1009,7 @@ df_resultado_2['producto final'] = df_resultado_2.apply(asign_mype, axis=1)
 df_resultado_2['Tipo de Producto 43/ corregido'] = df_resultado_2['producto final']
 
 #esta columna tiene el tipo de producto43 ya corregido
-#%%
+#%%% comprobación mype
 #comprobación de las diferencias de tipo de producto
 df_resultado_2['anterior'] = df_resultado_2['Tipo de Producto 43/']
 df_resultado_2['producto final'] = pd.to_numeric(df_resultado_2['producto final'])
@@ -1191,7 +1028,7 @@ df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/ co
 
 print('se reasignaron ' + str(df_resultado_2[df_resultado_2['dif_prod'] == 'diferente'].shape[0]) + ' créditos')
 
-#%%
+#%%% verificación de que cada socio mype tenga un úncio alineamiento
 # VERIFICACIÓN DEL ALINEAMIENTO QUE ESTÉ IGUAL PARA TODOS LOS CRÉDITOS MYPE
 
 anx06_filtered = df_resultado_2.copy()
@@ -1212,7 +1049,7 @@ del tipos_producto_deseados
 del anx06_filtered
 del grouped
 del result
-#%%
+#%% CRÉDITOS MAYORES A 50K QUE NO SEAN MYPE PARA ANALIZARLOS
 # POR SI ACASO, BUSCAMOS CRÉDITOS CON MONTOS MAYORES A 50K QUE NO SEAN MYPE
 # En abril 2023 encotramos un crédito mediana empresa que estaba con etiqueda de dxp
 
@@ -1225,18 +1062,17 @@ Fincore''', 'Fecha de Desembolso 21/']])
 df_resultado_2.loc[df_resultado_2['''Nro Prestamo 
 Fincore'''] == '00103786', 'Tipo de Producto 43/'] = 96
 
-#%%
-
+#%% conclusión
 #########################################################################################
 #### HASTA AQUÍ YA TERMINAMOS EL TIPO DE PRODUCTO 43, LO QUE SIGUE SON OTRAS COSAS  #####
 #########################################################################################
 
-#%%
+#%% cambio de nombre
 #AÑADIENDO UNA COLUMNA QUE ES LO MISMO QUE OTRA PERO CON OTRO NOMBRE
 df_resultado_2['Fecha Ultimo Pago'] = df_resultado_2['''Fecha Ultimo 
 Pago TXT''']
 
-#%%
+#%% REUBICACIÓN DE COLUMNAS
 #moviendo estas dos columnas al final
 
 lista_columns = list(df_resultado_2.columns)
@@ -1252,7 +1088,7 @@ columnas_nuevas = columnas_nuevas + ["periodo de gracia por Reprog Término"]
 # Reordena las columnas del DataFrame utilizando la nueva lista de nombres de columnas
 df_resultado_2 = df_resultado_2.reindex(columns=columnas_nuevas)
 
-#%%
+#%% parseo de fechas
 #parseando datos
 
 #aqui hay riesgo de perder fechas si es que están mal escritas
@@ -1271,8 +1107,8 @@ pd.to_datetime(df_resultado_2["periodo de gracia por Reprog Término"], format='
 df_resultado_2["periodo de gracia por Reprog Término"] = df_resultado_2["periodo de gracia por Reprog Término"].dt.date
 print('guiones después de procesar: ', str(df_resultado_2["periodo de gracia por Reprog Término"].isna().sum()))
 
-#%%
-#fecha término de gracia por desembolso
+#%% fecha término de gracia por desembolso 
+#
 def fechatermino(fecha, periodo_gracia):
     return fecha + pd.DateOffset(days=periodo_gracia)
 
@@ -1282,7 +1118,7 @@ df_resultado_2['fecha término de gracia por desembolso'] = df_resultado_2.apply
 x = df_resultado_2[['fecha término de gracia por desembolso','Fecha de Desembolso 21/', 'Periodo de Gracia 47/']]
 
 
-#%%
+#%% DD vs DF
 #DD vs DF
 def DD_vs_DF(df_resultado_2):
     if pd.isna(df_resultado_2['fecha término de gracia por desembolso']):
@@ -1294,13 +1130,13 @@ def DD_vs_DF(df_resultado_2):
 
 df_resultado_2['DD vs DF'] = df_resultado_2.apply(DD_vs_DF, axis=1)
 
-#%%
+#%% reubicación de columna
 #moviendo esa columna al final
 df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
 Contabilidad''']= df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
 (NVO)''']
 
-#%%
+#%% DG vs BW
 #cálculo de las columnas de fechas
 df_resultado_2['Fecha Ultimo Pago'] = \
 pd.to_datetime(df_resultado_2['Fecha Ultimo Pago'], 
@@ -1318,7 +1154,7 @@ def DG_vs_BW(df_resultado_2):
 df_resultado_2['DG vs BW'] = df_resultado_2.apply(DG_vs_BW, 
                                                   axis=1)
 
-#%%
+#%% DG vs BW con FVUCC
 df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
 Contabilidad'''] = \
 pd.to_datetime(df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
@@ -1343,7 +1179,7 @@ def con_fvucc(df_resultado_2):
 df_resultado_2['DG vs BW con FVUCC'] = df_resultado_2.apply(con_fvucc, 
                                                             axis=1)
 
-#%%
+#%% DH vs CS
 #noup
 fecha_fija = pd.to_datetime(fecha_corte)
 
@@ -1358,7 +1194,7 @@ def max_fecha(row):
 # Aplicar la función a cada fila del DataFrame
 df_resultado_2['DH vs CS'] = df_resultado_2.apply(max_fecha, axis=1)
 
-#%%
+#%% DH vs CS
 #calculando 'DH vs CS'para los créditos que tienen días mora
 
 def dh_vs_cs_morosos(row, dias_sumar):
@@ -1375,7 +1211,7 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(dh_vs_cs_morosos,
 df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
 
-#%%
+#%% DH vs CS
 #calculando DH vs CS para los que tienen capital vigente y vencido al mismo tiempo
 def dh_vs_ambos(df_resultado_2, dias_sumar):
     if (df_resultado_2['Capital Vigente 26/'] > 0 and \
@@ -1391,7 +1227,7 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(dh_vs_ambos,
 df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
 
-#%%
+#%% DH vs CS creditos monocuotas
 #modificación de DH VS CS, para créditos monocuotas
 ####################
 # verificar si funciona bien, yo creo que sí uwu
@@ -1408,7 +1244,7 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(dfvscs_monocuota,
 df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
     
-#%%
+#%% DH vs CS ajuste
 #modificación de dh vs cs de los devengados, vamos a 
 #cambiar algunos porque Jenny se ha hueveado
 ########################################################
@@ -1466,7 +1302,7 @@ df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
 
 
-#%%
+#%% DEVENGADOS
 'intereses devengados, calculados de manera genérica'
 def devengados_genericos(df_resultado_2):
     if df_resultado_2['Número de Cuotas Programadas 44/'] != 1:
@@ -1485,7 +1321,7 @@ Devengado 40/'''] = df_resultado_2['rendimiento devengado']
 
 df_resultado_2['rendimiento devengado'].sum()
 
-#%%
+#%% días para intereses en suspenso
 'intereses en suspenso, calculados de manera genérica'
 
 fecha_fija = pd.to_datetime(fecha_corte)
@@ -1518,7 +1354,7 @@ def ceros(df_resultado_2):
 
 df_resultado_2['dias int suspenso'] = df_resultado_2.apply(ceros, axis=1)
 
-#%%
+#%% dias int suspenso
 #última parte de los días en suspenso:
 def ultima_dias_suspenso(df_resultado_2):
     fecha1 = datetime.strptime(fecha_corte, '%Y-%m-%d').date()
@@ -1535,7 +1371,7 @@ df_resultado_2['dias int suspenso 2'] = df_resultado_2.apply(ultima_dias_suspens
 df_resultado_2['dias int suspenso'] = df_resultado_2['dias int suspenso 2']
 df_resultado_2.drop(['dias int suspenso 2'], axis=1, inplace=True)
 
-#%%
+#%% dias int suspenso
 #lo anterior ya no era lo último 
 #añadiendo unas excepciones
 '''
@@ -1575,7 +1411,7 @@ df_resultado_2['dias int suspenso 2'] = df_resultado_2.apply(modificacion_dias_s
 df_resultado_2['dias int suspenso'] = df_resultado_2['dias int suspenso 2']
 df_resultado_2.drop(['dias int suspenso 2'], axis=1, inplace=True)
     
-#%%
+#%% INTERESES EN SUSPENSO
 'intereses en suspenso'
 def int_suspenso(df_resultado_2):
     return (df_resultado_2['Capital Vencido 29/'] + df_resultado_2['Capital en Cobranza Judicial 30/'])* (\
@@ -1587,14 +1423,14 @@ df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['intereses en s
 
 df_resultado_2['''Intereses en Suspenso 41/'''].sum()
 
-#%%
+#%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
 #necesario para poder calcular la cartera neta = 
 #Saldo de colocaciones (créditos directos) 24/ - Ingresos Diferidos 42/
 'algoritmo que nos tiene que explicar Jenny'
 
 'de momento no se va a poder programar, no tenemos info, Jenny lo va a realizar, y tendremos que volver a procesar el archivo'
-#%%
+#%% CARTERA NETA
 'AHORA QUE YA TENEMOS LOS INGRESOS DIFERIDOS'
 #calculamos la cartera neta
 def cartera_neta(df_resultado_2):
@@ -1603,13 +1439,13 @@ def cartera_neta(df_resultado_2):
         
 df_resultado_2['Cartera Neta'] = df_resultado_2.apply(cartera_neta, axis=1)
 
-#%%
+#%% Provisiones Requeridas 36/ SA
 #cálculo de provisiones requeridas 36 SA
 
 df_resultado_2['Provisiones Requeridas 36/ SA'] = df_resultado_2['Cartera Neta'] * \
                                                   df_resultado_2['Tasa de Provisión SA']
 
-#%%
+#%% Provisiones Constituidas 37/
 #cálculo de las provisiones constituidas 37/
 def prov_cons_37(df_resultado_2):
     if df_resultado_2['''Nro Prestamo 
@@ -1647,7 +1483,7 @@ print(df_resultado_2['Provisiones Constituidas 37/'].sum())
 print(df_resultado_2['Provisiones Requeridas 36/'].sum())
 
 
-#%%
+#%% CÁLCULOS
 'VERIFICACIÓN'
 #LAS PROVISIONES CONSTITUIDAS DEL MES, DEBEN SER (EN MONTO) MAYORES A LA DEL MES PASADO
 #Y LAS PROVISIONES CONSTITUIDAS DIVIDIDAS ENTRE LAS PROVISIONES REQUERIDAS DEBE SER > 60%
@@ -1665,7 +1501,7 @@ print(suma_constituidas)
 
 print(df_resultado_2['Provisiones Constituidas 37/'].sum() / df_resultado_2['Cartera Atrasada'].sum())
 
-#%%
+#%% COLUMNAS CONTABILIDAD
 #añadiendo las columnas que Jenny necesita
 
 df_resultado_2['FEC_REPROG'] = df_resultado_2['FEC_ULT_REPROG']
@@ -1678,20 +1514,20 @@ df_resultado_2['FEC_REPROG'] = pd.to_datetime(df_resultado_2['FEC_REPROG'], erro
 
 df_resultado_2['FEC_REPROG'] = df_resultado_2['FEC_REPROG'].fillna('--')
 
-#%%
+#%%% limpieza
 # añadiendo -- a algunas columnas de fechas, para que las fórmulas de excel funcionen bien
 
 df_resultado_2['Fecha Ultimo Pago'] = df_resultado_2['Fecha Ultimo Pago'].fillna('--')
 
-#%%
+#%% REDONDEO DE DEVENGADOS e I.SUSPENSO A DOS DECIMALES
 #redondeando columnas 
 df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2) # mi estimación
 df_resultado_2['intereses en suspenso'] = df_resultado_2['intereses en suspenso'].round(2) # mi estimación
 
-#%%
+#%% REDONDEO DE TEA A 4 DECIMALES
 df_resultado_2['TEA TXT'] = df_resultado_2['Tasa de Interés Anual 23/'].round(4)
 
-#%%
+#%% 51/ 52/
 #CALCULANDO LAS COLUMNAS 51 Y 52
 #chequear, aún no está probado
 df_resultado_2['Saldo de Créditos que no cuentan con cobertura 51/'] = df_resultado_2['Cartera Neta'] - \
@@ -1707,7 +1543,7 @@ def calculo_52(df_resultado_2):
 df_resultado_2['Saldo Capital de Créditos Reprogramados 52/'] = df_resultado_2.apply(calculo_52, axis=1) #chequear, aún no está probado
 #chequear, aún no está probado
 
-#%%
+#%% PRODUCTO TXT
 #tipo de producto txt para hacer tablas dinámicas
 def producto_txt(df_resultado_2):
     tipo_producto = df_resultado_2['Tipo de Producto 43/']
@@ -1768,7 +1604,7 @@ def producto_txt(df_resultado_2):
 df_resultado_2['TIPO DE PRODUCTO TXT'] = df_resultado_2.apply(producto_txt, axis=1) #chequear, aún no está probado
 '''
 
-#%%
+#%% COLUMNAS ROJAS
 #AÑADIENDO LAS COLUMNAS ROJAS PARA JENNY
 df_resultado_2['Días de Diferido 1'] =      ''
 df_resultado_2['Ingresos Diferidos 1'] =    ''
@@ -1825,7 +1661,7 @@ def situacion_cred_consumo(df_resultado_2):
     
 df_resultado_2['Situación del Credito (Solo DxP)'] = df_resultado_2.apply(situacion_cred_consumo, axis=1)
 
-#%%
+#%% ordenamiento
 '''
 x = df_resultado_2.columns
 df_x = pd.DataFrame(x, columns=['columnas'])
@@ -2006,8 +1842,7 @@ Suspenso Total''', #PINTAR DE COLOR VERDE
 
 anexo06_casi = df_resultado_2[columnas_casi_final]
 
-#%%
-
+#%% BUSCADOR DE COLUMNAS POR TEXTO
 #BUSCADOR DE ALGUNA COLUMNA SOLO CAMBIANDO EL TEXTO
 x = list(df_resultado_2.columns)
 result = [column for column in x if 'alineam' in column]
@@ -2016,7 +1851,7 @@ result = [column for column in x if 'alineam' in column]
 for column in result:
     print(column)
 
-#%%
+#%% ordenamiento con columnas 58/ 59/
 #agregando las 2 nuevas columnas establecidas por la sbs
 #Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/	Rendimiento Devengado por Programa IMPULSO MYPERU 59/
 
@@ -2037,7 +1872,7 @@ ordenamiento_final = lista_columnas[0:65] + ['Saldo Capital en Cuenta de Orden P
 
 anexo06_casi = anexo06_casi[ordenamiento_final]
 
-#%% 
+#%% CRÉDITOS EN EL RESTO DEL SISTEMA FINANCIERO
 # AÑADIENDO EL NRO DE CRÉDITOS QUE TIENE EL SOCIO EN EL RESTO DEL SECTOR FINANCIERO
 # NOS VAMOS AL SABIO DE EXPERIAN, 
 
@@ -2077,7 +1912,7 @@ print('nro filas por investigar: ', str((nro_creditos[nro_creditos['TIPO DOC TXT
 #cambiando el nombre
 nro_creditos = nro_creditos.rename(columns={"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
 
-#%%
+#%%% MERGE
 #MERGE CON EL ANEXO06
 merge_nro_creditos = nro_creditos[["NUMERO DOCUMENTO de experian", 
                                    'TIPO DOC TXT', 
@@ -2107,18 +1942,18 @@ anexo06_casi[['documento rellenado anx06','Tipo de Documento 9/']]
 
 merge_nro_creditos[['documento rellenado', 'TIPO DOC TXT']]
 
-#%%
+#%%% sin datos
 #le ponemos sin datos en donde no ha matcheado
 
 ya_casi['total en sistema(no incluye San Miguel)'] = ya_casi['total en sistema(no incluye San Miguel)'].fillna('sin datos')
 ya_casi['total en sistema(incluye San Miguel)'] = ya_casi['total en sistema(incluye San Miguel)'].fillna('sin datos')
 
-#%%
+#%% CAMBIANDO DE TIPO DE DATO
 #arreglamos la columna del Tipo de Documento 9/
 
 ya_casi['Tipo de Documento 9/'] = ya_casi['Tipo de Documento 9/'].astype(float).astype(int)
 
-#%%
+#%% FORMATO DE FECHAS
 def convertir_formato_fecha(fecha):
     if fecha != '--':
         fecha = pd.to_datetime(fecha, format='%d-%m-%Y')
@@ -2161,23 +1996,23 @@ ya_casi['Fecha de Vencimiento Actual del Crédito 49/'] = ya_casi['Fecha de Venc
 #%% redondeamos la columna de la tasa de interés anual a 4 decimales
 ya_casi['Tasa de Interés Anual 23/'] = ya_casi['Tasa de Interés Anual 23/'].round(4)
 
-#%%
+#%% RECÁLCULO DE LA COLUMNA NRO_REGISTRO
 #por si acasito, corregimos la columna del nro Registro 1/
-
+print(ya_casi.shape[0])
+ya_casi.drop_duplicates(subset = 'Nro Prestamo \nFincore', inplace=True)
+print(ya_casi.shape[0])
+print('si sale menos es porque hubo algún duplicado')
 # Obtener la cantidad total de filas en el DataFrame
 total_filas = len(ya_casi)
 
 # Crear la nueva columna con la secuencia numérica
 ya_casi['Registro 1/'] = [f'{i+1:06}' for i in range(total_filas)]
 
-#%% añadimos las sumas al final para el anexo06
-
-
-#%%
-#si ya vimos que está bien
+#%% rename del anexo06 
+#
 anexo06_casi = ya_casi.copy()
 
-#%%
+#%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
 nombre = "ANX06 procesado " + fecha_corte + ".xlsx"
@@ -2190,7 +2025,7 @@ except FileNotFoundError:
 anexo06_casi.to_excel(nombre,
                       index=False)
 
-#%%
+#%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
 # Obtener la ubicación actual
 ubicacion_actual = os.getcwd()
@@ -2199,7 +2034,7 @@ ubicacion_actual = os.getcwd()
 print("La ubicación actual es: " + ubicacion_actual)
 
 
-#%%
+#%% PARTE 2
 #######################################################
 #██████╗  █████╗ ██████╗ ████████╗███████╗    ██████╗ #
 #██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝    ╚════██╗#
@@ -2210,7 +2045,7 @@ print("La ubicación actual es: " + ubicacion_actual)
 #######################################################                                                                                                                                                                                                 
 'UNA VEZ QUE JENNY NOS DE EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
 
-#%%
+#%% IMPORTACIÓN DE ARCHIVOS
 #leyendo el excel que nos envía CONTABILIDAD
 import os
 import pandas as pd
@@ -2232,23 +2067,22 @@ df_diferidos = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión 1 - 
                         'Tipo de Producto 43/': object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        '''Nro Prestamo 
-Fincore''': str},
+                        'Nro Prestamo \nFincore': str},
                      skiprows=2
                      )
 
 df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
-                   'Fecha de Nacimiento 3/',
-                   'Número de Documento 10/',
-                   'Domicilio 12/',
-                   'Numero de Crédito 18/'], inplace=True, how= 'all')
+                            'Fecha de Nacimiento 3/',
+                            'Número de Documento 10/',
+                            'Domicilio 12/',
+                            'Numero de Crédito 18/'], inplace=True, how= 'all')
 
 #%% #asignamos los diferidos
 df_diferidos['Ingresos Diferidos 2'] = df_diferidos['Ingresos Diferidos 2'].round(2)
 df_diferidos['Ingresos Diferidos 42/'] = df_diferidos['Ingresos Diferidos 2']
 print('no debe salir cero: ' + str(df_diferidos['Ingresos Diferidos 42/'].sum()))
 
-#%%
+#%% CARTERA NETA FINAL
 
 'AHORA QUE YA TENEMOS LOS INGRESOS DIFERIDOS'
 #calculamos la cartera neta
@@ -2260,7 +2094,7 @@ df_diferidos['Cartera Neta'] = df_diferidos.apply(cartera_neta, axis=1)
 df_diferidos['Cartera Neta'] = df_diferidos['Cartera Neta'].round(2)
 df_diferidos['Cartera Neta'].sum()
 
-#%%
+#%% PROVISIONES REQUERIDAS SIN ALINEAMIENTO
 #cálculo de provisiones requeridas 36 SA
 
 df_diferidos['Provisiones Requeridas 36/ SA'] = df_diferidos['Cartera Neta'] * \
@@ -2268,7 +2102,7 @@ df_diferidos['Provisiones Requeridas 36/ SA'] = df_diferidos['Cartera Neta'] * \
 
 df_diferidos['Provisiones Requeridas 36/ SA'].sum()
                                                 
-#%%
+#%% PROVISIONES REQUERIDAS
 #cálculo de provisiones requeridas 36
 
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Cartera Neta'] * \
@@ -2276,7 +2110,7 @@ df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Cartera Neta'] * \
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 df_diferidos['Provisiones Requeridas 36/'].sum()
 
-#%%
+#%% Saldo de Créditos que no cuentan con cobertura 51/
 # Saldo de Créditos que no cuentan con cobertura 51/
 df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferidos['Cartera Neta'] - \
                                                                     (df_diferidos['Saldos de Garantías Preferidas 34/'] + \
@@ -2285,7 +2119,7 @@ df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferid
 df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'].round(2)                                                                
 
 #%% en este caso, añadir los créditos que mandó Harris
-
+# POSIBLEMENTE SE VA A ELIMINAR EN EL FUTURO
 dxp_castigados = pd.read_excel('data para castigo junio 2023_vhf.xlsx',
                                dtype = {'''Nro Prestamo 
 Fincore''' : object}, skiprows= 2, sheet_name = 'BD - Para Castigo')
@@ -2293,7 +2127,7 @@ Fincore''' : object}, skiprows= 2, sheet_name = 'BD - Para Castigo')
 dxp_castigados = list(dxp_castigados['''Nro Prestamo 
 Fincore'''])
 
-#%%
+#%% CÁLCULO DE PROVISIONES CONSTITUIDAS
 #cálculo de las provisiones constituidas 37/
 df_diferidos['''Nro Prestamo 
 Fincore'''] = df_diferidos['''Nro Prestamo 
@@ -2336,7 +2170,7 @@ df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constit
 
 print(df_diferidos['Provisiones Constituidas 37/'].sum())
 
-#%%
+#%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado
 'AQUI HAY QUE CAMBIAR LA FECHA PARA QUE VAYA DEL MES PASADO al que estamos elaborando'
 import pyodbc
@@ -2357,7 +2191,7 @@ provisiones_mes_pasado = pd.read_sql_query(query, conn)
 
 mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 
-#%%
+#%%% VERIFICACIÓN DE RESULTADOS 1
 'VERIFICACIÓN'
 #LAS PROVISIONES CONSTITUIDAS DEL MES, DEBEN SER (EN MONTO) MAYORES A LA DEL MES PASADO
 #Y LAS PROVISIONES CONSTITUIDAS DIVIDIDAS ENTRE LAS PROVISIONES REQUERIDAS DEBE SER > 60%
@@ -2380,7 +2214,7 @@ print('variación de constituídas con el mes pasado', (suma_constituidas - floa
 print('provisiones constituidas:')
 print(suma_constituidas)
 
-#%%
+#%%% VERIFICACIÓN DE RESULTADOS 2
 print('saldo de provisiones constituidas')
 if mes_pasado < suma_constituidas:
     print('todo bien')
@@ -2413,7 +2247,7 @@ Devengado Total''']
 df_diferidos['''Intereses en Suspenso 41/'''] = df_diferidos['''Interes 
 Suspenso Total''']
 
-#%%
+#%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
 df_diferidos_ampliado = df_diferidos.copy()
 df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore','Cartera Neta', 
@@ -2421,7 +2255,7 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore','Cartera Neta',
                              'Provisiones Requeridas 36/', 'Provisiones Constituidas 37/',
                              'Saldo de Créditos que no cuentan con cobertura 51/']]
 
-#%%
+#%% GENERACIÓN DEL EXCEL
 
 fecha_corte = '30-07-2023'
 'CREACIÓN DEL EXCEL'
@@ -2435,7 +2269,7 @@ except FileNotFoundError:
 df_diferidos_columnas.to_excel(nombre,
                       index=False)
 
-#%%
+#%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
 # Obtener la ubicación actual
 ubicacion_actual = os.getcwd()
@@ -2443,7 +2277,7 @@ ubicacion_actual = os.getcwd()
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
 
-#%%
+#%% REPORTE DE BRECHAS
 '#############################################################################'
 '###########             BRECHAS DE UN MES A OTRO               ##############'
 '#############################################################################'
@@ -2525,7 +2359,7 @@ ordenamiento_columnas = ['SALDO CARTERA',
                          'INTERESES EN SUSPENSO',
                          'INTERESES DIFERIDOS']
 
-#%% 
+#%% filtración de columnas
 pivot_mes_pasado = pivot_mes_pasado[ordenamiento_columnas]
 #%% PIVOT DE ESTE MES
 
@@ -2558,18 +2392,18 @@ Devengado 40/''', 'Intereses en Suspenso 41/', 'Ingresos Diferidos 42/'],
 #pivot_mes_actual = pivot_mes_actual.reset_index()
 pivot_mes_actual.fillna(0, inplace=True)
 
-#%%
+#%% pivot mes actual
 
 pivot_mes_actual = pivot_mes_actual.rename(columns={#'Tipo de Crédito 19/'                           : 'TIPO DE CRÉDITO',
-                                                    'Saldo de colocaciones (créditos directos) 24/' : 'SALDO CARTERA',
-                                                    'Capital Vencido 29/'                           : 'CAPITAL VENCIDO',
-                                                    'Capital en Cobranza Judicial 30/'              : 'COBRANZA JUDICIAL',
-                                                    'Saldos de Créditos Castigados 38/'             : 'SALDO CASTIGADO',
-                                                    'Provisiones Constituidas 37/'                  : 'PROVISIONES CONSTITUIDAS',
-                                                    'Provisiones Requeridas 36/'                    : 'PROVISIONES REQUERIDAS',
-                                                    '''Rendimiento
-Devengado 40/'''                : 'INTERESES DEVENGADOS', 'Intereses en Suspenso 41/'               : 'INTERESES EN SUSPENSO',
-                                                    'Ingresos Diferidos 42/'                        : 'INTERESES DIFERIDOS'})
+                                        'Saldo de colocaciones (créditos directos) 24/' : 'SALDO CARTERA',
+                                        'Capital Vencido 29/'                           : 'CAPITAL VENCIDO',
+                                        'Capital en Cobranza Judicial 30/'              : 'COBRANZA JUDICIAL',
+                                        'Saldos de Créditos Castigados 38/'             : 'SALDO CASTIGADO',
+                                        'Provisiones Constituidas 37/'                  : 'PROVISIONES CONSTITUIDAS',
+                                        'Provisiones Requeridas 36/'                    : 'PROVISIONES REQUERIDAS',
+                                        'Rendimiento\nDevengado 40/'                    : 'INTERESES DEVENGADOS', 
+                                        'Intereses en Suspenso 41/'                     : 'INTERESES EN SUSPENSO',
+                                        'Ingresos Diferidos 42/'                        : 'INTERESES DIFERIDOS'})
 
 pivot_mes_actual = pivot_mes_actual[ordenamiento_columnas]
 
@@ -2584,8 +2418,7 @@ for columna in diferencias_porcentuales.columns:
     diferencias_porcentuales[columna] = (diferencias[columna] / pivot_mes_pasado[columna]) * 1
 diferencias_porcentuales.fillna(0, inplace=True)
 
-#%%
-#exportamos a excel
+#%% exportación a excel
 
 import pandas as pd
 
@@ -2615,7 +2448,7 @@ espacio_entre_tablas.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_a
 writer.save()
 
 
-#%%
+#%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
 # Obtener la ubicación actual
 ubicacion_actual = os.getcwd()
