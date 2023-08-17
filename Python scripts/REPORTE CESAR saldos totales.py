@@ -17,12 +17,12 @@ FECHA = 'JULIO-23' #servirá para el nombre del archivo
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 JULIO')
 
-INSUMO = 'CARTERA_TOTAL_03082023.xlsx'
-MES_PASADO = 'SALDO_COOPACSANMIGUEL - JUNIO-23_INC_CVV_DETALLADO.xlsx'
-COBRANZA = 'Ingresos por Cobranza Julio-23 - General.xlsx'
-UTILIDAD_CASTIGO = 'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
+INSUMO           =    'CARTERA_TOTAL_03082023.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JUNIO-23_INC_CVV_DETALLADO.xlsx'
+COBRANZA         =    'Ingresos por Cobranza Julio-23 - General.xlsx'
+UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
-#IMPORTANDO LOS DATOS DE EXCEL
+##  IMPORTANDO LOS DATOS DE EXCEL  ##
 
 def parse_date(date_str):
     try:
@@ -50,15 +50,17 @@ def parse_date(date_str):
                         raise ValueError("Formato de fecha no válido.")
 
 #    '%Y-%m-%d %H:%M:%S.%f'
-    
-# 1 el primero es la base de datos aún por procesar
+############################################################
+##   1 el primero es la base de datos aún por procesar    ##
+############################################################
+
 df1=pd.read_excel(INSUMO,
                  dtype={'CodigoSocio': object, 'NroDocIdentidad': object,
                        'NumeroPrestamo':object, 'NroPrestamoFC': object,
                        'TlfSocio':object, 'CelularSocio': object,
                        'TipoCredito':object, 'SubTipoCredito': object}
 
-                ,parse_dates=['FechaDesembolsoTXT'  #AQUI SI SE HA PROCESADO
+                 ,parse_dates=['FechaDesembolsoTXT'  #AQUI SI SE HA PROCESADO
                               # ,'FechaAsignacionAbogadoTXT'  #no procesado
                               # ,'FechaExpedienteTXT'         #no procesado
                               # ,'FechaAsignacion'            #no procesado
@@ -66,46 +68,66 @@ df1=pd.read_excel(INSUMO,
                               # ,'JFechaVentaCartera'         #no procesado
                               # ,'FechaProcesoSistemaTXT'     #no procesado
                              ],
-                   date_parser=parse_date)
+                 date_parser=parse_date)
+
+#eliminación de duplicados por si acaso
 df1 = df1.drop_duplicates(subset='NroPrestamoFC')
 
-#df1 = df1.drop(9123) #esta partque habría que eliminar para el próximo mes
+#eliminación de vacíos
+df1.dropna(subset=['CodigoSocio', 
+                   'NroDocIdentidad',
+                   'NumeroPrestamo',
+                   'NroPrestamoFC',
+                   'TipoCredito'], inplace=True, how='all')
 
-# 2 aqui va el reporte del mes pasado
+############################################################
+##   2 aqui va el reporte del mes pasado                ####
+############################################################
+
 df2=pd.read_excel(MES_PASADO,
                   skiprows=0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
                   dtype={'NroDocIdentidad': object,
                          'NumeroPrestamo':object,
                          'NroPrestamoFC': object})
+
+#eliminación de duplicados por si acaso
 df2 = df2.drop_duplicates(subset='NroPrestamoFC')
 
+#eliminación de vacíos
+df2.dropna(subset=['NroDocIdentidad', 
+                   'NumeroPrestamo',
+                   'NroPrestamoFC'], inplace=True, how='all')
 
-#for i in range (21073,21093):
-#    df2 = df2.drop(i)
+############################################################
+##    3 ESTE TERCER ARCHIVO ES LA COBRANZA DEL MES       ###
+############################################################
 
-
-#del i
-#df2 = df2.drop(9123) #esta parte habría que eliminar para el próximo mes
-#df2 = df2.drop(9124) #esto también hay que eliminar
-
-
-# 3 ESTE TERCER ARCHIVO ES LA COBRANZA DEL MES
 df3_cobranza = pd.read_excel(COBRANZA,
-                 dtype={'codigosocio': object, 'doc_ident': object,
-                       'PagareFincore':object} )
+                             dtype={'codigosocio': object, 
+                                    'doc_ident': object,
+                                    'PagareFincore':object} )
 
+#aquí NO hay que eliminar duplicados
 
-# 4 el reporte 'Utilidad año castigo 2018 2019 2020 y 2021 - JGM para añadir a Saldos e Ingresos'
+#eliminamos columnas vacías
+df3_cobranza.dropna(subset=['codigosocio', 
+                            'doc_ident',
+                            'PagareFincore'], 
+                    inplace=True, 
+                    how='all')
+
+##########################################################################################################
+#    4 el reporte 'Utilidad año castigo 2018 2019 2020 y 2021 - JGM para añadir a Saldos e Ingresos'    ##
+##########################################################################################################
 
 df4_JGM_año_castigo = pd.read_excel(UTILIDAD_CASTIGO,
-                 dtype={'Numero Prestamo (Fox/Pond)': object, 'Nro Prestamo Fincore': object})
+                                    dtype={'Numero Prestamo (Fox/Pond)': object, 
+                                           'Nro Prestamo Fincore': object})
 
 df4_JGM_año_castigo = df4_JGM_año_castigo.drop_duplicates(subset='Nro Prestamo Fincore')
 
-
 JGM_año_castigo =  df4_JGM_año_castigo[['Nro Prestamo Fincore', 'año castigo utilidad JGM']] #esta es la versión para hacer el merge
 
-                        
 #%%
 
 dff1 = df1.copy() #dff1 será la copa de seguridad para no estar repitiendo
@@ -121,94 +143,14 @@ dff3 = df3_cobranza.copy() #copia de seguridad
 #df1 = df1.drop(columns=['CodPrestamoTXT'])
 df1 = df1.rename(columns={"Finalidad": "Finalidad TXT"})
 df2["CodFinalidad"] = df2["CodFinalidad"].astype(str)
-df2_finalidad = df2[["NroPrestamoFC", "CodFinalidad"]] #aquí revisar si tiene el nombre 'CodFinalidad' o 'Finalidad' a secas
+df2_finalidad = df2[["NroPrestamoFC",
+                     "CodFinalidad"]] #aquí revisar si tiene el nombre 'CodFinalidad' o 'Finalidad' a secas
 
-
-df_resultado = df1.merge(df2_finalidad, 
+df_resultado = df1.merge(df2_finalidad,
                          left_on=["NroPrestamoFC"], 
                          right_on=["NroPrestamoFC"]
                          ,how='left')
-############################
-'aqui se duplicó un crédito'
-############################
 
-#%%
-'''
-#codigo que primero me funcionó pero ya no
-def finalidad_producto(df_resultado):
-    if pd.isnull(df_resultado['Finalidad']):
-        if df_resultado['Finalidad TXT'].str.contains('LIBRE DISPONIBILIDAD').any() and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '30'
-        elif df_resultado['Finalidad TXT'].str.contains('INDEPENDIENTES - OTROS').any() and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '30'
-        elif df_resultado['Finalidad TXT'].str.contains('COMPRA DE PRODUCTO-BAZAR').any() and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '36'    
-        elif df_resultado['Finalidad TXT'].str.contains('GARANTIA HIPOTECARIA').any():
-            return '41'
-        elif df_resultado['Finalidad TXT'].str.contains('ACTIVO FIJO').any() and df_resultado['TipoCreditoTXT'].str.contains('PEQUEÑA EMPRESAS').any():
-            return '15'
-        elif df_resultado['Finalidad TXT'].str.contains('CONSUMO ORDINARIO').any() and df_resultado['TipoCreditoTXT'].str.contains('MEDIANAS EMPRESAS').any():
-            return '19'
-        elif df_resultado['Finalidad TXT'].str.contains('CAPITAL DE TRABAJO').any() and df_resultado['TipoCreditoTXT'].str.contains('MEDIANAS EMPRESAS').any():
-            return '19'    
-        elif df_resultado['Finalidad TXT'].str.contains('ACTIVO FIJO').any() and df_resultado['TipoCreditoTXT'].str.contains('MEDIANAS EMPRESAS').any():
-            return '16'
-        #no olvidar que aquí hay 2 negaciones
-        elif ~df_resultado['Finalidad TXT'].str.contains('GARANTIA HIPOTECARIA').any() and df_resultado['TipoCreditoTXT'].str.contains('MICROEMPRESAS').any():
-            return '25'    
-        elif ~(df_resultado['Finalidad TXT'].str.contains('LIBRE DISPONIBILIDAD').any() and df_resultado['Finalidad TXT'].str.contains('INDEPENDIENTES - OTROS').any()) and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '34'
-        elif (df_resultado['Finalidad TXT'].str.contains('COMPRA DE SERVICIOS / OTROS').any() or df_resultado['Finalidad TXT'].str.contains('COMPRA DE PRODUCTO-BAZAR').any()) and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '39'
-        elif df_resultado['Finalidad TXT'].str.contains('COMPRA DE PRODUCTO-BAZAR').any() and df_resultado['TipoCreditoTXT'].str.contains('CONSUMO NO REVOLVENTE').any():
-            return '45'    
-
-    else:
-        return df_resultado['Finalidad']
-    '''
-
-#aqui hay que quitar comentario
-'''
-#5
-def finalidad_producto(df_resultado):
-    if pd.isnull(df_resultado['CodFinalidad']):
-        if 'LIBRE DISPONIBILIDAD' in df_resultado['Finalidad TXT'] and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '30'
-        elif 'INDEPENDIENTES - OTROS' in df_resultado['Finalidad TXT'] and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '30'
-        elif 'COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT'] and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '36'    
-        elif 'GARANTIA HIPOTECARIA' in df_resultado['Finalidad TXT']:
-            return '41'
-        elif 'ACTIVO FIJO' in df_resultado['Finalidad TXT'] and 'PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '15'
-        elif 'CONSUMO ORDINARIO' in df_resultado['Finalidad TXT'] and 'MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '19'
-        elif 'CAPITAL DE TRABAJO' in df_resultado['Finalidad TXT'] and 'MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '19'    
-        elif 'ACTIVO FIJO' in df_resultado['Finalidad TXT'] and 'MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '16'
-        #no olvidar que aquí hay negaciones
-        elif ('GARANTIA HIPOTECARIA' not in df_resultado['Finalidad TXT']) and 'MICROEMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '25'
-        elif ~('LIBRE DISPONIBILIDAD' in df_resultado['Finalidad TXT'] and 'INDEPENDIENTES - OTROS' in df_resultado['Finalidad TXT']) and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '34'
-        elif ('COMPRA DE SERVICIOS / OTROS' in df_resultado['Finalidad TXT'] or 'COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT']) and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '39'
-        elif 'COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT'] and 'CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']:
-            return '45'
-        elif 'PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']:
-            return '15'
-        else:
-            return 'investigar'
-    else:
-        return df_resultado['CodFinalidad']
-    
-
-
-df_resultado['CodFinalidad'] = df_resultado.apply(finalidad_producto, axis=1)
-"hasta aquí está asignado el tipo de producto de la columna 'Finalidad'"
-'''
 #%%
 
 df_resultado['CodFinalidad']= np.nan
@@ -282,6 +224,8 @@ df_resultado['CodFinalidad'] = df_resultado.apply(pond_41, axis=1)
 df_resultado2 = df_resultado.copy()
 
 # Crear máscara booleana que indica cuáles filas cumplen la condición
+
+df_resultado2['MonedaTXT'] = df_resultado2['MonedaTXT'].str.strip()
 mask = df_resultado2['MonedaTXT'].eq('US$')
 
 # Seleccionar solo las filas que cumplen la condición y asignarles el resultado de la división
@@ -333,34 +277,31 @@ df_sum_capital = df3_cobranza.groupby('PagareFincore')['Capital'].sum().reset_in
 df_sum_INT_OTROS = df3_cobranza.groupby('PagareFincore')['Ingresos Financ'].sum().reset_index()
 df_sum_INT_OTROS = df_sum_INT_OTROS.rename({'Ingresos Financ': 'Int y Otros mes actual'}, axis=1)
 
-
-df3_cobranza.columns
-
 #esto es del mes pasado
 #separo las columnas de nro de 'fincore' y 'IMPTE CASTIGADO (Asignado x PGB)' del mes pasado, para hacer un merge
-df_cosas_mes_pasado = df2[["NroPrestamoFC", 
-                           'IMPTE CASTIGADO (Asignado x PGB)', 
-                           'FECHA DE CASTIGO', 
-                           'Capital Amortizado', 
+df_cosas_mes_pasado = df2[["NroPrestamoFC",
+                           'IMPTE CASTIGADO (Asignado x PGB)',
+                           'FECHA DE CASTIGO',
+                           'Capital Amortizado',
                            'Int y Otros']]
 
-#este codigo es para comprobar que sí está bien el resultado
-#df_sum.where(df_sum['PagareFincore'] == '00083701').dropna(how='all')
-
 "Merge de la tabla en bruto con la de cosas del reporte del mes pasado"
-df5 = df4.merge(df_cosas_mes_pasado, 
+df_cosas_mes_pasado = df_cosas_mes_pasado.drop_duplicates(subset='NroPrestamoFC')
+df5 = df4.merge(df_cosas_mes_pasado,
                          left_on=["NroPrestamoFC"], 
                          right_on=["NroPrestamoFC"]
                          ,how='left')
 
 "Merge de la tabla en bruto con el capital de la cobranza del mes actual"
-df5 = df5.merge(df_sum_capital, 
+df_sum_capital = df_sum_capital.drop_duplicates(subset="PagareFincore")
+df5 = df5.merge(df_sum_capital,
                          left_on=["NroPrestamoFC"], 
                          right_on=["PagareFincore"]
                          ,how='left')
 
 "Merge de la tabla en bruto con el int de la cobranza del mes actual"
-df5 = df5.merge(df_sum_INT_OTROS, 
+df_sum_INT_OTROS = df_sum_INT_OTROS.drop_duplicates(subset="PagareFincore")
+df5 = df5.merge(df_sum_INT_OTROS,
                          left_on=["NroPrestamoFC"], 
                          right_on=["PagareFincore"]
                          ,how='left')
@@ -377,17 +318,12 @@ df5['Int y Otros mes actual'].fillna(0, inplace=True)
 
 df6 = df5.copy()
 
-
 mascara = df5['IMPTE CASTIGADO (Asignado x PGB)'] != 0
 
-df6.loc[mascara, 'Capital Amortizado'] = df6.loc[mascara, 'Capital Amortizado']+df6.loc[mascara, 'Capital']
-df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros']+df6.loc[mascara, 'Int y Otros mes actual']
+df6.loc[mascara, 'Capital Amortizado'] = df6.loc[mascara, 'Capital Amortizado'] + df6.loc[mascara, 'Capital']
+df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros'] + df6.loc[mascara, 'Int y Otros mes actual']
 #hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado
 #, y filtrado según saldo castigado
-
-############################
-'aqui se duplicaron dos créditos (ya van 4)'
-############################
 
 #%%
 #sumar y restar
@@ -408,25 +344,19 @@ df6['SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.apply(asignar_saldo_deudor, a
 
 #ya está llenado hasta esta columna SALDO DEUDOR REALISTA (SOLO PARA PGB)
 
-
 #%%
 df2_observ_v_garantia = df2[['NroPrestamoFC','OBSERVACION','VALOR GARANTIA']].copy()
 df2_observ_v_garantia['OBSERVACION'].fillna('--', inplace=True) #REEMPLAZANDO LOS NaN por --
-df2_observ_v_garantia['VALOR GARANTIA'].fillna(0, inplace=True) #reemp
-
-
+df2_observ_v_garantia['VALOR GARANTIA'].fillna(0, inplace=True) #reemplazando los NaN por 0
 
 df6 = df6.rename(columns={'VALOR GARANTIA': 'VALOR GARANTIA ANTIGUA'})
 df6 = df6.rename(columns={'OBSERVACION': 'OBSERVACION ANTIGUA'})
 
-df6 = df6.merge(df2_observ_v_garantia, 
+df2_observ_v_garantia = df2_observ_v_garantia.drop_duplicates(subset = "NroPrestamoFC")
+df6 = df6.merge(df2_observ_v_garantia,
                          left_on=["NroPrestamoFC"], 
                          right_on=["NroPrestamoFC"]
                          ,how='left')
-
-############################
-'aqui se duplicó un crédito'
-############################
 
 #df6[['VALOR GARANTIA','OBSERVACION']]
 
@@ -446,7 +376,6 @@ dff6['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] = dff6.apply(asignar_saldo_deudor, ax
 
 #solo para chequear
 #%%
-
 df7 = dff6.copy()
 def alerta(df7):
     if df7['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] > df7['Nuevo Saldo']:
@@ -455,7 +384,6 @@ def alerta(df7):
         return '--'
     
 df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] = df7.apply(alerta, axis=1)
-
 
 #%%
 df_final = df7.merge(JGM_año_castigo, 
@@ -551,7 +479,7 @@ df_finalizado['CodFinalidad'] = df_finalizado['CodFinalidad'].astype(str)
 
 #df_finalizado['CodFinalidad'] = df_finalizado['CodFinalidad'].str.replace('.0', '')
 def asignacion_auxiliar(df_finalizado):
-    if df_finalizado['CodFinalidad'] in ['15']:
+    if df_finalizado['CodFinalidad']   in ['15']:
         return 'PEQUEÑA EMPRESA'
     elif df_finalizado['CodFinalidad'] in ['16', '17', '18', '19']:
         return 'MEDIANA EMPRESA'   
@@ -577,9 +505,12 @@ df_finalizado['VALOR GARANTIA'] = df_finalizado['VALOR GARANTIA'].fillna(0)
 # creamos una máscara booleana
 mask = df_finalizado['NroPrestamoFC'].duplicated(keep=False)
 df_duplicados = df_finalizado[mask]
-print(df_duplicados)
 
-data = df_finalizado.drop(index=3198) #para eliminar según el índice, (elimina el índice que pones, ni más ni menos)
+print('NRO DE CRÉDITOS DUPLICADOS:')
+print(df_duplicados.shape[0])
+
+# si es que hay duplicados, hay que eliminarlos
+##data = df_finalizado.drop(index=3198) #para eliminar según el índice, (elimina el índice que pones, ni más ni menos)
 
 #df_finalizado = data.copy()
 #%%
