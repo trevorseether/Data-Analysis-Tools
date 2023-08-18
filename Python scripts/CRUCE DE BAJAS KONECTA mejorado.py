@@ -103,7 +103,6 @@ SELECT
 	s.FechaNacimiento, 
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
-	p.FechaVentaCartera, 
 	tm4.descripcion as 'EstadoSocio'
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo as p
