@@ -9,9 +9,9 @@ import pandas as pd
 import os
 
 #%% #LEYENDO EL DEL DÍA ACTUAL
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\17 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\18 agosto 2023')
 
-kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230817.xlsx',
+kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230818.xlsx',
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
                               'NUMERO DOCUMENTO': str})
@@ -21,8 +21,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
 #%% #LEYENDO EL DEL DÍA ANTERIOR
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\16 agosto 2023'
-nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230816.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\17 agosto 2023'
+nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230817.xlsx'
 
 kashio_anterior = pd.read_excel(ubi + '\\' + nombre,
                                 dtype={'ID CLIENTE': str,
@@ -87,7 +87,7 @@ kashio.to_excel(nombre, index=False)
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
 #PONEMOS EL NOMBRE DEL OTRO ARCHIVO
-kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230817.xlsx',
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230818.xlsx',
                                 dtype = {'ID CLIENTE (*)': str,
                                          'REFERENCIA': str,
                                          'ID ORDEN DE PAGO': str})
