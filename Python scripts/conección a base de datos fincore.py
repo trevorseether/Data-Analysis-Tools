@@ -8,14 +8,19 @@ Created on Fri Aug  4 18:58:42 2023
 import pyodbc
 import pandas as pd
 
-server = '172.16.1.19\SQL_SANMIGUEL'
-database = 'nombre_de_la_base_de_datos'  # Reemplaza con el nombre de tu base de datos
-username = 'USER_LECTURA'
-password = '123456789@T'
+#%%
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
+#%%
+
+server      = datos['DATOS'][0]
+username    = datos['DATOS'][2]
+password    = datos['DATOS'][3]
 
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
+
 ########################################################
 ###                CAMBIAR LA FECHA               ######
 ########################################################

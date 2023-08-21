@@ -43,22 +43,26 @@ print('Documentos que se hayan convertido en Null:')
 print(uwu)
 del uwu
 
+#%% LECTURA DE LAS CREDENCIALES
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
-#%%
-server = '172.16.1.19\SQL_SANMIGUEL'
-database = 'nombre_de_la_base_de_datos'  # Reemplaza con el nombre de tu base de datos
-username = 'USER_LECTURA'
-password = '123456789@T'
+#%% CREACIÓN DE LA CONECCIÓN A SQL
+
+server      = datos['DATOS'][0]
+username    = datos['DATOS'][2]
+password    = datos['DATOS'][3]
 
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
+
+#%%
 ########################################################
 ###                CAMBIAR LA FECHA               ######
 ########################################################
 
 ###############################################################################
-fecha_hoy = '20230814' ########## NO OLVIDAAAAAAAAAAAAAAAAAAAAARRRRRRR ########
+fecha_hoy = '20230814' ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ########
 ###############################################################################
 query = f'''
 SELECT
@@ -185,9 +189,9 @@ bajas2 = bajas[['Documento', 'Documento original']]
 #%%
 'inner join usando '
 df_resultado = vigentes2.merge(bajas2, 
-                         left_on=["DOC_IDENTIDAD_ceros"], 
-                         right_on=['Documento']
-                         ,how='inner')
+                               left_on=["DOC_IDENTIDAD_ceros"], 
+                               right_on=['Documento']
+                               ,how='inner')
 
 #%%
 '''creamos el archivo final'''
@@ -203,6 +207,9 @@ final = final.rename(columns={'Documento original': 'Documento'})
 
 final = final[['Documento', 'SOCIO', 'FECHA_DESEMBOLSO',
                'CUOTA MENSUAL', 'PAGARE_FINCORE', 'EMPRESA/PLANILLA']]
+
+# POR SI ACASO, ELIMINAMOS DUPLICADOS
+final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace=True)
 
 #%%
 

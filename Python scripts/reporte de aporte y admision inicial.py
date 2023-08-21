@@ -14,9 +14,14 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE APORTE Y ADMISIO\\2023 AGO
 hora = '9am'
 
 #%%
-server = '172.16.1.19\SQL_SANMIGUEL'
-username = 'USER_LECTURA'
-password = '123456789@T'
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
+#%% COLOCANDO CREDENCIALES DEL SQL SERVER
+
+server      = datos['DATOS'][0]
+username    = datos['DATOS'][2]
+password    = datos['DATOS'][3]
+
 
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
