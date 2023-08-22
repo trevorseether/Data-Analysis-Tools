@@ -18,20 +18,21 @@ import pyodbc
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '14-08-2023'
+FECHATXT = '22-08-2023'
 ############################################################################
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\14 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\22 agosto 2023')
 
 #%%
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('5TO INFORME 08_23 GRUPO KONECTA.xlsx',
+bajas = pd.read_excel('VF 6TO INFORME DE BAJAS GRUPO - AGOSTO 2023.xlsx',
                     dtype=({'Documento': object}))
 
+bajas['Documento'] = bajas['Documento'].astype(str)
 bajas['Documento'] = bajas['Documento'].str.strip()
 
 uwu = bajas[pd.isna(bajas['Documento'])]
@@ -40,8 +41,13 @@ print(uwu)
 bajas['Documento original'] =   bajas['Documento']
 bajas['Documento'] = bajas['Documento'].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
-print(uwu)
-del uwu
+
+if uwu.shape[0] > 0:
+    print(uwu)
+    print('investigar qué ha pasado')
+else:
+    del uwu
+    print('todo bien')
 
 #%% LECTURA DE LAS CREDENCIALES
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -62,7 +68,7 @@ conn = pyodbc.connect(conn_str)
 ########################################################
 
 ###############################################################################
-fecha_hoy = '20230814' ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ########
+fecha_hoy = '20230822' ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ########
 ###############################################################################
 query = f'''
 SELECT
@@ -170,7 +176,7 @@ vigentes["Estado"] = vigentes["Estado"].str.upper() #mayúsculas
 vigentes = vigentes[vigentes["Estado"] == 'PENDIENTE']
 
 #%%
-'agregamos 14 ceros al reporte enviado POR CESAR'
+'agregamos 14 ceros al reporte EXTRAIDO CON SQL'
 vigentes["Doc_Identidad"] = vigentes["Doc_Identidad"].astype(str)
 vigentes["DOC_IDENTIDAD_ceros"] = vigentes["Doc_Identidad"].str.zfill(14)
 
