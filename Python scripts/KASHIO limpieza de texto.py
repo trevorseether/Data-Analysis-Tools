@@ -8,10 +8,16 @@ Created on Mon Aug  7 15:00:55 2023
 import pandas as pd
 import os
 
-#%% #LEYENDO EL DEL DÍA ACTUAL
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\21 agosto 2023')
+#%% UBICACIÓN DE LOS ARCHIVOS
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\22 agosto 2023')
 
-kashio = pd.read_excel('DATA_CLIENTES_COOP.SANMIGUEL_20230821.xlsx',
+#%%
+'NOMBRE DEL ARCHIVO DE HOY' ##########################################
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230822.xlsx'
+#####################################################################
+
+#%%
+kashio = pd.read_excel(ARCHIVO_HOY,
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
                               'NUMERO DOCUMENTO': str})
@@ -20,9 +26,11 @@ kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
-#%% #LEYENDO EL DEL DÍA ANTERIOR
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\18 agosto 2023'
-nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230818.xlsx'
+#%% 
+'''
+#LEYENDO EL DEL DÍA ANTERIOR
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\21 agosto 2023'
+nombre = 'DATA_CLIENTES_COOP.SANMIGUEL_20230821.xlsx'
 
 kashio_anterior = pd.read_excel(ubi + '\\' + nombre,
                                 dtype={'ID CLIENTE': str,
@@ -43,7 +51,7 @@ kashio = kashio.merge(kashio_anterior,
                       right_on=['ID ANTERIOR'],
                       how='left')
 
-def limpieza(kashio): #revisar si esta vaina del pd.isna funciona
+def limpieza(kashio): #si no hay 'email del día anterior' se coloca el del día actual
     if pd.isna(kashio['EMAIL ANTERIOR']):
         return kashio['EMAIL']
     else:
@@ -52,7 +60,10 @@ def limpieza(kashio): #revisar si esta vaina del pd.isna funciona
 kashio['EMAIL ANTERIOR'] = kashio.apply(limpieza, axis=1)
 
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL ANTERIOR'].str.strip()
-#%% LIMPIEZA DE DATOS:  
+'''
+#%% LIMPIEZA DE DATOS:
+kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos las celdas anteriores, esto habría que eliminarlo
+
 def correccion(row):
     palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
                          'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM',
@@ -75,7 +86,7 @@ kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesa
 
 #%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
 '''esto habrá que comentarlo una vez que asumamos al 100% las funciones'''
-nombre = "correo corregido.xlsx"
+nombre = "correo corregido PRUEBITA.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -86,8 +97,8 @@ kashio.to_excel(nombre, index=False)
 
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
-#PONEMOS EL NOMBRE DEL OTRO ARCHIVO
-kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_20230821.xlsx',
+#ESTE AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) +'.xlsx',
                                 dtype = {'ID CLIENTE (*)': str,
                                          'REFERENCIA': str,
                                          'ID ORDEN DE PAGO': str})

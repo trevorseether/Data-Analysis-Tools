@@ -22,14 +22,14 @@ FECHATXT = '22-08-2023'
 ############################################################################
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\22 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\22 agosto 2023 p2')
 
 #%%
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('VF 6TO INFORME DE BAJAS GRUPO - AGOSTO 2023.xlsx',
+bajas = pd.read_excel('VF ADICIONAL 6TO INFORME DE BAJAS GRUPO - AGOSTO 2023.xlsx',
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
