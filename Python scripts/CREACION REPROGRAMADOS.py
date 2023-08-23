@@ -18,6 +18,7 @@ import numpy as np
 #%%
 fecha_mes = 'JULIO 2023'
 fecha_corte = '2023-07-31'
+
 #%%
 #INSUMO PRINCIPAL, ANEXO06 SUPER PRELIMINAR
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
@@ -39,10 +40,8 @@ bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados f
                              'Tipo de Producto 43/': object,
                              'Fecha de Vencimiento Origuinal del Credito 48/': object,
                              'Fecha de Vencimiento Actual del Crédito 49/': object,
-                             '''Nro Prestamo 
-Fincore''': object,
-                             'Refinanciado TXT': object,
-}))
+                             'Nro Prestamo \nFincore': object,
+                             'Refinanciado TXT': object}))
 
 menos_bruto = bruto.drop(columns=[col for col in bruto.columns if 'Unnamed' in col]) #elimina columnas Unnamed
 
