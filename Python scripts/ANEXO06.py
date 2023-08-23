@@ -128,8 +128,12 @@ Fincore'''] == '00092306', 'Tipo de Documento 9/'] = '1'
 tipo_cero = df1[(df1['Tipo de Documento 9/'] == 0) | \
                 (df1['Tipo de Documento 9/'] == '0')]
 
-print(tipo_cero.shape[0]) #si sale vacío, está todo bien
-
+#si sale vacío, está todo bien
+if tipo_cero.shape[0] == 0:
+    print(0)
+    print('todo bien')
+else:
+    print('investigar, hay algún tipo de documento con cero, y no debe tenerlo')
     
 #456 Ejemplo de código para realizar un update en función de múltiples condiciones
 #456df1.loc[(df1['Nro Prestamo Fincore'] == '00092306') & \
@@ -151,6 +155,7 @@ def cuenta_contable_castigados(df1):
 df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castigados, axis=1)
 
 print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
+print('si sale 8113020000 entonces todo bien')
 
 #%% CLASIFICACIÓN DE LOS REFINANCIADOS
 
@@ -204,9 +209,7 @@ print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()].shape[0]
 #quitando posibles espacios vacíos en el código del socio
 df1['Código Socio 7/'] = df1['Código Socio 7/'].str.strip()
 
-df1['''Nro Prestamo 
-Fincore'''] = df1['''Nro Prestamo 
-Fincore'''].str.strip()
+df1['Nro Prestamo \nFincore'] = df1['Nro Prestamo \nFincore'].str.strip()
 
 df1['Número de Documento 10/'] = df1['Número de Documento 10/'].str.strip()
 df1['Tipo de Documento 9/'] = df1['Tipo de Documento 9/'].astype(int).astype(str).str.strip()
@@ -226,8 +229,8 @@ df100_merge = df100_merge["codigo de socio"]
 
 df_resultado = df1.merge(df100_merge, 
                          left_on=["Código Socio 7/"], 
-                         right_on=["codigo de socio"]
-                         ,how='left')
+                         right_on=["codigo de socio"],
+                         how='left')
 
 print(df_resultado.shape[0])
 df_resultado.drop_duplicates(subset='Nro Prestamo \nFincore', inplace=True)
@@ -238,7 +241,7 @@ df_resultado = df_resultado.rename(columns={"codigo de socio": "al menos 1 créd
 dataframe = df_resultado.copy()
 
 # del df_resultado
-# df_resultado = dataframe 
+# df_resultado = dataframe
 
 #%%% limpieza refinanciados
 
