@@ -9,11 +9,11 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\22 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\23 agosto 2023')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230822.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230823.xlsx'
 #####################################################################
 
 #%%
@@ -86,7 +86,7 @@ kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesa
 
 #%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
 '''esto habrá que comentarlo una vez que asumamos al 100% las funciones'''
-nombre = "correo corregido PRUEBITA.xlsx"
+nombre = "correo corregido.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -128,7 +128,7 @@ kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
 
 #%% EXPORTAR A CSV 
 
-kashio_para_csv.to_csv('GeneracionData.csv', 
+kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
                        index=False, 
                        encoding='utf-8')
 

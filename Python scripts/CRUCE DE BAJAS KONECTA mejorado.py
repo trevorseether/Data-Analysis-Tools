@@ -149,8 +149,8 @@ vigentes = pd.read_sql_query(query, conn, dtype={'Doc_Identidad': object,
        'fechadesembolso': object
        })
 del conn
-#%%
-#parsenado las fechas
+#%% PARSEO DE FECHAS
+
 formatos = ['%d/%m/%Y %H:%M:%S',
             '%d/%m/%Y',
             '%Y%m%d', '%Y-%m-%d', 
@@ -168,7 +168,7 @@ def parse_dates(date_str):
 
 vigentes['fechadesembolso'] = vigentes['fechadesembolso'].apply(parse_dates)
 
-#%%
+#%% FILTRAMOS ESTADO = PENDIENTE
 'por si acaso, nos quedamos solo con los que tienen estado = pendiente'
 
 vigentes["Estado"] = vigentes["Estado"].str.strip() #quitamos espacios
