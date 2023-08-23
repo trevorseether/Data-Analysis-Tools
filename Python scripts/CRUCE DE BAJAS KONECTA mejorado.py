@@ -37,17 +37,18 @@ bajas['Documento'] = bajas['Documento'].str.strip()
 
 uwu = bajas[pd.isna(bajas['Documento'])]
 print('Documentos que se hayan convertido en Null:')
-print(uwu)
+print(uwu.shape[0])
 bajas['Documento original'] =   bajas['Documento']
 bajas['Documento'] = bajas['Documento'].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
 
 if uwu.shape[0] > 0:
     print(uwu)
-    print('investigar qué ha pasado')
+    print('investigar qué ha pasado ( ´･･)ﾉ(._.`)')
 else:
+    print(uwu.shape[0])
     del uwu
-    print('todo bien')
+    print('''todo bien (●'◡'●)''')
 
 #%% LECTURA DE LAS CREDENCIALES
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -184,12 +185,12 @@ vigentes["DOC_IDENTIDAD_ceros"] = vigentes["Doc_Identidad"].str.zfill(14)
 'nos quedamos solo con las columnas necesarias'
 
 vigentes2 = vigentes[["DOC_IDENTIDAD_ceros", "Socio", "fechadesembolso", "pagare_fincore", "CuotaFija", "Planilla"]]
-vigentes2 = vigentes2.rename(columns={"Doc_Identidad": "DOC_IDENTIDAD",
-                                      "Socio": "SOCIO",
-                                      "fechadesembolso": "FECHA_DESEMBOLSO",
-                                      "pagare_fincore": "PAGARE_FINCORE",
-                                      "CuotaFija": "CUOTA MENSUAL",
-                                      "Planilla": "EMPRESA/PLANILLA"})
+vigentes2 = vigentes2.rename(columns={"Doc_Identidad"   : "DOC_IDENTIDAD",
+                                      "Socio"           : "SOCIO",
+                                      "fechadesembolso" : "FECHA_DESEMBOLSO",
+                                      "pagare_fincore"  : "PAGARE_FINCORE",
+                                      "CuotaFija"       : "CUOTA MENSUAL",
+                                      "Planilla"        : "EMPRESA/PLANILLA"})
 
 bajas2 = bajas[['Documento', 'Documento original']]
 #%%
@@ -205,14 +206,24 @@ df_resultado = vigentes2.merge(bajas2,
 df_resultado['SALDO A DESCONTAR'] = np.nan
 df_resultado['# CUOTAS'] = np.nan
 
-final = df_resultado[['Documento original','SOCIO', 'FECHA_DESEMBOLSO', 'SALDO A DESCONTAR', '# CUOTAS',"CUOTA MENSUAL", 'PAGARE_FINCORE', "EMPRESA/PLANILLA"]]
+final = df_resultado[['Documento original',
+                      'SOCIO', 
+                      'FECHA_DESEMBOLSO', 
+                      'SALDO A DESCONTAR', 
+                      '# CUOTAS',"CUOTA MENSUAL",
+                      'PAGARE_FINCORE', 
+                      "EMPRESA/PLANILLA"]]
 
 final = final.rename(columns={'Documento original': 'Documento'})
 
 #%% NOS QUEDAMOS SOLO CON LAS COLUMNAS NECESARIAS (ya lo que hacíamos a mano no hace falta)
 
-final = final[['Documento', 'SOCIO', 'FECHA_DESEMBOLSO',
-               'CUOTA MENSUAL', 'PAGARE_FINCORE', 'EMPRESA/PLANILLA']]
+final = final[['Documento', 
+               'SOCIO', 
+               'FECHA_DESEMBOLSO',
+               'CUOTA MENSUAL', 
+               'PAGARE_FINCORE', 
+               'EMPRESA/PLANILLA']]
 
 # POR SI ACASO, ELIMINAMOS DUPLICADOS
 final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace=True)
@@ -228,10 +239,5 @@ except FileNotFoundError:
 
 final.to_excel(NOMBRE, index=False,
                sheet_name=FECHATXT)
-
-
-
-
-
 
 
