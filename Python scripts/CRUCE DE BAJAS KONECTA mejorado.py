@@ -4,17 +4,19 @@ Created on Fri Jun 16 10:46:51 2023
 
 @author: Joseph Montoya Muñoz
 """
-
+'''
 ###############################################################################
 ##          CRUCE DE BAJAS DE KONECTA
 ###############################################################################
+'''
+#%% IMPORTACIÓN DE MÓDULOS
 
 import pandas as pd
 import os
-import numpy as np
+#import numpy as np
 import pyodbc
 
-#%%
+#%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
@@ -24,7 +26,7 @@ FECHATXT = '22-08-2023'
 'ubicación de trabajo'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\22 agosto 2023 p2')
 
-#%%
+#%% DATA COBRANZA
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
@@ -63,7 +65,7 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-#%%
+#%% QUERY, créditos vigentes
 ########################################################
 ###                CAMBIAR LA FECHA               ######
 ########################################################
@@ -176,15 +178,21 @@ vigentes["Estado"] = vigentes["Estado"].str.upper() #mayúsculas
 
 vigentes = vigentes[vigentes["Estado"] == 'PENDIENTE']
 
-#%%
+#%% 14 ceros para merge
 'agregamos 14 ceros al reporte EXTRAIDO CON SQL'
 vigentes["Doc_Identidad"] = vigentes["Doc_Identidad"].astype(str)
 vigentes["DOC_IDENTIDAD_ceros"] = vigentes["Doc_Identidad"].str.zfill(14)
 
-#%%
+#%%SELECCIÓN DE COLUMNAS
 'nos quedamos solo con las columnas necesarias'
 
-vigentes2 = vigentes[["DOC_IDENTIDAD_ceros", "Socio", "fechadesembolso", "pagare_fincore", "CuotaFija", "Planilla"]]
+vigentes2 = vigentes[["DOC_IDENTIDAD_ceros", 
+                      "Socio", 
+                      "fechadesembolso", 
+                      "pagare_fincore", 
+                      "CuotaFija", 
+                      "Planilla"]]
+
 vigentes2 = vigentes2.rename(columns={"Doc_Identidad"   : "DOC_IDENTIDAD",
                                       "Socio"           : "SOCIO",
                                       "fechadesembolso" : "FECHA_DESEMBOLSO",
@@ -193,42 +201,34 @@ vigentes2 = vigentes2.rename(columns={"Doc_Identidad"   : "DOC_IDENTIDAD",
                                       "Planilla"        : "EMPRESA/PLANILLA"})
 
 bajas2 = bajas[['Documento', 'Documento original']]
-#%%
+#%% INNER JOIN
 'inner join usando '
 df_resultado = vigentes2.merge(bajas2, 
                                left_on=["DOC_IDENTIDAD_ceros"], 
                                right_on=['Documento']
                                ,how='inner')
 
-#%%
+#%% DATAFRAME FINAL
 '''creamos el archivo final'''
 
-df_resultado['SALDO A DESCONTAR'] = np.nan
-df_resultado['# CUOTAS'] = np.nan
+#df_resultado['SALDO A DESCONTAR'] = np.nan
+#df_resultado['# CUOTAS'] = np.nan
 
 final = df_resultado[['Documento original',
                       'SOCIO', 
                       'FECHA_DESEMBOLSO', 
-                      'SALDO A DESCONTAR', 
-                      '# CUOTAS',"CUOTA MENSUAL",
+                      #'SALDO A DESCONTAR', 
+                      #'# CUOTAS',
+                      "CUOTA MENSUAL",
                       'PAGARE_FINCORE', 
                       "EMPRESA/PLANILLA"]]
 
 final = final.rename(columns={'Documento original': 'Documento'})
 
-#%% NOS QUEDAMOS SOLO CON LAS COLUMNAS NECESARIAS (ya lo que hacíamos a mano no hace falta)
-
-final = final[['Documento', 
-               'SOCIO', 
-               'FECHA_DESEMBOLSO',
-               'CUOTA MENSUAL', 
-               'PAGARE_FINCORE', 
-               'EMPRESA/PLANILLA']]
-
 # POR SI ACASO, ELIMINAMOS DUPLICADOS
 final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace=True)
 
-#%%
+#%% CREACIÓN DE EXCEL
 
 NOMBRE = 'BAJAS '+ FECHATXT +'.xlsx'
 try:
