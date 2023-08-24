@@ -26,6 +26,8 @@ kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
+columnas = list(kashio.columns)
+
 #%% 
 '''
 #LEYENDO EL DEL DÍA ANTERIOR
@@ -82,11 +84,11 @@ kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis=1)
 
 kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 
-kashio = kashio[kashio.columns[0:11]] #nos quedamos solo con las columnas necesarias
+kashio = kashio[columnas] #nos quedamos solo con las columnas necesarias
 
-#%% CREACIÓN DEL PRIMER REPORTE CORREGIDO
-'''esto habrá que comentarlo una vez que asumamos al 100% las funciones'''
-nombre = "correo corregido.xlsx"
+#%% REPORTE DE CLIENTES CORREGIDO PARA CHEQUEAR LOS CORREOS
+
+nombre = "Correo corregido " + str(ARCHIVO_HOY[29:37]) + ".xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
