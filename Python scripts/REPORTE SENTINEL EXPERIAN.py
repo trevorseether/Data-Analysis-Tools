@@ -753,7 +753,7 @@ df_sentinel.loc[mascara_booleana, ['N° Documento\nIdentidad (*)  DNI o RUC',
 df_sentinel['Tipo Persona (*)'] = df_sentinel['Tipo Persona (*)'].astype(str).str.strip()
 
 def arreglo_me_deuda_avalada(df_sentinel):
-    if df_sentinel['Tipo Persona (*)'] in ['1', '2']:
+    if df_sentinel['Tipo Persona (*)'] in ['1', '2', 1, 2]:
         return 0
     else:
         return df_sentinel['MN Deuda Avalada (*)']

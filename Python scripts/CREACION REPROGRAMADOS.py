@@ -5,22 +5,27 @@ Created on Tue Jun  6 10:40:15 2023
 @author: Joseph Montoya
 """
 
+###############################################################################
+####                             REPROGRAMADOS                             ####
+###############################################################################
+
+#%% IMPORTACIÓN DE LIBRERÍAS
 import pandas as pd
 import os
 import numpy as np
 
-#%%
+#%% INDICACIONES PRELIMINARES
 'Revisar que estén bien las fechas:'
 #"Fecha Creacion Reprogramacion Nacimiento TXT"
 #"Fecha Creacion Reprogramacion Corte TXT"
 #'FEC_ULT_REPROG'
 
-#%%
+#%% ESTABLECER FECHA DEL MES
 fecha_mes = 'JULIO 2023'
 fecha_corte = '2023-07-31'
 
-#%%
-#INSUMO PRINCIPAL, ANEXO06 SUPER PRELIMINAR
+#%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
+
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
 
 bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados final (original fincore).xlsx',
@@ -46,10 +51,10 @@ bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados f
 menos_bruto = bruto.drop(columns=[col for col in bruto.columns if 'Unnamed' in col]) #elimina columnas Unnamed
 
 menos_bruto.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
-                   'Fecha de Nacimiento 3/',
-                   'Número de Documento 10/',
-                   'Domicilio 12/',
-                   'Numero de Crédito 18/'], inplace=True, how='all') #eliminando las filas vacías
+                           'Fecha de Nacimiento 3/',
+                           'Número de Documento 10/',
+                           'Domicilio 12/',
+                           'Numero de Crédito 18/'], inplace=True, how='all') #eliminando las filas vacías
 
 menos_bruto['Código Socio 7/'] = menos_bruto['Código Socio 7/'].str.strip()
 menos_bruto['Apellidos y Nombres / Razón Social 2/'] = menos_bruto['Apellidos y Nombres / Razón Social 2/'].str.strip()
@@ -71,7 +76,7 @@ print('si sale menos en el segundo es porque hubo duplicados')
 df_mes_actual_copia = menos_bruto.copy()
 
 #%%
-#aquí el anexo06 del mes pasado, el que manda Cesar
+#aquí el anexo06 del mes pasado, el que manda Cesar (creo que ahí iría el del primer procesamiento)
 ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO'
 
 nombre_anx06 = 'ANEXO 06 CAMPOS AMPLIADOS JUNIO 2023 - validacion1.xlsx'
