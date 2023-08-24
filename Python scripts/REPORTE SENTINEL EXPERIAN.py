@@ -4,49 +4,19 @@ Created on Tue Feb 21 12:37:47 2023
 
 @author: Joseph Montoya
 """
-#############################
-#   reporte para sentinel   #
-#############################
-#ESTE ES EL REPORTE QUE NOS PASA DENISSE O CESAR
+'''
+#####################################
+#   REPORTE PARA SENTINEL-EXPERIAN  #
+#####################################
+'''
 
-#%% módulos necesarios
+#%% importación de módulos
 import pandas as pd
 import os
-import pyodbc
 import numpy as np
 
-#import numpy as np
-
-#%%
-##############################################
-#    NROS CREDITO, OBTENIDOS DEL SQL
-##############################################
-#añadiendo nro de fincore al reporte de sentinel
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-
-
-########################################################
-###  donde dice @fechacorte se debe poner el mes  ######
-########################################################
-
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
-df_fincore = pd.read_sql_query('''
-declare @fechacorte datetime
-set @fechacorte = '20230731' 
-
-select 
-    NumerodeCredito18, 
-    Nro_Fincore
-    
-from 
-    anexos_riesgos2..Anx06_preliminar
-
-where 
-    FechaCorte1 = @fechacorte
-''', conn)
-del conn
-
-#%% df_fincore en caso no haya subido esto al sql
+#%% ANEXO 06 PARA SACAR ALGUNOS DATOS DE AQUÍ
+FECHA_CORTE = 'JULIO 2023'
 ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO'
 nombre = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados VERSIÓN 2.xlsx'
 
@@ -55,6 +25,25 @@ df_fincore = pd.read_excel(ubi + '\\'  + nombre,
                                     'Numero de Crédito 18/': object},
                            skiprows= 2)
 
+df_fincore.dropna(subset=['Nro Prestamo \nFincore',
+                          'Numero de Crédito 18/'], inplace=True, how='all')
+
+#LIMPIEZA DE ESPACIOS
+df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].astype(str)
+df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].str.strip()
+df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].astype(str)
+df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].str.strip()
+
+#generamos el anexo para las saldos descapitalizados
+anexo_06_descap = df_fincore[['Nro Prestamo \nFincore',
+                              'Numero de Crédito 18/',
+                              'Capital Vigente 26/',
+                              'Capital Refinanciado 28/',
+                              'Capital Vencido 29/',
+                              'Capital en Cobranza Judicial 30/',
+                              'Saldos de Créditos Castigados 38/']]
+
+#anexo para relacionar nro fincore con nro crédito 18/
 df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
 df_fincore['Nro_Fincore'] = df_fincore['Nro Prestamo \nFincore']
 
@@ -66,66 +55,34 @@ df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
 del ubi
 del nombre
 
-#%%
+#%% LECTURA DEL REPORTE EN BRUTO
 ##############################################
 #      REPORTE INSUMO PRINCIPAL
 ##############################################
 #importamos el archivo sentinel bruto, que nos manda Cesar o Denisse
 ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO"
-os.chdir(ubicacion) #aqui se cambia la ubicación
+os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
 
 df_sentinel=pd.read_excel("SM_0723 - Sentinel-Experian Cart Vigente y Vencida - Julio-23.xlsm",    # aqui se cambia el nombre del archivo si es necesario
                   dtype={
-'''Fecha del
-Periodo
-(*)''': object, 
-'''Codigo
-Entidad
-(*)''': object,
-'''Tipo
-Documento
-Identidad (*)''': object,
-'''N° Documento
-Identidad (*)  DNI o RUC''' : str,
-'''Tipo Persona (*)''': object,
-'''Modalidad de Credito (*)''': object})
+                      'Fecha del\nPeriodo\n(*)':        object, 
+                      'Codigo\nEntidad\n(*)':           object,
+                      'Tipo\nDocumento\nIdentidad (*)': object,
+                      'N° Documento\nIdentidad (*)  DNI o RUC' : str,
+                      'Tipo Persona (*)':               object,
+                      'Modalidad de Credito (*)':       object
+                        })
 
 df_sentinel.dropna(subset=['Cod. Prestamo', 
-                   '''N° Documento
-Identidad (*)  DNI o RUC''',
-                   'Razon Social (*)',
-                   'Apellido Paterno (*)'], inplace=True, how='all')
+                           'N° Documento\nIdentidad (*)  DNI o RUC',
+                           'Razon Social (*)',
+                           'Apellido Paterno (*)'], 
+                   inplace=True, 
+                   how='all')
 
 df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 
-#%% DESCAPITALIZACIÓN DE LOS SALDOS
-
-'ES SOLO SACAR ESTOS DATOS DEL ANEXO06'
-#######################################
-#   aquí ponemos el anexo06 final   ###
-#######################################
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO'
-nombre = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados VERSIÓN 2.xlsx'
-anexo_06_descap = pd.read_excel(ubi + '\\' + nombre,
-                                skiprows= 2,
-                                dtype = {'Nro Prestamo \nFincore' : object,
-                                         'Numero de Crédito 18/': object}
-                                         )
-
-#nos quedamos con las columnas necesarias
-anexo_06_descap = anexo_06_descap[['Nro Prestamo \nFincore',
-                                   'Numero de Crédito 18/',
-                                   'Capital Vigente 26/',
-                                   'Capital Refinanciado 28/',
-                                   'Capital Vencido 29/',
-                                   'Capital en Cobranza Judicial 30/',
-                                   'Saldos de Créditos Castigados 38/']]
-
-anexo_06_descap.dropna(subset=['Nro Prestamo \nFincore',
-                               'Numero de Crédito 18/'], inplace=True, how='all')
-
-anexo_06_descap['Nro Prestamo \nFincore'] = anexo_06_descap['Nro Prestamo \nFincore'].str.strip()
 #%% descapitalización de los saldos
 
 df_fincore = df_fincore.rename(columns={'NumerodeCredito18': 
@@ -143,15 +100,21 @@ df_sentinel = df_sentinel.merge(df_fincore,
                                 how='left')
 
 df_sentinel.drop(['cod pres para merge'], axis=1, inplace=True)
-#%%
+
+#%% verifiación de nulos
+
 sin_match = df_sentinel[pd.isna(df_sentinel['Nro_Fincore'])]
 print(sin_match.shape[0])
 print("si sale más de cero hay que revisar")
+if sin_match.shape[0] > 0:
+    print(sin_match)
+else:
+    ''
 
 # código para eliminar los que no han hecho match (no están en el anexo 06)
 #df_sentinel = df_sentinel.dropna(subset=['Nro_Fincore'])
 
-#%% ahora sí añadimos los montos descapitalizados
+#%% AÑADIENDO SALDOS DESCAPITALIZADOS
 anexo_06_descap = anexo_06_descap.rename(columns={'Nro Prestamo \nFincore': 
                                                   'Nro_Fincore'})
 df_sentinel = df_sentinel.merge(anexo_06_descap, 
@@ -180,19 +143,19 @@ df_sentinel['MN Linea de Credito (*)']              = ''
 df_sentinel['MN Creditos Cartigados (*)']           = df_sentinel['Saldos de Créditos Castigados 38/']
 
 #%% ELIMINAMOS LAS COLUMNAS QUE YA NO NECESITAMOS
-df_sentinel.drop(["Nro_Fincore"], axis=1, inplace=True)
-df_sentinel.drop(["Numero de Crédito 18/"], axis=1, inplace=True)
-df_sentinel.drop(["Capital Vigente 26/"], axis=1, inplace=True)
-df_sentinel.drop(["Capital Refinanciado 28/"], axis=1, inplace=True)
-df_sentinel.drop(["Capital Vencido 29/"], axis=1, inplace=True)
-df_sentinel.drop(["Capital en Cobranza Judicial 30/"], axis=1, inplace=True)
+df_sentinel.drop(["Nro_Fincore"],                       axis=1, inplace=True)
+df_sentinel.drop(["Numero de Crédito 18/"],             axis=1, inplace=True)
+df_sentinel.drop(["Capital Vigente 26/"],               axis=1, inplace=True)
+df_sentinel.drop(["Capital Refinanciado 28/"],          axis=1, inplace=True)
+df_sentinel.drop(["Capital Vencido 29/"],               axis=1, inplace=True)
+df_sentinel.drop(["Capital en Cobranza Judicial 30/"],  axis=1, inplace=True)
 df_sentinel.drop(["Saldos de Créditos Castigados 38/"], axis=1, inplace=True)
 
-#%% le ponemos el nombre que tenía antes por si acaso
+#%%% cambio de nombre
 df_fincore = df_fincore.rename(columns={'cod pres para merge': 
                                         'NumerodeCredito18'})
 
-#%%
+#%% corrección recurrente
 #ya que todos los meses se duplican los datos del socio AGUILA	FEBRES	MIGUEL ALBERTO
 #antes de eliminar sus datos duplicados, vamos a etiquetar su 'Tipo Documento Identidad(*)' = 1
 df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '02803330') & \
@@ -200,7 +163,7 @@ df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '0280
                 (df_sentinel['Apellido Materno (*)'] == 'FEBRES'),
                 'Tipo\nDocumento\nIdentidad (*)'] = '1'
 
-    #%%
+#%% verificación de duplicados
 #AQUI DEBEMOS VERIFICAR SI EXISTEN DUPLICADOS
 #SI EXISTE DEBEMOS HACER UNA CORRECCIÓN MANUAL
 
@@ -217,11 +180,11 @@ print(df_duplicados.shape[0])
 #si hay duplicados posiblemente está mal la columna 'Tipo Documento Identidad(*)'
 #debemos arreglarlo
 
-#%%
-#PROCEDEMOS A ELIMINAR DUPLICADOS
+#%%% eliminación de duplicados
+
 df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 
-#%% avales
+#%% IMPORTACIÓN DE LOS AVALES
 ##############################################
 #   AVALES: OBTENIDO DEL FINCORE
 ##############################################
@@ -235,9 +198,9 @@ df1=pd.read_excel(ruta,
                          'Numero':object},
                          skiprows=8)
 
-#%%
+#%% EL REPORTE DE AVALES QUE ENVÍA CESAR, con columnas separadas
 ##############################################
-#     AVALES: COLUMNAS SEPARADAS
+#      AVALES: COLUMNAS SEPARADAS
 ##############################################
 # ARCHIVO DE AVALES QUE NOS MANDA CESAR, LOS APELLIDOS Y NOMBRES ESTÁN EN COLUMNAS
 # es el archivo que contiene los datos de los avales, pero separados en columnas (apellido paterno, materno, nombres
@@ -254,7 +217,7 @@ avales_datos_separados['NumeroDocIdentidad'] = avales_datos_separados['NumeroDoc
 #ELIMINAMOS LOS POSIBLES DUPLICADOS
 avales_datos_separados = avales_datos_separados.drop_duplicates(subset='NumeroDocIdentidad')
 
-#%%
+#%% importando la calificación del anexo06 del mismo mes
 ##############################################
 #      CALIFICACIÓN DE LOS CRÉDITOS
 ##############################################
@@ -290,7 +253,7 @@ grouped.columns = ['DIFERENTES PRODUCTOS']
 result = grouped[grouped['DIFERENTES PRODUCTOS'] > 1]
 print(result) #si sale vacío significa que está todo bien
 
-#%% EN CASO DE QUE LOS CRÉDITOS EN DÓLARES NO ESTÉN SOLARIZADOS
+#%% (desactivado)EN CASO DE QUE LOS CRÉDITOS EN DÓLARES NO ESTÉN SOLARIZADOS
 #456'MULTIPLICACIÓN DE LOS SALDOS EN DÓLARES POR EL TIPO DE CAMBIO DEL MES'
 
 #456tipo_cambio = 3.628
@@ -314,8 +277,7 @@ print(result) #si sale vacío significa que está todo bien
 #456df_sentinel['ME Creditos Cartigados (*)'] = \
 #456df_sentinel['ME Creditos Cartigados (*)'].fillna(0) * tipo_cambio
 
-
-#%%
+#%% ASIGNACIÓN DE CALIFICACIÓN
 #pues parece que ya está 😅
 
 def calificacion(df_sentinel):
@@ -333,7 +295,7 @@ df_sentinel.drop(['calificacion final'], axis=1, inplace=True)
 
 df_sentinel['Calificación(*)'] = df_sentinel['Calificación(*)'].astype(int)
 
-#%%
+#%% SUMA HORIZONTAL MN
 #realizamos la suma horizontal
 #primero para MN
 
@@ -376,7 +338,7 @@ df_sentinel.loc[mask, 'MN Deuda Directa Refinanciada (*)']         = \
     df_sentinel.loc[mask, 'MN Deuda Directa Vigente (*)']    
 df_sentinel.loc[mask, 'MN Deuda Directa Vigente (*)']         = 0
     
-#%%
+#%% SUMA HORIZONTAL ME
 #realizamos la suma horizontal para ME
 mask = df_sentinel['ME Deuda Directa Cobranza Judicial (*)'] > 0
 df_sentinel.loc[mask, 'ME Deuda Directa Cobranza Judicial (*)']    = \
@@ -414,12 +376,12 @@ df_sentinel.loc[mask, 'ME Deuda Directa Refinanciada (*)']         = \
     df_sentinel.loc[mask, 'ME Deuda Directa Vigente (*)']    
 df_sentinel.loc[mask, 'ME Deuda Directa Vigente (*)']         = 0
 
-#%%
+#%% SUMA DE CASTIGADOS Y TODO LO PONEMOS EN MONEDA NACIONAL
 #SUMA DE LOS CASTIGADOS, y le ponemos cero a los que están en dólares
 df_sentinel['MN Creditos Cartigados (*)'] = df_sentinel['MN Creditos Cartigados (*)'] + df_sentinel['ME Creditos Cartigados (*)']
 df_sentinel['ME Creditos Cartigados (*)'] = 0
 
-#%%
+#%% PASANDO VALORES A LA MONEDA NACIONAL 
 # colocamos todos los valores en la columna de MN,
 # y ponemos ceros en las columnas ME
 df_sentinel['MN Deuda Directa Cobranza Judicial (*)'] = df_sentinel['MN Deuda Directa Cobranza Judicial (*)'] + \
@@ -442,12 +404,12 @@ df_sentinel['MN Deuda Directa Vigente (*)'] = df_sentinel['MN Deuda Directa Vige
     df_sentinel['ME Deuda Directa Vigente (*)']
 df_sentinel['ME Deuda Directa Vigente (*)'] = 0
 
-#%%
+#%% COLOCANDO CEROS
 # ponemos ceros a las columnas donde van los montos de los avales
 df_sentinel['MN Deuda Indirecta (avales,cartas fianza,credito) (*)'] = 0
 df_sentinel['MN Deuda Avalada (*)'] = 0
 
-#%%
+#%% preparación para el merge
 #para concatenar las columnas, nos quedamos con un archivo que solo servirá para el merge
 
 #aqui estamos creando una columna que va a tener el nombre del aval + el numero del crédito,
@@ -503,30 +465,31 @@ df_sentinel_fincore = df_sentinel.merge(df_fincore, ############################
 #PARA VER ALGUNAS COSAS
 #df_fincore[df_fincore['NumerodeCredito18'] == '004663']
 
-#%%
+#%% verificación match completo
 
 #codigo para verificar que haya habido un match completo
 match_incompleto = df_sentinel_fincore.loc[df_sentinel_fincore['Nro_Fincore'].isna()]
 print(match_incompleto.shape[0])
-#si sale Empty DataFrame significa que hizo el match correctamente
-
+print('si sale Empty DataFrame significa que hizo el match correctamente')
+if match_incompleto.shape[0] > 0:
+    print('investigar, no hubo match completo')
 #si hay datos, hay que investigar quiapasau
 
-#%%
+#%% MERGE CON AVALES
 'todo bien actualmente'
 #hacemos un merge que solo nos dejará con la tabla de avales
 df_resultado = df_sentinel_fincore.merge(valores_unicos, 
-                         left_on=['Nro_Fincore'], 
-                         right_on=['fincore']
-                         ,how='inner')
+                                         left_on=['Nro_Fincore'], 
+                                         right_on=['fincore'],
+                                         how='inner')
 
-#%%
+#%% dni avales
 #ESTA ES LA PARTE EN LA QUE ARREGLAMOS EL DNI DEL AVAL, CREO QUE AQUÍ TAMBIÉN DEBERÍAMOS PONER
 #LOS DATOS PERSONALES DE LOS AVALES CUANDO TENGAMOS ESE REPORTE
 #
 df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'] = df_resultado['Dni - Asociado - indirecta2']
 
-#%%
+#%% tipo de persona
 #a esta tabla de avales le ponemos 3 en 'Tipo Persona (*)'
 df_resultado['Tipo Persona (*)'] = '3'
 
@@ -534,7 +497,7 @@ df_resultado['Tipo\nDocumento\nIdentidad (*)'] = '1'
 #df_resultado = df_resultado.drop_duplicates(subset=['Cod. Prestamo', '''N° Documento
 #Identidad (*)  DNI o RUC'''], keep='first')
 
-#%%
+#%% MONTO DE LA DEUDA AVALADA
 #colocamos el monto de la deuda en la columna 'MN Deuda Avalada (*)'
 df_resultado['MN Deuda Avalada (*)'] = df_resultado['MN Deuda Directa Vigente (*)'] + \
                                        df_resultado['MN Deuda Directa Refinanciada (*)'] + \
@@ -548,7 +511,7 @@ df_resultado['MN Deuda Directa Vencida > 30 (*)']      = 0
 df_resultado['MN Deuda Directa Cobranza Judicial (*)'] = 0
 
 
-#%% ordenando
+#%% ORDENAMIENTO DE COLUMNAS
 
 df_resultado['Estado'] = ''
 df_sentinel['Estado'] = ''
@@ -579,7 +542,7 @@ df_avales = df_resultado[columnas]
 
 df_sentinel = df_sentinel[columnas]
 
-#%%
+#%% MONTO DE LA DEUDA AVALADA
 # ahora vamos a asignar el monto de la columna 'MN Deuda Avalada (*)' al reporte original
 
 df_avales_copia = df_avales.copy()
@@ -600,7 +563,7 @@ df_sentinel_avales = df_sentinel.merge(df_avales_reducido, #####################
 df_sentinel_avales['MN Deuda Avalada (*)_avales'].fillna(0, inplace=True)
 df_sentinel_avales['MN Deuda Avalada (*)'] = df_sentinel_avales['MN Deuda Avalada (*)_avales']
 
-#%%
+#%% eliminación de espacios vacíos
 #antes de la unión, eliminamos posibles espacios en blanco porque los he detectado
 
 'este código lo he comentado porque por alguna razón eliminaba el dni :c'
@@ -608,25 +571,20 @@ df_sentinel_avales['MN Deuda Avalada (*)'] = df_sentinel_avales['MN Deuda Avalad
 #Identidad (*)  DNI o RUC'''] = df_sentinel_avales['''N° Documento
 #Identidad (*)  DNI o RUC'''].str.strip()
 
+df_avales['N° Documento\nIdentidad (*)  DNI o RUC'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].str.strip()
 
-df_avales['''N° Documento
-Identidad (*)  DNI o RUC'''] = df_avales['''N° Documento
-Identidad (*)  DNI o RUC'''].str.strip()
-
-#%%
+#%% TAMBIÉN PONEMOS EL MONTO CASTIGADOS EN EL MONTO AVALADO SI ES QUE TIENEN AVALES
 
 'aqui tenemos que modificar la columna de los avales de la MN Deuda Avalada (*), porque aquí debe ir todo, incluyendo los saldos castigados'
 
 df_avales['MN Deuda Avalada (*)'] = df_avales['MN Deuda Avalada (*)']  + df_avales['MN Creditos Cartigados (*)']
 df_avales['MN Creditos Cartigados (*)'] = 0
 
-#%%
+#%% DATOS PERSONALES DE LOS AVALES
 'hasta aquí ya está todo lo numérico, solo falta reemplazar los datos personales de los avales'
 #limpiamos los datos
 df_avales['Razon Social (*)'] = ''
-df_avales['''N° Documento
-Identidad (*)  DNI o RUC'''] = df_avales['''N° Documento
-Identidad (*)  DNI o RUC'''].str.strip()
+df_avales['N° Documento\nIdentidad (*)  DNI o RUC'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].str.strip()
 
 #CAMBIAMOS LOS NOMBRES PARA QUE NO HAYA NINGUNA AMBIGUEDAD
 avales_datos_separados = avales_datos_separados.rename(columns={'NumeroDocIdentidad': 'dni para merge'})
@@ -671,17 +629,15 @@ df_avales_mergeado.drop(['Celular1'], axis=1, inplace=True)
 df_avales_mergeado.drop(['Celular2'], axis=1, inplace=True)
 df_avales_mergeado.drop(['TelefonoFijo1'], axis=1, inplace=True)
 
-#%%
-#unimos todo
+#%% CONCATENAMOS LOS AVALES CON LA LISTA DE CRÉDITOS
 
 reporte = pd.concat([df_sentinel_avales,df_avales_mergeado], ignore_index=True)
 
-#%%
-#hay dos columnas al final que debemos eliminar
+#%% eliminación de columnas
 reporte.drop(["Cod. Prestamo_avales"], axis=1, inplace=True)
 reporte.drop(["MN Deuda Avalada (*)_avales"], axis=1, inplace=True)
 
-#%%
+#%% PARSEO DE FECHAS
 #Arreglando la columna final de fechas de vencimiento:
 
 # Convertir la columna 'Fecha de Vencimiento (*)' a objetos de fecha
@@ -690,11 +646,11 @@ reporte['Fecha de Vencimiento (*)'] = pd.to_datetime(reporte['Fecha de Vencimien
 # Aplicar formato de fecha específico
 reporte['Fecha de Vencimiento (*)'] = reporte['Fecha de Vencimiento (*)'].dt.strftime('%d/%m/%Y')
 
-#%% ojo con esto
+#%% copia
 df_sentinel = reporte.copy()
 
-#%%
-#correcciones variadas (datos malardos)
+#%% correcciones variadas (datos malardos)
+
 #esta primera parte sirve para crear un dataframe y verificar si está filtrando bien
 #para usarlo meter todo lo que está en paréntesis
 
@@ -804,8 +760,7 @@ def arreglo_me_deuda_avalada(df_sentinel):
     
 df_sentinel['MN Deuda Avalada (*)'] = df_sentinel.apply(arreglo_me_deuda_avalada, axis=1)
 
-#%% debe ir 1 en Estado
-# si es castigado
+#%% ESTADO 1 PARA LOS CRÉDITOS CASTIGADOS
 
 def estado_castigado(df_sentinel):
     if df_sentinel['MN Creditos Cartigados (*)'] > 0:
@@ -815,13 +770,13 @@ def estado_castigado(df_sentinel):
     
 df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
 
-#%%
+#%% especificaciones finales
 
 'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
 'se debe subir a HÁBITO PAGO'
 
-#%%
-nombre_archivo = 'sentinel_experian.xlsx'
+#%% CREACIÓN DEL EXCEL
+nombre_archivo = 'sentinel_experian '+ str(FECHA_CORTE) +'.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)
@@ -830,7 +785,7 @@ except FileNotFoundError:
 
 df_sentinel.to_excel(nombre_archivo, index=False)
 
-#%% por si necesitamos la ubicación actual
+#%% UBICACIÓN ACTUAL
 
 ubicacion_actual = os.getcwd()
 
