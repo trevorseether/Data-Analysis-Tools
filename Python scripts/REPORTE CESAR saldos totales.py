@@ -4,16 +4,22 @@ Created on Wed Jun  6 09:45:50 2023
 
 @author: Joseph Montoya
 """
+
+###############################################################################
+#                   REPORTE DE SALDOS TOTALES
+###############################################################################
+
+#%% importación de librerías
 import numpy as np
 import pandas as pd
 import os
 from datetime import datetime
 from openpyxl import load_workbook
 
-#%%
+#%% FECHA DE CORTE
 FECHA = 'JULIO-23' #servirá para el nombre del archivo
 
-#%%
+#%% IMPORTACIÓN DE ARCHIVOS
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 JULIO')
 
@@ -84,7 +90,7 @@ df1.dropna(subset=['CodigoSocio',
 ##   2 aqui va el reporte del mes pasado                ####
 ############################################################
 
-df2=pd.read_excel(MES_PASADO,
+df2 = pd.read_excel(MES_PASADO,
                   skiprows=0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
                   dtype={'NroDocIdentidad': object,
                          'NumeroPrestamo':object,
@@ -117,7 +123,7 @@ df3_cobranza.dropna(subset=['codigosocio',
                     how='all')
 
 ##########################################################################################################
-#    4 el reporte 'Utilidad año castigo 2018 2019 2020 y 2021 - JGM para añadir a Saldos e Ingresos'    ##
+#    4 el reporte 'Utilidad año castigo 2018 2019 2020 2021 Y 2022 - JGM para añadir a Saldos e Ingresos'    ##
 ##########################################################################################################
 
 df4_JGM_año_castigo = pd.read_excel(UTILIDAD_CASTIGO,
@@ -128,7 +134,7 @@ df4_JGM_año_castigo = df4_JGM_año_castigo.drop_duplicates(subset='Nro Prestamo
 
 JGM_año_castigo =  df4_JGM_año_castigo[['Nro Prestamo Fincore', 'año castigo utilidad JGM']] #esta es la versión para hacer el merge
 
-#%%
+#%%% copias por si acaso
 
 dff1 = df1.copy() #dff1 será la copa de seguridad para no estar repitiendo
 dff2 = df2.copy() #para no estar repitiendo el insertado de datos
@@ -138,20 +144,22 @@ dff3 = df3_cobranza.copy() #copia de seguridad
 #df2 = dff2.copy()
 #df3_cobranza = dff3.copy()
 
-#%%
+#%% MERGE CON FINALIDAD DEL MES PASADO
 
 #df1 = df1.drop(columns=['CodPrestamoTXT'])
 df1 = df1.rename(columns={"Finalidad": "Finalidad TXT"})
+
 df2["CodFinalidad"] = df2["CodFinalidad"].astype(str)
+
 df2_finalidad = df2[["NroPrestamoFC",
                      "CodFinalidad"]] #aquí revisar si tiene el nombre 'CodFinalidad' o 'Finalidad' a secas
 
 df_resultado = df1.merge(df2_finalidad,
                          left_on=["NroPrestamoFC"], 
-                         right_on=["NroPrestamoFC"]
-                         ,how='left')
+                         right_on=["NroPrestamoFC"],
+                         how='left')
 
-#%%
+#%% ASIGNACIÓN CÓDIGO FINALIDAD
 
 df_resultado['CodFinalidad']= np.nan
 
@@ -219,7 +227,7 @@ def pond_41(df_resultado):
     
 df_resultado['CodFinalidad'] = df_resultado.apply(pond_41, axis=1)
 
-#%%
+#%% SOLARIZANDO LOS CRÉDITOS QUE ESTÁN EN DÓLARES
 
 df_resultado2 = df_resultado.copy()
 
@@ -239,7 +247,8 @@ df_resultado2.loc[mask, 'InteresCompensatorioDeuda']     = df_resultado2.loc[mas
 df_resultado2.loc[mask, 'InteresMoratorioDeuda']         = df_resultado2.loc[mask, 'InteresMoratorioDeuda']           / df_resultado2.loc[mask, 'TipoCambioTXT']
 
 #con esto ya están divididas esas columnas entre el tipo de cambio si es que están en dólares
-#%%
+#%% SUMA DEL SALDO Y CRÉDITOS CAPITALIZADOS, o algo así
+
 df_resultado3 = df_resultado2.copy()
 
 def capitalizado(df_resultado3):
@@ -257,11 +266,10 @@ df_resultado4['CRED CON CAPITALIZ'] = df_resultado3.apply(capitalizado, axis=1)
 df4 = df_resultado4.copy()
 mask2 = df4['CRED CON CAPITALIZ'].eq('revisar')
 
-
+#REDONDEO A DOS DECIMALES
 df4['MontoSolicitadoTXT'] = round(df4['MontoSolicitadoTXT'],2)
 df4['SoloCapitalAmortizado'] = round(df4['SoloCapitalAmortizado'],2)
 df4['SaldoCapital'] = round(df4['SaldoCapital'],2)
-
 
 df4.loc[mask2, 'SaldoCapital'] = round(df4.loc[mask2, 'MontoSolicitadoTXT'] - df4.loc[mask2, 'SoloCapitalAmortizado'],2)
 
@@ -269,7 +277,7 @@ df4['CRED CON CAPITALIZ'] = df4['CRED CON CAPITALIZ'].replace('revisar', '')
 
 
 df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)'] + df4['InteresCompensatorioDeuda'] + df4['InteresMoratorioDeuda']
-#%%
+#%% DATOS DEL MES PASADO
 'siguiente fase'
 
 #suma group by de la tabla donde está la cobranza del mes actual
@@ -325,10 +333,11 @@ df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros'] + df6.loc[masc
 #hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado
 #, y filtrado según saldo castigado
 
-#%%
+#%% SALDO DEUDOR PGB
+
 #sumar y restar
 df6['Total Amortizado'] = df6['Capital Amortizado'] + df6['Int y Otros']
-df6['SALDO CASTIGADO'] = df6['IMPTE CASTIGADO (Asignado x PGB)'] - df6['Total Amortizado']
+df6['SALDO CASTIGADO']  = df6['IMPTE CASTIGADO (Asignado x PGB)'] - df6['Total Amortizado']
 df6.loc[mascara, 'SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.loc[mascara, 'Capital Amortizado']+df6.loc[mascara, 'Capital']
 
 #df6.loc[mascara, 'columna'] = df6['columna5'].where(mascara, df6['columna6'])                  
@@ -344,7 +353,8 @@ df6['SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.apply(asignar_saldo_deudor, a
 
 #ya está llenado hasta esta columna SALDO DEUDOR REALISTA (SOLO PARA PGB)
 
-#%%
+#%% ASIGNACIÓN DE DATOS DEL MES PASADO
+
 df2_observ_v_garantia = df2[['NroPrestamoFC','OBSERVACION','VALOR GARANTIA']].copy()
 df2_observ_v_garantia['OBSERVACION'].fillna('--', inplace=True) #REEMPLAZANDO LOS NaN por --
 df2_observ_v_garantia['VALOR GARANTIA'].fillna(0, inplace=True) #reemplazando los NaN por 0
@@ -361,7 +371,8 @@ df6 = df6.merge(df2_observ_v_garantia,
 #df6[['VALOR GARANTIA','OBSERVACION']]
 
 # hasta aquí ya está el valor garantía
-#%%
+#%% SALDO REAL VS DEUDOR
+
 dff6 = df6.copy()
 def saldo_real_vs_deudor(dff6):
     if dff6['VALOR GARANTIA'] > 0:
@@ -375,7 +386,8 @@ def saldo_real_vs_deudor(dff6):
 dff6['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] = dff6.apply(asignar_saldo_deudor, axis=1)
 
 #solo para chequear
-#%%
+#%% ALERTA DEUDA > GARANTÍA
+
 df7 = dff6.copy()
 def alerta(df7):
     if df7['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] > df7['Nuevo Saldo']:
@@ -385,77 +397,82 @@ def alerta(df7):
     
 df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] = df7.apply(alerta, axis=1)
 
-#%%
+print(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"][['SALDO REAL (S.DEUDOR Vs. GARANTIA)', 'Nuevo Saldo']])
+print('en total hay ' + str(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"].shape[0]) + ' casos')
+print('es solo una alerta en el reporte, no hay que corregir nada realmente')
+
+#%% ORDENAMIENTO DE COLUMNAS
+
 df_final = df7.merge(JGM_año_castigo, 
                          left_on=["NroPrestamoFC"], 
-                         right_on=["Nro Prestamo Fincore"]
-                         ,how='left') #se duplicó un crédito
+                         right_on=["Nro Prestamo Fincore"],
+                         how='left') #se duplicó un crédito
 
 COLUMNAS = ['Socio',
-'CodigoSocio',
-'TipoDocumentoTXT',
-'NroDocIdentidad',
-'CodFinalidad',
-'TipoCreditoTXT',
-'NumeroPrestamo',
-'NroPrestamoFC',
-'FechaDesembolsoTXT',
-'MonedaTXT',
-'MontoSolicitadoTXT',
-'SoloCapitalAmortizado',
-'SaldoCapital',
-'CRED CON CAPITALIZ',
-'InteresVencidoPactado',
-'InteresPactadoPagado',
-'SoloSaldoInteresVencido',
-'Saldo Deudor (Sobre la Cuota)',
-'InteresCompensatorioDeuda',
-'InteresMoratorioDeuda',
-'Nuevo Saldo',
-'IMPTE CASTIGADO (Asignado x PGB)',
-'FECHA DE CASTIGO',
-'Capital Amortizado',
-'Int y Otros',
-'Total Amortizado',
-'SALDO CASTIGADO',
-'SALDO DEUDOR REALISTA (SOLO PARA PGB)',
-'OBSERVACION',
-'VALOR GARANTIA',
-'SALDO REAL (S.DEUDOR Vs. GARANTIA)',
-'ALERTA (Si Deuda sobrepasa V.Garantia)',
-'año castigo utilidad JGM',
-'FechaUltimoPagoCBTXT',
-'ImporteVencido',
-'NroCuotasVencidas',
-'NombrePlanilla',
-'Domicilio',
-'DistritoSocio',
-'TlfSocio',
-'CelularSocio',
-'EmailSocio',
-'OrigenTXT',
-'DiasVencimientoSBS',
-'Funcionaria',
-'SituacionTXT',
-'AbogadoTXT',
-'FechaAsignacionAbogadoTXT',
-'NroExpedienteTXT',
-'FechaExpedienteTXT',
-'Juzgado',
-'FechaAsignacion',
-'Etapa',
-'ObservacionAbogado',
-'JFechaCastigo',
-'JFechaVentaCartera',
-'UltObservacionSocio',
-'TipoCredito',
-'TipoCreditoTXT',
-'Finalidad TXT',
-'TipoCambioTXT',
-'FechaProcesoSistemaTXT',
-'FlagGarantiaPref',
-'OrigenPrestamo'
-]
+            'CodigoSocio',
+            'TipoDocumentoTXT',
+            'NroDocIdentidad',
+            'CodFinalidad',
+            'TipoCreditoTXT',
+            'NumeroPrestamo',
+            'NroPrestamoFC',
+            'FechaDesembolsoTXT',
+            'MonedaTXT',
+            'MontoSolicitadoTXT',
+            'SoloCapitalAmortizado',
+            'SaldoCapital',
+            'CRED CON CAPITALIZ',
+            'InteresVencidoPactado',
+            'InteresPactadoPagado',
+            'SoloSaldoInteresVencido',
+            'Saldo Deudor (Sobre la Cuota)',
+            'InteresCompensatorioDeuda',
+            'InteresMoratorioDeuda',
+            'Nuevo Saldo',
+            'IMPTE CASTIGADO (Asignado x PGB)',
+            'FECHA DE CASTIGO',
+            'Capital Amortizado',
+            'Int y Otros',
+            'Total Amortizado',
+            'SALDO CASTIGADO',
+            'SALDO DEUDOR REALISTA (SOLO PARA PGB)',
+            'OBSERVACION',
+            'VALOR GARANTIA',
+            'SALDO REAL (S.DEUDOR Vs. GARANTIA)',
+            'ALERTA (Si Deuda sobrepasa V.Garantia)',
+            'año castigo utilidad JGM',
+            'FechaUltimoPagoCBTXT',
+            'ImporteVencido',
+            'NroCuotasVencidas',
+            'NombrePlanilla',
+            'Domicilio',
+            'DistritoSocio',
+            'TlfSocio',
+            'CelularSocio',
+            'EmailSocio',
+            'OrigenTXT',
+            'DiasVencimientoSBS',
+            'Funcionaria',
+            'SituacionTXT',
+            'AbogadoTXT',
+            'FechaAsignacionAbogadoTXT',
+            'NroExpedienteTXT',
+            'FechaExpedienteTXT',
+            'Juzgado',
+            'FechaAsignacion',
+            'Etapa',
+            'ObservacionAbogado',
+            'JFechaCastigo',
+            'JFechaVentaCartera',
+            'UltObservacionSocio',
+            'TipoCredito',
+            'TipoCreditoTXT',
+            'Finalidad TXT',
+            'TipoCambioTXT',
+            'FechaProcesoSistemaTXT',
+            'FlagGarantiaPref',
+            'OrigenPrestamo'
+            ]
 
 RESULTADO_FINAL = df_final[COLUMNAS]
 df_finalizado = RESULTADO_FINAL.copy()
@@ -466,7 +483,7 @@ for col in indice:
     df_finalizado.loc[:, col] = df_finalizado[col].round(2) #redondeando las columnas a dos decimales
 
 #df_finalizado
-#%%
+#%% COLUMNA AUXILIAR PARA TABLAS PIVOTE
 # creando las columnas auxiliares para los reportes 
 #df_finalizado['Finalidad']
 
@@ -496,10 +513,12 @@ def asignacion_auxiliar(df_finalizado):
 
 df_finalizado['auxiliar1'] = df_finalizado.apply(asignacion_auxiliar, axis=1)
 
-#%% reemplazar nulos de algunas columnas
+#%% REEMPLAZANDO NULOS EN VALOR GARANTIA
 df_finalizado['VALOR GARANTIA'] = df_finalizado['VALOR GARANTIA'].fillna(0)
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%###
+#%% VERIFICACIÓN DE DUPLICADOS
+
+'''%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'''
 ### CÓDIGO PARA VERIFICAR SI HAY DUPLICADOS   ###%
 ###############################################%%%
 # creamos una máscara booleana
@@ -508,12 +527,12 @@ df_duplicados = df_finalizado[mask]
 
 print('NRO DE CRÉDITOS DUPLICADOS:')
 print(df_duplicados.shape[0])
+print(df_duplicados)
 
-# si es que hay duplicados, hay que eliminarlos
-##data = df_finalizado.drop(index=3198) #para eliminar según el índice, (elimina el índice que pones, ni más ni menos)
+df_finalizado = df_finalizado.drop_duplicates(subset = 'NroPrestamoFC')
 
 #df_finalizado = data.copy()
-#%%
+#%% PIVOT TABLES
 #creación de las tablas dinámicas para el reporte
 
 # TABLA 11
@@ -542,6 +561,7 @@ column_order = ['SaldoCapital',
                 'Nuevo Saldo']
 tabla11 = tabla11.reindex(columns=column_order).reset_index()
 del column_order
+
 total_columnas = ['auxiliar1',
                   'SaldoCapital',
                   'InteresVencidoPactado',
@@ -565,8 +585,8 @@ nueva_fila = pd.DataFrame([['Total',
 tabla11 = pd.concat([tabla11,nueva_fila], ignore_index=True)
 del total_columnas
 
-#%%
-# TABLA 12
+#%%% TABLA 12
+
 datos_12 = datos_soles[datos_soles['SituacionTXT'] == 'JUDICIAL']
 tabla12 = datos_12.pivot_table(#columns = 'auxiliar1',
                                       values=['Nuevo Saldo'], 
@@ -578,8 +598,7 @@ tabla12 = datos_12.pivot_table(#columns = 'auxiliar1',
 
 tabla12 = tabla12.reset_index()
 
-#%%
-# TABLA 13
+#%%% TABLA 13
 datos_13 = datos_soles[(datos_soles['SituacionTXT'] == 'JUDICIAL NO ASIGNADO') | \
                        (datos_soles['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
 tabla13 = datos_13.pivot_table(#columns = 'auxiliar1',
@@ -592,8 +611,7 @@ tabla13 = datos_13.pivot_table(#columns = 'auxiliar1',
 
 tabla13 = tabla13.reset_index()
 
-#%%
-# TABLA 14
+#%%% TABLA 14
 datos_14 = datos_soles[~datos_soles['JFechaVentaCartera'].isnull()] #NO OLVIDAR QUE AQUÍ EL FILTRO ES NO NULOS
 tabla14 = datos_14.pivot_table(#columns = 'auxiliar1',
                                       values=['Nuevo Saldo'], 
@@ -605,8 +623,7 @@ tabla14 = datos_14.pivot_table(#columns = 'auxiliar1',
 
 tabla14 = tabla14.reset_index()
 
-#%%
-#TABLAS PERO EN DÓLARES
+#%% TABLAS EN DÓLARES
 # tabla 21
 
 df_finalizado['MonedaTXT'] = df_finalizado['MonedaTXT'].str.strip()
@@ -658,8 +675,8 @@ nueva_fila = pd.DataFrame([['Total',
 tabla21 = pd.concat([tabla21,nueva_fila], ignore_index=True)
 del total_columnas
 
-#%%
-# TABLA 22
+#%%% TABLA 22
+
 datos_22 = datos_dolares[datos_dolares['SituacionTXT'] == 'JUDICIAL']
 tabla22 = datos_22.pivot_table(#columns = 'auxiliar1',
                                       values=['Nuevo Saldo'], 
@@ -671,8 +688,8 @@ tabla22 = datos_22.pivot_table(#columns = 'auxiliar1',
 
 tabla22 = tabla22.reset_index()
 
-#%%
-# TABLA 23
+#%%% TABLA 23
+
 datos_23 = datos_dolares[(datos_dolares['SituacionTXT'] == 'JUDICIAL NO ASIGNADO') | \
                        (datos_dolares['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
 tabla23 = datos_23.pivot_table(#columns = 'auxiliar1',
@@ -685,8 +702,8 @@ tabla23 = datos_23.pivot_table(#columns = 'auxiliar1',
 
 tabla23 = tabla23.reset_index()
 
-#%%
-# TABLA 24
+#%%% TABLA 24
+
 datos_24 = datos_dolares[~datos_dolares['JFechaVentaCartera'].isnull()] #NO OLVIDAR QUE AQUÍ EL FILTRO ES NO NULOS
 tabla24 = datos_24.pivot_table(#columns = 'auxiliar1',
                                       values=['Nuevo Saldo'], 
@@ -697,8 +714,7 @@ tabla24 = datos_24.pivot_table(#columns = 'auxiliar1',
                                       )
 tabla24 = tabla24.reset_index()
 
-#%%
-# CÓDIGO PARA CREAR EL EXCEL
+#%% CREACIÓN DEL EXCEL
 
 nombre = "SALDO_COOPACSANMIGUEL - " + FECHA +"_INC_CVV_DETALLADO.xlsx"
 try:
@@ -711,7 +727,7 @@ df_finalizado.to_excel(nombre, index=False, engine='openpyxl')
             
    # impte castigado no varía, eso solo se jala del mes anterior
    
-#%%
+#%% ESCRIBIENDO CON OPENPYXL
 #añadimos las tablas pivote al final del dataframe
 tabla = tabla11.copy()
 
@@ -739,7 +755,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%
+#%%% TABLA 12
 tabla = tabla12.copy()
 
 num_filas = len(df_finalizado.index)
@@ -764,7 +780,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
             
-#%%
+#%%% TABLA 13
 tabla = tabla13.copy()
 
 num_filas = len(df_finalizado.index)
@@ -789,7 +805,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%
+#%%% TABLA 14
 tabla = tabla14.copy()
 
 num_filas = len(df_finalizado.index)
@@ -814,7 +830,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%            
+#%%% TABLA 21       
 tabla = tabla21.copy()
 
 num_filas = len(df_finalizado.index)
@@ -841,7 +857,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%
+#%%% TABLA 22
 tabla = tabla22.copy()
 
 num_filas = len(df_finalizado.index)
@@ -866,7 +882,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
             
-#%%
+#%%% TABLA 23
 tabla = tabla23.copy()
 
 num_filas = len(df_finalizado.index)
@@ -891,7 +907,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%
+#%%% TABLA 24
 tabla = tabla24.copy()
 
 num_filas = len(df_finalizado.index)
@@ -916,8 +932,7 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
             # Insertar datos del DataFrame
             celda.value = tabla.iloc[fila - 1, columna]
 
-#%%
-# Guardar los cambios en el archivo Excel
+#%% GUARDAR LOS CAMBIOS EN EL EXCEL
 
 book.save(nombre)
 
