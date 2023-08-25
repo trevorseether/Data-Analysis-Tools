@@ -136,9 +136,9 @@ union['Fecha de Nacimiento 3/'] = union['Fecha de Nacimiento 3/'].apply(parse_da
 nacimiento_diferente = union[union['FechaNacimiento mes pasado'] != \
                             union['Fecha de Nacimiento 3/']]
 nacimiento_diferente = nacimiento_diferente[['fincore',
-                                         'Fecha de Nacimiento 3/',
-                                         'FechaNacimiento mes pasado'
-                                         ]]
+                                             'Fecha de Nacimiento 3/',
+                                             'FechaNacimiento mes pasado'
+                                             ]]
 
 #%%% verificamos días de mora > 31 días:
 union['dif días de mora'] = union['Dias de Mora 33/'] - \
