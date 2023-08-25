@@ -9,18 +9,20 @@ Created on Thu Apr 27 12:24:36 2023
 ############# VERIFICACIONES DEL ANEXO06 ##################
 ###########################################################
 
+#%% importación de módulos
 import pandas as pd
 import os
 import pyodbc
 import numpy as np
 
-#%%
-#VAMOS A IMPORTAR EL ANEXO06 DEL MES PASADO
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-df_mes_pasado = pd.read_sql_query('''
+#%% IMPORTACIÓN ANX06 DEL MES PASADO
+
+FECHA_SQL = '20230630'
+
+QUERY = f'''
                             
 declare @fecha as datetime
-set @fecha = '20230531'  -- aqui se pone el mes pasado
+set @fecha = '{FECHA_SQL}'
 
 select 
 Nro_Fincore, ApellidosyNombresRazonSocial2, FechadeNacimiento3,
@@ -29,8 +31,11 @@ from anexos_riesgos2..Anx06_preliminar
 where FechaCorte1 = @fecha
 
 order by ApellidosyNombresRazonSocial2
-                            
-                            ''', conn)
+                            '''
+
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+
+df_mes_pasado = pd.read_sql_query(QUERY, conn)
 
 del conn
 
@@ -43,10 +48,10 @@ df_mes_pasado = df_mes_pasado.rename(columns={'NumerodeDocumento10': 'Documento 
 df_mes_pasado = df_mes_pasado.rename(columns={'DiasdeMora33': 'DíasMora mes pasado'})
 df_mes_pasado = df_mes_pasado.rename(columns={'ClasificaciondelDeudorconAlineamiento15': 'Clasificación Alineamiento mes pasado'})
 
-#%%
+#%% ANEXO AMPLIADO MES ACTUAL
 #leemos el anexo ampliado de este mes
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO\\parte 2')
-df = pd.read_excel('Rpt_DeudoresSBS_Junio 2023 HT version 03.xlsx',
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2')
+df = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx',
                  dtype={'Registro 1/': object, 
                         'Fecha de Nacimiento 3/': object,
                         'Código Socio 7/':object, 
@@ -62,8 +67,7 @@ df = pd.read_excel('Rpt_DeudoresSBS_Junio 2023 HT version 03.xlsx',
                         'Tipo de Producto 43/': object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        '''Nro Prestamo 
-Fincore''': object},
+                        'Nro Prestamo \nFincore': object},
                      skiprows=2
                      )
 df['Apellidos y Nombres / Razón Social 2/'] = df['Apellidos y Nombres / Razón Social 2/'].str.strip()
@@ -72,39 +76,36 @@ df['Número de Documento 10/'] = df['Número de Documento 10/'].str.strip()
 df = df.rename(columns={'Apellidos y Nombres / Razón Social 2/': 'nombres y apellidos mes actual'})
 
 
-#%%
+#%% FILTRADO DE COLUMNAS
 #nos quedamos solo con las columnas necesarias
 anx = df[['nombres y apellidos mes actual',
           'Fecha de Nacimiento 3/',
           'Número de Documento 10/',
           'Dias de Mora 33/',
           'Clasificación del Deudor con Alineamiento 15/',
-          '''Nro Prestamo 
-Fincore'''
+          'Nro Prestamo \nFincore'
           ]]
 
-anx = anx.rename(columns={'''Nro Prestamo 
-Fincore''': "fincore"})
+anx = anx.rename(columns={'Nro Prestamo \nFincore': "fincore"})
 
 del df
 
-#%%
+#%% INTERSECCIÓN ENTRE MES ACTUAL Y MES PASADO
 #filtramos el dataframe actual para que solo 
 #tenga los números fincore que aparecen el
 #mes pasado
 
 df_filtrado = anx[anx['fincore'].isin(df_mes_pasado['Nro_Fincore'])]
 
-#%%
-#unimos
+#%% UNIÓN ENTRE AMBAS TABLAS
 
 union = df_filtrado.merge(df_mes_pasado, 
                           how='left', 
                           left_on=['fincore'], 
                           right_on=['Nro_Fincore'])
 
-#%%
-#verificamos nombres diferentes de un mes a otro
+#%%% verificamos nombres diferentes de un mes a otro
+
 nombres_diferentes = union[union['nombres y apellidos mes actual'] != \
                            union['nombres y apellidos mes pasado']]
 nombres_diferentes = nombres_diferentes[['fincore',
@@ -112,15 +113,25 @@ nombres_diferentes = nombres_diferentes[['fincore',
                                          'nombres y apellidos mes pasado'
                                          ]]
 
-#%%
-#verificamos los documentos
+#%%% verificamos los documentos
 documento_diferente = union[union['Documento mes pasado'] != \
                             union['Número de Documento 10/']]
 documento_diferente = documento_diferente[['fincore',
                                          'Número de Documento 10/',
                                          'Documento mes pasado'
                                          ]]
-#%%
+#%%% verificamos fecha de nacimiento
+#parseo de la fecha
+formatos = ['%Y%m%d']
+def parse_dates(date_str):
+    for formato in formatos:
+        try:
+            return pd.to_datetime(date_str, format=formato)
+        except ValueError:
+            pass
+    return pd.NaT
+union['Fecha de Nacimiento 3/'] = union['Fecha de Nacimiento 3/'].apply(parse_dates)
+
 #verificamos fecha de nacimiento
 nacimiento_diferente = union[union['FechaNacimiento mes pasado'] != \
                             union['Fecha de Nacimiento 3/']]
@@ -129,8 +140,7 @@ nacimiento_diferente = nacimiento_diferente[['fincore',
                                          'FechaNacimiento mes pasado'
                                          ]]
 
-#%%
-#verificamos días de mora > 31 días:
+#%%% verificamos días de mora > 31 días:
 union['dif días de mora'] = union['Dias de Mora 33/'] - \
                             union['DíasMora mes pasado']
 
@@ -140,7 +150,7 @@ dias_mora = dias_mora[['fincore',
                        'DíasMora mes pasado',
                        'dif días de mora']]
 
-#%%
+#%%% diferencia de clasificación
 union['dif clasificacion'] = union['Clasificación del Deudor con Alineamiento 15/'] - \
                              union['Clasificación Alineamiento mes pasado']
 
@@ -155,7 +165,4 @@ dif_clasificacion = dif_clasificacion[['fincore',
 
 x = union[['Nro_Fincore','Clasificación del Deudor con Alineamiento 15/', 
            'Clasificación Alineamiento mes pasado', 'dif clasificacion']]
-
-
-union.columns
 
