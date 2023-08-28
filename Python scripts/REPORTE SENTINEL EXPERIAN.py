@@ -85,7 +85,7 @@ df_sentinel.dropna(subset=['Cod. Prestamo',
 #eliminación de duplicados
 df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 
-''' 
+
 #para segurarnos que sea STR (no parece que sea muy necesario)
 
 df_sentinel['Fecha del\nPeriodo\n(*)']          = df_sentinel['Fecha del\nPeriodo\n(*)'].astype(str)
@@ -101,7 +101,7 @@ df_sentinel['Nombres (*)']          = df_sentinel['Nombres (*)'].astype(str)
 df_sentinel['Apellido Paterno (*)'] = df_sentinel['Apellido Paterno (*)'].str.strip()
 df_sentinel['Apellido Materno (*)'] = df_sentinel['Apellido Materno (*)'].str.strip()
 df_sentinel['Nombres (*)']          = df_sentinel['Nombres (*)'].str.strip()
-'''
+
 #%% DESCAPITALIZACIÓN DE LOS SALDOS
 
 df_fincore = df_fincore.rename(columns={'NumerodeCredito18': 
@@ -794,9 +794,15 @@ def estado_castigado(df_sentinel):
     
 df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
 
-#%%
+#%% eliminación de los nan que son texto:
+mask = df_sentinel['Apellido Paterno (*)'] == 'nan'
+df_sentinel.loc[mask, 'Apellido Paterno (*)'] = ''
 
+mask = df_sentinel['Apellido Materno (*)'] == 'nan'
+df_sentinel.loc[mask, 'Apellido Materno (*)'] = ''
 
+mask = df_sentinel['Nombres (*)'] == 'nan'
+df_sentinel.loc[mask, 'Nombres (*)'] = ''
 
 #%% especificaciones finales
 
