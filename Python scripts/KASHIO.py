@@ -9,11 +9,11 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\24 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\25 agosto 2023 corregido')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230824.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230825.xlsx'
 #####################################################################
 
 #%%
@@ -81,6 +81,7 @@ kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis=1)
 ###############################################################################
 ###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
 ###############################################################################
+# también hay que reemplazar las Ã‘ por Ñ
 
 kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 

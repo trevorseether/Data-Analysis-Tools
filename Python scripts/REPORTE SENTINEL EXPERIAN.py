@@ -60,7 +60,7 @@ del nombre
 #      REPORTE INSUMO PRINCIPAL
 ##############################################
 #importamos el archivo sentinel bruto, que nos manda Cesar o Denisse
-ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO"
+ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO"
 os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
 
@@ -163,6 +163,9 @@ df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '0280
                 (df_sentinel['Apellido Materno (*)'] == 'FEBRES'),
                 'Tipo\nDocumento\nIdentidad (*)'] = '1'
 
+print('si sale más de cero, es porque hay espacios vacíos en la columna TIPO DOCUMENTO IDENTIDAD:')
+print(df_sentinel[pd.isna(df_sentinel['Tipo\nDocumento\nIdentidad (*)'])].shape[0])
+    
 #%% verificación de duplicados
 #AQUI DEBEMOS VERIFICAR SI EXISTEN DUPLICADOS
 #SI EXISTE DEBEMOS HACER UNA CORRECCIÓN MANUAL
