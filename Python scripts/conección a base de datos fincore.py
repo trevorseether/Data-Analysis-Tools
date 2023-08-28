@@ -100,5 +100,6 @@ BETWEEN '20110101' AND '{fecha_hoy}' and s.codigosocio>0  and p.codestado = 341 
 order by socio asc, p.fechadesembolso desc
 
 '''
+
 df_fincore = pd.read_sql_query(query, conn)
 del conn
