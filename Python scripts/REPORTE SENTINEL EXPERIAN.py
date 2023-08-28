@@ -74,6 +74,7 @@ df_sentinel=pd.read_excel("SM_0723 - Sentinel-Experian Cart Vigente y Vencida - 
                       'Modalidad de Credito (*)':       object
                         })
 
+#limpieza de filas vacías
 df_sentinel.dropna(subset=['Cod. Prestamo', 
                            'N° Documento\nIdentidad (*)  DNI o RUC',
                            'Razon Social (*)',
@@ -81,9 +82,27 @@ df_sentinel.dropna(subset=['Cod. Prestamo',
                    inplace=True, 
                    how='all')
 
+#eliminación de duplicados
 df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 
-#%% descapitalización de los saldos
+''' 
+#para segurarnos que sea STR (no parece que sea muy necesario)
+
+df_sentinel['Fecha del\nPeriodo\n(*)']          = df_sentinel['Fecha del\nPeriodo\n(*)'].astype(str)
+df_sentinel['Codigo\nEntidad\n(*)']             = df_sentinel['Codigo\nEntidad\n(*)'].astype(str)
+df_sentinel['Tipo\nDocumento\nIdentidad (*)']   = df_sentinel['Tipo\nDocumento\nIdentidad (*)'].astype(str)
+df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] = df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'].astype(str)
+df_sentinel['Modalidad de Credito (*)']         = df_sentinel['Modalidad de Credito (*)'].astype(str)
+
+df_sentinel['Apellido Paterno (*)'] = df_sentinel['Apellido Paterno (*)'].astype(str)
+df_sentinel['Apellido Materno (*)'] = df_sentinel['Apellido Materno (*)'].astype(str)
+df_sentinel['Nombres (*)']          = df_sentinel['Nombres (*)'].astype(str)
+
+df_sentinel['Apellido Paterno (*)'] = df_sentinel['Apellido Paterno (*)'].str.strip()
+df_sentinel['Apellido Materno (*)'] = df_sentinel['Apellido Materno (*)'].str.strip()
+df_sentinel['Nombres (*)']          = df_sentinel['Nombres (*)'].str.strip()
+'''
+#%% DESCAPITALIZACIÓN DE LOS SALDOS
 
 df_fincore = df_fincore.rename(columns={'NumerodeCredito18': 
                                         'cod pres para merge'})
@@ -95,17 +114,19 @@ df_fincore['cod pres para merge'] = df_fincore['cod pres para merge'].str.strip(
 df_sentinel['cod pres para merge'] = df_sentinel['Cod. Prestamo'].str.split('-', expand=True)[1] #potente este código ah
 
 df_sentinel['cod pres para merge'] = df_sentinel['cod pres para merge'].str.strip()
+
+#merge
 df_sentinel = df_sentinel.merge(df_fincore, 
                                 on='cod pres para merge', 
                                 how='left')
 
 df_sentinel.drop(['cod pres para merge'], axis=1, inplace=True)
 
-#%% verifiación de nulos
+#%%% verifiación de nulos
 
 sin_match = df_sentinel[pd.isna(df_sentinel['Nro_Fincore'])]
 print(sin_match.shape[0])
-print("si sale más de cero hay que revisar")
+print("si sale más de cero hay que revisar, pues signfica que hay espacios vacíos en la columna Nro_Fincore")
 if sin_match.shape[0] > 0:
     print(sin_match)
 else:
@@ -155,7 +176,7 @@ df_sentinel.drop(["Saldos de Créditos Castigados 38/"], axis=1, inplace=True)
 df_fincore = df_fincore.rename(columns={'cod pres para merge': 
                                         'NumerodeCredito18'})
 
-#%% corrección recurrente
+#%%% corrección recurrente
 #ya que todos los meses se duplican los datos del socio AGUILA	FEBRES	MIGUEL ALBERTO
 #antes de eliminar sus datos duplicados, vamos a etiquetar su 'Tipo Documento Identidad(*)' = 1
 df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '02803330') & \
@@ -166,7 +187,7 @@ df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '0280
 print('si sale más de cero, es porque hay espacios vacíos en la columna TIPO DOCUMENTO IDENTIDAD:')
 print(df_sentinel[pd.isna(df_sentinel['Tipo\nDocumento\nIdentidad (*)'])].shape[0])
     
-#%% verificación de duplicados
+#%%% verificación de duplicados
 #AQUI DEBEMOS VERIFICAR SI EXISTEN DUPLICADOS
 #SI EXISTE DEBEMOS HACER UNA CORRECCIÓN MANUAL
 
@@ -208,7 +229,7 @@ df1=pd.read_excel(ruta,
 # ARCHIVO DE AVALES QUE NOS MANDA CESAR, LOS APELLIDOS Y NOMBRES ESTÁN EN COLUMNAS
 # es el archivo que contiene los datos de los avales, pero separados en columnas (apellido paterno, materno, nombres
 # domicilio, distrito, provincia, dpto, celulares)
-ruta = 'C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO'
+ruta = 'C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO'
 avales_datos_separados = pd.read_excel(ruta + '\\' +'Avales SM - corte 04-08-23.xlsx',
                                        dtype={'NumeroDocIdentidad': str,
                                               'Celular1': str,
@@ -226,7 +247,7 @@ avales_datos_separados = avales_datos_separados.drop_duplicates(subset='NumeroDo
 ##############################################
 #REALIZANDO UNA CALIFICACIÓN UNIFICADA PARA EL REPORTE DE SENTINEL, EXPERIAN, CALIFICACIÓN QUE SALE DEL ANEXO 06
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\sentinel\\2023 JULIO') #ponemos la ubicación del archivo de las calificaciones
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO') #ponemos la ubicación del archivo de las calificaciones
 calif_anx06 = pd.read_excel('calificacion para reporte experian.xlsx',
                             dtype={'cod socio para merge': str})
 
@@ -773,13 +794,17 @@ def estado_castigado(df_sentinel):
     
 df_sentinel['Estado'] = df_sentinel.apply(estado_castigado, axis=1)
 
+#%%
+
+
+
 #%% especificaciones finales
 
 'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
 'se debe subir a HÁBITO PAGO'
 
 #%% CREACIÓN DEL EXCEL
-nombre_archivo = 'sentinel_experian '+ str(FECHA_CORTE) +'.xlsx'
+nombre_archivo = 'sentinel_experian kho'+ str(FECHA_CORTE) +'.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)
