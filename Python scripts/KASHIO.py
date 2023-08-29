@@ -9,11 +9,11 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\28 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\29 agosto 2023')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230828.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230829.xlsx'
 #####################################################################
 
 #%%
@@ -147,7 +147,9 @@ df.to_csv('datos.csv', index=False, encoding='utf-8')
 #BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
 '''
 
-#%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO
+#%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO CREAR EL REPORTE MENSUAL
+
+'''
 kashio_para_csv.to_excel('insumo cobranzas ' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
                          index = False)
-
+'''
