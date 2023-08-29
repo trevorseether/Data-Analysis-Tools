@@ -39,11 +39,13 @@ kashio['ID CLIENTE']       = kashio['ID CLIENTE'].str.strip()
 kashio['TELEFONO']         = kashio['TELEFONO'].str.strip()
 kashio['ID ORDEN DE PAGO'] = kashio['ID ORDEN DE PAGO'].str.upper()
 
+kashio['CODIGO KASHIO'] = kashio['NUMERO DOCUMENTO']
 # nos quedamos solo con los números de DNI
 kashio['DNI'] = kashio['NUMERO DOCUMENTO'].str.extract('(\d+)')
 
 #%%
-kashio_ordenado = kashio[['DNI', 'NOMBRE', 'ID ORDEN DE PAGO', 'MONEDA','MONTO',
+kashio_ordenado = kashio[['DNI', 'NOMBRE','CODIGO KASHIO', 
+                          'ID ORDEN DE PAGO', 'MONEDA','MONTO',
                           'ID CLIENTE', 'REFERENCIA', 'VENCIMIENTO']]
 
 # parseo de fechas
@@ -149,7 +151,7 @@ owo = kashio_union[kashio_union['DNI'] != kashio_union['Doc_Identidad']]
 print(owo)
 
 #%%
-kashio_final = kashio_union[['DNI', 'Nombre Cliente', 'CODIGO DE PAGO',
+kashio_final = kashio_union[['DNI', 'Nombre Cliente', 'CODIGO KASHIO','CODIGO DE PAGO',
                              'MONEDA', 'VALOR PAGO', 'codsoc', 'num pagare',
                              'Fecha Cuota', 'celular1', 'Email', 'Funcionario',
                              'departamento', 'provincia', 'distrito', 'COD_FINALIDAD',
@@ -167,7 +169,7 @@ kashio_final = kashio_final.rename(columns={'codsoc'    : 'CODSOC',
 
 #%% arreglito para libre disponibilidad
 def libre_disponibildiad(kashio_final):
-    if kashio_final['COD_FINALIDAD'] in [30,31,32,33,'30','31', '32', '33']:
+    if kashio_final['COD_FINALIDAD'] in [30, 31, 32, 33, '30', '31', '32', '33']:
         return 'LIBRE DISPONIBILIDAD'
     else:
         return kashio_final['PRODUCTO']
