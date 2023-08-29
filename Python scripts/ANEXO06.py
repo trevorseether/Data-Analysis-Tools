@@ -68,25 +68,26 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO')
 #5
 anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx"
 df1=pd.read_excel(anexo_del_mes,
-                 dtype={'Registro 1/': object, 
-                        'Fecha de Nacimiento 3/': object,
-                        'Código Socio 7/':object,
-                        'Tipo de Documento 9/':object,
-                        'Número de Documento 10/': object,
-                        'Relación Laboral con la Cooperativa 13/':object, 
-                        'Código de Agencia 16/': object,
-                        'Moneda del crédito 17/':object, 
-                        'Numero de Crédito 18/': object,
-                        'Tipo de Crédito 19/': object,
-                        'Sub Tipo de Crédito 20/': object,
-                        'Fecha de Desembolso 21/': object,
-                        'Cuenta Contable 25/': object,
-                        'Cuenta Contable Crédito Castigado 39/': object,
-                        'Tipo de Producto 43/': object,
+                 dtype={'Registro 1/'                   : object, 
+                        'Fecha de Nacimiento 3/'        : object,
+                        'Código Socio 7/'               : object,
+                        'Tipo de Documento 9/'          : object,
+                        'Número de Documento 10/'       : object,
+                        'Relación Laboral con la Cooperativa 13/'   : object, 
+                        'Código de Agencia 16/'         : object,
+                        'Moneda del crédito 17/'        : object, 
+                        'Numero de Crédito 18/'         : object,
+                        'Tipo de Crédito 19/'           : object,
+                        'Sub Tipo de Crédito 20/'       : object,
+                        'Fecha de Desembolso 21/'       : object,
+                        'Cuenta Contable 25/'           : object,
+                        'Cuenta Contable Crédito Castigado 39/'     : object,
+                        'Tipo de Producto 43/'          : object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        'Nro Prestamo \nFincore': object,
-                        'Refinanciado TXT': object},
+                        'Nro Prestamo \nFincore'        : object,
+                        'Refinanciado TXT'              : object
+                        },
                  skiprows=2)
 
 #eliminando las filas con NaN en las siguiente columnas al mismo tiempo:
@@ -110,8 +111,8 @@ x = df1.columns
 #POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
 creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', case=False) | 
-                      (df1['Nombre PlanillaTXT'].str.contains('san miguel', case=False) & 
-                      (df1['Nombre PlanillaTXT'].str.contains('coopac', case=False)))]
+                     (df1['Nombre PlanillaTXT'].str.contains('san miguel', case=False) & 
+                     (df1['Nombre PlanillaTXT'].str.contains('coopac', case=False)))]
 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos a ver las planillas
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas

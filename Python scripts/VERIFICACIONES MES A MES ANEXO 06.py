@@ -52,29 +52,41 @@ df_mes_pasado = df_mes_pasado.rename(columns={'ClasificaciondelDeudorconAlineami
 #leemos el anexo ampliado de este mes
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2')
 df = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx',
-                 dtype={'Registro 1/': object, 
-                        'Fecha de Nacimiento 3/': object,
-                        'Código Socio 7/':object, 
-                        'Número de Documento 10/': object,
-                        'Relación Laboral con la Cooperativa 13/':object, 
-                        'Código de Agencia 16/': object,
-                        'Moneda del crédito 17/':object, 
-                        'Numero de Crédito 18/': object,
-                        'Tipo de Crédito 19/': object,
-                        'Sub Tipo de Crédito 20/': object,
-                        'Fecha de Desembolso 21/': object,
-                        'Cuenta Contable 25/': object,
-                        'Tipo de Producto 43/': object,
+                 dtype={'Registro 1/'               : object, 
+                        'Fecha de Nacimiento 3/'    : object,
+                        'Código Socio 7/'           : object, 
+                        'Número de Documento 10/'   : object,
+                        'Relación Laboral con la Cooperativa 13/': object, 
+                        'Código de Agencia 16/'     : object,
+                        'Moneda del crédito 17/'    : object, 
+                        'Numero de Crédito 18/'     : object,
+                        'Tipo de Crédito 19/'       : object,
+                        'Sub Tipo de Crédito 20/'   : object,
+                        'Fecha de Desembolso 21/'   : object,
+                        'Cuenta Contable 25/'       : object,
+                        'Tipo de Producto 43/'      : object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        'Nro Prestamo \nFincore': object},
+                        'Nro Prestamo \nFincore'    : object},
                      skiprows=2
                      )
+
+#eliminación de filas vacías
+df.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
+                  'Fecha de Nacimiento 3/',
+                  'Número de Documento 10/',
+                  'Domicilio 12/',
+                  'Numero de Crédito 18/'], inplace=True, how='all')
+
+#limpieza de datos
 df['Apellidos y Nombres / Razón Social 2/'] = df['Apellidos y Nombres / Razón Social 2/'].str.strip()
 df['Número de Documento 10/'] = df['Número de Documento 10/'].str.strip()
 
-df = df.rename(columns={'Apellidos y Nombres / Razón Social 2/': 'nombres y apellidos mes actual'})
+print(df[pd.isna(df['Apellidos y Nombres / Razón Social 2/'])].shape[0])
+print(df[pd.isna(df['Número de Documento 10/'])].shape[0])
+print('si sale más de cero significa que hay nulo en alguna celda')
 
+df = df.rename(columns={'Apellidos y Nombres / Razón Social 2/': 'nombres y apellidos mes actual'})
 
 #%% FILTRADO DE COLUMNAS
 #nos quedamos solo con las columnas necesarias
