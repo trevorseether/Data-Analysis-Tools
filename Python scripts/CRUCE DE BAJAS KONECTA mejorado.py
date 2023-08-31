@@ -150,6 +150,7 @@ vigentes = pd.read_sql_query(query, conn, dtype={'Doc_Identidad': object,
        'pagare_fincore': object,
        'fechadesembolso': object
        })
+
 del conn
 #%% PARSEO DE FECHAS
 
