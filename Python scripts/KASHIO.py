@@ -152,6 +152,6 @@ df.to_csv('datos.csv', index=False, encoding='utf-8')
 #%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO CREAR EL REPORTE MENSUAL
 
 '''
-kashio_para_csv.to_excel('insumo cobranzas ' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
+kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
                          index = False)
 '''
