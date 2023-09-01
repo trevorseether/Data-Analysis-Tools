@@ -9,11 +9,11 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\31 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\01 setiembre 2023')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230831.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230901.xlsx'
 #####################################################################
 
 #%%
@@ -69,7 +69,7 @@ kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos las celdas anteriores
 def correccion(row):
     palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
                          'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM',
-                         'Ñ', ' ', '  ', '   ', 'GMAIL.COMN', 'GMNAIL.COM']
+                         'Ñ', ' ', '  ', '   ', 'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
@@ -128,6 +128,8 @@ kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('É', 'E')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Í', 'I')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ó', 'O')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
+
+kashio_para_csv['DOCUMENTO'] = 'OTHER'
 
 #%% EXPORTAR A CSV 
 
