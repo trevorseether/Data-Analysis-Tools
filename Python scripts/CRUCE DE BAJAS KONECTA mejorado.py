@@ -24,15 +24,20 @@ from datetime import datetime
 FECHATXT = '04-09-2023'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
-'ubicación de trabajo'
+'directorio de trabajo' ####################################################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\04 SETIEMBRE')
+############################################################################
+
+'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
+nombre_archivo = '1ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx'
+############################################################################
 
 #%% DATA COBRANZA
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('1ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx',
+bajas = pd.read_excel(nombre_archivo,
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
