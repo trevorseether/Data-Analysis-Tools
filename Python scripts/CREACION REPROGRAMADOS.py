@@ -18,17 +18,17 @@ import numpy as np
 'Revisar que estén bien las fechas:'
 #"Fecha Creacion Reprogramacion Nacimiento TXT"
 #"Fecha Creacion Reprogramacion Corte TXT"
-#'FEC_ULT_REPROG'
 
 #%% ESTABLECER FECHA DEL MES
-fecha_mes = 'JULIO 2023'
-fecha_corte = '2023-07-31'
-
+fecha_mes               = 'AGOSTO 2023'
+fecha_corte             = '2023-08-31'
+fecha_corte_inicial     = '2023-08-01'
+fecha_corte_inicial_int = 20230801
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO')
 
-bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Julio2023 - campos ampliados final (original fincore).xlsx',
+bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Agosto2023 - campos ampliados (original fincore).xlsx',
                       skiprows=4,
                       dtype=({'Registro 1/': object, 
                              'Fecha de Nacimiento 3/': object,
@@ -77,9 +77,9 @@ df_mes_actual_copia = menos_bruto.copy()
 
 #%%
 #aquí el anexo06 del mes pasado, el que manda Cesar (creo que ahí iría el del primer procesamiento)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
 
-nombre_anx06 = 'ANEXO 06 CAMPOS AMPLIADOS JUNIO 2023 - validacion1.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx'
 
 anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                skiprows=2,
@@ -313,7 +313,7 @@ ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombr
 ###############################################################
 
 #cambiar la fecha###################################################################################################
-filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= 20230701] #aquí cambiar la fecha
+filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= fecha_corte_inicial_int] #aquí cambiar la fecha
 #cambiar la fechaAAAAAAAAAAAAAAAAAAAAAAAA ##########################################################################
 
 para_enviar = filtrado_certificados[filtrado_certificados['Monto de Desembolso 22/'] >= 90000]
@@ -498,7 +498,7 @@ ordenado['Clasificación del Deudor 14/'] = ordenado['alineamiento14 provisional
 ordenado.drop(['alineamiento14 provisional'], axis=1, inplace=True)
 
 nulos = ordenado[pd.isna(ordenado['Clasificación del Deudor 14/'])]
-print(nulos)
+print(nulos.shape[0])
 del nulos
 revisar = ordenado[ordenado['Clasificación del Deudor 14/'] == 'revisar caso']
 print(revisar)
@@ -945,9 +945,9 @@ print('######################################################')
 '##############################################################################'
 #AÑADIENDO NUEVOS REPROGRAMADOS
 #PONER AQUÍ EL INICIO DEL MES DE CORTE (habrá que cambiarlo cada mes)
-mes_inicio = pd.to_datetime('2023-07-01')
+mes_inicio = pd.to_datetime(fecha_corte)
 #PONER AQUÍ EL FINAL DEL MES DE CORTE (habrá que cambiarlo cada mes)
-mes_final = pd.to_datetime('2023-07-31')
+mes_final = pd.to_datetime(fecha_corte_inicial)
 '##############################################################################'
 
 def nueva_fec_ult_reprog(anx06_ordenado):
@@ -1325,7 +1325,7 @@ Devengado Total'''].sum())
 print('suma total (2):')
 print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
 print('')
-print('la suma total debe ser igual para ambos')
+print('la suma total de (1) y (2) debe ser la misma')
                       
 #%% ASIGNACIÓN DE LOS DEVENGADOS A LAS COLUMNAS QUE SÍ IRÁN EN EL ANEXO 06 PARA LA SBS
 
@@ -1384,6 +1384,11 @@ excel_writer.save()
 #filtramos créditos reprogramados NO castigados
 reprogramados = anx06_repro[(anx06_repro['TIPO_REPRO'] != '--') & \
                             (anx06_repro['Saldos de Créditos Castigados 38/'] == 0)]
+    
+#%% pequeña alerta detectada
+investigar = reprogramados[pd.isna(reprogramados['TIPO_REPRO'])]
+print(investigar.shape[0])
+print('debe salir cero, sino investigar')
 
 #%%
 # CREACIÓN DEL EXCEL DE REPROGRAMADOS
@@ -1407,9 +1412,9 @@ df_mes_actual_copia #original antes de procesarlo
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 #donde dice @fechacorte se debe poner el mes
 
-fecha_corte_actual  = '20230731' #mes actual
-fecha_corte_menos_1 = '20230630' #mes anterior
-fecha_corte_menos_2 = '20230531' #mes anterior del anterior
+fecha_corte_actual  = '20230830' #mes actual
+fecha_corte_menos_1 = '20230731' #mes anterior
+fecha_corte_menos_2 = '20230630' #mes anterior del anterior
 
 query_sql = f'''
 SELECT 
@@ -1462,5 +1467,5 @@ no_aparecen = antiguos_aparecen[~antiguos_aparecen['Nro Prestamo \nFincore'].str
 para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 2/',
                             'Nro Prestamo \nFincore', 'Saldo de colocaciones (créditos directos) 24/']]
 
-
+print(para_reporte)
 

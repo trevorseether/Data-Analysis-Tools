@@ -13,7 +13,6 @@ Created on Fri Jun 16 10:46:51 2023
 
 import pandas as pd
 import os
-#import numpy as np
 import pyodbc
 from datetime import datetime
 
@@ -32,10 +31,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\04 SET
 nombre_archivo = '1ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx'
 ############################################################################
 
-#%% DATA COBRANZA
-################################
-#  DATA ENVIADA POR COBRANZA
-################################
+#%% IMPORTANDO EL INFORME DE BAJAS
 
 bajas = pd.read_excel(nombre_archivo,
                     dtype=({'Documento': object}))
@@ -43,19 +39,19 @@ bajas = pd.read_excel(nombre_archivo,
 bajas['Documento'] = bajas['Documento'].astype(str)
 bajas['Documento'] = bajas['Documento'].str.strip()
 
-uwu = bajas[pd.isna(bajas['Documento'])]
+doc_nulos = bajas[pd.isna(bajas['Documento'])]
 print('Documentos que se hayan convertido en Null:')
-print(uwu.shape[0])
+print(doc_nulos.shape[0])
 bajas['Documento original'] =   bajas['Documento']
 bajas['Documento'] = bajas['Documento'].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
 
-if uwu.shape[0] > 0:
-    print(uwu)
+if doc_nulos.shape[0] > 0:
+    print(doc_nulos)
     print('investigar qué ha pasado ( ´･･)ﾉ(._.`)')
 else:
-    print(uwu.shape[0])
-    del uwu
+    print(doc_nulos.shape[0])
+    del doc_nulos
     print('''todo bien (●'◡'●)''')
 
 #%% LECTURA DE LAS CREDENCIALES
@@ -72,9 +68,6 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 conn = pyodbc.connect(conn_str)
 
 #%% QUERY, créditos vigentes
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
 
 def convertir_fecha(fecha_str):
     try:
@@ -89,7 +82,7 @@ def convertir_fecha(fecha_str):
 fecha_formateada = convertir_fecha(FECHATXT)
 
 ###############################################################################
-fecha_hoy = fecha_formateada ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ##
+fecha_hoy = fecha_formateada ######### AQUÍ VA LA FECHA DE HOY
 ###############################################################################
 query = f'''
 SELECT
