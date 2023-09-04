@@ -15,23 +15,24 @@ import pandas as pd
 import os
 #import numpy as np
 import pyodbc
+from datetime import datetime
 
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '22-08-2023'
+FECHATXT = '04-09-2023'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'ubicación de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 AGOSTO\\22 agosto 2023 p2')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\04 SETIEMBRE')
 
 #%% DATA COBRANZA
 ################################
 #  DATA ENVIADA POR COBRANZA
 ################################
 
-bajas = pd.read_excel('VF ADICIONAL 6TO INFORME DE BAJAS GRUPO - AGOSTO 2023.xlsx',
+bajas = pd.read_excel('1ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx',
                     dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
@@ -70,8 +71,20 @@ conn = pyodbc.connect(conn_str)
 ###                CAMBIAR LA FECHA               ######
 ########################################################
 
+def convertir_fecha(fecha_str):
+    try:
+        # Parsea la fecha de entrada en formato 'dd-mm-yyyy'
+        fecha = datetime.strptime(fecha_str, '%d-%m-%Y')
+        # Formatea la fecha en el formato 'yyyymmdd'
+        fecha_formateada = fecha.strftime('%Y%m%d')
+        return fecha_formateada
+    except ValueError:
+        return "Formato de fecha incorrecto. Debe ser 'dd-mm-yyyy'."
+
+fecha_formateada = convertir_fecha(FECHATXT)
+
 ###############################################################################
-fecha_hoy = '20230822' ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ########
+fecha_hoy = fecha_formateada ######### NO OLVIDAAR (AQUÍ VA LA FECHA DE HOY) ##
 ###############################################################################
 query = f'''
 SELECT

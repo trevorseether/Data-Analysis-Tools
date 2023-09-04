@@ -131,6 +131,11 @@ kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
 
 kashio_para_csv['DOCUMENTO'] = 'OTHER'
 
+kashio_para_csv['MONTO'] = kashio_para_csv['MONTO'].round(2)
+
+kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana
+                                #pd.Timestamp('2050-12-31') si es que necesitaramos que esté en formato fecha
+
 #%% EXPORTAR A CSV 
 
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
@@ -138,14 +143,6 @@ kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv',
                        encoding='utf-8')
 
 '''
-nombre_archivo = 'datos.csv'
-df = pd.read_csv(nombre_archivo, encoding='utf-8',
-                 dtype = {'ID CLIENTE': str,
-                          'TELEFONO': str,
-                          'REFERENCIA': str})
-
-
-df.to_csv('datos.csv', index=False, encoding='utf-8')
 #BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
 '''
 
