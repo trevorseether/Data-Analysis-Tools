@@ -20,10 +20,13 @@ import numpy as np
 #"Fecha Creacion Reprogramacion Corte TXT"
 
 #%% ESTABLECER FECHA DEL MES
+
 fecha_mes               = 'AGOSTO 2023'
 fecha_corte             = '2023-08-31'
 fecha_corte_inicial     = '2023-08-01'
-fecha_corte_inicial_int = 20230801
+
+#%% UIT actual
+uit = 4950
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO')
@@ -75,7 +78,7 @@ print('si sale menos en el segundo es porque hubo duplicados')
 
 df_mes_actual_copia = menos_bruto.copy()
 
-#%%
+#%% ANEXO PRELIMINAR DEL MES PASADO
 #aquí el anexo06 del mes pasado, el que manda Cesar (creo que ahí iría el del primer procesamiento)
 ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
 
@@ -265,8 +268,8 @@ Suspenso Total''',
 'Fecha Castigo TXT'
 ]]
 
-#%%
-#PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO #chucha, tenemos que tener cuidado con esta huevada,
+#%% SALDO DE GARANTÍA DEL MES PASADO
+#PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
 #estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final ya se han cambiado estos datos y se han puesto en las columnas 'monto de garantías'
 
 garantias = anx06_anterior[['Nro Prestamo \nFincore',
@@ -303,14 +306,16 @@ if actual == anterior:
 else:
     print('habría que chequear si algún crédito se canceló \no quizás no hizo match')
 
-#%%
+#%%% strip de texto
 ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombres / Razón Social 2/'].str.strip()
 
-#%%
+#%% CRÉDITOS GARANTIZADOS PARA OSWALD
 ###############################################################
 ## generamos el archivo para Oswald y/o Juan Carlos        ####
 ## para que nos ayuden con los certificados de depósitos   ####
 ###############################################################
+
+fecha_corte_inicial_int = int(fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10])
 
 #cambiar la fecha###################################################################################################
 filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= fecha_corte_inicial_int] #aquí cambiar la fecha
@@ -336,21 +341,19 @@ except FileNotFoundError:
 para_enviar.to_excel(ruta,
                       index=False)
 
-#%%
+#%% indicaciones
 
 #EL MONTO QUE ENVÍEN IRÁ EN GARANTÍA AUTOLIQUIDABLE
 # puede que esté en dólares, hay que pasarlo a soles
 # esto se añade después de generar este archivo, para generar el anexo06 final, no este
-#%%
-#ahora hay que calcular alineamiento interno y tasa de provisión requerida (como en el anexo06)
-#arreglamos el saldo de cartera
 
-#%% HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
+#%% AJUSTE SALDO SIN CAPITALIZAR
+#HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
 
-#%% 
+#%%% función escoger menor saldo de cartera
 '''
 #solución provisional, nos quedamos con el menor monto de ambos.
 # de momento hay que esperar a que Oscar nos diga algo
@@ -365,7 +368,7 @@ def mayor_saldo_cartera(ordenado):
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado.apply(mayor_saldo_cartera, axis=1)
 '''
 
-#%%
+#%% diferencia negativa
 def negativos_saldo_cartera(ordenado):
     if ordenado['Saldo de colocaciones (créditos directos) 24/'] < 0:
         return ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT']
@@ -377,7 +380,7 @@ ordenado['Código Socio 7/'] = ordenado['Código Socio 7/'].astype(str).str.stri
 
 ordenado['Nro Prestamo \nFincore'] = ordenado['Nro Prestamo \nFincore'].str.strip()
 
-#%%
+#%%CORRECCIÓN TIPO DE CRÉDITO 19/
 #verificación del tipo de producto 19/
 #para créditos MYPE
 ordenado['Tipo de Crédito 19/'] = ordenado['Tipo de Crédito 19/'].astype(str) #por si acasito
@@ -429,14 +432,14 @@ filtrado_credito_19 = filtrado_credito_19.rename(columns={'Nro Prestamo \nFincor
 
 #guardamos este excel para mandárselo a Cesar
 try:
-    ruta = "Corección Tipo de Crédito 19.xlsx"
+    ruta = "Corrección Tipo de Crédito 19.xlsx"
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
 filtrado_credito_19.to_excel(ruta, index=False)
 
-#%%
+#%% CLASIFICACIÓN SIN ALINEAMIENTO 14/
 #calculamos alineamiento 14/
 #arreglamos la columna de los refinanciados
 ordenado['Refinanciado TXT'] = ordenado['Refinanciado TXT'].str.upper()
@@ -504,8 +507,8 @@ revisar = ordenado[ordenado['Clasificación del Deudor 14/'] == 'revisar caso']
 print(revisar)
 del revisar
 
-#%%
-#calculamos alineamiento 15/
+#%% CLASIFICACIÓN CON ALINEAMIENTO 15/
+
 #primero que nada columnas auxiliares
 saldo_total = ordenado.groupby('Código Socio 7/')['Saldo de colocaciones (créditos directos) 24/'].sum().reset_index()
 saldo_total = saldo_total.rename(columns={"Código Socio 7/": "codigo para merge"})
@@ -531,7 +534,7 @@ ordenado['porcentaje del total'] =  ordenado['Saldo de colocaciones (créditos d
 #%% PARTE 2 ALINEAMIENTO 15/
 #creamos función que crea columna auxiliar para escoger los que sirven para el alineamiento
 ###############################################
-uit = 4950 #valor de la uit en el año 2023  ###
+# uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 def monto_menor(ordenado):
     if (ordenado['Saldo de colocaciones (créditos directos) 24/'] < 100) or \
@@ -559,7 +562,7 @@ ordenado = ordenado.merge(calificacion,
 #hasta aquí ya hemos asignado el tipo de producto, de manera general, debería estar todo unificado. falta poner las excepciones,
 ordenado.drop(['cod socio para merge'], axis=1, inplace=True)
 
-#%%
+#%% ASIGNACIÓN ALINEMIENTO 15/ CONDICIONAL
 #finalmente, función para asignar el alineamiento 15/
 def asignacion_15(ordenado):
     if ordenado['credito menor'] == 'mayor':
@@ -580,11 +583,7 @@ ordenado.drop(['saldo para dividir',
                'calificacion para merge',
                'alineamiento 15 por joseph'], axis=1, inplace=True)
 
-#%%
-# cálculo de provisiones
-# ya no
-
-#%%
+#%% CORRECCIÓN DEL VIGENTE, REFINANCIADO, VENCIDO Y JUDICIAL
 #creamos algoritmo para arreglar Vigente, Refinanciado, Vencido, judicial
 def arreglo1(ordenado):
     if (ordenado['Capital Refinanciado 28/'] == 0) & \
@@ -633,7 +632,7 @@ def arreglo2_3(ordenado):
         return ordenado['Capital Refinanciado 28/']
 ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 
-#%%
+#%% Eliminación de duplicados
 ordenado = ordenado.drop_duplicates(subset = 'Nro Prestamo \nFincore')
 
 #%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
@@ -818,7 +817,7 @@ suma_otros = ordenado['Capital Vigente 26/'].sum() + \
 print('DEBE SALIR TRUE:') 
 print(round(suma_saldo_cartera,2)  == round(suma_otros,2)) 
 
-#%%
+#%% las 6 columnas azules de las reprogramaciones
 #NUEVA PARTE IMPORTANTE DE ESTE REPORTE, AÑADIREMOS UNAS 6 COLUMNAS IMPORTANTES
 ordenado['FEC_ULT_REPROG']= ''
 ordenado['PLAZO_REPR']= ''
@@ -876,7 +875,7 @@ anx06_ordenado.drop(['fincore para merge',
                      'TIPO_REPRO para merge'], axis=1, inplace=True)
 
 
-#%%
+#%% columnas 4, 5 y 6
 #añadimos datos a la col 4
 def col4(anx06_ordenado):
     if anx06_ordenado['TIPO_REPRO'] != '--':
@@ -901,7 +900,7 @@ def col6(anx06_ordenado):
         return anx06_ordenado['NRO REPROG']
 anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col6, axis=1)    
 
-#%%
+#%% REPROGRAMADOS DEL MES
 #AÑADIENDO LOS REPROGRAMADOS DEL MES
 columna = anx06_ordenado["Fecha Creacion Reprogramacion Nacimiento TXT"]
 filas_no_nan = columna.count()
@@ -941,12 +940,12 @@ print('######################################################')
 print(' también chequear que en ambas columnas salga igual')
 print('######################################################')
 
-#%%
+#%% NUEVAS REPROGRAMACIONES
 '##############################################################################'
 #AÑADIENDO NUEVOS REPROGRAMADOS
-#PONER AQUÍ EL INICIO DEL MES DE CORTE (habrá que cambiarlo cada mes)
+#PONER AQUÍ EL INICIO DEL MES DE CORTE (es el dato que se solicita al principio)
 mes_inicio = pd.to_datetime(fecha_corte)
-#PONER AQUÍ EL FINAL DEL MES DE CORTE (habrá que cambiarlo cada mes)
+#PONER AQUÍ EL FINAL DEL MES DE CORTE (es el dato que se solicita al principio)
 mes_final = pd.to_datetime(fecha_corte_inicial)
 '##############################################################################'
 
@@ -974,10 +973,10 @@ def nuevo_tipo_reprog(anx06_ordenado):
         return anx06_ordenado['TIPO_REPRO']
 anx06_ordenado['TIPO_REPRO'] = anx06_ordenado.apply(nuevo_tipo_reprog, axis=1)
 
-#%%
+#%%% indicaciones
 #falta añadir las 3 columnas, pero para los nuevos
 
-#%%
+#%% COLUMNAS 4, 5 Y 6 NUEVAMNETE
 #NUEVAMENTE añadimos datos a la col 4
 def col4(anx06_ordenado):
     if (anx06_ordenado['TIPO_REPRO'] != '--') & \
@@ -1005,7 +1004,7 @@ def col6(anx06_ordenado):
         return anx06_ordenado['NRO REPROG']
 anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col6, axis=1)
 
-#%%
+#%% PARSEO DE FECHAS DE ÚLTIMA REPROGAMACIÓN
 #arreglamos las fechas de la columna ['FEC_ULT_REPROG']
 anx06_ordenado['FEC_ULT_REPROG'] = anx06_ordenado['FEC_ULT_REPROG'].astype(str)  # Convierte los valores en la columna 'c' a cadenas
 
@@ -1047,8 +1046,8 @@ print(str(anx06_ordenado[anx06_ordenado['Relación Laboral con la Cooperativa 13
 
 anx06_repro = anx06_ordenado.copy() #creando una copia para el reporte de reprogramados
 
-#%%
-'aquí se me han duplicado créditos'
+#%% CRÉDITOS MENORES A 100 SOLES
+'aquí se me han duplicado créditos alguna vez'
 # CREACIÓN DE LA PESTAÑA DONDE ESTARÁN LOS CRÉDITOS CON CRÉDITOS MENORES A 100 SOLES
 
 menores = anx06_ordenado[(anx06_ordenado['Saldo de colocaciones (créditos directos) 24/'] < 100) & \
@@ -1083,7 +1082,7 @@ amarillo =  cred <100
 rosado =  cred >= 100
  PROV.REQUERIDA A SER EVALUADA.'''})
  
-#%% eliminamos créditos no vigentes
+#%% ELIMINACIÓN DE CRÉDITOS NO VIGENTES
 #es decir , créditos que tengan E1 = 342 y E2 <= FECHA DE CORTE
 anx06_ordenado['E1'] = anx06_ordenado['E1'].astype(int)
 anx06_ordenado['E2'] = anx06_ordenado['E2'].astype(str)
@@ -1161,8 +1160,7 @@ anx06_ordenado['''fecha término de gracia por desembolso ["v" + dias gracia (av
 # print para verificar que haya funcionado, esta vaina está medio rara    
 print(anx06_ordenado[['''fecha desemb (v)''', '''fecha término de gracia por desembolso ["v" + dias gracia (av)]''']])
 
-#%%
-#COL AMARILLA 3 y 4, primero datos del mes pasado
+#%% COL AMARILLA 3 y 4, primero datos del mes pasado
 
 col3_4 = anx06_anterior[['Nro Prestamo \nFincore', 
                          'periodo de gracia por Reprog inicio', 
@@ -1192,7 +1190,7 @@ anx06_ordenado[(anx06_ordenado['periodo de gracia por Reprog inicio'] != '--') &
                (pd.isna(anx06_ordenado['periodo de gracia por Reprog inicio']))]['periodo de gracia por Reprog inicio']
 
 
-#%% columna 5
+#%%% columna 5
 anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''] = anx06_ordenado['Fecha Venc Ult Cuota Cancelada']
 
@@ -1208,7 +1206,7 @@ anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
 #hasta aquí todo bien
 
-#%% col amarillas 3 y 4
+#%%% col amarillas 3 y 4
 
 def col3_actuales(anx06_ordenado):
     if (anx06_ordenado["Fecha Creacion Reprogramacion Nacimiento TXT"] >= mes_inicio) & \
@@ -1234,19 +1232,17 @@ anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado.apply(c
 print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog Término'] != '--']['periodo de gracia por Reprog Término'])
 #aparentemente todo bien
 
-#%% 5ta columna amarilla
+#%%% 5ta columna amarilla
 
 # hay que asegurarnos de que esta columna sea datetime 'Fecha Venc Ult Cuota Cancelada'
 
-anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
-(NVO)'''] = anx06_ordenado['Fecha Venc Ult Cuota Cancelada']
+anx06_ordenado['Fecha Venc de Ult Cuota Cancelada\n(NVO)'] = anx06_ordenado['Fecha Venc Ult Cuota Cancelada']
 
 anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''] = anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''].fillna('--')
 
-#%%
-#por si acasito, corregimos la columna del nro Registro 1/
+#%% RECALCULACIÓN DE LA COLUMNA NRO REGISTRO 1/
 
 # Obtener la cantidad total de filas en el DataFrame
 total_filas = len(anx06_ordenado)
@@ -1259,6 +1255,7 @@ anx06_ordenado['Registro 1/'] = [f'{i+1:06}' for i in range(total_filas)]
 anx06_ordenado['Fecha de Desembolso 21/'] = anx06_ordenado['Fecha de Desembolso 21/'].astype(int)
 
 #%% verificación de los intereses en suspenso y devengados
+
 print(' ')
 print('intereses en suspenso1:')
 print(anx06_ordenado['''Interes 
@@ -1269,6 +1266,7 @@ print(anx06_ordenado['''Interes
 Devengado Total'''].sum())
 print('suma total (1):')
 print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
+
 #%% intereses en Suspenso + Devengados en caso de que tengan cero cuotas canceladas y tengan >30 días
 #se suman los intereses en suspenso y devengados
 
@@ -1353,9 +1351,9 @@ columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
     
 anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
-#%%
-#CREAMOS EL EXCEL
-df_vacío = pd.DataFrame({' ': ['', '', ''], '  ': ['', '', '']})
+#%% CREACIÓN DEL EXCEL
+df_vacío = pd.DataFrame({' ' : ['', '', ''], 
+                         '  ': ['', '', '']})
 
 nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
 try:
@@ -1379,8 +1377,8 @@ menores.to_excel(excel_writer, sheet_name='socios con cred < 100 soles', index=F
 # Guardar los cambios y cerrar el objeto ExcelWriter
 excel_writer.save()
  
-#%%
-#YA ESTÁ
+#%% FILTRADO DE CRÉDITOS REPROGRAMADOS
+
 #filtramos créditos reprogramados NO castigados
 reprogramados = anx06_repro[(anx06_repro['TIPO_REPRO'] != '--') & \
                             (anx06_repro['Saldos de Créditos Castigados 38/'] == 0)]
@@ -1390,8 +1388,7 @@ investigar = reprogramados[pd.isna(reprogramados['TIPO_REPRO'])]
 print(investigar.shape[0])
 print('debe salir cero, sino investigar')
 
-#%%
-# CREACIÓN DEL EXCEL DE REPROGRAMADOS
+#%% CREACIÓN DEL EXCEL DE REPROGRAMADOS
 try:
     ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
     os.remove(ruta)
@@ -1401,7 +1398,7 @@ except FileNotFoundError:
 reprogramados.to_excel(ruta,
                       index=False)    
 
-#%%
+#%% VERIFICACIONES ADICIONALES, CRÉDITOS QUE APARECIERON ESTE MES PERO NO EN ALGÚN MES ANTERIOR
 ###############################################################################
 ######     verificamos si algún crédito no apareció el mes pasado        ######
 ###############################################################################
