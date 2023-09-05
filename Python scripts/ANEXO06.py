@@ -24,10 +24,20 @@ import datetime
 "periodo de gracia por Reprog Término"
 
 #deben estar en formato de fecha
+
+#%% PARÁMETROS INICIALES
+###############################################
+uit = 4950 #valor de la uit en el año 2023  ###
+###############################################
+
+# FECHA DE CORTE ###################################
+fecha_corte = '2023-07-31' #ejemplo '2023-06-30' ###
+####################################################
+
+############################################################################################
+mes_calif = 'Julio' #aqui debemos poner el mes donde esté la calificación más reciente  ###
+############################################################################################
 #%% ESTABLECER FECHA CORTE
-#2
-#PONER LA FECHA DE CORTE
-fecha_corte = '2023-07-31' #ejemplo '2023-06-30'
 
 #esta función nos permite obtener el número de días del mes de corte
 def dias_en_mes(fecha):
@@ -175,10 +185,6 @@ archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 07 2023.xlsx' #nombre d
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows=3,
                           dtype={'Nº de Crédito FINCORE': object, })
-
-############################################################################################
-mes_calif = 'Julio' #aqui debemos poner el mes donde esté la calificación más reciente ###
-############################################################################################
 
 calif_ref[mes_calif] = calif_ref[mes_calif].astype(float)
 calif_ref = calif_ref.rename(columns={mes_calif: 'calificacion especial'})
@@ -363,9 +369,6 @@ df_resultado['porcentaje del total'] =  df_resultado['Saldo de colocaciones (cr�
 
 #%% PARTE 2 ALINEAMIENTO 15/
 #creamos función que crea columna auxiliar para escoger los que sirven para el alineamiento
-###############################################
-uit = 4950 #valor de la uit en el año 2023  ###
-###############################################
 def monto_menor(df_resultado):
     if (df_resultado['Saldo de colocaciones (créditos directos) 24/'] < 100) or \
         ((df_resultado['porcentaje del total'] < 0.01) and \
@@ -1060,11 +1063,9 @@ del result
 not_in = [15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 29, 95, 96, 97, 98, 99, 41, 45]
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
 mayores_para_investigar = mayores_para_investigar[mayores_para_investigar['Saldo de colocaciones (créditos directos) 24/'] > 50000]
-print(mayores_para_investigar[['''Nro Prestamo 
-Fincore''', 'Fecha de Desembolso 21/']])
+print(mayores_para_investigar[['Nro Prestamo \nFincore', 'Fecha de Desembolso 21/']])
 
-df_resultado_2.loc[df_resultado_2['''Nro Prestamo 
-Fincore'''] == '00103786', 'Tipo de Producto 43/'] = 96
+df_resultado_2.loc[df_resultado_2['Nro Prestamo \nFincore'] == '00103786', 'Tipo de Producto 43/'] = 96
 
 #%% conclusión
 #########################################################################################
@@ -1395,7 +1396,7 @@ def modificacion_dias_suspenso(df_resultado_2):
 ''' #esta vaina antes funcionaba pi pi pi
   
 def modificacion_dias_suspenso(row):
-    fecha_fija = pd.Timestamp('2023-05-31')  # Reemplaza 'yyyy-mm-dd' con la fecha fija que deseas utilizar
+    fecha_fija = pd.Timestamp(fecha_corte)  # 'yyyy-mm-dd' FECHA DE CORTE
     
     if ((row['Capital Vigente 26/'] > 0) and (row['Capital Vencido 29/'] > 0)) and \
             row['Fecha Venc de Ult Cuota Cancelada Contabilidad temporal'] == '--':
@@ -1863,7 +1864,7 @@ for column in result:
 anexo06_casi['Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/'] = '' 
 anexo06_casi['Rendimiento Devengado por Programa IMPULSO MYPERU 59/'] = ''
 
-#ORDENAMIENTOOOOOOOO
+#ORDENAMIENTO DE LAS COLUMNAS
 lista_columnas = list(anexo06_casi.columns)
 
 lista_columnas.remove('Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/')
@@ -1878,7 +1879,9 @@ anexo06_casi = anexo06_casi[ordenamiento_final]
 
 #%% CRÉDITOS EN EL RESTO DEL SISTEMA FINANCIERO
 # AÑADIENDO EL NRO DE CRÉDITOS QUE TIENE EL SOCIO EN EL RESTO DEL SECTOR FINANCIERO
-# NOS VAMOS AL SABIO DE EXPERIAN, 
+# NOS VAMOS AL SABIO DE EXPERIAN,
+
+# esta vaina la voy a eliminar y reemplazar en el futuro por el alineamiento externo (●'◡'●)
 
 import pandas as pd
 import os
@@ -2049,6 +2052,11 @@ print("La ubicación actual es: " + ubicacion_actual)
 #######################################################                                                                                                                                                                                                 
 'UNA VEZ QUE JENNY NOS DE EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
 
+#%% mes anterior al que estamos trabajando actualmente
+##################################################################
+fechacorte_mes_pasado = "20230630" #  aqui cambiamos la fecha #### se pone la del mes pasado
+##################################################################
+
 #%% IMPORTACIÓN DE ARCHIVOS
 #leyendo el excel que nos envía CONTABILIDAD
 import os
@@ -2178,9 +2186,7 @@ print(df_diferidos['Provisiones Constituidas 37/'].sum())
 #comparando provisiones constituidas contra el del mes pasado
 'AQUI HAY QUE CAMBIAR LA FECHA PARA QUE VAYA DEL MES PASADO al que estamos elaborando'
 import pyodbc
-##################################################################
-fechacorte_mes_pasado = "20230630" #  aqui cambiamos la fecha #### se pone la del mes pasado
-##################################################################
+
 query = f'''
 declare @fechacorte as datetime
 set @fechacorte = '{fechacorte_mes_pasado}'
