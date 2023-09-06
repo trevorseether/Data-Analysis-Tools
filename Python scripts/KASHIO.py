@@ -5,18 +5,24 @@ Created on Mon Aug  7 15:00:55 2023
 @author: Joseph Montoya
 """
 
+###############################################################################
+###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
+###############################################################################
+# también hay que reemplazar las Ã‘ por Ñ
+
+
 import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\05 setiembre 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\06 setiembre 2023')
 
-#%%
+#%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230905.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230906.xlsx'
 #####################################################################
 
-#%%
+#%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
                        dtype={'ID CLIENTE': str,
                               'TELEFONO': str,
@@ -28,7 +34,7 @@ kashio['EMAIL'] = kashio['EMAIL'].str.upper()
 
 columnas = list(kashio.columns)
 
-#%% 
+#%%  lectura y merge con el del día anterior (obsoleto)
 '''
 #LEYENDO EL DEL DÍA ANTERIOR
 ubi = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\21 agosto 2023'
