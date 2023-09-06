@@ -27,11 +27,33 @@ fecha_corte_inicial     = '2023-08-01'
 
 #%% UIT actual
 uit = 4950
+
+#%% ARCHIVOS
+
+# ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO'
+############################################################################################
+
+# NOMBRE DE INSUMO ACTUAL ##################################################################
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Agosto2023 - campos ampliados (original fincore).xlsx'
+############################################################################################
+
+#***
+# DATOS DEL MES PASADO
+# ubicación del ANX 06 del mes pasado ######################################################
+#aquí el anexo06 del mes pasado, el que manda Cesar (el que se genera para reprogramados)
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
+############################################################################################
+
+# ANX06 PRELIMINAR DEL MES PASADO ##########################################################
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx'
+############################################################################################
+
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO')
+os.chdir(directorio)
 
-bruto = pd.read_excel('Rpt_DeudoresSBS Anexo06  - Agosto2023 - campos ampliados (original fincore).xlsx',
+bruto = pd.read_excel(anx06_actual,
                       skiprows=4,
                       dtype=({'Registro 1/': object, 
                              'Fecha de Nacimiento 3/': object,
@@ -79,10 +101,6 @@ print('si sale menos en el segundo es porque hubo duplicados')
 df_mes_actual_copia = menos_bruto.copy()
 
 #%% ANEXO PRELIMINAR DEL MES PASADO
-#aquí el anexo06 del mes pasado, el que manda Cesar (creo que ahí iría el del primer procesamiento)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
-
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx'
 
 anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                skiprows=2,
@@ -315,7 +333,7 @@ ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombr
 ## para que nos ayuden con los certificados de depósitos   ####
 ###############################################################
 
-fecha_corte_inicial_int = int(fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10])
+fecha_corte_inicial_int = int(fecha_corte_inicial[0:4] + fecha_corte_inicial[5:7] + fecha_corte_inicial[8:10])
 
 #cambiar la fecha###################################################################################################
 filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= fecha_corte_inicial_int] #aquí cambiar la fecha
@@ -635,14 +653,25 @@ ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 #%% Eliminación de duplicados
 ordenado = ordenado.drop_duplicates(subset = 'Nro Prestamo \nFincore')
 
-#%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
-# ya determinamos con oscar y cesar que esto debemos hacer
-# buscar en CRONOGRAMA DE PRÉSTAMO:
+#%% SALDOS CASTIGADOS NEGATIVOS LUEGO DE DESCAPITALIZAR:
+# buscar en CRONOGRAMA DE PRÉSTAMO si aparece alguno:
 revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
-# corregimos, poniendo el saldo capital en el monto de saldo castigado
-ordenado.loc[(ordenado['Apellidos y Nombres / Razón Social 2/'] == 'CHUCUYA HERNANDEZ CLELIA MARIA') & \
-             (ordenado['Registro 1/'] == '004278'), 
-             'Saldos de Créditos Castigados 38/'] = 39.22
+print(revisar_en_fincore)
+print(revisar_en_fincore.shape[0])
+print('debe salir cero, sino hay que reemplazar el monto castigado por su saldo que aparece en el Fincore')
+
+# corregimos, poniendo el saldo capital en el monto de saldo
+#en este caso estoy poniendo el saldo castigado de un caso recurrente
+if 'CHUCUYA HERNANDEZ CLELIA MARIA' in list(revisar_en_fincore['Apellidos y Nombres / Razón Social 2/']):
+    ordenado.loc[(ordenado['Apellidos y Nombres / Razón Social 2/'] == 'CHUCUYA HERNANDEZ CLELIA MARIA') & \
+                 (ordenado['Nro Prestamo \nFincore'] == '00073897'), 
+                 'Saldos de Créditos Castigados 38/'] = 39.22
+
+revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
+print(revisar_en_fincore.shape[0])
+print('debe salir cero, sino hay que reemplazar el monto castigado por su saldo')
+
+#%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
 
 ###############################################################################
 # ahora sí nos aseguramos de quitar alguna vaina que no cuadra
