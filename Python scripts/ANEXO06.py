@@ -26,16 +26,33 @@ import datetime
 #deben estar en formato de fecha
 
 #%% PARÁMETROS INICIALES
+
+# DIRECTORIO DE TRABAJO #######################################################
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO')
+###############################################################################
+
+# ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #################
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 - campos ampliados 01.xlsx"
+###############################################################################
+
 ###############################################
 uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE ###################################
-fecha_corte = '2023-07-31' #ejemplo '2023-06-30' ###
+fecha_corte     = '2023-08-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Agosto 2023'
 ####################################################
 
+'este es el archivo de la calificación que añade Enrique manualmente'
+########################################################################################################################
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 08 2023.xlsx' #nombre del archivo de los refinanciados ########
+########################################################################################################################
+
+# Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
+# columnas en ese excel y solo quedarnos con el mes que necesitamos:
 ############################################################################################
-mes_calif = 'Julio' #aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'AGOSTOO' #aqui debemos poner el mes donde esté la calificación más reciente  ###
 ############################################################################################
 #%% ESTABLECER FECHA CORTE
 
@@ -68,15 +85,8 @@ df = pd.DataFrame({'Fecha': ['18/01/2023', '19/01/2023', '20/01/2023']})
 df['Fecha'] = df['Fecha'].apply(convertir_formato_fecha)
 '''
 
-#%% DIRECTORIO DE TRABAJO
-#4
-
-#UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO')
-
 #%% IMPORTACIÓN DE ARCHIVOS
 #5
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx"
 df1=pd.read_excel(anexo_del_mes,
                  dtype={'Registro 1/'                   : object, 
                         'Fecha de Nacimiento 3/'        : object,
@@ -134,6 +144,9 @@ print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]
 # Reemplazar el valor de 'Tipo de Documento 9/' donde 'Nro Prestamo Fincore' sea '00092306'
 # es una corrección recurrente
 df1.loc[df1['''Nro Prestamo 
+Fincore'''] == '00109244', 'Tipo de Documento 9/'] = '1'
+
+df1.loc[df1['''Nro Prestamo 
 Fincore'''] == '00092306', 'Tipo de Documento 9/'] = '1'
 
 tipo_cero = df1[(df1['Tipo de Documento 9/'] == 0) | \
@@ -145,7 +158,7 @@ if tipo_cero.shape[0] == 0:
     print('todo bien')
 else:
     print('investigar, hay algún tipo de documento con cero, y no debe tenerlo')
-    
+    print(tipo_cero['Nro Prestamo \nFincore'])
 #456 Ejemplo de código para realizar un update en función de múltiples condiciones
 #456df1.loc[(df1['Nro Prestamo Fincore'] == '00092306') & \
 #456        (df1['sexo'] == 'M') & \
@@ -176,11 +189,6 @@ print('si sale 8113020000 entonces todo bien')
 
 #ahora vamos a leer el archivo donde Enrique manualmente elabora la clasificación de los refinanciados
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
-
-'este es el archivo de la calificación que añade Enrique manualmente'
-########################################################################################################################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 07 2023.xlsx' #nombre del archivo de los refinanciados ########
-########################################################################################################################
 
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows=3,
@@ -894,6 +902,7 @@ def producto_37(df_resultado):
 df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_37, axis=1)
 
 print(df_resultado[df_resultado['Tipo de Producto 43/'] == 37][['Tipo de Producto 43/', 'Nombre PlanillaTXT']])
+print('en total son: ' + str(df_resultado[df_resultado['Tipo de Producto 43/'] == 37].shape[0]))
 #si salen 37s y la coopac es porque sí funciona
 
 #%%% limpieza
@@ -1379,21 +1388,6 @@ df_resultado_2.drop(['dias int suspenso 2'], axis=1, inplace=True)
 #%% dias int suspenso
 #lo anterior ya no era lo último 
 #añadiendo unas excepciones
-'''
-def modificacion_dias_suspenso(df_resultado_2):
-    if (((df_resultado_2['Capital Vigente 26/'] > 0) and \
-        (df_resultado_2['Capital Vencido 29/'] > 0))) and \
-        df_resultado_2['Fecha Venc de Ult Cuota Cancelada Contabilidad temporal'] == '--':
-        
-        return (fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days
-    elif (((df_resultado_2['Capital Vigente 26/'] > 0) and \
-        (df_resultado_2['Capital Vencido 29/'] > 0))) and \
-        df_resultado_2['Fecha Venc de Ult Cuota Cancelada Contabilidad temporal'] != '--':
-        
-        return (fecha_fija - df_resultado_2['Fecha Venc de Ult Cuota Cancelada Contabilidad']).days
-    else:
-        return df_resultado_2['dias int suspenso']
-''' #esta vaina antes funcionaba pi pi pi
   
 def modificacion_dias_suspenso(row):
     fecha_fija = pd.Timestamp(fecha_corte)  # 'yyyy-mm-dd' FECHA DE CORTE
@@ -1773,7 +1767,6 @@ Origuinal TXT''',
 '''Nro Prestamos X Deudor TXT''',
 '''Fecha Ultimo 
 Pago TXT''',
-'''Nro Dias Gracia Corte RPG TXT''',
 '''Tipo Reprogramacion TXT''',
 '''Fecha Primer Cuota Gracia Nacimiento RPG TXT''',
 '''Primer Fecha Cuota Gracia Corte RPG TXT''',
@@ -1873,7 +1866,7 @@ lista_columnas.remove('TIPO DE PRODUCTO TXT')
 
 ordenamiento_final = lista_columnas[0:65] + ['Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/',
                                              'Rendimiento Devengado por Programa IMPULSO MYPERU 59/'] + \
-                                            lista_columnas[66:] + ['TIPO DE PRODUCTO TXT']
+                                            lista_columnas[65:] + ['TIPO DE PRODUCTO TXT']
 
 anexo06_casi = anexo06_casi[ordenamiento_final]
 
@@ -2022,7 +2015,7 @@ anexo06_casi = ya_casi.copy()
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
-nombre = "ANX06 procesado " + fecha_corte + ".xlsx"
+nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados PROCESADO 02.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
