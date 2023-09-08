@@ -1993,12 +1993,13 @@ print('--------------------------------------')
 
 #%% lo convertimos a int (a ver qué pasa)
 
-ya_casi['Fecha de Nacimiento 3/'] = ya_casi['Fecha de Nacimiento 3/'].astype(int)
-ya_casi['Fecha de Desembolso 21/'] = ya_casi['Fecha de Desembolso 21/'].astype(int)
-ya_casi['Fecha de Vencimiento Origuinal del Credito 48/'] = ya_casi['Fecha de Vencimiento Origuinal del Credito 48/'].astype(int)
-ya_casi['Fecha de Vencimiento Actual del Crédito 49/'] = ya_casi['Fecha de Vencimiento Actual del Crédito 49/'].astype(int)
+ya_casi['Fecha de Nacimiento 3/']   = ya_casi['Fecha de Nacimiento 3/'].astype(int)
+ya_casi['Fecha de Desembolso 21/']  = ya_casi['Fecha de Desembolso 21/'].astype(int)
+ya_casi['Fecha de Vencimiento Origuinal del Credito 48/']   = ya_casi['Fecha de Vencimiento Origuinal del Credito 48/'].astype(int)
+ya_casi['Fecha de Vencimiento Actual del Crédito 49/']      = ya_casi['Fecha de Vencimiento Actual del Crédito 49/'].astype(int)
 
 #%% redondeamos la columna de la tasa de interés anual a 4 decimales
+
 ya_casi['Tasa de Interés Anual 23/'] = ya_casi['Tasa de Interés Anual 23/'].round(4)
 
 #%% RECÁLCULO DE LA COLUMNA NRO_REGISTRO
@@ -2256,7 +2257,7 @@ print('diferencia:  '+ str(suma_constituidas - mes_pasado))
 calculo_que_pidio_enrique = suma_constituidas / (df_diferidos['Capital Vencido 29/'].sum() + df_diferidos['Capital en Cobranza Judicial 30/'].sum())
 print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 
-#%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso y los redondeamos
+#%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso, provisiones y los redondeamos
 
 df_diferidos['Interes\nDevengado Total'] = df_diferidos['Interes\nDevengado Total'].round(2)
 
@@ -2265,6 +2266,9 @@ df_diferidos['Interes \nSuspenso Total'] = df_diferidos['Interes \nSuspenso Tota
 df_diferidos['Rendimiento\nDevengado 40/'] = df_diferidos['Interes\nDevengado Total']
 
 df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Total']
+
+df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
+df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
@@ -2453,23 +2457,50 @@ writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine='xlsxwriter')
 espacio_entre_tablas = pd.DataFrame([''])
 
 # Guarda los dataframes en el archivo Excel
-pivot_mes_actual.to_excel(writer, sheet_name='Brechas', startrow=0, startcol=0, index=True)
-writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + 1, 0, 'DATOS DEL MES ACTUAL')
+pivot_mes_actual.to_excel(writer, 
+                          sheet_name='Brechas', 
+                          startrow=0, 
+                          startcol=0, 
+                          index=True)
+writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + 1, #número de fila
+                               0,                             #número de columna
+                               'DATOS DEL MES ACTUAL')        #valor en esa fila y columna
 
-pivot_mes_pasado.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + 3, startcol=0, index=True)
-writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 4, 0, 'DATOS DEL MES PASADO')
+pivot_mes_pasado.to_excel(writer, 
+                          sheet_name='Brechas', 
+                          startrow=pivot_mes_actual.shape[0] + 3, 
+                          startcol=0, 
+                          index=True)
+writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 4, #número de fila
+                               0,                                                         #número de columna
+                               'DATOS DEL MES PASADO')                                    #valor en esa fila y columna
 
-diferencias.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 6, startcol=0, index=True)
-writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 7, 0, 'DIFERENCIAS DE UN MES A OTRO')
+diferencias.to_excel(writer, 
+                     sheet_name='Brechas', 
+                     startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 6, 
+                     startcol=0, 
+                     index=True)
+writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 7, #número de fila
+                               0,                                                                                #número de columna
+                               'DIFERENCIAS DE UN MES A OTRO')                                                   #valor en esa fila y columna
 
-diferencias_porcentuales.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 9, startcol=0, index=True)
-writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 10, 0, 'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')
+diferencias_porcentuales.to_excel(writer, 
+                                  sheet_name='Brechas', 
+                                  startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 9, 
+                                  startcol=0, 
+                                  index=True)
+writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 10, #número de fila
+                               0,                                                                                                                     #número de columna
+                               'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')                                                                           #valor en esa fila y columna
 
-espacio_entre_tablas.to_excel(writer, sheet_name='Brechas', startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, startcol=0, index=False)
+espacio_entre_tablas.to_excel(writer, 
+                              sheet_name='Brechas', 
+                              startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, 
+                              startcol=0, 
+                              index=False)
 
 # Guarda y cierra el archivo Excel
 writer.save()
-
 
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS

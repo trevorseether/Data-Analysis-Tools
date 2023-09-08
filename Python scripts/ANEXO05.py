@@ -26,17 +26,18 @@ fecha_corte = 'JULIO 2023'         ###########
 #ubicación ####################################################################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2')
 ###############################################################################
+
 #%%
 #PONER EL ANEXO 06 FINAL
 df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx",
-                 dtype={'Código Socio 7/': object, 
-                        'Número de Documento 10/': object,
-                        'Numero de Crédito 18/':object, 
-                        'Nro Prestamo \nFincore': object,
-                       'Moneda del crédito 17/':object, 
-                       'Tipo de Crédito 19/': object,
-                       'Clasificación del Deudor con Alineamiento 15/': object,
-                       'Fecha de Nacimiento 3/': object,
+                 dtype={'Código Socio 7/'           : object, 
+                        'Número de Documento 10/'   : object,
+                        'Numero de Crédito 18/'     : object, 
+                        'Nro Prestamo \nFincore'    : object,
+                        'Moneda del crédito 17/'    : object, 
+                        'Tipo de Crédito 19/'       : object,
+                        'Clasificación del Deudor con Alineamiento 15/': object,
+                        'Fecha de Nacimiento 3/'    : object,
                        },
                  skiprows= 2 #ESTO VA A DEPENDER DEL ARCHIVO 
 )
@@ -56,9 +57,7 @@ df1['Código Socio 7/'] = df1['Código Socio 7/'].str.strip()
 
 #%% REDONDEO DE LAS COLUMNAS
 df1['Ingresos Diferidos 42/'] = df1['Ingresos Diferidos 42/'].round(2)
-df1['''Rendimiento
-Devengado 40/'''] = df1['''Rendimiento
-Devengado 40/'''].round(2)
+df1['Rendimiento\nDevengado 40/'] = df1['Rendimiento\nDevengado 40/'].round(2)
 
 df1['Intereses en Suspenso 41/'] = df1['Intereses en Suspenso 41/'].round(2)
 
