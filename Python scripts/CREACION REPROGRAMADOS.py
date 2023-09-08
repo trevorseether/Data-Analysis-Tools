@@ -198,9 +198,7 @@ Devengado 40/''',
 'Saldo de Créditos que no cuentan con cobertura 51/',
 'Saldo Capital de Créditos Reprogramados 52/',
 'Saldo Capital en Cuenta de Orden por efecto del Covid 53/',
-'''Subcuenta de orden 
-54/
-''',
+'Subcuenta de orden \n54/\n',
 'Rendimiento Devengado por efecto del COVID 19 55/',
 'Saldo de Garantías con Sustitución de Contraparte 56/',
 'Saldo Capital de Créditos Reprogramados por efecto del COVID 19 57/',
@@ -1363,11 +1361,74 @@ columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
     
 anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
+#%% AÑADIENDO MODIFICACIONES A LAS COLUMNAS 52, 53, 54, 55
+
+anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación']  = anx06_ordenado["TIPO_REPRO"]
+
+anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] = anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'].map(
+                                                                          {"TIPO 1": '1', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+                                                                           "TIPO 2": '2',
+                                                                           "TIPO 3": '1'},
+                                                                         na_action = None) #EN CASO DE NULO NO HACER NADA
+
+anx06_ordenado["FEC_ULT_REPROG2"] = pd.to_datetime(anx06_ordenado["FEC_ULT_REPROG"], 
+                                                  errors='coerce')
+
+def correccion_modalidad_repro(anx06_ordenado):
+    if anx06_ordenado["FEC_ULT_REPROG2"] >= pd.Timestamp('2023-01-01'):
+        return '3'
+    else:
+        return anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación']
+
+anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] = anx06_ordenado.apply(correccion_modalidad_repro, 
+                                                                                axis=1)
+
+#%%% COLUMNA 52/
+def calculo_52(anx06_ordenado):
+    if anx06_ordenado['FEC_ULT_REPROG'] != '--': 
+        return anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
+    else:
+        return 0
+
+anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado.apply(calculo_52, 
+                                                                                     axis=1)
+
+#%% COLUMNA 53/
+def calculo_53(anx06_ordenado):
+    if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
+        return anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
+    else:
+        return 0
+
+anx06_ordenado['Saldo Capital en Cuenta de Orden por efecto del Covid 53/'] = anx06_ordenado.apply(calculo_53, 
+                                                                                                   axis = 1)
+
+#%% COLUMNA 54/
+def calculo_54(anx06_ordenado):
+    if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
+        return '810924'
+    elif anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['3']:
+        return '810923'
+    else:
+        return None
+    
+anx06_ordenado['Subcuenta de orden \n54/\n'] = anx06_ordenado.apply(calculo_54,
+                                                                    axis = 1)
+
+#%% COLUMNA 55/
+def calculo_55(anx06_ordenado):
+    if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
+        return anx06_ordenado['Interes\nDevengado Total']
+    else:
+        return None
+
+anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = anx06_ordenado.apply(calculo_55,
+                                                                                           axis = 1)
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados REPRO.xlsx'
 try:
     ruta = nombre
     os.remove(ruta)

@@ -1535,7 +1535,8 @@ df_resultado_2['TEA TXT'] = df_resultado_2['Tasa de Interés Anual 23/'].round(4
 df_resultado_2['Saldo de Créditos que no cuentan con cobertura 51/'] = df_resultado_2['Cartera Neta'] - \
                                                                         (df_resultado_2['Saldos de Garantías Preferidas 34/'] + \
                                                                          df_resultado_2['Saldo de Garantías Autoliquidables 35/'])
-#chequear, aún no está probado                                                                      
+#chequear, aún no está probado     
+'''                                                                 
 def calculo_52(df_resultado_2):
     if df_resultado_2['FEC_ULT_REPROG'] != '--': 
         return df_resultado_2['Saldo de colocaciones (créditos directos) 24/']
@@ -1544,7 +1545,7 @@ def calculo_52(df_resultado_2):
 
 df_resultado_2['Saldo Capital de Créditos Reprogramados 52/'] = df_resultado_2.apply(calculo_52, axis=1) #chequear, aún no está probado
 #chequear, aún no está probado
-
+'''
 #%% PRODUCTO TXT
 #tipo de producto txt para hacer tablas dinámicas
 def producto_txt(df_resultado_2):
@@ -2060,16 +2061,16 @@ fecha_corte = 'Agosto 2023'  #se pone el corte actual
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20230731" #  aqui cambiamos la fecha, se pone la del mes pasado
+fechacorte_mes_pasado = "20230731" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión 1 - CONT.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 fase 3 final.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
 
 #%% importación de módulos
 import os
@@ -2151,7 +2152,7 @@ df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferid
 # POSIBLEMENTE SE VA A ELIMINAR EN EL FUTURO
 dxp_castigados = pd.read_excel('data para castigo junio 2023_vhf.xlsx',
                                dtype = {'Nro Prestamo \nFincore' : object}, 
-                               skiprows= 2, 
+                               skiprows= 2,
                                sheet_name = 'BD - Para Castigo')
 
 dxp_castigados = list(dxp_castigados['Nro Prestamo \nFincore'])
@@ -2185,11 +2186,12 @@ def prov_cons_37_FINAL(df_diferidos):
                 '00016572',
                 '00001147', #
                 '00001287', #
-                '00021994']) \
-    or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
+                '00021994']) :
+    #\
+    #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.623 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.6453 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
@@ -2251,11 +2253,14 @@ else:
     print('todo mal')
     print('mes actual: ', int(suma_constituidas))
     print('mes pasado: ', int(mes_pasado))
-    
-print('diferencia:  '+ str(suma_constituidas - mes_pasado))
+
+diferencia_cons = suma_constituidas - mes_pasado
+print('diferencia:  '+ str(round(diferencia_cons,2)))
 
 calculo_que_pidio_enrique = suma_constituidas / (df_diferidos['Capital Vencido 29/'].sum() + df_diferidos['Capital en Cobranza Judicial 30/'].sum())
 print("{:.2f}%".format(calculo_que_pidio_enrique*100))
+
+
 
 #%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso, provisiones y los redondeamos
 
@@ -2312,8 +2317,12 @@ df_diferidos = df_diferidos_ampliado.copy()
 import pyodbc
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
+# FECHA PARA EL NOMBRE DEL ARCHIVO ##############
+fecha = 'AGOSTO 2023'
+#################################################
+
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20230630' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20230731' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 query = f'''
@@ -2449,7 +2458,6 @@ diferencias_porcentuales.fillna(0, inplace=True)
 
 import pandas as pd
 
-fecha = 'JULIO 2023'
 # Crea un objeto ExcelWriter para guardar los dataframes en un solo archivo
 writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine='xlsxwriter')
 
