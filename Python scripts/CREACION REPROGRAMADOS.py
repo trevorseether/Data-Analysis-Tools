@@ -97,6 +97,28 @@ menos_bruto = menos_bruto.drop_duplicates(subset='Nro Prestamo \nFincore') #por 
 print(menos_bruto.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
+#%% ELIMINACIÓN DE CRÉDITOS VENDIDOS (por si acaso)
+vendidos = ['00001346',
+            '00050796',
+            '00000633',
+            '00000942',
+            '00020154',
+            '00054955',
+            '00001147',
+            '00001287']
+
+def eliminar(menos_bruto):
+    if menos_bruto['Nro Prestamo \nFincore'] in vendidos:
+        return 'eliminar'
+
+menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] = menos_bruto.apply(eliminar, axis=1)
+
+print(menos_bruto.shape[0])
+menos_bruto = menos_bruto[menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] != 'eliminar']
+
+print('')
+print(menos_bruto.shape[0])
+
 df_mes_actual_copia = menos_bruto.copy()
 
 #%% ANEXO PRELIMINAR DEL MES PASADO
