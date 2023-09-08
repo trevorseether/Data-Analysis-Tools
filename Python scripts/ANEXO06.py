@@ -12,8 +12,7 @@ import os
 import datetime
 import calendar
 from datetime import datetime, timedelta
-import pyodbc
-import numpy as np
+# import numpy as np
 
 #%% importación de módulos
 import datetime
@@ -1330,8 +1329,7 @@ def devengados_genericos(df_resultado_2):
 df_resultado_2['rendimiento devengado'] = df_resultado_2.apply(devengados_genericos, axis=1)
 df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2)
 
-df_resultado_2['''Rendimiento
-Devengado 40/'''] = df_resultado_2['rendimiento devengado']
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['rendimiento devengado']
 
 df_resultado_2['rendimiento devengado'].sum()
 
@@ -1421,6 +1419,11 @@ df_resultado_2['intereses en suspenso'] = df_resultado_2.apply(int_suspenso, axi
 df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['intereses en suspenso']
 
 df_resultado_2['''Intereses en Suspenso 41/'''].sum()
+
+#%% REASIGNAMOS DEVENGADOS Y SUSPENSO DEL FINCORE AL ANEXO 06
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Interes\nDevengado Total'].round(2)
+
+df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
 
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
@@ -1718,8 +1721,7 @@ rosado =  cred >= 100
 '''Provisiones Constituidas 37/''',
 '''Saldos de Créditos Castigados 38/''',
 '''Cuenta Contable Crédito Castigado 39/''',
-'''Rendimiento
-Devengado 40/''',
+'Rendimiento\nDevengado 40/',
 '''Intereses en Suspenso 41/''',
 '''Ingresos Diferidos 42/''',
 '''Tipo de Producto 43/ original''',
@@ -1923,7 +1925,8 @@ merge_nro_creditos = nro_creditos[["NUMERO DOCUMENTO de experian",
 #agregamos 14 ceros a la derecha al archivo del merge y al del anx06
 def agregar_ceros(valor, longitud):
     return str(valor).zfill(longitud)
-merge_nro_creditos['documento rellenado'] = merge_nro_creditos["NUMERO DOCUMENTO de experian"].apply(agregar_ceros, longitud=14)
+merge_nro_creditos['documento rellenado'] = merge_nro_creditos["NUMERO DOCUMENTO de experian"].apply(agregar_ceros, 
+                                                                                                     longitud=14)
 
 anexo06_casi['documento rellenado anx06'] = anexo06_casi['Número de Documento 10/']
 
@@ -1938,9 +1941,11 @@ ya_casi = anexo06_casi.merge(merge_nro_creditos,
                              right_on=['documento rellenado', 'TIPO DOC TXT']
                              ,how='left')
 
-anexo06_casi[['documento rellenado anx06','Tipo de Documento 9/']]
+anexo06_casi[['documento rellenado anx06',
+              'Tipo de Documento 9/']]
 
-merge_nro_creditos[['documento rellenado', 'TIPO DOC TXT']]
+merge_nro_creditos[['documento rellenado', 
+                    'TIPO DOC TXT']]
 
 #%%% sin datos
 #le ponemos sin datos en donde no ha matcheado
@@ -1953,7 +1958,7 @@ ya_casi['total en sistema(incluye San Miguel)'] = ya_casi['total en sistema(incl
 
 ya_casi['Tipo de Documento 9/'] = ya_casi['Tipo de Documento 9/'].astype(float).astype(int)
 
-#%% FORMATO DE FECHAS
+#%% FORMATO DE FECHAS (convirtiéndolas a números enteros)
 def convertir_formato_fecha(fecha):
     if fecha != '--':
         fecha = pd.to_datetime(fecha, format='%d-%m-%Y')
@@ -2045,36 +2050,53 @@ print("La ubicación actual es: " + ubicacion_actual)
 #######################################################                                                                                                                                                                                                 
 'UNA VEZ QUE JENNY NOS DE EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
 
-#%% mes anterior al que estamos trabajando actualmente
+#%% PARÁMETROS INCIALES
+
+# mes actual #####################################################
+fecha_corte = 'Agosto 2023'  #se pone el corte actual
 ##################################################################
-fechacorte_mes_pasado = "20230630" #  aqui cambiamos la fecha #### se pone la del mes pasado
+
+# mes anterior al que estamos trabajando actualmente
+# formato de fecha para extraer datos desde SQL
 ##################################################################
+fechacorte_mes_pasado = "20230731" #  aqui cambiamos la fecha, se pone la del mes pasado
+##################################################################
+
+# Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
+##################################################################
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión 1 - CONT.xlsx'
+##################################################################
+
+# DIRECTORIO DE TRABAJO ##########################################
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2'
+
+#%% importación de módulos
+import os
+import pandas as pd
 
 #%% IMPORTACIÓN DE ARCHIVOS
 #leyendo el excel que nos envía CONTABILIDAD
-import os
-import pandas as pd
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2') #cambiar ubicación
+os.chdir(directorio_final)
 
-df_diferidos = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión 1 - CONT.xlsx',
-                 dtype={'Registro 1/': object, 
-                        'Fecha de Nacimiento 3/': object,
-                        'Código Socio 7/':object, 
-                        'Número de Documento 10/': object,
-                        'Relación Laboral con la Cooperativa 13/':object, 
-                        'Código de Agencia 16/': object,
-                        'Moneda del crédito 17/':object, 
-                        'Numero de Crédito 18/': object,
-                        'Tipo de Crédito 19/': object,
-                        'Sub Tipo de Crédito 20/': object,
-                        'Fecha de Desembolso 21/': object,
-                        'Cuenta Contable 25/': object,
-                        'Tipo de Producto 43/': object,
-                        'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                        'Fecha de Vencimiento Actual del Crédito 49/': object,
-                        'Nro Prestamo \nFincore': str},
-                     skiprows=2
-                     )
+df_diferidos = pd.read_excel(anx06_contabilidad,
+                 dtype = {'Registro 1/'               : object, 
+                          'Fecha de Nacimiento 3/'    : object,
+                          'Código Socio 7/'           : object, 
+                          'Número de Documento 10/'   : object,
+                          'Relación Laboral con la Cooperativa 13/'       : object, 
+                          'Código de Agencia 16/'     : object,
+                          'Moneda del crédito 17/'    : object, 
+                          'Numero de Crédito 18/'     : object,
+                          'Tipo de Crédito 19/'       : object,
+                          'Sub Tipo de Crédito 20/'   : object,
+                          'Fecha de Desembolso 21/'   : object,
+                          'Cuenta Contable 25/'       : object,
+                          'Tipo de Producto 43/'      : object,
+                          'Fecha de Vencimiento Origuinal del Credito 48/': object,
+                          'Fecha de Vencimiento Actual del Crédito 49/'   : object,
+                          'Nro Prestamo \nFincore'    : str},
+                         skiprows=2
+                             )
 
 df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
                             'Fecha de Nacimiento 3/',
@@ -2083,8 +2105,8 @@ df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                             'Numero de Crédito 18/'], inplace=True, how= 'all')
 
 #%% #asignamos los diferidos
-df_diferidos['Ingresos Diferidos 2'] = df_diferidos['Ingresos Diferidos 2'].round(2)
-df_diferidos['Ingresos Diferidos 42/'] = df_diferidos['Ingresos Diferidos 2']
+df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
+df_diferidos['Ingresos Diferidos 42/']  = df_diferidos['Ingresos Diferidos 2']
 print('no debe salir cero: ' + str(df_diferidos['Ingresos Diferidos 42/'].sum()))
 
 #%% CARTERA NETA FINAL
@@ -2095,7 +2117,8 @@ def cartera_neta(df_diferidos):
     return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] - \
         df_diferidos['Ingresos Diferidos 42/']
         
-df_diferidos['Cartera Neta'] = df_diferidos.apply(cartera_neta, axis=1)
+df_diferidos['Cartera Neta'] = df_diferidos.apply(cartera_neta, 
+                                                  axis=1)
 df_diferidos['Cartera Neta'] = df_diferidos['Cartera Neta'].round(2)
 df_diferidos['Cartera Neta'].sum()
 
@@ -2126,17 +2149,15 @@ df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferid
 #%% en este caso, añadir los créditos que mandó Harris
 # POSIBLEMENTE SE VA A ELIMINAR EN EL FUTURO
 dxp_castigados = pd.read_excel('data para castigo junio 2023_vhf.xlsx',
-                               dtype = {'''Nro Prestamo 
-Fincore''' : object}, skiprows= 2, sheet_name = 'BD - Para Castigo')
+                               dtype = {'Nro Prestamo \nFincore' : object}, 
+                               skiprows= 2, 
+                               sheet_name = 'BD - Para Castigo')
 
-dxp_castigados = list(dxp_castigados['''Nro Prestamo 
-Fincore'''])
+dxp_castigados = list(dxp_castigados['Nro Prestamo \nFincore'])
 
 #%% CÁLCULO DE PROVISIONES CONSTITUIDAS
 #cálculo de las provisiones constituidas 37/
-df_diferidos['''Nro Prestamo 
-Fincore'''] = df_diferidos['''Nro Prestamo 
-Fincore'''].str.strip() #quitando espacios por si acaso
+df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
 
 #para que funcione el match por tipo de producto que solicitó cesar
 df_diferidos['Tipo de Producto 43/'] == df_diferidos['Tipo de Producto 43/'].astype(int)
@@ -2181,11 +2202,13 @@ print(df_diferidos['Provisiones Constituidas 37/'].sum())
 import pyodbc
 
 query = f'''
-declare @fechacorte as datetime
-set @fechacorte = '{fechacorte_mes_pasado}'
+DECLARE @fechacorte as DATETIME
+SET @fechacorte = '{fechacorte_mes_pasado}'
 
-select sum(ProvisionesConstituidas37) as 'ProvisionesConstituidas37' 
-from anexos_riesgos2..Anx06_preliminar
+SELECT 
+    SUM(ProvisionesConstituidas37) as 'ProvisionesConstituidas37' 
+FROM 
+    anexos_riesgos2..Anx06_preliminar
 where FechaCorte1 = @fechacorte
 '''
 
@@ -2235,32 +2258,27 @@ print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 
 #%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso y los redondeamos
 
-df_diferidos['''Interes
-Devengado Total'''] = df_diferidos['''Interes
-Devengado Total'''].round(2)
+df_diferidos['Interes\nDevengado Total'] = df_diferidos['Interes\nDevengado Total'].round(2)
 
-df_diferidos['''Interes 
-Suspenso Total'''] = df_diferidos['''Interes 
-Suspenso Total'''].round(2)
+df_diferidos['Interes \nSuspenso Total'] = df_diferidos['Interes \nSuspenso Total'].round(2)
 
-df_diferidos['''Rendimiento
-Devengado 40/'''] = df_diferidos['''Interes
-Devengado Total''']
+df_diferidos['Rendimiento\nDevengado 40/'] = df_diferidos['Interes\nDevengado Total']
 
-df_diferidos['''Intereses en Suspenso 41/'''] = df_diferidos['''Interes 
-Suspenso Total''']
+df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Total']
 
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
 df_diferidos_ampliado = df_diferidos.copy()
-df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore','Cartera Neta', 
-                             'Ingresos Diferidos 42/', 'Provisiones Requeridas 36/ SA', 
-                             'Provisiones Requeridas 36/', 'Provisiones Constituidas 37/',
-                             'Saldo de Créditos que no cuentan con cobertura 51/']]
+df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore',
+                                      'Cartera Neta', 
+                                      'Ingresos Diferidos 42/', 
+                                      'Provisiones Requeridas 36/ SA', 
+                                      'Provisiones Requeridas 36/', 
+                                      'Provisiones Constituidas 37/',
+                                      'Saldo de Créditos que no cuentan con cobertura 51/']]
 
 #%% GENERACIÓN DEL EXCEL
 
-fecha_corte = '30-07-2023'
 'CREACIÓN DEL EXCEL'
 nombre = "anx06 columnas parte 2 - " + fecha_corte + ".xlsx"
 try:
@@ -2375,8 +2393,9 @@ datos_actuales = df_diferidos[['Saldo de colocaciones (créditos directos) 24/',
                                'Tipo de Crédito 19/',
                                'Provisiones Constituidas 37/',
                                'Provisiones Requeridas 36/',
-                               '''Rendimiento
-Devengado 40/''', 'Intereses en Suspenso 41/', 'Ingresos Diferidos 42/']]
+                               'Rendimiento\nDevengado 40/', 
+                               'Intereses en Suspenso 41/', 
+                               'Ingresos Diferidos 42/']]
 
 pivot_mes_actual = datos_actuales.pivot_table(index=[COLUMNA_COMPARACION],
                                        #columns=,
@@ -2386,8 +2405,9 @@ pivot_mes_actual = datos_actuales.pivot_table(index=[COLUMNA_COMPARACION],
                                                'Saldos de Créditos Castigados 38/',
                                                'Provisiones Constituidas 37/',
                                                'Provisiones Requeridas 36/',
-                                               '''Rendimiento
-Devengado 40/''', 'Intereses en Suspenso 41/', 'Ingresos Diferidos 42/'], 
+                                               'Rendimiento\nDevengado 40/', 
+                                               'Intereses en Suspenso 41/', 
+                                               'Ingresos Diferidos 42/'], 
                                        margins=True, 
                                        margins_name='Total', #para sacar las sumatorias totales                                      
                                        aggfunc='sum'

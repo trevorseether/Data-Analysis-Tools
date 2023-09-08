@@ -54,23 +54,23 @@ os.chdir(directorio)
 
 bruto = pd.read_excel(anx06_actual,
                       skiprows=4,
-                      dtype=({'Registro 1/': object, 
-                             'Fecha de Nacimiento 3/': object,
-                             'Código Socio 7/':object,
-                             'Número de Documento 10/': object,
-                             'Relación Laboral con la Cooperativa 13/':object, 
-                             'Código de Agencia 16/': object,
-                             'Moneda del crédito 17/':object, 
-                             'Numero de Crédito 18/': object,
-                             'Tipo de Crédito 19/': object,
-                             'Sub Tipo de Crédito 20/': object,
-                             'Fecha de Desembolso 21/': object,
-                             'Cuenta Contable 25/': object,
-                             'Tipo de Producto 43/': object,
-                             'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                             'Fecha de Vencimiento Actual del Crédito 49/': object,
-                             'Nro Prestamo \nFincore': object,
-                             'Refinanciado TXT': object}))
+                      dtype=({'Registro 1/'             : object, 
+                             'Fecha de Nacimiento 3/'   : object,
+                             'Código Socio 7/'          : object,
+                             'Número de Documento 10/'  : object,
+                             'Relación Laboral con la Cooperativa 13/'        :object, 
+                             'Código de Agencia 16/'    : object,
+                             'Moneda del crédito 17/'   : object, 
+                             'Numero de Crédito 18/'    : object,
+                             'Tipo de Crédito 19/'      : object,
+                             'Sub Tipo de Crédito 20/'  : object,
+                             'Fecha de Desembolso 21/'  : object,
+                             'Cuenta Contable 25/'      : object,
+                             'Tipo de Producto 43/'     : object,
+                             'Fecha de Vencimiento Origuinal del Credito 48/' : object,
+                             'Fecha de Vencimiento Actual del Crédito 49/'    : object,
+                             'Nro Prestamo \nFincore'   : object,
+                             'Refinanciado TXT'         : object}))
 
 menos_bruto = bruto.drop(columns=[col for col in bruto.columns if 'Unnamed' in col]) #elimina columnas Unnamed
 
@@ -103,23 +103,23 @@ df_mes_actual_copia = menos_bruto.copy()
 
 anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                skiprows=2,
-                               dtype={'Registro 1/': object, 
-                                      'Fecha de Nacimiento 3/': object,
-                                      'Código Socio 7/':object, 
-                                      'Número de Documento 10/': object,
-                                      'Relación Laboral con la Cooperativa 13/':object, 
-                                      'Código de Agencia 16/': object,
-                                      'Moneda del crédito 17/':object, 
-                                      'Numero de Crédito 18/': object,
-                                      'Tipo de Crédito 19/': object,
-                                      'Sub Tipo de Crédito 20/': object,
-                                      'Fecha de Desembolso 21/': object,
-                                      'Cuenta Contable 25/': object,
-                                      'Tipo de Producto 43/': object,
-                                      'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                                      'Fecha de Vencimiento Actual del Crédito 49/': object,
-                                      'Nro Prestamo \nFincore': object,
-                                      'Refinanciado TXT': object}) #no está funcionando esta vaina, debería leer en str
+                               dtype={'Registro 1/'                 : object, 
+                                      'Fecha de Nacimiento 3/'      : object,
+                                      'Código Socio 7/'             : object, 
+                                      'Número de Documento 10/'     : object,
+                                      'Relación Laboral con la Cooperativa 13/'         :object, 
+                                      'Código de Agencia 16/'       : object,
+                                      'Moneda del crédito 17/'      : object, 
+                                      'Numero de Crédito 18/'       : object,
+                                      'Tipo de Crédito 19/'         : object,
+                                      'Sub Tipo de Crédito 20/'     : object,
+                                      'Fecha de Desembolso 21/'     : object,
+                                      'Cuenta Contable 25/'         : object,
+                                      'Tipo de Producto 43/'        : object,
+                                      'Fecha de Vencimiento Origuinal del Credito 48/'  : object,
+                                      'Fecha de Vencimiento Actual del Crédito 49/'     : object,
+                                      'Nro Prestamo \nFincore'      : object,
+                                      'Refinanciado TXT'            : object}) #no está funcionando esta vaina, debería leer en str
 del ubicacion_anx06_anterior
 del nombre_anx06
 
@@ -294,9 +294,10 @@ garantias = anx06_anterior[['Nro Prestamo \nFincore',
                             'Saldo de Garantías Autoliquidables 35/']]
 
 nuevos_nombres = {
-    'Nro Prestamo \nFincore'                :   'fincore para merge',
-    'Saldos de Garantías Preferidas 34/'    :   'garantias pref mes pasado',
-    'Saldo de Garantías Autoliquidables 35/':   'garantias autoli mes pasado'}
+                'Nro Prestamo \nFincore'                :   'fincore para merge',
+                'Saldos de Garantías Preferidas 34/'    :   'garantias pref mes pasado',
+                'Saldo de Garantías Autoliquidables 35/':   'garantias autoli mes pasado'
+                 }
 
 garantias = garantias.rename(columns=nuevos_nombres)
 del nuevos_nombres
@@ -1286,12 +1287,10 @@ anx06_ordenado['Fecha de Desembolso 21/'] = anx06_ordenado['Fecha de Desembolso 
 
 print(' ')
 print('intereses en suspenso1:')
-print(anx06_ordenado['''Interes 
-Suspenso Total'''].sum())
+print(anx06_ordenado['Interes \nSuspenso Total'].sum())
 
 print('intereses devengados1:')
-print(anx06_ordenado['''Interes
-Devengado Total'''].sum())
+print(anx06_ordenado['Interes\nDevengado Total'].sum())
 print('suma total (1):')
 print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
 
@@ -1304,25 +1303,17 @@ def int_suspenso_y_devengados(anx06_ordenado):
     if (1 == 1) & \
     (anx06_ordenado['Tipo de Crédito 19/'] == '08') & \
     (anx06_ordenado['Dias de Mora 33/'] > 15):
-        return anx06_ordenado['''Interes 
-Suspenso Total'''] + anx06_ordenado['''Interes
-Devengado Total''']
+        return anx06_ordenado['Interes \nSuspenso Total'] + anx06_ordenado['Interes\nDevengado Total']
     elif (1 == 1) & \
     (anx06_ordenado['Tipo de Crédito 19/'] in ['09', '10', '11', '12', '13', 9, 10, 11, 12, 13]) & \
     (anx06_ordenado['Dias de Mora 33/'] > 30):
-        return anx06_ordenado['''Interes 
-Suspenso Total'''] + anx06_ordenado['''Interes
-Devengado Total''']
+        return anx06_ordenado['Interes \nSuspenso Total'] + anx06_ordenado['Interes\nDevengado Total']
     else:
-        return anx06_ordenado['''Interes 
-Suspenso Total''']
+        return anx06_ordenado['Interes \nSuspenso Total']
 
-anx06_ordenado['''Interes 
-Suspenso Total'''] = anx06_ordenado.apply(int_suspenso_y_devengados, axis=1)
+anx06_ordenado['Interes \nSuspenso Total'] = anx06_ordenado.apply(int_suspenso_y_devengados, axis=1)
 
-anx06_ordenado['''Interes
-Devengado Total'''] = anx06_ordenado['''Interes
-Devengado Total'''].astype(float)
+anx06_ordenado['Interes\nDevengado Total'] = anx06_ordenado['Interes\nDevengado Total'].astype(float)
 
 #se le pone cero a esos mismos devengados
 def devengados_cero(anx06_ordenado):
@@ -1335,19 +1326,15 @@ def devengados_cero(anx06_ordenado):
     anx06_ordenado['Dias de Mora 33/'] > 30:
         return 0
     else:
-        return anx06_ordenado['''Interes
-Devengado Total''']
+        return anx06_ordenado['Interes\nDevengado Total']
 
-anx06_ordenado['''Interes
-Devengado Total'''] = anx06_ordenado.apply(devengados_cero, axis=1)
+anx06_ordenado['Interes\nDevengado Total'] = anx06_ordenado.apply(devengados_cero, axis=1)
 
 print(' ')
 print('intereses en suspenso2:')
-print(anx06_ordenado['''Interes 
-Suspenso Total'''].sum())
+print(anx06_ordenado['Interes \nSuspenso Total'].sum())
 print('intereses devengados2:')
-print(anx06_ordenado['''Interes
-Devengado Total'''].sum())
+print(anx06_ordenado['Interes\nDevengado Total'].sum())
 print('suma total (2):')
 print(round(anx06_ordenado['Interes \nSuspenso Total'].sum() + anx06_ordenado['Interes\nDevengado Total'].sum(),2))
 print('')
@@ -1355,12 +1342,9 @@ print('la suma total de (1) y (2) debe ser la misma')
                       
 #%% ASIGNACIÓN DE LOS DEVENGADOS A LAS COLUMNAS QUE SÍ IRÁN EN EL ANEXO 06 PARA LA SBS
 
-anx06_ordenado['''Rendimiento
-Devengado 40/'''] = anx06_ordenado['''Interes
-Devengado Total''']
+anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado['Interes\nDevengado Total'].round(2)
 
-anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado['''Interes 
-Suspenso Total''']
+anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado['Interes \nSuspenso Total'].round(2)
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])
