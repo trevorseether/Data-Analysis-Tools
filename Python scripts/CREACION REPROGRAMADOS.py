@@ -38,10 +38,9 @@ directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AG
 anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Agosto2023 - campos ampliados (original fincore).xlsx'
 ############################################################################################
 
-#***
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
-#aquí el anexo06 del mes pasado, el que manda Cesar (el que se genera para reprogramados)
+#aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
 ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
 ############################################################################################
 
