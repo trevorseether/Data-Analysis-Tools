@@ -20,15 +20,15 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '04-09-2023'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '11-09-2023'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'directorio de trabajo' ####################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\04 SETIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\11 setiembre')
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '1ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx'
+nombre_archivo = '2DO INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx'
 ############################################################################
 
 #%% IMPORTANDO EL INFORME DE BAJAS
