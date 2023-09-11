@@ -16,17 +16,39 @@ import os
 import numpy as np
 
 #%% ANEXO 06 PARA SACAR ALGUNOS DATOS DE AQUÍ
-FECHA_CORTE = 'JULIO 2023'
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO'
-nombre = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados VERSIÓN 2.xlsx'
+FECHA_CORTE = 'AGOSTO 2023'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
+nombre = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 03 FINAL.xlsx'
+filas_para_skip = 2
+#%% DATOS DEL REPORTE INSUMO PRINCIPAL
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 AGOSTO"
 
+insumo_principal = "SM_0823 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - AGOSTO-23 - INSUMO.xlsx"
+
+# en la misma ubicación que tenemos el archivo en bruto, debemos poner los avales
+# estos avales los sacamos del Fincore con los siguientes botones:
+# REPORTES / CREDITO /PRESTAMOS OTORGADOS / REGISTRO DE AVALES Y-O GARANTÍAS 
+avales = 'Rpt_Avales.xlsx'
+
+# AVALES SEPARADOS QUE ENVÍA CESAR #esto vamos a cambiarlo por una lectura SQL
+ubi_avales_separados = 'C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 AGOSTO'
+
+avales_separados = 'Avales SM - corte 08-09-23.xlsx'
+
+#%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO'
+
+nombre_calif_experian = 'calificacion para reporte experian.xlsx'
+#%% IMPORTACIÓN DE ARCHIVOS
 df_fincore = pd.read_excel(ubi + '\\'  + nombre,
                            dtype = {'Nro Prestamo \nFincore' : object,
-                                    'Numero de Crédito 18/': object},
-                           skiprows= 2)
+                                    'Numero de Crédito 18/'  : object},
+                           skiprows = filas_para_skip)
 
 df_fincore.dropna(subset=['Nro Prestamo \nFincore',
-                          'Numero de Crédito 18/'], inplace=True, how='all')
+                          'Numero de Crédito 18/'], 
+                  inplace = True, 
+                  how     = 'all')
 
 #LIMPIEZA DE ESPACIOS
 df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].astype(str)
@@ -60,18 +82,17 @@ del nombre
 #      REPORTE INSUMO PRINCIPAL
 ##############################################
 #importamos el archivo sentinel bruto, que nos manda Cesar o Denisse
-ubicacion = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO"
+ubicacion = directorio
 os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
-
-df_sentinel=pd.read_excel("SM_0723 - Sentinel-Experian Cart Vigente y Vencida - Julio-23.xlsm",    # aqui se cambia el nombre del archivo si es necesario
+df_sentinel=pd.read_excel(insumo_principal,    # aqui se cambia el nombre del archivo si es necesario
                   dtype={
-                      'Fecha del\nPeriodo\n(*)':        object, 
-                      'Codigo\nEntidad\n(*)':           object,
-                      'Tipo\nDocumento\nIdentidad (*)': object,
+                      'Fecha del\nPeriodo\n(*)'         : object, 
+                      'Codigo\nEntidad\n(*)'            : object,
+                      'Tipo\nDocumento\nIdentidad (*)'  : object,
                       'N° Documento\nIdentidad (*)  DNI o RUC' : str,
-                      'Tipo Persona (*)':               object,
-                      'Modalidad de Credito (*)':       object
+                      'Tipo Persona (*)'                : object,
+                      'Modalidad de Credito (*)'        : object
                         })
 
 #limpieza de filas vacías
@@ -79,8 +100,8 @@ df_sentinel.dropna(subset=['Cod. Prestamo',
                            'N° Documento\nIdentidad (*)  DNI o RUC',
                            'Razon Social (*)',
                            'Apellido Paterno (*)'], 
-                   inplace=True, 
-                   how='all')
+                   inplace = True, 
+                   how     = 'all')
 
 #eliminación de duplicados
 df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
@@ -133,7 +154,7 @@ else:
     ''
 
 # código para eliminar los que no han hecho match (no están en el anexo 06)
-#df_sentinel = df_sentinel.dropna(subset=['Nro_Fincore'])
+df_sentinel = df_sentinel.dropna(subset=['Nro_Fincore'])
 
 #%% AÑADIENDO SALDOS DESCAPITALIZADOS
 anexo_06_descap = anexo_06_descap.rename(columns={'Nro Prestamo \nFincore': 
@@ -192,7 +213,7 @@ print(df_sentinel[pd.isna(df_sentinel['Tipo\nDocumento\nIdentidad (*)'])].shape[
 #SI EXISTE DEBEMOS HACER UNA CORRECCIÓN MANUAL
 
 # Encontrar las filas que tienen valores duplicados en la columna "nombre"
-mask = df_sentinel['Cod. Prestamo'].duplicated(keep=False)
+mask = df_sentinel['Cod. Prestamo'].duplicated(keep = False)
 
 # Indexar el DataFrame original con la máscara booleana para obtener las filas correspondientes
 df_duplicados = df_sentinel[mask]
@@ -215,22 +236,22 @@ df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 # en la misma ubicación que tenemos el archivo en bruto, debemos poner los avales
 # estos avales los sacamos del Fincore con los siguientes botones:
 # REPORTES / CREDITO /PRESTAMOS OTORGADOS / REGISTRO DE AVALES Y-O GARANTÍAS 
-ruta = "Rpt_Avales.xlsx"
+ruta = avales
 df1=pd.read_excel(ruta,
                   dtype={'Nro Docto\nAval': object,
                          'Nro Docto\nSocio': object,
                          'Numero':object},
                          skiprows=8)
 
-#%% EL REPORTE DE AVALES QUE ENVÍA CESAR, con columnas separadas
+#%% EL REPORTE DE AVALES QUE ENVÍA CESAR, con columnas separadas (REEMPLAZAR POR SQL)
 ##############################################
 #      AVALES: COLUMNAS SEPARADAS
 ##############################################
 # ARCHIVO DE AVALES QUE NOS MANDA CESAR, LOS APELLIDOS Y NOMBRES ESTÁN EN COLUMNAS
 # es el archivo que contiene los datos de los avales, pero separados en columnas (apellido paterno, materno, nombres
 # domicilio, distrito, provincia, dpto, celulares)
-ruta = 'C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO'
-avales_datos_separados = pd.read_excel(ruta + '\\' +'Avales SM - corte 04-08-23.xlsx',
+ruta = ubi_avales_separados
+avales_datos_separados = pd.read_excel(ruta + '\\' + avales_separados,
                                        dtype={'NumeroDocIdentidad': str,
                                               'Celular1': str,
                                               'Celular2': str,
@@ -247,21 +268,23 @@ avales_datos_separados = avales_datos_separados.drop_duplicates(subset='NumeroDo
 ##############################################
 #REALIZANDO UNA CALIFICACIÓN UNIFICADA PARA EL REPORTE DE SENTINEL, EXPERIAN, CALIFICACIÓN QUE SALE DEL ANEXO 06
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JULIO') #ponemos la ubicación del archivo de las calificaciones
-calif_anx06 = pd.read_excel('calificacion para reporte experian.xlsx',
+calif_experian_importacion = ubicacion_calificacion + '\\' + nombre_calif_experian
+
+calif_anx06 = pd.read_excel(calif_experian_importacion,
                             dtype={'cod socio para merge': str})
 
 df_sentinel['cod socio para mergear'] = df_sentinel['Cod. Prestamo'].str.split('-', expand=True)[0] #potente este código ah
 
 #merge
 df_sentinel = df_sentinel.merge(calif_anx06,
-                                left_on=['cod socio para mergear'], 
-                                right_on=['cod socio para merge']
-                                ,how='left')
+                                left_on  = ['cod socio para mergear'], 
+                                right_on = ['cod socio para merge'],
+                                how      = 'left')
 
-df_sentinel.drop(['cod socio para merge'], axis=1, inplace=True)
+df_sentinel.drop(['cod socio para merge'], 
+                 axis=1, 
+                 inplace=True)
 
-os.chdir(ubicacion) #volvemos a la ruta de siempre
 #try:
 #    ruta = "verificacion.xlsx"
 #    os.remove(ruta)
@@ -454,7 +477,8 @@ df1_filtrado = df1_filtrado.rename(columns={'Nro Docto\nSocio':
                                             'dni socio'})
 
 #eliminamos las filas duplicadas en función de la columna 'concatenación'
-valores_unicos = df1_filtrado.drop_duplicates(subset='concatenacion', keep='first')
+valores_unicos = df1_filtrado.drop_duplicates(subset = 'concatenacion', 
+                                              keep   = 'first')
 
 #creamos la columna fincore en función del nro de crédito en la columna 'Numero',
 #la cual tiene texto en el siguiente formado: '01-00079529' y nos quedaremos con '00079529'
@@ -466,8 +490,7 @@ valores_unicos = valores_unicos.dropna(subset=['Dni - Asociado - indirecta2', 'A
 #valores_unicos['fincore']
 
 #%% merge que servirá para poner numero de fincore al reporte de sentinel (solo tiene credito18)
-'aqui está el problema'
-'aqui está el gran problema'
+'aqui podrían duplicarse créditos'
 
 #tenemos una columna que tiene esta estrucutra de datos '00000007-00099116'
 #lo que hacemos es quedarnos con la segunda parte, que corresponde con el nro de crédito
@@ -479,9 +502,9 @@ df_sentinel['credito18'] = df_sentinel['credito18'].str.strip()
 #ahora que tenemos el número de crédito 18, le hacemos un merge con la columna fincore
     
 df_sentinel_fincore = df_sentinel.merge(df_fincore, ##########################################################
-                         left_on=['credito18'], 
-                         right_on=['NumerodeCredito18']
-                         ,how='left')
+                                        left_on   = ['credito18'], 
+                                        right_on  = ['NumerodeCredito18'],
+                                        how       = 'left')
 
 #df_sentinel_fincore.columns
 #df_sentinel_fincore.to_excel('333.xlsx', index=False)
@@ -494,7 +517,7 @@ df_sentinel_fincore = df_sentinel.merge(df_fincore, ############################
 #codigo para verificar que haya habido un match completo
 match_incompleto = df_sentinel_fincore.loc[df_sentinel_fincore['Nro_Fincore'].isna()]
 print(match_incompleto.shape[0])
-print('si sale Empty DataFrame significa que hizo el match correctamente')
+print('si sale 0 significa que hizo el match correctamente')
 if match_incompleto.shape[0] > 0:
     print('investigar, no hubo match completo')
 #si hay datos, hay que investigar quiapasau
@@ -503,9 +526,9 @@ if match_incompleto.shape[0] > 0:
 'todo bien actualmente'
 #hacemos un merge que solo nos dejará con la tabla de avales
 df_resultado = df_sentinel_fincore.merge(valores_unicos, 
-                                         left_on=['Nro_Fincore'], 
-                                         right_on=['fincore'],
-                                         how='inner')
+                                         left_on  = ['Nro_Fincore'], 
+                                         right_on = ['fincore'],
+                                         how      = 'inner')
 
 #%% dni avales
 #ESTA ES LA PARTE EN LA QUE ARREGLAMOS EL DNI DEL AVAL, CREO QUE AQUÍ TAMBIÉN DEBERÍAMOS PONER
@@ -538,7 +561,7 @@ df_resultado['MN Deuda Directa Cobranza Judicial (*)'] = 0
 #%% ORDENAMIENTO DE COLUMNAS
 
 df_resultado['Estado'] = ''
-df_sentinel['Estado'] = ''
+df_sentinel['Estado']  = ''
 columnas = ['Fecha del\nPeriodo\n(*)', 'Codigo\nEntidad\n(*)', 'Cod. Prestamo',
        'Tipo\nDocumento\nIdentidad (*)',
        'N° Documento\nIdentidad (*)  DNI o RUC', 'Razon Social (*)',
@@ -612,13 +635,13 @@ df_avales['N° Documento\nIdentidad (*)  DNI o RUC'] = df_avales['N° Documento\
 
 #CAMBIAMOS LOS NOMBRES PARA QUE NO HAYA NINGUNA AMBIGUEDAD
 avales_datos_separados = avales_datos_separados.rename(columns={'NumeroDocIdentidad': 'dni para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'ApellidoPaterno': 'A paterno para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'ApellidoMaterno': 'A materno para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'Nombres': 'nombres para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'ApellidoPaterno'   : 'A paterno para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'ApellidoMaterno'   : 'A materno para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'Nombres'           : 'nombres para merge'})
 avales_datos_separados = avales_datos_separados.rename(columns={'NombreDomicilioDNI': 'domicilio para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'Distrito': 'distrito para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'Provincia': 'provincia para merge'})
-avales_datos_separados = avales_datos_separados.rename(columns={'Dpto': 'dpto para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'Distrito'          : 'distrito para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'Provincia'         : 'provincia para merge'})
+avales_datos_separados = avales_datos_separados.rename(columns={'Dpto'              : 'dpto para merge'})
 
 #UNIMOS LOS DATAFRAMES
 
@@ -626,9 +649,9 @@ df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC
 avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(int).astype(str)
 
 df_avales_mergeado = df_avales.merge(avales_datos_separados,
-                                     left_on=['dni para merge'], 
-                                     right_on=['dni para merge']
-                                     ,how='left')
+                                     left_on  = ['dni para merge'], 
+                                     right_on = ['dni para merge'],
+                                     how      = 'left')
                                               
 #ASIGNAMOS LOS DATOS DE LOS AVALES A LAS COLUMNAS CORRESPONDIENTES                                    
 df_avales_mergeado['Apellido Paterno (*)'] = df_avales_mergeado['A paterno para merge']                                        
@@ -655,6 +678,10 @@ df_avales_mergeado.drop(['TelefonoFijo1'], axis=1, inplace=True)
 
 #%% CONCATENAMOS LOS AVALES CON LA LISTA DE CRÉDITOS
 
+#eliminamos duplicados por si acaso
+df_sentinel_avales = df_sentinel_avales.drop_duplicates(subset = 'Cod. Prestamo')
+
+#ahora sí la unión
 reporte = pd.concat([df_sentinel_avales,df_avales_mergeado], ignore_index=True)
 
 #%% eliminación de columnas
