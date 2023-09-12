@@ -940,10 +940,25 @@ df_sentinel.loc[mask, 'Apellido Materno (*)'] = ''
 mask = df_sentinel['Nombres (*)'] == 'nan'
 df_sentinel.loc[mask, 'Nombres (*)'] = ''
 
+#%% verificamos que solo haya 1, 3 o 6 en la columna Tipo Documento Identidad
+
+datos_tipo_documento = df_sentinel['Tipo\nDocumento\nIdentidad (*)'].unique()
+print(datos_tipo_documento)
+print('')
+df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '02803330') & \
+                (df_sentinel['Apellido Paterno (*)'] == 'AGUILA') & \
+                (df_sentinel['Apellido Materno (*)'] == 'FEBRES'),
+                'Tipo\nDocumento\nIdentidad (*)'] = '1'
+    
+datos_tipo_documento = df_sentinel['Tipo\nDocumento\nIdentidad (*)'].unique()
+print(datos_tipo_documento)
+print('si después de arrelgar siguen apareciendo otros hay que buscarlos')
+
 #%% especificaciones finales
 
 'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
 'se debe subir a HÁBITO PAGO'
+
 
 #%% CREACIÓN DEL EXCEL
 nombre_archivo = 'sentinel_experian khoO'+ str(FECHA_CORTE) +'.xlsx'
