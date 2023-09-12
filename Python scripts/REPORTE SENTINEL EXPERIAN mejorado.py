@@ -310,7 +310,7 @@ del conn
 
 avales_datos_separados['NumeroDocIdentidad'] = avales_datos_separados['NumeroDocIdentidad'].str.strip()
 
-#ELIMINAMOS LOS POSIBLES DUPLICADOS
+#ELIMINAMOS DUPLICADOS (ASÍ ESTÁ EN LA BASE DE DATOS ಠ_ಠ)
 avales_datos_separados = avales_datos_separados.drop_duplicates(subset = 'NumeroDocIdentidad')
 
 #%% importando la calificación del anexo06 del mismo mes
