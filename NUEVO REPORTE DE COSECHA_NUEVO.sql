@@ -53,7 +53,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20230831' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20220930' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha..cosecha_nuevo (
 nro_fincore,

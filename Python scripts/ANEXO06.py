@@ -2517,7 +2517,3 @@ ubicacion_actual = os.getcwd()
 
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
-
-
-
-

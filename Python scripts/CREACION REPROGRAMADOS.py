@@ -93,11 +93,12 @@ del df_duplicadoss
 
 print(menos_bruto.shape[0])
 
-menos_bruto = menos_bruto.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
+menos_bruto = menos_bruto.drop_duplicates(subset = 'Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(menos_bruto.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
 #%% ELIMINACIÓN DE CRÉDITOS VENDIDOS (por si acaso)
+
 vendidos = ['00001346',
             '00050796',
             '00000633',
@@ -114,7 +115,11 @@ def eliminar(menos_bruto):
 menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] = menos_bruto.apply(eliminar, axis=1)
 
 print(menos_bruto.shape[0])
+
+
 menos_bruto = menos_bruto[menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] != 'eliminar']
+menos_bruto = menos_bruto.drop('CRÉDITOS VENDIDOS (ELIMINAR)', axis=1)
+
 
 print('')
 print(menos_bruto.shape[0])
@@ -993,9 +998,9 @@ print('######################################################')
 '##############################################################################'
 #AÑADIENDO NUEVOS REPROGRAMADOS
 #PONER AQUÍ EL INICIO DEL MES DE CORTE (es el dato que se solicita al principio)
-mes_inicio = pd.to_datetime(fecha_corte)
+mes_inicio = pd.to_datetime(fecha_corte_inicial)
 #PONER AQUÍ EL FINAL DEL MES DE CORTE (es el dato que se solicita al principio)
-mes_final = pd.to_datetime(fecha_corte_inicial)
+mes_final = pd.to_datetime(fecha_corte)
 '##############################################################################'
 
 def nueva_fec_ult_reprog(anx06_ordenado):
@@ -1406,8 +1411,10 @@ anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] = anx06_ordenado.apply
                                                                                 axis=1)
 
 #%%% COLUMNA 52/
+
+print(anx06_ordenado['TIPO_REPRO'].unique())
 def calculo_52(anx06_ordenado):
-    if anx06_ordenado['FEC_ULT_REPROG'] != '--': 
+    if anx06_ordenado['TIPO_REPRO'] != '--': 
         return anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
     else:
         return 0
@@ -1415,6 +1422,8 @@ def calculo_52(anx06_ordenado):
 anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado.apply(calculo_52, 
                                                                                      axis=1)
 
+print(anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum())
+suma_saldo_reprogramados = anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum()
 #%% COLUMNA 53/
 def calculo_53(anx06_ordenado):
     if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
@@ -1450,7 +1459,7 @@ anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = anx06_orde
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados REPRO.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados REPROk.xlsx'
 try:
     ruta = nombre
     os.remove(ruta)
@@ -1477,7 +1486,9 @@ excel_writer.save()
 #filtramos créditos reprogramados NO castigados
 reprogramados = anx06_repro[(anx06_repro['TIPO_REPRO'] != '--') & \
                             (anx06_repro['Saldos de Créditos Castigados 38/'] == 0)]
-    
+
+print(suma_saldo_reprogramados)
+print(reprogramados['Saldo de colocaciones (créditos directos) 24/'].sum())
 #%% pequeña alerta detectada
 investigar = reprogramados[pd.isna(reprogramados['TIPO_REPRO'])]
 print(investigar.shape[0])
@@ -1485,13 +1496,18 @@ print('debe salir cero, sino investigar')
 
 #%% CREACIÓN DEL EXCEL DE REPROGRAMADOS
 try:
-    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
+    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados prueba {fecha_mes} no incluye castigados(prueba).xlsx'
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
 reprogramados.to_excel(ruta,
-                      index=False)    
+                      index=False) 
+
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
 
 #%% VERIFICACIONES ADICIONALES, CRÉDITOS QUE APARECIERON ESTE MES PERO NO EN ALGÚN MES ANTERIOR
 ###############################################################################
