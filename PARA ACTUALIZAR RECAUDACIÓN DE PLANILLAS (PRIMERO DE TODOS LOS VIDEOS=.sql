@@ -1,6 +1,6 @@
 
 DECLARE @fechacorte as datetime
-SET @fechacorte = '20230630'
+SET @fechacorte = '20230731'
 ---------------
 SELECT 
 	Nro_Fincore, CodigoSocio7, NumerodeCredito18, 
@@ -56,16 +56,24 @@ LEFT JOIN Anexos_Riesgos..PLANILLA2 P
 	ON (LTRIM(RTRIM(A.NUEVA_PLANILLA)) =  LTRIM(RTRIM(P.NUEVA_PLANILLA)))
 	WHERE FechaCorte1 = @fechacorte
 --	and A.NUEVA_PLANILLA like '%03%' --esto solo sirve par verificar algunos cashitos
+--AND P.PLANILLA_CORREGIDA like '%san miguel%'
 	ORDER BY A.NUEVA_PLANILLA
 GO
 
+--
+select * from Anexos_Riesgos..PLANILLA2
+where NUEVA_PLANILLA like '%san miguel%'
+update Anexos_Riesgos..PLANILLA2
+set planilla_corregida = 'COOPERATIVA DE AHORRO Y CREDITO SAN MIGUEL LTDA.'
+where planilla_corregida like '%cooperativa%ahorro%san miguel%'
+--
 ---------------------------------------------------------------------------
 ------------SI SE ENCUENTRA ALGUNA CORRESPONDENCIA, LA COLUMNA PLANILLA_CORREGIDA SE PEGA EN
 ------------EL REPORTE DE RECAUDACIÓN DE HARRIS, PARA QUE HAGA MATCH
 ----------------------------------------------------------------------------
 -- codigo para hacer la tablita que se subirá al SQL
 declare @fechacorte as datetime
-set @fechacorte = '20230630'
+set @fechacorte = '20230731'
 
 SELECT FechaCorte1 as 'FechaCorte',
 	CodigoSocio7 as 'CodSocio',
@@ -80,7 +88,7 @@ FROM  anexos_riesgos2..Anx06_preliminar A
 where FechaCorte1 = @fechacorte
 
 ---------------------------------------------------------------------------
-DECLARE @FECHACORTE AS DATETIME = '20230630'
+DECLARE @FECHACORTE AS DATETIME = '20230831'
 DECLARE @PLANILLAS AS VARCHAR(50) = '%inabif%'
 SELECT 
 	--EMPRESA, 

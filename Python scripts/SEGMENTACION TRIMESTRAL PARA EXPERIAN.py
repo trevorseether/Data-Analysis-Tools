@@ -23,13 +23,13 @@ mes = 'JUNIO 2023'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2023 JUNIO') 
 #en esta ubicación debemos poner el archivo de reprogramados que se manda a principio del mes
 
-#%% IMPORTACIÓN DEL ANEXO06 DEL SQL
-
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-
 ## donde dice @fechacorte se debe poner el mes ################################
 fecha_corte_sql = '20230630'                                                  #
 ###############################################################################
+
+#%% IMPORTACIÓN DEL ANEXO06 DEL SQL
+
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 QUERY = f'''
 DECLARE @FECHA AS DATETIME

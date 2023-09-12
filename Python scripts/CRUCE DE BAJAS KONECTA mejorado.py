@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\12 set
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '2DO INFORME DE BAJAS GRUPO - SETIEMBRE 2023 ADICIONALES.xlsx'
+nombre_archivo = '2DO INFORME DE BAJAS GRUPO - SETIEMBRE 2023 ADICIONALES 2DA PARTE.xlsx'
 ############################################################################
 
 #%% IMPORTANDO EL INFORME DE BAJAS
@@ -242,7 +242,7 @@ final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace=True)
 
 #%% CREACIÓN DE EXCEL
 
-NOMBRE = 'BAJAS '+ FECHATXT +'.xlsx'
+NOMBRE = 'BAJAS '+ FECHATXT + '.xlsx'
 try:
 
     os.remove(NOMBRE)

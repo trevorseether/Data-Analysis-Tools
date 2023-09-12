@@ -35,18 +35,27 @@ insumo_principal = "SM_0823 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - AGOSTO-
 avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
-#%% ANEXO 06 DEL MISMO MES DE CORTE:
+# FECHA CORTE PARA SQL SERVER ######
+f_corte_sql = '20230831'
+####################################
 
-ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
-nombre          = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 04 FINAL.xlsx'
-filas_para_skip = 2
-
-#%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06
+#%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
 ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
-#%% IMPORTACIÓN DE ARCHIVOS
+#%% ANEXO 06 DEL MISMO MES DE CORTE:
+
+''' #lo eliminaremos si todos los meses simplemente extraemos datos desde el sql server
+ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
+nombre          = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 04 FINAL.xlsx'
+filas_para_skip = 2
+'''
+
+#%% IMPORTACIÓN DEL ANEXO 06: 
+    # ESTO LO DEBERÍA REEMPLAZAR POR EXTRACCIÓN DE DATOS DEL SQL, PORQUE SÍ O SÍ ESTE REPORTE SALE DESPUÉS DEL ANEXO 06
+
+'''
 df_fincore = pd.read_excel(ubi + '\\'  + nombre,
                            dtype = {'Nro Prestamo \nFincore' : object,
                                     'Numero de Crédito 18/'  : object},
@@ -83,12 +92,65 @@ df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
 
 del ubi
 del nombre
+'''
+###############################################################################
+#en reemplazo del código anterior, extraemos datos desde sql server:
 
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+
+QUERY = f'''
+select
+	FechaCorte1,
+	Nro_Fincore        as 'Nro Prestamo \nFincore',
+	NumerodeCredito18  as 'Numero de Crédito 18/',
+	CapitalVigente26   as 'Capital Vigente 26/' ,
+	CapitalRefinanciado28         as 'Capital Refinanciado 28/',
+	CapitalVencido29   as 'Capital Vencido 29/',
+	CapitalenCobranzaJudicial30   as 'Capital en Cobranza Judicial 30/',
+	SaldosdeCreditosCastigados38  as 'Saldos de Créditos Castigados 38/'
+from 
+	anexos_riesgos2..anx06_preliminar
+where FechaCorte1 = '{f_corte_sql}'                      
+'''
+                       
+df_fincore = pd.read_sql_query(sql   = QUERY, 
+                               con   = conn, 
+                               dtype ={'Nro Prestamo \nFincore' : str,
+                                       'Numero de Crédito 18/'  : str})
+del conn  #para limpiar el explorador de variables
+
+df_fincore.dropna(subset=['Nro Prestamo \nFincore',
+                          'Numero de Crédito 18/'], 
+                  inplace = True, 
+                  how     = 'all')
+
+#LIMPIEZA DE ESPACIOS
+df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].astype(str)
+df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].str.strip()
+df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].astype(str)
+df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].str.strip()
+
+#generamos el anexo para las saldos descapitalizados
+anexo_06_descap = df_fincore[['Nro Prestamo \nFincore',
+                              'Numero de Crédito 18/',
+                              'Capital Vigente 26/',
+                              'Capital Refinanciado 28/',
+                              'Capital Vencido 29/',
+                              'Capital en Cobranza Judicial 30/',
+                              'Saldos de Créditos Castigados 38/']]
+
+#anexo para relacionar nro fincore con nro crédito 18/
+df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
+df_fincore['Nro_Fincore'] = df_fincore['Nro Prestamo \nFincore']
+
+df_fincore = df_fincore[['NumerodeCredito18', 'Nro_Fincore']]
+
+df_fincore['NumerodeCredito18'] = df_fincore['NumerodeCredito18'].str.strip()
+df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
+
+ 
 #%% LECTURA DEL REPORTE EN BRUTO
-##############################################
-#      REPORTE INSUMO PRINCIPAL
-##############################################
-#importamos el archivo sentinel bruto, que nos manda Cesar o Denisse
+
 ubicacion = directorio
 os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
@@ -263,11 +325,7 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
-
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
+# QUERY CON LA QUE EXTRAEMOS DATOS DESDE SQL-SERVER
 query = '''
 --** lista de avales en gral.
 --** para cruce con reporte avales del fincore
