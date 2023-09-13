@@ -34,20 +34,21 @@ SELECT
 
 	'' AS 'IMPORTE ENVIADO S/.',
 	'' AS 'RECIBIDO MASIVO',
-	'' AS 'RECIBIDO INDEP.',
+	0  AS 'RECIBIDO INDEP.',
 	'' AS 'CUOTA MES CON LIQUIDACION',
 	'' AS 'PAGO JUDICIALES',
+	'' AS 'PAGO EXCEDENTE PRONTO PAGO / AMORTIZACIÓN',
 	'' AS 'PAGO EXCEDENTE LIQUIDACIÓN',
 	CASE
 		WHEN ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) = 1 
 		THEN '=SI.ERROR(T2;0)' ELSE '' END AS 'Desc_Envio',
 	CASE
 		WHEN ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) = 1 
-		THEN '=SUMA(U2:Y2)' ELSE '' END AS 'Desc_Pago',
+		THEN '=SUMA(U2:Z2)' ELSE '' END AS 'Desc_Pago',
 	CASE
 		WHEN ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) = 1 
-		THEN '=SI.ERROR(AA2/Z2;0)' ELSE '' END AS 'RECAUDACIÓN',
-		a.Departamento
+		THEN '=SI.ERROR(AB2/AA2;0)' ELSE '' END AS 'RECAUDACIÓN',
+	a.Departamento
 
 FROM  
 	anexos_riesgos2..Anx06_preliminar A
@@ -61,12 +62,6 @@ LEFT JOIN Anexos_Riesgos..PLANILLA2 P
 GO
 
 --
-select * from Anexos_Riesgos..PLANILLA2
-where NUEVA_PLANILLA like '%san miguel%'
-update Anexos_Riesgos..PLANILLA2
-set planilla_corregida = 'COOPERATIVA DE AHORRO Y CREDITO SAN MIGUEL LTDA.'
-where planilla_corregida like '%cooperativa%ahorro%san miguel%'
---
 ---------------------------------------------------------------------------
 ------------SI SE ENCUENTRA ALGUNA CORRESPONDENCIA, LA COLUMNA PLANILLA_CORREGIDA SE PEGA EN
 ------------EL REPORTE DE RECAUDACIÓN DE HARRIS, PARA QUE HAGA MATCH
@@ -75,10 +70,11 @@ where planilla_corregida like '%cooperativa%ahorro%san miguel%'
 declare @fechacorte as datetime
 set @fechacorte = '20230731'
 
-SELECT FechaCorte1 as 'FechaCorte',
-	CodigoSocio7 as 'CodSocio',
-	NumerodeCredito18 as 'CodCredito',
-	Monedadelcredito17 as 'CodMoneda',
+SELECT 
+	FechaCorte1			as 'FechaCorte',
+	CodigoSocio7		as 'CodSocio',
+	NumerodeCredito18	as 'CodCredito',
+	Monedadelcredito17	as 'CodMoneda',
 	'' as 'Desc_Envio',
 	'' as 'Desc_pago',
 	'' as 'recaudacion',
@@ -87,40 +83,10 @@ SELECT FechaCorte1 as 'FechaCorte',
 FROM  anexos_riesgos2..Anx06_preliminar A
 where FechaCorte1 = @fechacorte
 
----------------------------------------------------------------------------
-DECLARE @FECHACORTE AS DATETIME = '20230831'
-DECLARE @PLANILLAS AS VARCHAR(50) = '%inabif%'
-SELECT 
-	--EMPRESA, 
-	--PLANILLA, 
-	distinct NUEVA_PLANILLA 
-FROM 
-	anexos_riesgos2..Anx06_preliminar
-WHERE 
-	FechaCorte1 = @fechacorte
-	AND (EMPRESA LIKE @PLANILLAS
-	OR PLANILLA LIKE @PLANILLAS
-	OR NUEVA_PLANILLA LIKE @PLANILLAS)
-
-select * from Anexos_Riesgos..PLANILLA2
-where NUEVA_PLANILLA like @PLANILLAS
-or NUEVA_PLANILLA_creada like @PLANILLAS
-or Empresa like @PLANILLAS
-
-select NUEVA_PLANILLA,* from anexos_riesgos2..Anx06_preliminar where FechaCorte1 = @fechacorte
-and Nro_Fincore = 94300
-
-INSERT INTO Anexos_Riesgos..planilla2
-VALUES (
-'PROGRAMA INTEGRAL NACIONAL PARA EL BIENESTAR FAMILIAR - INABIF - CAS',
-'PROGRAMA INTEGRAL NACIONAL PARA EL BIENESTAR FAMILIAR - INABIF - CAS',
-'INABIF',
-'INABIF - CAS'
-)
 ----------------------------------------------------------------------
 --para insertar la recaudación una vez creada
 insert into RECAUDACION..Cabecera_Pagos ---- ESTA TABLA ES NUEVA, SE HA CREADO PORQUE LA ORIGINAL YA SE LLENÓ
-select * from RECAUDACION..recaudacion20230630
+select * from RECAUDACION..recaudacion20230731
 ----------------------------------------------------------------------
 
 ----creando un esquema nuevo para más orden
