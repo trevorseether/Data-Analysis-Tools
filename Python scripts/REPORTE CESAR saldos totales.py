@@ -77,7 +77,7 @@ df1=pd.read_excel(INSUMO,
                  date_parser=parse_date)
 
 #eliminación de duplicados por si acaso
-df1 = df1.drop_duplicates(subset='NroPrestamoFC')
+df1 = df1.drop_duplicates(subset = 'NroPrestamoFC')
 
 #eliminación de vacíos
 df1.dropna(subset=['CodigoSocio', 
@@ -85,6 +85,25 @@ df1.dropna(subset=['CodigoSocio',
                    'NumeroPrestamo',
                    'NroPrestamoFC',
                    'TipoCredito'], inplace=True, how='all')
+
+print(df1.shape[0])
+vendidos = ['00001346',
+            '00050796',
+            '00000633',
+            '00000942',
+            '00020154',
+            '00054955',
+            '00001147',
+            '00001287']
+
+def eliminar(row):
+    if row['NroPrestamoFC'] in vendidos:
+        return 'eliminar'
+
+df1['NroPrestamoFC'] = df1['NroPrestamoFC'].str.strip()
+df1['NroPrestamoFC'] = df1.apply(eliminar, axis=1)
+print(df1.shape[0])
+print('si en el segundo sale menos es porque faltaba retirar los créditos vendidos')
 
 ############################################################
 ##   2 aqui va el reporte del mes pasado                ####

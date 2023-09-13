@@ -961,14 +961,18 @@ print('si después de arrelgar siguen apareciendo otros hay que buscarlos')
 
 
 #%% CREACIÓN DEL EXCEL
-nombre_archivo = 'sentinel_experian khoO'+ str(FECHA_CORTE) +'.xlsx'
+
+mes = str(f_corte_sql[4:6])
+año = str(f_corte_sql[2:4])
+nombre_archivo = 'SM_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' -PROCESADO' + '.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
-df_sentinel.to_excel(nombre_archivo, index=False)
+df_sentinel.to_excel(nombre_archivo, 
+                     index = False)
 
 #%% UBICACIÓN ACTUAL
 
