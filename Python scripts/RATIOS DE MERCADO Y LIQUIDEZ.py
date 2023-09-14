@@ -4,6 +4,12 @@ Created on Thu Jan 19 10:18:16 2023
 
 @author: Joseph Montoya
 """
+
+###############################################################################
+#                  REPORTE DE RATIOS DE MERCADO Y LIQUIDEZ                    #
+###############################################################################
+
+#%%
 from datetime import datetime
 import pandas as pd
 import calendar
@@ -11,21 +17,30 @@ import os
 import pyodbc
 #%%
 ######## UBICACIÓN ############################################################
-fecha_txt = 'Julio - 2023' #escribir el mes que estamos haciendo
+fecha_txt = 'Agosto - 2023' #escribir el mes que estamos haciendo
 
-ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\ratios\\2023 JULIO'
-os.chdir(ubicacion)
+ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\ratios\\2023 AGOSTO'
 
+INSUMO = 'Ratios - Cronogramas de creditos vigentes al 31-Agosto-23 - No incl castigados.xlsx'
+
+# ubicación anexo06 ###########################################################
+ubi_anx06 = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
+
+anx06 = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 04 FINAL.xlsx'
+
+filas_skip = 2
 #%%
 ########### INSUMO ############################################################
-df = pd.read_excel('Ratios - Cronogramas de creditos vigentes al 31-Julio-23 - No incl castigados.xlsx',
-                   skiprows= 0,
-                   dtype = {'NroPrestamoFincore': object,
-                            'FechaVencimiento': object})
+os.chdir(ubicacion)
+df = pd.read_excel(INSUMO,
+                   skiprows = 0,
+                   dtype    = {'NroPrestamoFincore' : str,
+                               'FechaVencimiento'   : str,
+                               'CodPrestamoFox'     : str})
 
 df = df.rename(columns={'NroPrestamoFincore': 'NroPrestamo'})
 
-df['NroPrestamo'] = df['NroPrestamo'].str.strip()
+df['NroPrestamo'] = df['NroPrestamo'].astype(str).str.strip()
 df = df.rename(columns={"Fecha Vencimiento": "FechaVencimiento"})
 df = df.rename(columns={"Moneda Prestamo": "MonedaPrestamo"})
 
@@ -63,16 +78,14 @@ df_filtrado = df.query('FechaVencimiento >= "2023-01-01" and MonedaPrestamo.str.
 ###############################################################################
 #usamos este código
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final')
-
-numeros_fincores = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx',
-                                 skiprows = 2,
+anx06_ubi = ubi_anx06 + '\\' + anx06
+numeros_fincores = pd.read_excel(anx06_ubi,
+                                 skiprows = filas_skip,
                                  dtype = {'Nro Prestamo \nFincore' : object})
 
 fincores = numeros_fincores['Nro Prestamo \nFincore'].tolist()
 df_filtrado_2 = df_filtrado[df_filtrado['NroPrestamo'].isin(fincores)]
 
-os.chdir(ubicacion)
 
 #%% creando columnas adicionales
 
