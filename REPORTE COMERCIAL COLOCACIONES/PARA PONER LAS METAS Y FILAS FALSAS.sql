@@ -1,20 +1,20 @@
 
 update top (1) reportes_diana..DIANA_REPORTE
 set  META_CUENTAS = 12,
-	 META_MONTO = 25000
+	 META_MONTO   = 25000
 ----     select top 1 * from reportes_diana..DIANA_REPORTE
-where FECHA_CORTE = '20230731'
+where FECHA_CORTE = '20230831'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%ZAIRA%ASCUE%'
+and funcionario like '%zaira%ascue%'
 ----------------------------------------------------
 -- LO MISMO PERO PARA MYPE
 update top (1) reportes_diana..DIANA_MYPE
 set  META_CUENTAS = 10,
-	 META_MONTO = 80000
+	 META_MONTO   = 80000
 ----     select top 1 * from reportes_diana..DIANA_MYPE
-where FECHA_CORTE = '20230731'
+where FECHA_CORTE = '20230831'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%jessica%piscoya%'
+and funcionario like '%YULAISE%MOREAN%'
 
 ---------------------------------------------------------------------------
 ----------------------------------------------------------------------------

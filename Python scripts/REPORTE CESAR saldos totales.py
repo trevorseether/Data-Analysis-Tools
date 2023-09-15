@@ -17,54 +17,50 @@ from datetime import datetime
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'JULIO-23' #servirá para el nombre del archivo
+FECHA = 'AGOSTO-23' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 JULIO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 AGOSTO')
 
-INSUMO           =    'CARTERA_TOTAL_03082023.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JUNIO-23_INC_CVV_DETALLADO.xlsx'
-COBRANZA         =    'Ingresos por Cobranza Julio-23 - General.xlsx'
+INSUMO           =    'CARTERA_TOTAL_SM_Agosto23.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JULIO-23_INC_CVV_DETALLADO.xlsx'
+COBRANZA         =    'Ingresos por Cobranza Agosto-23 - General.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
 ##  IMPORTANDO LOS DATOS DE EXCEL  ##
+formatos = ['%d/%m/%Y %H:%M:%S',
+            '%d/%m/%Y',
+            '%Y%m%d', '%Y-%m-%d', 
+            '%Y-%m-%d %H:%M:%S', 
+            '%Y/%m/%d %H:%M:%S',
+            '%Y-%m-%d %H:%M:%S PM',
+            '%Y-%m-%d %H:%M:%S AM',
+            '%Y/%m/%d %H:%M:%S PM',
+            '%Y/%m/%d %H:%M:%S AM']  # Lista de formatos a analizar
 
-def parse_date(date_str):
-    try:
-        # Intentar parsear como fecha con formato DD/MM/YYYY HH:MM:SS
-        return datetime.strptime(date_str, '%d/%m/%Y %H:%M:%S')
-    except ValueError:
+def parse_dates(date_str):
+    for formato in formatos:
         try:
-            # Intentar parsear como fecha con formato DD/MM/YYYY
-            return datetime.strptime(date_str, '%d/%m/%Y')
+            return pd.to_datetime(date_str, format=formato)
         except ValueError:
-            try:
-                # Intentar parsear como fecha con formato DD-MM-YYYY HH:MM:SS
-                return datetime.strptime(date_str, '%d-%m-%Y %H:%M:%S')
-            except ValueError:
-                try:
-                    # Intentar parsear como fecha con formato YYYY-MM-DD HH:MM:SS
-                    return datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-                except ValueError:
-                    # Verificar otros casos especiales
-                    if date_str == '-':
-                        return date_str
-                    elif date_str == 'NULL':
-                        return date_str
-                    else:
-                        raise ValueError("Formato de fecha no válido.")
+            pass
+    return pd.NaT
 
-#    '%Y-%m-%d %H:%M:%S.%f'
+
 ############################################################
 ##   1 el primero es la base de datos aún por procesar    ##
 ############################################################
 
-df1=pd.read_excel(INSUMO,
-                 dtype={'CodigoSocio': object, 'NroDocIdentidad': object,
-                       'NumeroPrestamo':object, 'NroPrestamoFC': object,
-                       'TlfSocio':object, 'CelularSocio': object,
-                       'TipoCredito':object, 'SubTipoCredito': object}
+df1 = pd.read_excel(INSUMO,
+                 dtype={'CodigoSocio': object, 
+                        'NroDocIdentidad': object,
+                        'NumeroPrestamo':object, 
+                        'NroPrestamoFC': object,
+                        'TlfSocio':object, 
+                        'CelularSocio': object,
+                        'TipoCredito':object, 
+                        'SubTipoCredito': object}
 
                  ,parse_dates=['FechaDesembolsoTXT'  #AQUI SI SE HA PROCESADO
                               # ,'FechaAsignacionAbogadoTXT'  #no procesado
@@ -74,7 +70,7 @@ df1=pd.read_excel(INSUMO,
                               # ,'JFechaVentaCartera'         #no procesado
                               # ,'FechaProcesoSistemaTXT'     #no procesado
                              ],
-                 date_parser=parse_date)
+                 date_parser=parse_dates)
 
 #eliminación de duplicados por si acaso
 df1 = df1.drop_duplicates(subset = 'NroPrestamoFC')
@@ -86,7 +82,6 @@ df1.dropna(subset=['CodigoSocio',
                    'NroPrestamoFC',
                    'TipoCredito'], inplace=True, how='all')
 
-print(df1.shape[0])
 vendidos = ['00001346',
             '00050796',
             '00000633',
@@ -96,14 +91,14 @@ vendidos = ['00001346',
             '00001147',
             '00001287']
 
-def eliminar(row):
-    if row['NroPrestamoFC'] in vendidos:
-        return 'eliminar'
+def fecha_venta_cartera1(df1):
+    if df1['NroPrestamoFC'] in vendidos:
+        return '2023-08-29' #año-mes-día
+    else:
+        return df1['JFechaVentaCartera']
 
-df1['NroPrestamoFC'] = df1['NroPrestamoFC'].str.strip()
-df1['NroPrestamoFC'] = df1.apply(eliminar, axis=1)
-print(df1.shape[0])
-print('si en el segundo sale menos es porque faltaba retirar los créditos vendidos')
+df1['JFechaVentaCartera'] = df1.apply(fecha_venta_cartera1, axis=1)
+df1['JFechaVentaCartera'] = df1['JFechaVentaCartera'].apply(parse_dates)
 
 ############################################################
 ##   2 aqui va el reporte del mes pasado                ####
@@ -111,9 +106,9 @@ print('si en el segundo sale menos es porque faltaba retirar los créditos vendi
 
 df2 = pd.read_excel(MES_PASADO,
                   skiprows=0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
-                  dtype={'NroDocIdentidad': object,
-                         'NumeroPrestamo':object,
-                         'NroPrestamoFC': object})
+                  dtype={'NroDocIdentidad' : object,
+                         'NumeroPrestamo'  :object,
+                         'NroPrestamoFC'   : object})
 
 #eliminación de duplicados por si acaso
 df2 = df2.drop_duplicates(subset='NroPrestamoFC')
@@ -146,8 +141,8 @@ df3_cobranza.dropna(subset=['codigosocio',
 ##########################################################################################################
 
 df4_JGM_año_castigo = pd.read_excel(UTILIDAD_CASTIGO,
-                                    dtype={'Numero Prestamo (Fox/Pond)': object, 
-                                           'Nro Prestamo Fincore': object})
+                                    dtype={'Numero Prestamo (Fox/Pond)' : object, 
+                                           'Nro Prestamo Fincore'       : object})
 
 df4_JGM_año_castigo = df4_JGM_año_castigo.drop_duplicates(subset='Nro Prestamo Fincore')
 
@@ -296,6 +291,7 @@ df4['CRED CON CAPITALIZ'] = df4['CRED CON CAPITALIZ'].replace('revisar', '')
 
 
 df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)'] + df4['InteresCompensatorioDeuda'] + df4['InteresMoratorioDeuda']
+
 #%% DATOS DEL MES PASADO
 'siguiente fase'
 
