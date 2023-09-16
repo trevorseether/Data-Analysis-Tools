@@ -15,17 +15,17 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\14 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\15 setiembre')
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230914.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230915.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
-                       dtype={'ID CLIENTE': str,
-                              'TELEFONO': str,
+                       dtype={'ID CLIENTE'      : str,
+                              'TELEFONO'        : str,
                               'NUMERO DOCUMENTO': str})
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()

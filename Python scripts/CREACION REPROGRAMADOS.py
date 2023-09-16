@@ -1455,6 +1455,10 @@ def calculo_55(anx06_ordenado):
 
 anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = anx06_ordenado.apply(calculo_55,
                                                                                            axis = 1)
+
+#%% Reemplazar solo el ';' por una cadena vacía en la columna 'Domicilio 12/' 
+anx06_ordenado['Domicilio 12/'] = anx06_ordenado['Domicilio 12/'].str.replace(';', '', regex=False)
+
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
