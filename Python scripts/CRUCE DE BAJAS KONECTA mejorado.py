@@ -20,15 +20,15 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '12-09-2023'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '18-09-2023'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'directorio de trabajo' ####################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\12 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 SETIEMBRE\\18 SETIEMBRE')
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '2DO INFORME DE BAJAS GRUPO - SETIEMBRE 2023 ADICIONALES 2DA PARTE.xlsx'
+nombre_archivo = 'VF_3ER INFORME DE BAJAS GRUPO - SETIEMBRE 2023.xlsx'
 ############################################################################
 
 #%% IMPORTANDO EL INFORME DE BAJAS
@@ -213,6 +213,7 @@ vigentes2 = vigentes2.rename(columns={"Doc_Identidad"   : "DOC_IDENTIDAD",
                                       "Planilla"        : "EMPRESA/PLANILLA"})
 
 bajas2 = bajas[['Documento', 'Documento original']]
+
 #%% INNER JOIN
 'inner join usando '
 df_resultado = vigentes2.merge(bajas2, 

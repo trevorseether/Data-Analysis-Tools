@@ -1435,11 +1435,15 @@ anx06_ordenado['Saldo Capital en Cuenta de Orden por efecto del Covid 53/'] = an
                                                                                                    axis = 1)
 
 #%% COLUMNA 54/
-def calculo_54(anx06_ordenado):
-    if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
-        return '810924'
-    elif anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['3']:
-        return '810923'
+def calculo_54(anx06_ordenado): #probar esta vaina
+    if anx06_ordenado['Saldo de Créditos que no cuentan con cobertura 51/'] > 0 or \
+        anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] > 0:
+        if anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['1', '2']:
+            return '8109240000'
+        elif anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] in ['3']:
+            return '8109230000'
+        else:
+            return None
     else:
         return None
     
@@ -1459,6 +1463,16 @@ anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = anx06_orde
 #%% Reemplazar solo el ';' por una cadena vacía en la columna 'Domicilio 12/' 
 anx06_ordenado['Domicilio 12/'] = anx06_ordenado['Domicilio 12/'].str.replace(';', '', regex = False)
 
+#%% ALERTA, SI EL CRÉDITO TIENE TIPO DE CRÉDITO 12 (CONSUMO NO REVOLVENTE)
+# Y AL MISMO TIEMPO TIENE GARANTÍAS PREFERIDAS, NO DEBE TENER
+
+ALERTAAA = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') and \
+                          (anx06_ordenado['Saldos de Garantías Preferidas 34/'] > 0)]
+    
+if ALERTAAA.shape[0] > 0:
+    print('ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
+else:
+    print('todo bien q(≧▽≦q)')
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})

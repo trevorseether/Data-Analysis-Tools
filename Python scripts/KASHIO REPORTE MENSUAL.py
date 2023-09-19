@@ -14,26 +14,31 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'SEPTIEMBRE 2023'
-fecha_inicio = '2023-09-01'
+MES          = 'SETIEMBRE 2023'
+fecha_inicio = '2023-09-20'
 fecha_final  = '2023-09-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 AGOSTO\\28 agosto 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\18 setiembre')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'insumo cobranzas 20230828.xlsx'
+ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte 20230918.xlsx'
 #####################################################################
 
 #%%
+# reporte de pagos enviado por Kashio #########################################
+pagos_rep_kashio = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\15 setiembre\\kash\\FhMQVfES9EBBbSMy9pKmsn.xlsx'
+###############################################################################
+
+#%%
 kashio = pd.read_excel(ARCHIVO_HOY,
-                       dtype={'ID CLIENTE'          : str,
-                              'TELEFONO'            : str,
-                              'ID ORDEN DE PAGO'    : str,
-                              'REFERENCIA'          : str,
-                              'MONTO'               : float,
-                              'VENCIMIENTO'         : str})
+                       dtype={'ID CLIENTE'       : str,
+                              'TELEFONO'         : str,
+                              'ID ORDEN DE PAGO' : str,
+                              'REFERENCIA'       : str,
+                              'MONTO'            : float,
+                              'VENCIMIENTO'      : str})
 
 kashio['ID CLIENTE']       = kashio['ID CLIENTE'].str.strip()
 kashio['TELEFONO']         = kashio['TELEFONO'].str.strip()
@@ -142,10 +147,10 @@ df_fincore = df_fincore[['pagare_fincore','Doc_Identidad',
 #%% merge
 
 kashio_union = kashio_filtrado.merge(df_fincore, 
-                             left_on=['num pagare'], 
-                             right_on=['pagare_fincore']
-                             ,how='inner') #'left'  si le ponemos left, vemos las cancelaciones
-                             #inner porque los casos que no hagan match es porque ya fueron cancelados
+                                     left_on=['num pagare'], 
+                                     right_on=['pagare_fincore'],
+                                     how='inner') #'left'  si le ponemos left, vemos las cancelaciones
+                                     #inner porque los casos que no hagan match es porque ya fueron cancelados
 
 owo = kashio_union[kashio_union['DNI'] != kashio_union['Doc_Identidad']]
 print(owo)
@@ -175,6 +180,127 @@ def libre_disponibildiad(kashio_final):
         return kashio_final['PRODUCTO']
     
 kashio_final['PRODUCTO'] = kashio_final.apply(libre_disponibildiad, axis=1)
+
+#%% AÑADIENDO CUENTA BANCARIA
+# primero sacamos los datos de las cuentas bancarias de la pág de Kashio:
+# REPORTES / PAGOS / FECHA -> TODOS / EXPORTAR
+
+pagos_kashio = pd.read_excel(pagos_rep_kashio,
+                             skiprows = 0,
+                             dtype={'REFERENCIA DE ORDEN' : str,
+                                    'FECHA DE REGISTRO'   : str})
+
+# Formato datetime
+pagos_kashio['FECHA DE REGISTRO'] = pd.to_datetime(pagos_kashio['FECHA DE REGISTRO'])
+
+# Ordena el DataFrame por 'FECHA DE REGISTRO' en orden descendente
+pagos_kashio = pagos_kashio.sort_values(by = 'FECHA DE REGISTRO', 
+                                        ascending = False)
+
+# Filtra las filas únicas basadas en 'REFERENCIA DE ORDEN' conservando solo la primera (la más reciente)
+# Además corregimos el formato de los nros de fincore
+def convert_to_int(value):
+    try:
+        return int(value)
+    except ValueError:
+        return None  # Otra opción es devolver NaN si prefieres valores numéricos faltantes
+
+# Aplica la función a la columna 'REFERENCIA DE ORDEN' y crea una nueva columna 'ORDEN_ENTERO'
+pagos_kashio['REFERENCIA DE ORDEN'] = pagos_kashio['REFERENCIA DE ORDEN'].apply(convert_to_int)
+pagos_kashio = pagos_kashio[pagos_kashio['REFERENCIA DE ORDEN'] != None]
+pagos_kashio['REFERENCIA DE ORDEN'] = round(pagos_kashio['REFERENCIA DE ORDEN'],0)
+pagos_kashio['REFERENCIA DE ORDEN'] = pagos_kashio['REFERENCIA DE ORDEN'].astype(str)
+pagos_kashio['REFERENCIA DE ORDEN'] = pagos_kashio['REFERENCIA DE ORDEN'].str.rstrip('.0')
+pagos_kashio['REFERENCIA DE ORDEN'] = pagos_kashio['REFERENCIA DE ORDEN'].apply(lambda x: str(x).zfill(8))
+
+#ELIMINAMOS DUPLICADOS QUEDÁNDONOS SOLO CON EL MÁS RECIENTE
+pagos_kashio = pagos_kashio.drop_duplicates(subset = 'REFERENCIA DE ORDEN',
+                                            keep   = 'first')
+
+#FILTRADO DE COLUMNAS NECESARIAS
+pagos_kashio = pagos_kashio[['REFERENCIA DE ORDEN', 'MÉTODO DE PAGO']]
+
+#MERGE CON LOS PAGOS DE KASHIO
+kashio_final = kashio_final.merge(pagos_kashio, 
+                                  left_on=['NUM PAGARE'], 
+                                  right_on=['REFERENCIA DE ORDEN'],
+                                  how = 'left')
+
+#ELIMINAMOS LA COLUMNA AUXILIAR DEL MERGE QUE YA NO NECESITAREMOS
+kashio_final = kashio_final.drop('REFERENCIA DE ORDEN', 
+                                 axis=1)
+
+#%% IMPORTAMOS LA CUENTA BANCARIA DESDE EL SQL
+
+server      = datos['DATOS'][0]
+username    = datos['DATOS'][2]
+password    = datos['DATOS'][3]
+
+conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+
+conn = pyodbc.connect(conn_str)
+
+########################################################
+###                CAMBIAR LA FECHA               ######
+########################################################
+
+#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
+query = '''
+-- Estados de Socio
+-- ****************
+-- CodtablaDet CodtablaCab Descripcion
+-- 298	        41			PRESOCIO
+-- 299			41			HABIL
+-- 300			41			INACTIVO
+-- 301			41			INHABIL
+-- 532			41			FALLECIDO
+
+select soc.CodSocio, codigosocio, NroDocIdentidad, ApellidoPaterno, ApellidoMaterno, nombres, tra.CodigoCCI, tra.CodigoBancario, tra.CodMoneda,
+iif(tra.codmoneda = 94,'SOLES','DOLARES') as Moneda_Cta, ent.descripcion as Banco, tra.InformacionAl, tra.PorDefecto
+from socio soc
+left join SocioTransferencia tra on soc.codsocio = tra.CodSocio
+left join EntidadFinanciera ent on tra.CodEntidadFinanciera = ent.CodEntidadFinanciera
+
+where  soc.codigosocio is not null 
+and soc.CodigoSocio>0 
+--and tra.CodigoCCI is not null 
+and soc.CodEstado = 299 -- solo Hábiles
+--and tra.codmoneda = 94
+order by CodigoSocio asc, PorDefecto desc, InformacionAl asc --esta parte del ordenamiento es importante para quedarnos con el registro más reciente
+
+--
+
+--select * from Socio where CodigoSocio = 27
+--select * from SocioTransferencia
+--where codsocio = 9
+
+--select * from EntidadFinanciera
+
+--select * from TablaMaestraDet where CodTablaCab = 41
+
+'''
+
+cuenta_bancaria = pd.read_sql_query(query, conn)
+del conn
+
+cuenta_bancaria = cuenta_bancaria[['codigosocio', 'Banco']]
+
+cuenta_bancaria = cuenta_bancaria.drop_duplicates(subset = 'codigosocio',
+                                                  keep   = 'first')
+
+#MERGE CON LAS CUENTAS BANCARIAS DEL FINCORE
+kashio_final = kashio_final.merge(cuenta_bancaria, 
+                                  left_on=['CODSOC'], 
+                                  right_on=['codigosocio'],
+                                  how = 'left')
+
+# eliminación de columna que ya no es necesaria
+kashio_final = kashio_final.drop('codigosocio', 
+                                 axis=1)
+
+#rename
+kashio_final = kashio_final.rename(columns={'Banco' : "BANCO DE DESEMBOLSO"})
+
 
 #%% EXPORTACIÓN A EXCEL
 nombre = "KASHIO COBRANZAS - CUOTAS " + MES + '.xlsx'

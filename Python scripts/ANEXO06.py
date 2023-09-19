@@ -1181,7 +1181,6 @@ Contabilidad'''].dt.date
 df_resultado_2 = df_resultado_2.rename(columns={'''Fecha Venc de Ult Cuota Cancelada
 Contabilidad''': '''Fecha Venc de Ult Cuota Cancelada Contabilidad'''})
 
-
 #cálculo de DG vs BW con FVUCC
 def con_fvucc(df_resultado_2):
     if pd.isna(df_resultado_2['Fecha Venc de Ult Cuota Cancelada Contabilidad']):
@@ -1423,7 +1422,7 @@ df_resultado_2['''Intereses en Suspenso 41/'''].sum()
 #%% REASIGNAMOS DEVENGADOS Y SUSPENSO DEL FINCORE AL ANEXO 06
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Interes\nDevengado Total'].round(2)
 
-df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
+df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
 
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'

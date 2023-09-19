@@ -15,11 +15,11 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\15 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\18 setiembre otra vez')
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230915.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230918.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -107,7 +107,7 @@ kashio.to_excel(nombre, index=False)
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
 #ESTE AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
-kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) +'.xlsx',
+kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
                                 dtype = {'ID CLIENTE (*)': str,
                                          'REFERENCIA': str,
                                          'ID ORDEN DE PAGO': str})

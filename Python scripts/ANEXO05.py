@@ -29,7 +29,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fas
 
 #%%
 #PONER EL ANEXO 06 FINAL
-df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 03 FINAL.xlsx",
+df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 06 FINAL.xlsx",
                  dtype={'Código Socio 7/'           : object, 
                         'Número de Documento 10/'   : object,
                         'Numero de Crédito 18/'     : object, 
@@ -40,7 +40,7 @@ df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 03 FINAL.xlsx
                         'Fecha de Nacimiento 3/'    : object,
                        },
                  skiprows= 2 #ESTO VA A DEPENDER DEL ARCHIVO 
-)
+                 )
 
 #%%
 #para eliminar filas vacías
