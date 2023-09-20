@@ -375,13 +375,13 @@ df2_observ_v_garantia['OBSERVACION'].fillna('--', inplace=True) #REEMPLAZANDO LO
 df2_observ_v_garantia['VALOR GARANTIA'].fillna(0, inplace=True) #reemplazando los NaN por 0
 
 df6 = df6.rename(columns={'VALOR GARANTIA': 'VALOR GARANTIA ANTIGUA'})
-df6 = df6.rename(columns={'OBSERVACION': 'OBSERVACION ANTIGUA'})
+df6 = df6.rename(columns={'OBSERVACION'   : 'OBSERVACION ANTIGUA'})
 
 df2_observ_v_garantia = df2_observ_v_garantia.drop_duplicates(subset = "NroPrestamoFC")
 df6 = df6.merge(df2_observ_v_garantia,
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["NroPrestamoFC"]
-                         ,how='left')
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["NroPrestamoFC"],
+                         how      =  'left')
 
 #df6[['VALOR GARANTIA','OBSERVACION']]
 
@@ -398,30 +398,35 @@ def saldo_real_vs_deudor(dff6):
     else:
         return dff6['Nuevo Saldo']
     
-dff6['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] = dff6.apply(asignar_saldo_deudor, axis=1)
+dff6['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] = dff6.apply(saldo_real_vs_deudor, axis=1)
 
 #solo para chequear
 #%% ALERTA DEUDA > GARANTÍA
 
 df7 = dff6.copy()
 def alerta(df7):
-    if df7['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] > df7['Nuevo Saldo']:
+    if df7['SALDO REAL (S.DEUDOR Vs. GARANTIA)'] < df7['Nuevo Saldo']:
         return "DEUDA SOBREPASA GARANTIA"
     else:
         return '--'
     
 df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] = df7.apply(alerta, axis=1)
 
-print(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"][['SALDO REAL (S.DEUDOR Vs. GARANTIA)', 'Nuevo Saldo']])
+#printeo de resultados solo para ver (no hay nada que corregir aunque salga alerta)
+kho = df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"][['SALDO REAL (S.DEUDOR Vs. GARANTIA)',
+                                                                                        'VALOR GARANTIA', 
+                                                                                        'Nuevo Saldo']]
+print(kho)
+
 print('en total hay ' + str(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"].shape[0]) + ' casos')
 print('es solo una alerta en el reporte, no hay que corregir nada realmente')
 
 #%% ORDENAMIENTO DE COLUMNAS
 
 df_final = df7.merge(JGM_año_castigo, 
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["Nro Prestamo Fincore"],
-                         how='left') #se duplicó un crédito
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["Nro Prestamo Fincore"],
+                         how      = 'left') #se duplicó un crédito
 
 COLUMNAS = ['Socio',
             'CodigoSocio',
@@ -731,16 +736,18 @@ tabla24 = tabla24.reset_index()
 
 #%% CREACIÓN DEL EXCEL
 
-nombre = "SALDO_COOPACSANMIGUEL - " + FECHA +"_INC_CVV_DETALLADO.xlsx"
+nombre = "SALDO_COOPACSANMIGUEL - " + FECHA +"_INC_CVV_DETALLADO final.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
 except FileNotFoundError:
     pass
 
-df_finalizado.to_excel(nombre, index=False, engine='openpyxl')
+df_finalizado.to_excel(nombre, 
+                       index = False, 
+                       engine = 'openpyxl')
             
-   # impte castigado no varía, eso solo se jala del mes anterior
+# impte castigado no varía, eso solo se jala del mes anterior, a menos que haya nuevos castigos en el mes
    
 #%% ESCRIBIENDO CON OPENPYXL
 #añadimos las tablas pivote al final del dataframe
