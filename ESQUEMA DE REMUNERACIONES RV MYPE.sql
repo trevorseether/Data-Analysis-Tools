@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------
+                               REMUNERACIONES MYPE
+*/-----------------------------------------------------------------------------
+
+-- Declarar la variable con la fecha inicial
+DECLARE @fechacorte AS VARCHAR(8) = '20230831';
+
+-- Obtener el último día del mes anterior
+DECLARE @fechaAnterior AS DATETIME;
+SET @fechaAnterior = EOMONTH(DATEADD(MONTH, -1, EOMONTH(CONVERT(DATETIME, @fechacorte, 112))));
+
+DECLARE @fecha12MESES AS DATETIME;
+SET @fecha12MESES = EOMONTH(DATEADD(MONTH, -11, EOMONTH(CONVERT(DATETIME, @fechacorte, 112))));
+
+;
+
 /*
 -- COD PARA CREAR EL REPORTE CON LA COLUMNA ORIGINADOR CORREGIDA
 drop table ANEXOS_RIESGOS3..ANX06
@@ -26,7 +42,7 @@ ACTUAL AS (
     FROM 
         ANEXOS_RIESGOS3..ANX06
     WHERE 
-		FechaCorte1 = '20230831'
+		FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 		and TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,29)
     GROUP BY originador
 ),
@@ -39,7 +55,7 @@ DEL_MES AS (
 	FROM 
 		ANEXOS_RIESGOS3..ANX06
 	WHERE
-		FechaCorte1 = '20230831'
+		FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 		AND FechaCorte1 = EOMONTH(FechadeDesembolso21)
 		AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,29)
 	GROUP BY originador
@@ -54,7 +70,7 @@ ANTERIOR AS (
 				SUM(ISNULL(Saldodecolocacionescreditosdirectos24,0) + isnull(SaldosdeCreditosCastigados38,0)) AS MORA_ANTERIOR
 
 				FROM ANEXOS_RIESGOS3..ANX06
-				WHERE FechaCorte1 = '20230731'
+				WHERE FechaCorte1 = @fechaAnterior --------------------------------------------------------------FECHA CORTE ANTERIOR
 				AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,29)
 				GROUP BY originador
 				),
@@ -62,13 +78,13 @@ ANTERIOR AS (
 actual_distinct as (
 	select originador, count(distinct NumerodeDocumento10)  as NRO_SOCIOS_ACTUAL
 	from anexos_riesgos3..anx06	
-	where FechaCorte1 = '20230831'
+	where FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 	group by originador
 	),
 anterior_distinct as (
 	select originador, count(distinct NumerodeDocumento10)  AS NRO_SOCIOS_ANTERIOR
 	from anexos_riesgos3..anx06	
-	where FechaCorte1 = '20230731'
+	where FechaCorte1 = @fechaAnterior --------------------------------------------------------------FECHA CORTE ANTERIOR
 	group by originador
 	),
 
@@ -80,7 +96,7 @@ select
 	SUM(Saldodecolocacionescreditosdirectos24 + SaldosdeCreditosCastigados38) AS MORA_12
 
 from anexos_riesgos3..ANX06
-where FechaCorte1 = '20230831'
+where FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 and DATEDIFF(MONTH, FechadeDesembolso21, FechaCorte1) < 12
 and Saldodecolocacionescreditosdirectos24 > 0
 
@@ -110,7 +126,7 @@ SELECT
     END) AS MAYOR_DOS_CUOTAS
 
 FROM anexos_riesgos3..ANX06
-	WHERE FechaCorte1 = '20230831'
+	WHERE FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 	AND DATEDIFF(MONTH, FechadeDesembolso21, FechaCorte1) < 12
     AND (CapitalVencido29 > 0 OR CapitalenCobranzaJudicial30 > 0)
     AND TipodeProducto43 IN (15,16,17,18,19,21,22,23,24,25,29)
@@ -129,7 +145,7 @@ from
 where 
 	FechaCorte1 = EOMONTH(FechadeDesembolso21)
 and 
-	FechaCorte1 >= '20220930'
+	FechaCorte1 >= @fecha12MESES
 group by 
 	originador
 )
@@ -339,7 +355,7 @@ FROM
 	LEFT JOIN CAIDAS ON A.originador = CAIDAS.originador
 	LEFT JOIN nro_desembolsos ON A.originador = nro_desembolsos.originador
 
-WHERE a.FechaCorte1 = '20230831'
+WHERE a.FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 	and Saldodecolocacionescreditosdirectos24 > 0
 	AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,29)
 	AND AF.ACTIVIDAD = 'ACTIVO'
