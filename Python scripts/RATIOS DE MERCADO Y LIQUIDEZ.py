@@ -14,7 +14,7 @@ from datetime import datetime
 import pandas as pd
 import calendar
 import os
-import pyodbc
+#import pyodbc
 #%%
 ######## UBICACIÓN ############################################################
 fecha_txt = 'Agosto - 2023' #escribir el mes que estamos haciendo
