@@ -18,8 +18,6 @@ MES          = 'OCTUBRE 2023'
 fecha_inicio = '2023-10-01'
 fecha_final  = '2023-10-31'
 
-fecha_corte = '20230831' #?? INVESTIGAR
-
 #%% UBICACIÓN DE LOS ARCHIVOS
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\26 setiembre')
 
@@ -29,7 +27,8 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte 20230926.xlsx'
 #####################################################################
 
 #%%
-# reporte de pagos enviado por Kashio #########################################
+# reporte de pagos sacado de la plataforma de Kashio ##########################
+# Reportes / Pagos / Fecha : TODOS / Exportar #################################
 pagos_rep_kashio = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\26 setiembre\\27HJYzNbpPgDfSMvMXWurD.xlsx'
 ###############################################################################
 
@@ -96,8 +95,9 @@ conn = pyodbc.connect(conn_str)
 ########################################################
 ###                CAMBIAR LA FECHA               ######
 ########################################################
+# ya no recuerdo cuál era la necesidad de filtrar por fecha ( ͠° ͟ʖ ͡°)
 
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
+fecha_corte = fecha_inicio[0:4] + fecha_inicio[5:7] + '01'
 
 query = f'''
 SELECT
@@ -241,10 +241,6 @@ password    = datos['DATOS'][3]
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
-
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
 
 #extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
 query = '''
