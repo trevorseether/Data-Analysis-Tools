@@ -215,8 +215,8 @@ df_filtrado = df_filtrado[['NUMERO DE DOCUMENTO',
                            'CATEGORIA DE RIESGO EN LA ENTIDAD FINANCIERA']]
 df_resultado = para_excel.merge(df_filtrado, 
                                 left_on=['Número de Documento 10/'],
-                                right_on=['NUMERO DE DOCUMENTO']
-                                ,how='left')
+                                right_on=['NUMERO DE DOCUMENTO'],
+                                how='left')
 df_resultado.drop(['NUMERO DE DOCUMENTO'], axis=1, inplace=True)
 
 #%%
