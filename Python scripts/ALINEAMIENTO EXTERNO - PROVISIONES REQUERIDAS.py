@@ -26,10 +26,9 @@ base_alineamiento = '20523941047_70369063_PE202300732_RQ_COOPAC SAN MIGUEL _Alin
 
 anx06 = pd.read_excel(ch_anx06 + '\\' + anexo06,
                       skiprows= 2,
-                      dtype= {'Número de Documento 10/': str,
-                              'Tipo de Crédito 19/': str,
-                              '''Nro Prestamo 
-Fincore''': str})
+                      dtype= {'Número de Documento 10/' : str,
+                              'Tipo de Crédito 19/'     : str,
+                              'Nro Prestamo \nFincore'  : str})
 
 anx06.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
                      'Fecha de Nacimiento 3/',
@@ -75,7 +74,7 @@ def alineamiento_numerico(alineamiento_externo):
         return 4
     else:
         return ''
-    
+
 alineamiento_externo['ALINEAMIENTO EXTERNO'] = alineamiento_externo.apply(alineamiento_numerico, axis=1)
    
 print('NÚMERO DE FILAS QUE NO HACEN MATCH:')

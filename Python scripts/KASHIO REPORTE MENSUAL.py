@@ -14,21 +14,23 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'SETIEMBRE 2023'
-fecha_inicio = '2023-09-20'
-fecha_final  = '2023-09-30'
+MES          = 'OCTUBRE 2023'
+fecha_inicio = '2023-10-01'
+fecha_final  = '2023-10-31'
+
+fecha_corte = '20230831' #?? INVESTIGAR
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\18 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\26 setiembre')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte 20230918.xlsx'
+ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte 20230926.xlsx'
 #####################################################################
 
 #%%
 # reporte de pagos enviado por Kashio #########################################
-pagos_rep_kashio = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\15 setiembre\\kash\\FhMQVfES9EBBbSMy9pKmsn.xlsx'
+pagos_rep_kashio = 'C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\26 setiembre\\27HJYzNbpPgDfSMvMXWurD.xlsx'
 ###############################################################################
 
 #%%
@@ -96,7 +98,7 @@ conn = pyodbc.connect(conn_str)
 ########################################################
 
 #extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
-fecha_corte = '20230930'
+
 query = f'''
 SELECT
     RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
@@ -147,9 +149,9 @@ df_fincore = df_fincore[['pagare_fincore','Doc_Identidad',
 #%% merge
 
 kashio_union = kashio_filtrado.merge(df_fincore, 
-                                     left_on=['num pagare'], 
-                                     right_on=['pagare_fincore'],
-                                     how='inner') #'left'  si le ponemos left, vemos las cancelaciones
+                                     left_on  = ['num pagare'], 
+                                     right_on = ['pagare_fincore'],
+                                     how      = 'inner') #'left'  si le ponemos left, vemos las cancelaciones
                                      #inner porque los casos que no hagan match es porque ya fueron cancelados
 
 owo = kashio_union[kashio_union['DNI'] != kashio_union['Doc_Identidad']]
