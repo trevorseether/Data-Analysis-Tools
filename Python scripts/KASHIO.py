@@ -14,12 +14,13 @@ Created on Mon Aug  7 15:00:55 2023
 import pandas as pd
 import os
 
-#%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\27 setiembre')
+#%% UBICACIÓN DE LOS ARCHIVOS #################################################
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\28 setiembre')
+###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230927.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230928.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
