@@ -221,6 +221,48 @@ print('')
 print('Provisiones requeridas con al. externo:')
 print(UNION['Provisiones Requeridas A.EXTERNO'].sum())
 
+#%% COLUMNAS PARA EL SQL
+
+para_sql = UNION[['Nro_Fincore',
+                  'NumerodeDocumento10',
+                  'NUMERO DE ENTIDADES SBS REPORTADAS',
+                  'ALINEAMIENTO EXTERNO',
+                  'MAX CALIFICACION',
+                  'TASA PROV. CON AL. EXTERNO',
+                  'Provisiones Requeridas A.EXTERNO',
+                  #'ENTIDAD FINANCIERA CON PEOR CALIFICACIÓN',
+                  #'DEUDA TOTAL EN LA ENTIDAD',
+                  #'CATEGORÍA DE RIESGO EN LA ENTIDAD FINANCIERA',
+                  #'PROV. REQUERIDAS AL. EXTERNO AGRUPADO',
+                  'FechaCorte1']]
+
+nombre = f'AL. EXTERNO {CORTE_SQL} SQL.xlsx'
+
+para_sql.to_excel(nombre,
+                  index = False,
+                  sheet_name = 'AL. EXTERNO SQL')
+del nombre
+
+#LO SUBES A SQL Y USAS EL SIGUIENTE CÓDIGO:
+'''
+    INSERT INTO anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AL_EXTERNO] 
+--(columna1, columna2, columna3, ...)
+SELECT 
+	NRO_fincore, 
+	NumerodeDocumento10,
+	[NUMERO DE ENTIDADES SBS REPORTADAS],
+	[ALINEAMIENTO EXTERNO],
+	[MAX CALIFICACION],
+	[TASA PROV# CON AL# EXTERNO],
+	[Provisiones Requeridas A#EXTERNO],
+	NULL AS 'ENTID FINANC CON PEOR CALIF',
+	NULL AS 'DEUDA TOTAL EN LA ENTIDAD',
+	NULL AS 'CATEGORIA DE RIESGO EN LA ENTIDAD',
+	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
+	[FechaCorte1]
+FROM 
+	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AGOSTO_2023]
+'''
 #%% FILTRADOS DXP PARA COMPRA DE DEUDA
 
 #filtrados_dxp = UNION[UNION['PRODUCTO TXT'] == 'DXP']
@@ -275,5 +317,5 @@ filtrados_COMPRA_DEUDA.to_excel('COMPRA DE DEUDA.xlsx',
                                 sheet_name = 'COMPRA DE DEUDA')
 print('guardado concluido')
 
-UNION.shape[0]
+#UNION.shape[0]
 
