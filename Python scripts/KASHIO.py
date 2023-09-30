@@ -135,6 +135,7 @@ kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('É', 'E')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Í', 'I')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ó', 'O')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
+kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ñ', 'N')
 
 kashio_para_csv['DOCUMENTO'] = 'OTHER'
 
