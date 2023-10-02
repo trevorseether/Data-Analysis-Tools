@@ -15,12 +15,12 @@ import pandas as pd
 import os
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 SETIEMBRE\\29 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\02 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20230929.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231002.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -135,7 +135,6 @@ kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('É', 'E')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Í', 'I')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ó', 'O')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ú', 'U')
-kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Ñ', 'N')
 
 kashio_para_csv['DOCUMENTO'] = 'OTHER'
 
