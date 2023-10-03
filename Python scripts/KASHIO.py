@@ -25,9 +25,10 @@ ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231002.xlsx'
 
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
-                       dtype={'ID CLIENTE'      : str,
-                              'TELEFONO'        : str,
-                              'NUMERO DOCUMENTO': str})
+                       dtype={'ID CLIENTE'       : str,
+                              'TELEFONO'         : str,
+                              'NUMERO DOCUMENTO' : str}
+                       )
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
 kashio['EMAIL'] = kashio['EMAIL'].str.strip()
@@ -109,9 +110,10 @@ kashio.to_excel(nombre, index=False)
 
 #ESTE AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
 kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
-                                dtype = {'ID CLIENTE (*)': str,
-                                         'REFERENCIA': str,
-                                         'ID ORDEN DE PAGO': str})
+                                dtype = {'ID CLIENTE (*)'   : str,
+                                         'REFERENCIA'       : str,
+                                         'ID ORDEN DE PAGO' : str}
+                                )
 
 kashio_ampliado = kashio_ampliado.rename(columns={"NOMBRE": "NOMBRE_1"})
 print(kashio_ampliado.shape[0])
@@ -146,8 +148,8 @@ kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana
 #%% EXPORTAR A CSV 
 
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
-                       index=False, 
-                       encoding='utf-8')
+                       index    = False, 
+                       encoding = 'utf-8')
 
 '''
 #BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
