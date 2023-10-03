@@ -590,17 +590,17 @@ AND A.NUEVO_PROMOTOR is null
 --and FechaCorte1 = '20220930'
 
 update Anexos_Riesgos2..Anx06_preliminar set
-administrador = 'OFICINA CAÑETE',
-nuevo_promotor = 'OFICINA CAÑETE'
+administrador = 'PROSEVA CAÑETE',
+nuevo_promotor = 'PROSEVA CAÑETE'
 FROM Anexos_Riesgos2..Anx06_preliminar
 WHERE FECHACORTE1 = '20230831'
 AND ADMINISTRADOR LIKE '%CAÑETE%'
 
 ------------------------------------------------------------------------------------
----------------------CODIGO PARA ARREGLAR A PROSEVA CAÑETE Y PONERLA COMO OFICINA CAÑETE
+---------------------CODIGO PARA ARREGLAR A PROSEVA CAÑETE
 UPDATE A
-SET A.administrador = 'OFICINA CAÑETE',
-A.NUEVO_PROMOTOR = 'OFICINA CAÑETE'
+SET A.administrador = 'PROSEVA CAÑETE',
+A.NUEVO_PROMOTOR = 'PROSEVA CAÑETE'
 FROM Anexos_Riesgos2..Anx06_preliminar AS  A -- AQUÍ VA LA TABLA
 WHERE FechaCorte1 = '20230831'
 AND ADMINISTRADOR LIKE '%CAÑETE%'
@@ -830,7 +830,7 @@ set originador = 'JULY OLGA'
 where originador like '%JULY GARCIA%'
 
 update anexos_riesgos2..Anx06_preliminar
-set originador = 'OFICINA CAÑETE'
+set originador = 'PROSEVA CAÑETE'
 where originador like '%CAÑETE%'
 
 update anexos_riesgos2..Anx06_preliminar
@@ -848,3 +848,11 @@ where originador like '%JONY SALDAÑA%'
 update anexos_riesgos2..Anx06_preliminar
 set administrador = 'JHONY SALDAÑA'
 where administrador like '%JONY SALDAÑA%'
+
+update anexos_riesgos2..Anx06_preliminar
+set originador = 'MARIA CRISTINA MARTINEZ'
+where originador like '%MARIA CRISTINA MARTINEZ%'
+
+update anexos_riesgos2..Anx06_preliminar
+set administrador = 'MARIA CRISTINA MARTINEZ'
+where administrador like '%MARIA CRISTINA MARTINEZ%'
