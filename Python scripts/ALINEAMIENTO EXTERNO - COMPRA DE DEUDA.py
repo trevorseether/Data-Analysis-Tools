@@ -279,6 +279,7 @@ UNION['ALINEAMIENTO EXTERNO'] = UNION['ALINEAMIENTO EXTERNO'].astype(int)
 #                               (UNION['ALINEAMIENTO EXTERNO'] == 3)]
 
 # este código de aquí abajo lo podemos comentar si queremos aplicar el filtro
+# y des-comentamos el filtrado anterior si es que necesitamos filtrar
 filtrados_COMPRA_DEUDA = UNION.copy()
 
 #%% columnas necesarias:
