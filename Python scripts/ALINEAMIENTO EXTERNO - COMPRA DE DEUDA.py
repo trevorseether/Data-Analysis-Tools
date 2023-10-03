@@ -16,7 +16,10 @@ COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'
 
 CORTE_SQL = '20230831'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\alineamiento externo agosto')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 AGOSTO')
+
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2792023131015_1.csv'
+
 #%%
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -71,15 +74,15 @@ del conn
 
 base['NumerodeDocumento10'] = base['NumerodeDocumento10'].str.strip()
 #%%
-UBI = 'C:\\Users\\sanmiguel38\\Downloads'
-NOMBRE = 'exceldoc_AlinCartera_2171967_42734875_2792023131015_1.csv'
 
-al_externo = pd.read_csv(UBI + '\\' + NOMBRE,
+al_externo = pd.read_csv(NOMBRE_AL_EXTERNO,
                            dtype = {'NUMERO DE DOCUMENTO' : str},
                            skiprows = 1
                            )
 
 #%%
+x = al_externo.columns
+
 a_e_filtrado = al_externo[['TIPO DE DOCUMENTO',
                            'NUMERO DE DOCUMENTO',
                            #'APELLIDO PATERNO',
@@ -87,6 +90,7 @@ a_e_filtrado = al_externo[['TIPO DE DOCUMENTO',
                            #'NOMBRE',
                            'NIVEL DE RIESGO',
                            'NUMERO DE ENTIDADES SBS REPORTADAS',
+                           'DEUDA TOTAL EN NO REGULADAS',
                            'DEUDA TOTAL EN SBS',
                            'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023']]
 
@@ -226,6 +230,7 @@ print(UNION['Provisiones Requeridas A.EXTERNO'].sum())
 para_sql = UNION[['Nro_Fincore',
                   'NumerodeDocumento10',
                   'NUMERO DE ENTIDADES SBS REPORTADAS',
+                  'DEUDA TOTAL EN NO REGULADAS',
                   'ALINEAMIENTO EXTERNO',
                   'MAX CALIFICACION',
                   'TASA PROV. CON AL. EXTERNO',
@@ -269,8 +274,12 @@ FROM
 UNION['ClasificaciondelDeudorconAlineamiento15'] = UNION['ClasificaciondelDeudorconAlineamiento15'].astype(int)
 UNION['ALINEAMIENTO EXTERNO'] = UNION['ALINEAMIENTO EXTERNO'].astype(int)
 
-filtrados_COMPRA_DEUDA = UNION[(UNION['ClasificaciondelDeudorconAlineamiento15'] == 0) & \
-                               (UNION['ALINEAMIENTO EXTERNO'] == 3)]
+
+#filtrados_COMPRA_DEUDA = UNION[(UNION['ClasificaciondelDeudorconAlineamiento15'] == 0) & \
+#                               (UNION['ALINEAMIENTO EXTERNO'] == 3)]
+
+# este código de aquí abajo lo podemos comentar si queremos aplicar el filtro
+filtrados_COMPRA_DEUDA = UNION.copy()
 
 #%% columnas necesarias:
 
@@ -301,6 +310,7 @@ filtrados_COMPRA_DEUDA = filtrados_COMPRA_DEUDA[['FechaCorte1',
                                                  #'NUMERO DE DOCUMENTO',
                                                  'NIVEL DE RIESGO',
                                                  'NUMERO DE ENTIDADES SBS REPORTADAS',
+                                                 'DEUDA TOTAL EN NO REGULADAS',
                                                  'DEUDA TOTAL EN SBS',
                                                  'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023',
                                                  #'DOC ORIGINAL',
@@ -312,7 +322,7 @@ filtrados_COMPRA_DEUDA = filtrados_COMPRA_DEUDA[['FechaCorte1',
                                                  ]]
 #%% EXPORTACIÓN A EXCEL
 print('guardando excel')
-filtrados_COMPRA_DEUDA.to_excel('COMPRA DE DEUDA.xlsx',
+filtrados_COMPRA_DEUDA.to_excel('COMPRA DE DEUDA cartera total.xlsx',
                                 index = False,
                                 sheet_name = 'COMPRA DE DEUDA')
 print('guardado concluido')
