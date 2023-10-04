@@ -66,8 +66,8 @@ WHERE
 
 base = pd.read_sql_query(query, 
                          conn,
-                         dtype = {'NumerodeDocumento10': str,
-                                  'TipodeCredito19' : str}
+                         dtype = {'NumerodeDocumento10'  : str,
+                                  'TipodeCredito19'      : str}
                          )
 
 del conn

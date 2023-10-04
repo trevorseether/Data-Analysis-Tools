@@ -21,9 +21,9 @@ import numpy as np
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'AGOSTO 2023'
-fecha_corte             = '2023-08-31'
-fecha_corte_inicial     = '2023-08-01'
+fecha_mes               = 'SETIEMBRE 2023'
+fecha_corte             = '2023-09-30'
+fecha_corte_inicial     = '2023-09-01'
 
 #%% UIT actual
 uit = 4950
@@ -31,21 +31,21 @@ uit = 4950
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Agosto2023 - campos ampliados (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Setiembre2023 - campos ampliados (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 JULIO\\ahora si final'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - JULIO 2023 - campos ampliados 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 - campos ampliados 01.xlsx'
 ############################################################################################
 
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
@@ -676,7 +676,11 @@ def arreglo2_3(ordenado):
 ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 
 #%% Eliminación de duplicados
+
+print(ordenado.shape[0])
 ordenado = ordenado.drop_duplicates(subset = 'Nro Prestamo \nFincore')
+print(ordenado.shape[0])
+print('si sale menos es porque hubo duplicados')
 
 #%% SALDOS CASTIGADOS NEGATIVOS LUEGO DE DESCAPITALIZAR:
 # buscar en CRONOGRAMA DE PRÉSTAMO si aparece alguno:
@@ -1399,7 +1403,7 @@ anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] = anx06_ordenado['9/MD
                                                                          na_action = None) #EN CASO DE NULO NO HACER NADA
 
 anx06_ordenado["FEC_ULT_REPROG2"] = pd.to_datetime(anx06_ordenado["FEC_ULT_REPROG"], 
-                                                  errors='coerce')
+                                                   errors='coerce')
 
 def correccion_modalidad_repro(anx06_ordenado):
     if anx06_ordenado["FEC_ULT_REPROG2"] >= pd.Timestamp('2023-01-01'):
@@ -1422,6 +1426,7 @@ def calculo_52(anx06_ordenado):
 anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado.apply(calculo_52, 
                                                                                      axis=1)
 
+anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].round(2)
 print(anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum())
 suma_saldo_reprogramados = anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum()
 #%% COLUMNA 53/
@@ -1466,13 +1471,31 @@ anx06_ordenado['Domicilio 12/'] = anx06_ordenado['Domicilio 12/'].str.replace(';
 #%% ALERTA, SI EL CRÉDITO TIENE TIPO DE CRÉDITO 12 (CONSUMO NO REVOLVENTE)
 # Y AL MISMO TIEMPO TIENE GARANTÍAS PREFERIDAS, NO DEBE TENER
 
-ALERTAAA = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') and \
+alertaaa = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') & \
+                          (anx06_ordenado['Saldos de Garantías Preferidas 34/'] > 0)]
+
+if alertaaa.shape[0] > 0:
+    print('ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
+    print(alertaaa['Nro Prestamo \nFincore'])
+else:
+    print('todo bien q(≧▽≦q)')
+
+#%% corrigiendo por si acaso    
+anx06_ordenado.loc[(anx06_ordenado['Apellidos y Nombres / Razón Social 2/'] == 'BRICENO PAJUELO JAIME GUILLERMO') & \
+                   (anx06_ordenado['Nro Prestamo \nFincore'] == '00021989'), 
+                   'Tipo de Crédito 19/'] = '09'
+    
+alertaaa = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') & \
                           (anx06_ordenado['Saldos de Garantías Preferidas 34/'] > 0)]
     
-if ALERTAAA.shape[0] > 0:
+alertaaa['Nro Prestamo \nFincore']
+    
+
+if alertaaa.shape[0] > 0:
     print('ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
 else:
     print('todo bien q(≧▽≦q)')
+
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
@@ -1493,20 +1516,25 @@ df_vacío.to_excel(ruta,
 excel_writer = pd.ExcelWriter(nombre)
 
 # Guardar cada DataFrame en una hoja (sheet) diferente
-anx06_ordenado.to_excel(excel_writer, sheet_name = fecha_mes, index=False) ##
-menores.to_excel(excel_writer, sheet_name='socios con cred < 100 soles', index=False)
+anx06_ordenado.to_excel(excel_writer, 
+                        sheet_name = fecha_mes, 
+                        index = False) ##
+menores.to_excel(excel_writer, 
+                 sheet_name = 'socios con cred < 100 soles', 
+                 index = False)
 
 # Guardar los cambios y cerrar el objeto ExcelWriter
 excel_writer.save()
  
 #%% FILTRADO DE CRÉDITOS REPROGRAMADOS
-
+anx06_repro = anx06_ordenado.copy()
 #filtramos créditos reprogramados NO castigados
 reprogramados = anx06_repro[(anx06_repro['TIPO_REPRO'] != '--') & \
                             (anx06_repro['Saldos de Créditos Castigados 38/'] == 0)]
 
 print(suma_saldo_reprogramados)
 print(reprogramados['Saldo de colocaciones (créditos directos) 24/'].sum())
+
 #%% pequeña alerta detectada
 investigar = reprogramados[pd.isna(reprogramados['TIPO_REPRO'])]
 print(investigar.shape[0])
@@ -1514,7 +1542,7 @@ print('debe salir cero, sino investigar')
 
 #%% CREACIÓN DEL EXCEL DE REPROGRAMADOS
 try:
-    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados prueba {fecha_mes} no incluye castigados(prueba).xlsx'
+    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
     os.remove(ruta)
 except FileNotFoundError:
     pass
@@ -1574,7 +1602,7 @@ creditos_en_3_meses = df_mes_actual_copia.loc[df_mes_actual_copia['Nro Prestamo 
 creditos_no_aparecidos = creditos_en_3_meses[~creditos_en_3_meses['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
 
 print(creditos_no_aparecidos)
-
+creditos_no_aparecidos['Nro Prestamo \nFincore']
 #%% ahora vamos a buscar respecto al excel original antes de eliminar los cancelados
 'FILTRAMOS AQUELLOS CRÉDITOS QUE TENGAN FECHA DE DESEMBOLSO DE HACE DOS MESES AL CORTE ACTUAL'
 antiguos_aparecen = df_mes_actual_copia[df_mes_actual_copia['Fecha de Desembolso 21/'].astype(int) <= int(fecha_corte_menos_2)]
