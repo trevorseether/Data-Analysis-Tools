@@ -1519,6 +1519,7 @@ excel_writer = pd.ExcelWriter(nombre)
 anx06_ordenado.to_excel(excel_writer, 
                         sheet_name = fecha_mes, 
                         index = False) ##
+
 menores.to_excel(excel_writer, 
                  sheet_name = 'socios con cred < 100 soles', 
                  index = False)
