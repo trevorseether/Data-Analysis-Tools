@@ -940,7 +940,8 @@ def col4(anx06_ordenado):
         return anx06_ordenado['Nro Dias Gracia  Acumulado RPG TXT']
     else:
         return anx06_ordenado['PLAZO REPRO ACUMULADO']
-anx06_ordenado['PLAZO REPRO ACUMULADO'] = anx06_ordenado.apply(col4, axis=1)
+anx06_ordenado['PLAZO REPRO ACUMULADO'] = anx06_ordenado.apply(col4, 
+                                                               axis=1)
 
 #añadimos datos a la col 5
 def col5(anx06_ordenado):
@@ -948,7 +949,8 @@ def col5(anx06_ordenado):
         return anx06_ordenado['Nro Cuotas Canc Post Regro']
     else:
         return anx06_ordenado['NRO CUOTAS REPROG CANCELADAS']
-anx06_ordenado['NRO CUOTAS REPROG CANCELADAS'] = anx06_ordenado.apply(col5, axis=1)
+anx06_ordenado['NRO CUOTAS REPROG CANCELADAS'] = anx06_ordenado.apply(col5, 
+                                                                      axis=1)
 
 #añadimos datos a la col 6
 def col6(anx06_ordenado):
@@ -956,7 +958,8 @@ def col6(anx06_ordenado):
         return anx06_ordenado['Nro Reprogramaciones TXT']
     else:
         return anx06_ordenado['NRO REPROG']
-anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col6, axis=1)    
+anx06_ordenado['NRO REPROG'] = anx06_ordenado.apply(col6, 
+                                                    axis=1)    
 
 #%% REPROGRAMADOS DEL MES
 #AÑADIENDO LOS REPROGRAMADOS DEL MES
@@ -1388,10 +1391,10 @@ print('si sale menos, es porque hubo duplicados')
 '#############################################################################'
 columnas = anx06_ordenado.columns
 columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
-                                   'fecha término de gracia por desembolso ["v" + dias gracia (av)]',
-                                   'periodo de gracia por Reprog inicio',
-                                   'periodo de gracia por Reprog Término',
-                                   'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:136])
+                                             'fecha término de gracia por desembolso ["v" + dias gracia (av)]',
+                                             'periodo de gracia por Reprog inicio',
+                                             'periodo de gracia por Reprog Término',
+                                             'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:136])
     
 anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
@@ -1400,10 +1403,10 @@ anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación']  = anx06_ordenado["TIPO_REPRO"]
 
 anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'] = anx06_ordenado['9/MDREPRP/ Modalidad de reprogramación'].map(
-                                                                          {"TIPO 1": '1', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+                                                                          {"TIPO 1": '1', #REEMPLAZANDO LOS VALORES
                                                                            "TIPO 2": '2',
                                                                            "TIPO 3": '1'},
-                                                                         na_action = None) #EN CASO DE NULO NO HACER NADA
+                                                                           na_action = None) #EN CASO DE NULO NO HACER NADA
 
 anx06_ordenado["FEC_ULT_REPROG2"] = pd.to_datetime(anx06_ordenado["FEC_ULT_REPROG"], 
                                                    errors='coerce')
