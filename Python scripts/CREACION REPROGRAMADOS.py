@@ -1171,10 +1171,13 @@ def filtracion_E1_E2(anx06_ordenado):
     else:
         return 'vigente'
             
-anx06_ordenado['vigentes??'] = anx06_ordenado.apply(filtracion_E1_E2, axis=1)
+anx06_ordenado['vigentes??'] = anx06_ordenado.apply(filtracion_E1_E2, 
+                                                    axis=1)
 
 anx06_ordenado = anx06_ordenado[anx06_ordenado['vigentes??'] == 'vigente']
-anx06_ordenado.drop(['vigentes??'], axis=1, inplace=True)
+anx06_ordenado.drop(['vigentes??'], 
+                    axis=1, 
+                    inplace=True)
 
 #VERIFICACIÓN
 print(anx06_ordenado[~pd.isna(anx06_ordenado['E2'])]['E2']) #con esto podemos ver que solo queden créditos con cancelaciones posteriores a la fecha de corte
