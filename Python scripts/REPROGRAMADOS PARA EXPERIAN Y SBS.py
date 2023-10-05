@@ -39,7 +39,7 @@ tabla1.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                       'Fecha de Nacimiento 3/',
                       'Número de Documento 10/',
                       'Domicilio 12/',
-                      'Numero de Crédito 18/'], inplace=True, how='all')
+                      'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
 
@@ -119,7 +119,6 @@ calificacion = '20523941047_70369063_PE202300987_SEGMENTACION_RIESGO_COOPAC_SANM
 mes = 'agosto'
 año = 2023
 ###############################################################################
-
 
 #%% PROCESAMIENTO
 #lectura del anexo06 de reprogramados
