@@ -11,27 +11,27 @@ ADD [FECHA_CORTE] DATETIME NULL
 
 ----CÓDIGO PARA ASIGNAR FECHA A ESAS COLUMNAS,
 --- SE TIENE QUE ARREGLAR LOS DATOS PORQUE DIANA ES COJUDA
-update reportes_diana..DIANA_AGOSTO23
-set [FECHA DE REVISION] = [FECHA DESEMBOLSO]
-WHERE [FECHA DE REVISION] IS NULL
+update reportes_diana..DXP_LD_SETIEMBRE23
+set [FECHA_REVISIÓN] = [FECHA DESEMBOLSO]
+WHERE [FECHA_REVISIÓN] IS NULL
 AND [FECHA DESEMBOLSO] IS NOT NULL
 
-update reportes_diana..DIANA_AGOSTO23
-set [FECHA DESEMBOLSO] = [FECHA DE REVISION]
+update reportes_diana..DXP_LD_SETIEMBRE23
+set [FECHA DESEMBOLSO] = [FECHA_REVISIÓN]
 WHERE [FECHA DESEMBOLSO] IS NULL
-AND [FECHA DE REVISION] IS NOT NULL
+AND [FECHA_REVISIÓN] IS NOT NULL
 
 --CON ESTO REVISAS LAS FECHAS
-SELECT * FROM reportes_diana..DIANA_AGOSTO23
-WHERE ([FECHA DE REVISION] IS NULL
+SELECT * FROM reportes_diana..DXP_LD_SETIEMBRE23
+WHERE ([FECHA_REVISIÓN] IS NULL
 OR [FECHA DESEMBOLSO] IS NULL
 OR [FECHA DESEMBOLSO] IS NULL)
 
 -----------------------------------------------------------
---------PROCEDEMOS A INSERTAR TODOS MENOS PROSEVA----------
+--------PROCEDEMOS A INSERTAR TODOS MENOS PROSEVA----------SELECT * FROM reportes_diana..DXP_LD_SETIEMBRE23
 -----------------------------------------------------------
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20230831'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20230930'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
@@ -70,7 +70,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,NULL --META CUENTAS
 ,NULL --META MONTO
 ,A.[CANAL OFICINA] -- ANTERIORMENTE A.OFICINA
-,A.[FECHA DE REVISION]
+,A.[FECHA_REVISIÓN]
 ,A.ANALISTA
 ,A.[EMPRESA]
 ,A.[EMPRESA] -------todo check hasta planilla
@@ -80,7 +80,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from reportes_diana..DIANA_AGOSTO23 as A
+from reportes_diana..DXP_LD_SETIEMBRE23 as A
 --where [ESTADO FINAL] = 'APROBADO'
 
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ from reportes_diana..DIANA_AGOSTO23 as A
 ----------------------------------------------------------------------------------------------------------------------------------
 
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20230831'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20230930'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
 [FECHA_DESEMBOLSO],----check
@@ -140,14 +140,14 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from reportes_diana.PROSEVAS.ago23 as A
+from reportes_diana.PROSEVAS.SET23 as A
 --where [estado final] = 'APROBADO'
 
 --------------------------------------------------------------------
 --- CODIGO PARA AÑADIR LOS MYPE
 --- esto genera una ramificación de los reportes a partir de mayo del 2023
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20230831'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20230930'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 
 INSERT INTO reportes_diana..DIANA_MYPE (
@@ -197,7 +197,7 @@ SELECT
 	,@FECHACORTE
 
 from 
-	reportes_diana.MYPE.[2023_AGOSTO] as A
+	reportes_diana.MYPE.[2023_SETIEMBRE] as A
 WHERE 
 	Prooducto LIKE '%MULTIPRODUCTO%'
 	AND ([Tipo ] LIKE '%MICRO%'
