@@ -1483,7 +1483,11 @@ Fincore'''] in ['00000681',
     else:
         return  df_resultado_2['Provisiones Requeridas 36/'] * 0.52 # 0.50 es lo mínimo
 
-df_resultado_2['Provisiones Constituidas 37/'] = df_resultado_2.apply(prov_cons_37, axis=1)
+df_resultado_2['Provisiones Constituidas 37/'] = df_resultado_2.apply(prov_cons_37, 
+                                                                      axis=1)
+
+df_resultado_2['Provisiones Constituidas 37/'] = df_resultado_2['Provisiones Constituidas 37/'].round(2)
+df_resultado_2['Provisiones Requeridas 36/'] = df_resultado_2['Provisiones Requeridas 36/'].round(2)
 
 print(df_resultado_2['Provisiones Constituidas 37/'].sum())
 print(df_resultado_2['Provisiones Requeridas 36/'].sum())

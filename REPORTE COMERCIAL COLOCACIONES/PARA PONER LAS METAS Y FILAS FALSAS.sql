@@ -1,20 +1,21 @@
 
+-- INSERTAR METAS A DXP y LD
 update top (1) reportes_diana..DIANA_REPORTE
-set  META_CUENTAS = 12,
-	 META_MONTO   = 25000
+set  META_CUENTAS = 0,
+	 META_MONTO   = 0
 ----     select top 1 * from reportes_diana..DIANA_REPORTE
-where FECHA_CORTE = '20230831'
+where FECHA_CORTE = '20230930'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%zaira%ascue%'
+and funcionario like '%ZAIRA%ASCUE%'
 ----------------------------------------------------
 -- LO MISMO PERO PARA MYPE
 update top (1) reportes_diana..DIANA_MYPE
 set  META_CUENTAS = 10,
 	 META_MONTO   = 80000
 ----     select top 1 * from reportes_diana..DIANA_MYPE
-where FECHA_CORTE = '20230831'
+where FECHA_CORTE = '20230930'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%YULAISE%MOREAN%'
+and funcionario like '%JESSICA%PISCOYA%'
 
 ---------------------------------------------------------------------------
 ----------------------------------------------------------------------------
