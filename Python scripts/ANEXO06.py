@@ -194,6 +194,8 @@ calif_ref = pd.read_excel(archivo_refinanciados,
                           dtype={'Nº de Crédito FINCORE' : object,
                                  'PAGARE ACTUAL'         : str})
 
+calif_ref['PAGARE ACTUAL'] = calif_ref['PAGARE ACTUAL'].str.strip() #si aquí salta un error, es porque le han cambiado el nombre a la columna
+
 calif_ref[mes_calif] = calif_ref[mes_calif].astype(float)
 
 calif_ref = calif_ref.rename(columns = {mes_calif        : 'calificacion especial'})
@@ -676,24 +678,23 @@ df_resultado['Tasa Diaria'] = df_resultado.apply(int_diario, axis=1)
 df_resultado['Monto de Garantías Preferidas'] = df_resultado['Saldos de Garantías Preferidas 34/']
 
 def garant_pref(df_resultado):
-    if df_resultado['''Nro Prestamo 
-Fincore'''] in ['00025314'	,
-'00021989'	,
-'00024551'	,
-'00023254'	,
-'00025067'	,
-'00024033'	,
-'00025678'	,
-'00023259'	,
-'00022958'	,
-'00024926'	,
-'00023451'	,
-'00023202'	,
-'00023215'	,
-'00024860'	,
-'00025566'	,
-'00021994'	
-]:  
+    if df_resultado['Nro Prestamo \nFincore'] in ['00025314'	,
+                                                  '00021989'	,
+                                                  '00024551'	,
+                                                  '00023254'	,
+                                                  '00025067'	,
+                                                  '00024033'	,
+                                                  '00025678'	,
+                                                  '00023259'	,
+                                                  '00022958'	,
+                                                  '00024926'	,
+                                                  '00023451'	,
+                                                  '00023202'	,
+                                                  '00023215'	,
+                                                  '00024860'	,
+                                                  '00025566'	,
+                                                  '00021994'	
+                                                  ]:  
         return df_resultado['Saldo de colocaciones (créditos directos) 24/']
     else:
         return 0
@@ -887,8 +888,7 @@ def producto_43(row): #aparentemente este sí funciona, seguir investigando
     if (row['Partida Registral 8/'] != '') & \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31')) | \
      ((row['Partida Registral 8/'] != '') & \
-     (row['''Origen
- Prestamo'''] == 'POND')):
+     (row['Origen\nPrestamo'] == 'POND')):
         return '41'
     else:
         return row['Tipo de Producto 43/ original']
@@ -1559,7 +1559,7 @@ def producto_txt(df_resultado_2):
         return 'DXP'
     elif tipo_producto in [30, 31, 32, 33]:
         return 'LD'
-    elif tipo_producto in [21, 22, 23, 24, 25, 29]:
+    elif tipo_producto in [20, 21, 22, 23, 24, 25, 29]:
         return 'MICRO'
     elif tipo_producto in [15, 16, 17, 18, 19]:
         return 'PEQUEÑA'
