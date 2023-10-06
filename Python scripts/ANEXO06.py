@@ -27,11 +27,11 @@ import datetime
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO #######################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE')
 ###############################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 - campos ampliados 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - SETIEMBRE 2023 - campos ampliados 01.xlsx"
 ###############################################################################
 
 ###############################################
@@ -39,19 +39,19 @@ uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE ###################################
-fecha_corte     = '2023-08-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Agosto 2023'
+fecha_corte     = '2023-09-30' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Setiembre 2023'
 ####################################################
 
 'este es el archivo de la calificación que añade Enrique manualmente'
 ########################################################################################################################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 08 2023.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 ############################################################################################
-mes_calif = 'AGOSTOO' #aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Septiembre' #aqui debemos poner el mes donde esté la calificación más reciente  ###
 ############################################################################################
 #%% ESTABLECER FECHA CORTE
 
@@ -129,9 +129,9 @@ x = df1.columns
 #%% CRÉDITOS EN LA COOPAC
 #POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
-creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', case=False) | 
-                     (df1['Nombre PlanillaTXT'].str.contains('san miguel', case=False) & 
-                     (df1['Nombre PlanillaTXT'].str.contains('coopac', case=False)))]
+creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', case = False) | 
+                     (df1['Nombre PlanillaTXT'].str.contains('san miguel', case = False) & 
+                     (df1['Nombre PlanillaTXT'].str.contains('coopac', case = False)))]
 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos a ver las planillas
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas
@@ -190,16 +190,21 @@ print('si sale 8113020000 entonces todo bien')
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
 
 calif_ref = pd.read_excel(archivo_refinanciados,
-                          skiprows=3,
-                          dtype={'Nº de Crédito FINCORE': object, })
+                          skiprows = 3,
+                          dtype={'Nº de Crédito FINCORE' : object,
+                                 'PAGARE ACTUAL'         : str})
 
 calif_ref[mes_calif] = calif_ref[mes_calif].astype(float)
-calif_ref = calif_ref.rename(columns={mes_calif: 'calificacion especial'})
-calif_ref = calif_ref.rename(columns={'Nº de Crédito FINCORE': 'fincore ref'})
+
+calif_ref = calif_ref.rename(columns = {mes_calif        : 'calificacion especial'})
+calif_ref = calif_ref.rename(columns = {'PAGARE ACTUAL'  : 'fincore ref'}) #aquí antes la columna se llamaba Nº de Crédito FINCORE
+
 calif_ref = calif_ref[['fincore ref','calificacion especial']]
 
-calif_ref.dropna(subset=['fincore ref', 
-                         'calificacion especial'], inplace=True, how='all')
+calif_ref.dropna(subset = ['fincore ref', 
+                           'calificacion especial'], 
+                 inplace = True, 
+                 how = 'all')
 
 del archivo_refinanciados
 del mes_calif
@@ -1838,7 +1843,8 @@ Suspenso Total''', #PINTAR DE COLOR VERDE
 'Provincia Negocio',
 'Funcionario Origuinador',
 'Funcionario Actual',
-'Fecha Desembolso TXT']
+'Fecha Desembolso TXT',
+'9/MDREPRP/ Modalidad de reprogramación']
 
 anexo06_casi = df_resultado_2[columnas_casi_final]
 
@@ -2029,7 +2035,8 @@ except FileNotFoundError:
     pass
 
 anexo06_casi.to_excel(nombre,
-                      index=False)
+                      sheet_name = fech_corte_txt,
+                      index = False)
 
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
