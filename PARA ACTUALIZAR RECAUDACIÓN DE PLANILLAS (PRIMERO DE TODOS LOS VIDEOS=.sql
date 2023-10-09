@@ -1,6 +1,6 @@
 
 DECLARE @fechacorte as datetime
-SET @fechacorte = '20230731'
+SET @fechacorte = '20230831'
 ---------------
 SELECT 
 	Nro_Fincore, CodigoSocio7, NumerodeCredito18, 
@@ -68,7 +68,7 @@ GO
 ----------------------------------------------------------------------------
 -- codigo para hacer la tablita que se subirá al SQL
 declare @fechacorte as datetime
-set @fechacorte = '20230731'
+set @fechacorte = '20230831'
 
 SELECT 
 	FechaCorte1			as 'FechaCorte',
@@ -86,7 +86,7 @@ where FechaCorte1 = @fechacorte
 ----------------------------------------------------------------------
 --para insertar la recaudación una vez creada
 insert into RECAUDACION..Cabecera_Pagos ---- ESTA TABLA ES NUEVA, SE HA CREADO PORQUE LA ORIGINAL YA SE LLENÓ
-select * from RECAUDACION..recaudacion20230731
+select * from RECAUDACION..recaudacion20230831
 ----------------------------------------------------------------------
 
 ----creando un esquema nuevo para más orden

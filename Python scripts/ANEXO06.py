@@ -249,9 +249,9 @@ df100_merge.drop_duplicates(subset='codigo de socio', inplace=True)
 df100_merge = df100_merge["codigo de socio"]
 
 df_resultado = df1.merge(df100_merge, 
-                         left_on=["Código Socio 7/"], 
-                         right_on=["codigo de socio"],
-                         how='left')
+                         left_on  = ["Código Socio 7/"], 
+                         right_on = ["codigo de socio"],
+                         how      = 'left')
 
 print(df_resultado.shape[0])
 df_resultado.drop_duplicates(subset='Nro Prestamo \nFincore', inplace=True)

@@ -84,6 +84,7 @@ menos_bruto['Código Socio 7/'] = menos_bruto['Código Socio 7/'].str.strip()
 menos_bruto['Apellidos y Nombres / Razón Social 2/'] = menos_bruto['Apellidos y Nombres / Razón Social 2/'].str.strip()
 menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
 
+#conteo de duplicados
 mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)
 df_duplicadoss = menos_bruto[mask]
 
@@ -559,11 +560,13 @@ saldo_total = saldo_total.rename(columns={"Saldo de colocaciones (créditos dire
 
 #merge
 ordenado = ordenado.merge(saldo_total, 
-                          how='left', 
-                          left_on=['Código Socio 7/'], 
-                          right_on=["codigo para merge"])
+                          how      = 'left', 
+                          left_on  = ['Código Socio 7/'], 
+                          right_on = ["codigo para merge"])
 
-ordenado.drop(["codigo para merge"], axis=1, inplace=True)
+ordenado.drop(["codigo para merge"], 
+              axis=1, 
+              inplace=True)
 
 #verificamos si hay nulos
 #todo bien si sale un dataframe vacío
