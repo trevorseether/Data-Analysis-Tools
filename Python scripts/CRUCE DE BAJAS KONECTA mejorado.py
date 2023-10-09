@@ -20,21 +20,25 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '03-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
+FECHATXT = '09-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
 ############################################################################
 
 'directorio de trabajo' ####################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\03 10')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\09 10')
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '1ER INFORME DE BAJAS GRUPO - 10_ 2023.xlsx'
+nombre_archivo = '2DO INFORME DE BAJAS GRUPO - 10_ 2023 VF.xlsx'
 ############################################################################
 
+'filas a skipear' ######################
+filas_skip = 2
+########################################
 #%% IMPORTANDO EL INFORME DE BAJAS
 
 bajas = pd.read_excel(nombre_archivo,
-                    dtype=({'Documento': object}))
+                      skiprows = filas_skip,
+                      dtype=({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
 bajas['Documento'] = bajas['Documento'].str.strip()

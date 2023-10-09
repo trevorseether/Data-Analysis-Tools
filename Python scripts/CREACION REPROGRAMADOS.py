@@ -1189,10 +1189,9 @@ print(anx06_ordenado[~pd.isna(anx06_ordenado['E2'])]['E2']) #con esto podemos ve
 
 anx06_ordenado['''fecha desemb (v)'''] = np.nan
 anx06_ordenado['''fecha término de gracia por desembolso ["v" + dias gracia (av)]'''] = np.nan
-anx06_ordenado['''periodo de gracia por Reprog inicio'''] = np.nan
-anx06_ordenado['''periodo de gracia por Reprog Término'''] = np.nan
-anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
-(NVO)'''] = np.nan
+anx06_ordenado['''periodo de gracia por Reprog inicio''']       = np.nan
+anx06_ordenado['''periodo de gracia por Reprog Término''']      = np.nan
+anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada\n(NVO)''']  = np.nan
 
 # COL 1
 formatos = ['%d/%m/%Y',
@@ -1242,16 +1241,17 @@ anx06_ordenado = anx06_ordenado.merge(col3_4,
                                      right_on=["Fincore merge 3 y 4"]
                                      ,how='left')
 del col3_4
-anx06_ordenado['periodo de gracia por Reprog inicio'] = anx06_ordenado["3 merge"]
+anx06_ordenado['periodo de gracia por Reprog inicio']  = anx06_ordenado["3 merge"]
 anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado["4 merge"]
 
 anx06_ordenado.drop(["3 merge", #eliminación de columnas auxiliares que ya no sirven
                      "4 merge",
-                     "Fincore merge 3 y 4"], axis=1, inplace=True)
+                     "Fincore merge 3 y 4"], 
+                        axis=1, 
+                        inplace=True)
 
-
-anx06_ordenado[(anx06_ordenado['periodo de gracia por Reprog inicio'] != '--') & \
-               (pd.isna(anx06_ordenado['periodo de gracia por Reprog inicio']))]['periodo de gracia por Reprog inicio']
+print(anx06_ordenado[(anx06_ordenado['periodo de gracia por Reprog inicio'] != '--') & \
+                     (pd.isna(anx06_ordenado['periodo de gracia por Reprog inicio']))]['periodo de gracia por Reprog inicio'])
 
 
 #%%% columna 5
@@ -1267,7 +1267,7 @@ anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''] = anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''].fillna('--')
 
-print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
+x = (anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
 #hasta aquí todo bien
 
 #%%% col amarillas 3 y 4

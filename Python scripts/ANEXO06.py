@@ -1420,7 +1420,7 @@ def int_suspenso(df_resultado_2):
 
 df_resultado_2['intereses en suspenso'] = df_resultado_2.apply(int_suspenso, axis=1)
 
-df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['intereses en suspenso']
+df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Interes \nSuspenso Total']
 
 df_resultado_2['''Intereses en Suspenso 41/'''].sum()
 
