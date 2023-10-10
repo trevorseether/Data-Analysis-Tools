@@ -103,32 +103,34 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 AGOSTO'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 SETIEMBRE'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados AGOSTO 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202300987_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL.xlsx'
+calificacion = '20523941047_70369063_PE202301126_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'agosto'
+mes = 'setiembre'
 año = 2023
 ###############################################################################
 
 #%% PROCESAMIENTO
+os.chdir(directorio)
+
 #lectura del anexo06 de reprogramados
-tabla1 = pd.read_excel(anx06_repro, #UNA VEZ ENCONTRADO LOS EXCELS, LOS TRANSOFRMA EN DATAFRAME
-                       #sheet_name = "Hoja1", #ELECCION DE LA HOJA DEL EXCEL
-                       skiprows=2,           #IGNORA 2 PRIMERAS FILAS DEL EXCEL
-                       dtype={'Número de Documento 10/' : str,
-                              "Código Socio 7/"         : str,
-                              'Nro Prestamo \nFincore'  :str
-                             },
+tabla1 = pd.read_excel(anx06_repro,
+                       #sheet_name = "Hoja1",
+                       skiprows = 2,
+                       dtype = {'Número de Documento 10/' : str,
+                                "Código Socio 7/"         : str,
+                                'Nro Prestamo \nFincore'  : str
+                               },
                        parse_dates=["FEC_ULT_REPROG"])
 
 #eliminación de filas vacías si es que las hay
@@ -136,14 +138,15 @@ tabla1.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                       'Fecha de Nacimiento 3/',
                       'Número de Documento 10/',
                       'Domicilio 12/',
-                      'Numero de Crédito 18/'], inplace=True, how='all')
+                      'Numero de Crédito 18/'], inplace = True, 
+                                                how = 'all')
 
 
 #lectura del segundo archivo
 tabla2 = pd.read_excel(calificacion,
                         sheet_name = "A. SALIDA BATCH",
-                        skiprows=6,
-                        dtype={'NUMERO DOCUMENTO': str}
+                        skiprows   = 6,
+                        dtype      = {'NUMERO DOCUMENTO': str}
                        )
 
 df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
@@ -156,7 +159,7 @@ df['4/NID/Número de Documento']               = df['4/NID/Número de Documento'
 df['5/NCL/Nombre del deudor']                 = tabla1["Apellidos y Nombres / Razón Social 2/"]
 df['06/CCR/Número de código de la operación'] = tabla1['Nro Prestamo \nFincore']
 df['7/SKCR/Saldo capital de la deuda']        = tabla1["Saldo de colocaciones (créditos directos) 24/"]
-df['8/TCR/Tipo de crédito según reporte crediticio de deudores']        = tabla1["Tipo de Crédito 19/"]
+df['8/TCR/Tipo de crédito según reporte crediticio de deudores'] = tabla1["Tipo de Crédito 19/"]
 df['9/MDREPRP/ Modalidad de reprogramación']  = tabla1['9/MDREPRP/ Modalidad de reprogramación'] # = tabla1["TIPO_REPRO"]
 ########################
 df['10/SEGRIESGO/ Segmentación de Riesgos']   = 'modificar' #tabla2["RIESGO_FINAL"] #INFO QUE VIENE DE LA TABLA DE EQUIFAX
@@ -186,9 +189,15 @@ df = df.merge(tabla2[['NUMERO DOCUMENTO','NIVEL DE RIESGO']],
                          left_on  = ["4/NID/Número de Documento"],
                          right_on = ['NUMERO DOCUMENTO'],
                          how      = 'left')
-df.drop(['NUMERO DOCUMENTO'], axis=1, inplace=True)
+df.drop(['NUMERO DOCUMENTO'], 
+        axis = 1, 
+        inplace = True)
+
 df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['NIVEL DE RIESGO']
-df.drop(['NIVEL DE RIESGO'], axis=1, inplace=True)
+
+df.drop(['NIVEL DE RIESGO'], 
+        axis = 1, 
+        inplace = True)
 
 
 df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['10/SEGRIESGO/ Segmentación de Riesgos'].map({"BAJO"  : '1',
@@ -200,8 +209,7 @@ df['12/FREP/ Fecha en que se realizó la reprogramación'] = pd.to_datetime(df['
 
 mesesito = str(mes)
 añito = str(año)
-X = "COOPAC SAN MIGUEL REPROGRAMADOS - " + mesesito.upper() + " "+ añito
-
+X = "COOPAC SAN MIGUEL REPROGRAMADOS - " + mesesito.upper() + " " + añito
 
 nombre = str(X) + ".xlsx"
 
