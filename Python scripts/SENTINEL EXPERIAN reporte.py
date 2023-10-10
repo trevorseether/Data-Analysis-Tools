@@ -18,15 +18,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'AGOSTO 2023'
+FECHA_CORTE = 'SETIEMBRE 2023'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 AGOSTO"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 SETIEMBRE"
 ###############################################################################
 
-# INSUMO QUE SE GENERA EN EL FINCORE ##########################################
-insumo_principal = "SM_0823 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - AGOSTO-23 - INSUMO.xlsx"
+# INSUMO PRINCIPAL QUE PASA CESA ##############################################
+insumo_principal = "SM_0923 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - SETIEMBRE-23 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -36,19 +36,19 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20230831'
+f_corte_sql = '20230930'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
 
 ''' #lo eliminaremos si todos los meses simplemente extraemos datos desde el sql server
-ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
-nombre          = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 04 FINAL.xlsx'
+ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE'
+nombre          = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados PROCESADO 03.xlsx'
 filas_para_skip = 2
 '''
 
@@ -325,7 +325,7 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-# QUERY CON LA QUE EXTRAEMOS DATOS DESDE SQL-SERVER
+# QUERY CON LA QUE EXTRAEMOS DATOS DESDE SQL-SERVER DEL FINCORE
 query = '''
 --** lista de avales en gral.
 --** para cruce con reporte avales del fincore
@@ -907,6 +907,28 @@ df_sentinel.loc[mascara_booleana, ['N° Documento\nIdentidad (*)  DNI o RUC',
                             'NULL',
                             'NULL',
                             'NULL'] #ESTO TAMPOCO HA FUNCIONADO, INVESTIGAR
+
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'CASTRO') & \
+                (df_sentinel['Apellido Materno (*)'] == 'PALOMINO') & \
+                (df_sentinel['Nombres (*)'] == 'EGDAR') & \
+                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '74528054'), 
+                'Nombres (*)'] = 'EDGAR'
+
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'PEÑA') & \
+                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '07026251'), 
+                'Apellido Materno (*)'] = 'APALAYA'
+                                                   
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'PEÑA') & \
+                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '07026251'), 
+                'Nombres (*)'] = 'EZEQUIEL'
+
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'GRANDEZ') & \
+                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '10304141'), 
+                'Apellido Paterno (*)'] = 'GRANDES'
+
+df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'MC‘GUIRE') & \
+                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '00243006'), 
+                'Apellido Paterno (*)'] = "MC'GUIRE"
 
 #%% arreglo de ME Deuda Avalada (*) estaba quedando este valor para los no avales
 
