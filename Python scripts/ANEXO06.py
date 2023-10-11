@@ -107,7 +107,7 @@ df1=pd.read_excel(anexo_del_mes,
                         'Nro Prestamo \nFincore'        : object,
                         'Refinanciado TXT'              : object
                         },
-                 skiprows=2)
+                 skiprows = 2)
 
 #eliminando las filas con NaN en las siguiente columnas al mismo tiempo:
 df1.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
@@ -118,9 +118,9 @@ df1.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
 
 #leyendo la lista de socios con cred < 100 soles
 df_100=pd.read_excel(anexo_del_mes,
-                 dtype={'Código Socio 7/':object},
-                 skiprows=0,
-                 sheet_name='socios con cred < 100 soles')
+                 dtype      = {'Código Socio 7/':object},
+                 skiprows   = 0,
+                 sheet_name = 'socios con cred < 100 soles')
                     
 anexo06 = df1.columns  ; socios_menor_100 = df_100.columns
 del anexo_del_mes
@@ -502,7 +502,7 @@ except FileNotFoundError:
     pass
 
 calificacion_para_sentinel.to_excel(ruta,
-                                    index=False)
+                                    index = False)
 #este excel será usado por experian  
 
 #%% VERIFIACIÓN QUE NO VERIFICA XD
@@ -1128,7 +1128,7 @@ print('guiones después de procesar: ', str(df_resultado_2["periodo de gracia po
 #%% fecha término de gracia por desembolso 
 #
 def fechatermino(fecha, periodo_gracia):
-    return fecha + pd.DateOffset(days=periodo_gracia)
+    return fecha + pd.DateOffset(days = periodo_gracia)
 
 df_resultado_2['fecha término de gracia por desembolso'] = df_resultado_2.apply(
     lambda x: fechatermino(x['Fecha de Desembolso 21/'], x['Periodo de Gracia 47/']), axis=1)
@@ -1173,16 +1173,16 @@ df_resultado_2['DG vs BW'] = df_resultado_2.apply(DG_vs_BW,
                                                   axis=1)
 
 #%% DG vs BW con FVUCC
-df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
-Contabilidad'''] = \
-pd.to_datetime(df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
-Contabilidad'''], 
-               format='%Y-%m-%d %H:%M:%S', errors='coerce')
-df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
-Contabilidad'''] = df_resultado_2['''Fecha Venc de Ult Cuota Cancelada
-Contabilidad'''].dt.date
-#
+df_resultado_2['Fecha Venc de Ult Cuota Cancelada\nContabilidad'] = \
+pd.to_datetime(df_resultado_2['Fecha Venc de Ult Cuota Cancelada\nContabilidad'], 
+               format = '%Y-%m-%d %H:%M:%S', 
+               errors = 'coerce')
 
+#truncamos las horas minutos y nos quedamos solo con las fechas
+df_resultado_2['Fecha Venc de Ult Cuota Cancelada\nContabilidad'] = \
+df_resultado_2['Fecha Venc de Ult Cuota Cancelada\nContabilidad'].dt.date
+
+#rename
 df_resultado_2 = df_resultado_2.rename(columns={'''Fecha Venc de Ult Cuota Cancelada
 Contabilidad''': '''Fecha Venc de Ult Cuota Cancelada Contabilidad'''})
 
