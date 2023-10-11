@@ -20,16 +20,16 @@ from decimal import Decimal
 
 #%%
 ##############################################
-fecha_corte = 'AGOSTO 2023'         ###########
+fecha_corte = 'SETIEMBRE 2023'         ###########
 ##############################################
 #%%
 #ubicación ####################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\FINAL')
 ###############################################################################
 
 #%%
 #PONER EL ANEXO 06 FINAL
-df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 PROCESADO 06 FINAL.xlsx",
+df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx",
                  dtype={'Código Socio 7/'           : object, 
                         'Número de Documento 10/'   : object,
                         'Numero de Crédito 18/'     : object, 
@@ -1106,6 +1106,7 @@ except FileNotFoundError:
     pass
 
 anexo05.to_excel(nombre,
-                      index=False)
+                 index = False,
+                 sheet_name = fecha_corte)
 
 

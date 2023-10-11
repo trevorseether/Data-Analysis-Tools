@@ -2065,22 +2065,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Agosto 2023'  #se pone el corte actual
+fecha_corte = 'Setiembre 2023'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20230731" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20230831" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 fase 3 final.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados CONTABILIDAD.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 AGOSTO\\fase 3'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\CONTAB'
 
 #%% importación de módulos
 import os
@@ -2107,7 +2107,7 @@ df_diferidos = pd.read_excel(anx06_contabilidad,
                           'Fecha de Vencimiento Origuinal del Credito 48/': object,
                           'Fecha de Vencimiento Actual del Crédito 49/'   : object,
                           'Nro Prestamo \nFincore'    : str},
-                         skiprows=2
+                         skiprows = 2
                              )
 
 df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
@@ -2160,13 +2160,14 @@ df_diferidos['Saldo de Créditos que no cuentan con cobertura 51/'] = df_diferid
 
 #%% en este caso, añadir los créditos que mandó Harris
 # POSIBLEMENTE SE VA A ELIMINAR EN EL FUTURO
+'''
 dxp_castigados = pd.read_excel('data para castigo junio 2023_vhf.xlsx',
                                dtype = {'Nro Prestamo \nFincore' : object}, 
-                               skiprows= 2,
+                               skiprows = 2,
                                sheet_name = 'BD - Para Castigo')
 
 dxp_castigados = list(dxp_castigados['Nro Prestamo \nFincore'])
-
+'''
 #%% CÁLCULO DE PROVISIONES CONSTITUIDAS
 #cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
@@ -2201,14 +2202,14 @@ def prov_cons_37_FINAL(df_diferidos):
     #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.6453 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.6367 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 
 print(df_diferidos['Provisiones Constituidas 37/'].sum())
-
+print(df_diferidos['Provisiones Constituidas 37/'].sum() - 9164865.1000)
 #%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado
 'AQUI HAY QUE CAMBIAR LA FECHA PARA QUE VAYA DEL MES PASADO al que estamos elaborando'
@@ -2328,11 +2329,11 @@ import pyodbc
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'AGOSTO 2023'
+fecha = 'SETIEMBRE 2023'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20230731' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20230831' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 query = f'''
