@@ -574,7 +574,7 @@ where c.FechaCorte1='20230930'
 and c.Empresa is null
 
 update a
-set a.administrador = a.NUEVO_PROMOTOR
+set a.administrador = a.PROMOTOR -----a.nuevo_promotor
 --		select*
 from Anexos_Riesgos2..Anx06_preliminar a
 where FechaCorte1 = '20230930'
@@ -629,7 +629,7 @@ and administrador is null
 ---------------------------------------------------------------------------------delete from Anexos_Riesgos2..Anx06_preliminar  where Nro_Fincore is null
 --aqui relleno ese espacio duplicando lo que hay en nuevo promotor
 UPDATE A
-SET a.administrador = a.nuevo_promotor
+SET a.administrador = a.promotor --a.nuevo_promotor
 from Anexos_Riesgos2..Anx06_preliminar a
 where a.administrador is null
 and FechaCorte1 = '20230930'

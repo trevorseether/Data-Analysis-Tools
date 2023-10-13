@@ -31,7 +31,8 @@ UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM pa
 ##  IMPORTANDO LOS DATOS DE EXCEL  ##
 formatos = ['%d/%m/%Y %H:%M:%S',
             '%d/%m/%Y',
-            '%Y%m%d', '%Y-%m-%d', 
+            '%Y%m%d', 
+            '%Y-%m-%d', 
             '%Y-%m-%d %H:%M:%S', 
             '%Y/%m/%d %H:%M:%S',
             '%Y-%m-%d %H:%M:%S PM',
@@ -105,44 +106,44 @@ df1['JFechaVentaCartera'] = df1['JFechaVentaCartera'].apply(parse_dates)
 ############################################################
 
 df2 = pd.read_excel(MES_PASADO,
-                  skiprows=0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
-                  dtype={'NroDocIdentidad' : object,
-                         'NumeroPrestamo'  :object,
-                         'NroPrestamoFC'   : object})
+                  skiprows = 0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
+                  dtype = {'NroDocIdentidad' : object,
+                           'NumeroPrestamo'  : object,
+                           'NroPrestamoFC'   : object})
 
 #eliminación de duplicados por si acaso
-df2 = df2.drop_duplicates(subset='NroPrestamoFC')
+df2 = df2.drop_duplicates(subset = 'NroPrestamoFC')
 
 #eliminación de vacíos
-df2.dropna(subset=['NroDocIdentidad', 
-                   'NumeroPrestamo',
-                   'NroPrestamoFC'], inplace=True, how='all')
+df2.dropna(subset = ['NroDocIdentidad', 
+                     'NumeroPrestamo',
+                     'NroPrestamoFC'], inplace=True, how='all')
 
 ############################################################
 ##    3 ESTE TERCER ARCHIVO ES LA COBRANZA DEL MES       ###
 ############################################################
 
 df3_cobranza = pd.read_excel(COBRANZA,
-                             dtype={'codigosocio': object, 
-                                    'doc_ident': object,
-                                    'PagareFincore':object} )
+                             dtype = {'codigosocio'  : object, 
+                                      'doc_ident'    : object,
+                                      'PagareFincore': object} )
 
 #aquí NO hay que eliminar duplicados
 
 #eliminamos columnas vacías
-df3_cobranza.dropna(subset=['codigosocio', 
-                            'doc_ident',
-                            'PagareFincore'], 
-                    inplace=True, 
-                    how='all')
+df3_cobranza.dropna(subset = ['codigosocio', 
+                              'doc_ident',
+                              'PagareFincore'], 
+                    inplace = True, 
+                    how     = 'all')
 
 ##########################################################################################################
 #    4 el reporte 'Utilidad año castigo 2018 2019 2020 2021 Y 2022 - JGM para añadir a Saldos e Ingresos'    ##
 ##########################################################################################################
 
 df4_JGM_año_castigo = pd.read_excel(UTILIDAD_CASTIGO,
-                                    dtype={'Numero Prestamo (Fox/Pond)' : object, 
-                                           'Nro Prestamo Fincore'       : object})
+                                    dtype = {'Numero Prestamo (Fox/Pond)' : object, 
+                                             'Nro Prestamo Fincore'       : object})
 
 df4_JGM_año_castigo = df4_JGM_año_castigo.drop_duplicates(subset='Nro Prestamo Fincore')
 
@@ -169,9 +170,9 @@ df2_finalidad = df2[["NroPrestamoFC",
                      "CodFinalidad"]] #aquí revisar si tiene el nombre 'CodFinalidad' o 'Finalidad' a secas
 
 df_resultado = df1.merge(df2_finalidad,
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["NroPrestamoFC"],
-                         how='left')
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["NroPrestamoFC"],
+                         how      = 'left')
 
 #%% ASIGNACIÓN CÓDIGO FINALIDAD
 
