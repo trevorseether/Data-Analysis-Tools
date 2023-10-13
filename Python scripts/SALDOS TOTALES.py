@@ -13,7 +13,7 @@ Created on Wed Jun  6 09:45:50 2023
 import numpy as np
 import pandas as pd
 import os
-from datetime import datetime
+#from datetime import datetime
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
@@ -28,7 +28,9 @@ MES_PASADO       =    'SALDO_COOPACSANMIGUEL - AGOSTO-23_INC_CVV_DETALLADO final
 COBRANZA         =    'Ingresos por Cobranza Setiembre-23 - General.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
-##  IMPORTANDO LOS DATOS DE EXCEL  ##
+#%%  IMPORTANDO LOS DATOS DE EXCEL  ##
+
+#ANALIZADOR DE FECHAS
 formatos = ['%d/%m/%Y %H:%M:%S',
             '%d/%m/%Y',
             '%Y%m%d', 
@@ -54,16 +56,16 @@ def parse_dates(date_str):
 ############################################################
 
 df1 = pd.read_excel(INSUMO,
-                 dtype={'CodigoSocio': object, 
-                        'NroDocIdentidad': object,
-                        'NumeroPrestamo':object, 
-                        'NroPrestamoFC': object,
-                        'TlfSocio':object, 
-                        'CelularSocio': object,
-                        'TipoCredito':object, 
-                        'SubTipoCredito': object}
+                 dtype = {'CodigoSocio'    : object, 
+                          'NroDocIdentidad': object,
+                          'NumeroPrestamo' : object, 
+                          'NroPrestamoFC'  : object,
+                          'TlfSocio'       : object, 
+                          'CelularSocio'   : object,
+                          'TipoCredito'    : object, 
+                          'SubTipoCredito' : object}
 
-                 ,parse_dates=['FechaDesembolsoTXT'  #AQUI SI SE HA PROCESADO
+                 ,parse_dates = ['FechaDesembolsoTXT'  #AQUI SI SE HA PROCESADO
                               # ,'FechaAsignacionAbogadoTXT'  #no procesado
                               # ,'FechaExpedienteTXT'         #no procesado
                               # ,'FechaAsignacion'            #no procesado
@@ -71,7 +73,7 @@ df1 = pd.read_excel(INSUMO,
                               # ,'JFechaVentaCartera'         #no procesado
                               # ,'FechaProcesoSistemaTXT'     #no procesado
                              ],
-                 date_parser=parse_dates)
+                 date_parser = parse_dates)
 
 #eliminación de duplicados por si acaso
 df1 = df1.drop_duplicates(subset = 'NroPrestamoFC')
@@ -310,29 +312,29 @@ df_cosas_mes_pasado = df2[["NroPrestamoFC",
                            'Int y Otros']]
 
 "Merge de la tabla en bruto con la de cosas del reporte del mes pasado"
-df_cosas_mes_pasado = df_cosas_mes_pasado.drop_duplicates(subset='NroPrestamoFC')
+df_cosas_mes_pasado = df_cosas_mes_pasado.drop_duplicates(subset = 'NroPrestamoFC')
 df5 = df4.merge(df_cosas_mes_pasado,
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["NroPrestamoFC"]
-                         ,how='left')
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["NroPrestamoFC"],
+                         how      = 'left')
 
 "Merge de la tabla en bruto con el capital de la cobranza del mes actual"
-df_sum_capital = df_sum_capital.drop_duplicates(subset="PagareFincore")
+df_sum_capital = df_sum_capital.drop_duplicates(subset = "PagareFincore")
 df5 = df5.merge(df_sum_capital,
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["PagareFincore"]
-                         ,how='left')
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["PagareFincore"],
+                         how      = 'left')
 
 "Merge de la tabla en bruto con el int de la cobranza del mes actual"
-df_sum_INT_OTROS = df_sum_INT_OTROS.drop_duplicates(subset="PagareFincore")
+df_sum_INT_OTROS = df_sum_INT_OTROS.drop_duplicates(subset = "PagareFincore")
 df5 = df5.merge(df_sum_INT_OTROS,
-                         left_on=["NroPrestamoFC"], 
-                         right_on=["PagareFincore"]
-                         ,how='left')
+                         left_on  = ["NroPrestamoFC"], 
+                         right_on = ["PagareFincore"],
+                         how      = 'left')
 
 'eliminando los NaN'
-df5['Capital'].fillna(0, inplace=True)
-df5['Int y Otros'].fillna(0, inplace=True)
+df5['Capital'].fillna(0, inplace = True)
+df5['Int y Otros'].fillna(0, inplace = True)
 df5['IMPTE CASTIGADO (Asignado x PGB)'] = df5['ImporteCastigoGG']
 df5['IMPTE CASTIGADO (Asignado x PGB)'].fillna(0, inplace=True)
 df5['FECHA DE CASTIGO'] = df5['FechaCastigoGG'] #probar si funciona
@@ -375,8 +377,8 @@ df2_observ_v_garantia = df2[['NroPrestamoFC','OBSERVACION','VALOR GARANTIA']].co
 df2_observ_v_garantia['OBSERVACION'].fillna('--', inplace=True) #REEMPLAZANDO LOS NaN por --
 df2_observ_v_garantia['VALOR GARANTIA'].fillna(0, inplace=True) #reemplazando los NaN por 0
 
-df6 = df6.rename(columns={'VALOR GARANTIA': 'VALOR GARANTIA ANTIGUA'})
-df6 = df6.rename(columns={'OBSERVACION'   : 'OBSERVACION ANTIGUA'})
+df6 = df6.rename(columns = {'VALOR GARANTIA': 'VALOR GARANTIA ANTIGUA'})
+df6 = df6.rename(columns = {'OBSERVACION'   : 'OBSERVACION ANTIGUA'})
 
 df2_observ_v_garantia = df2_observ_v_garantia.drop_duplicates(subset = "NroPrestamoFC")
 df6 = df6.merge(df2_observ_v_garantia,
@@ -568,9 +570,10 @@ tabla11 = datos_soles.pivot_table(#columns = 'auxiliar1',
                                               'InteresCompensatorioDeuda',
                                               'InteresMoratorioDeuda',
                                               'Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=False, margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      index        = ['auxiliar1'],
+                                      margins      = False, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 column_order = ['SaldoCapital',
                 'InteresVencidoPactado',
@@ -580,7 +583,7 @@ column_order = ['SaldoCapital',
                 'InteresCompensatorioDeuda',
                 'InteresMoratorioDeuda',
                 'Nuevo Saldo']
-tabla11 = tabla11.reindex(columns=column_order).reset_index()
+tabla11 = tabla11.reindex(columns = column_order).reset_index()
 del column_order
 
 total_columnas = ['auxiliar1',
@@ -610,11 +613,11 @@ del total_columnas
 
 datos_12 = datos_soles[datos_soles['SituacionTXT'] == 'JUDICIAL']
 tabla12 = datos_12.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 
 tabla12 = tabla12.reset_index()
@@ -623,11 +626,11 @@ tabla12 = tabla12.reset_index()
 datos_13 = datos_soles[(datos_soles['SituacionTXT'] == 'JUDICIAL NO ASIGNADO') | \
                        (datos_soles['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
 tabla13 = datos_13.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 
 tabla13 = tabla13.reset_index()
@@ -635,11 +638,11 @@ tabla13 = tabla13.reset_index()
 #%%% TABLA 14
 datos_14 = datos_soles[~datos_soles['JFechaVentaCartera'].isnull()] #NO OLVIDAR QUE AQUÍ EL FILTRO ES NO NULOS
 tabla14 = datos_14.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 
 tabla14 = tabla14.reset_index()
@@ -659,9 +662,10 @@ tabla21 = datos_dolares.pivot_table(#columns = 'auxiliar1',
                                               'InteresCompensatorioDeuda',
                                               'InteresMoratorioDeuda',
                                               'Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=False, margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      index        = ['auxiliar1'],
+                                      margins      = False, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 column_order = ['SaldoCapital',
                 'InteresVencidoPactado',
@@ -671,7 +675,7 @@ column_order = ['SaldoCapital',
                 'InteresCompensatorioDeuda',
                 'InteresMoratorioDeuda',
                 'Nuevo Saldo']
-tabla21 = tabla21.reindex(columns=column_order).reset_index()
+tabla21 = tabla21.reindex(columns = column_order).reset_index()
 del column_order
 total_columnas = ['auxiliar1',
                   'SaldoCapital',
@@ -700,11 +704,11 @@ del total_columnas
 
 datos_22 = datos_dolares[datos_dolares['SituacionTXT'] == 'JUDICIAL']
 tabla22 = datos_22.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 
 tabla22 = tabla22.reset_index()
@@ -714,11 +718,11 @@ tabla22 = tabla22.reset_index()
 datos_23 = datos_dolares[(datos_dolares['SituacionTXT'] == 'JUDICIAL NO ASIGNADO') | \
                        (datos_dolares['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
 tabla23 = datos_23.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 
 tabla23 = tabla23.reset_index()
@@ -727,11 +731,11 @@ tabla23 = tabla23.reset_index()
 
 datos_24 = datos_dolares[~datos_dolares['JFechaVentaCartera'].isnull()] #NO OLVIDAR QUE AQUÍ EL FILTRO ES NO NULOS
 tabla24 = datos_24.pivot_table(#columns = 'auxiliar1',
-                                      values=['Nuevo Saldo'], 
-                                      index=['auxiliar1'],
-                                      margins=True, 
-                                      margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+                                      values       = ['Nuevo Saldo'], 
+                                      index        = ['auxiliar1'],
+                                      margins      = True, 
+                                      margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc      = 'sum'
                                       )
 tabla24 = tabla24.reset_index()
 

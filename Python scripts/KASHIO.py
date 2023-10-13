@@ -13,6 +13,8 @@ Created on Mon Aug  7 15:00:55 2023
 
 import pandas as pd
 import os
+import warnings
+warnings.filterwarnings('ignore')
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\12 octubre')
