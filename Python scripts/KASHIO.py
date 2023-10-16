@@ -17,12 +17,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\12 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\13 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231012.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231013.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -118,6 +118,8 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
                                 )
 
 kashio_ampliado = kashio_ampliado.rename(columns={"NOMBRE": "NOMBRE_1"})
+
+valor1 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 
 
@@ -125,8 +127,12 @@ kashio_ampliado = kashio_ampliado.merge(kashio,
                                         left_on=['ID CLIENTE (*)'],
                                         right_on=['ID CLIENTE'],
                                         how='left')
+valor2 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
-print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
+if valor1 != valor2:    
+    print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
+else:
+    print('todo bien, no hay créditos duplicados')
 
 #%% ARCHIVO FINAL PARA CONVERTIR A CSV
 

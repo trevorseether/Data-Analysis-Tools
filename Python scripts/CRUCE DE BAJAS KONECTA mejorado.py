@@ -20,15 +20,15 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '09-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
+FECHATXT = '16-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
 ############################################################################
 
 'directorio de trabajo' ####################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\09 10')
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\16 10'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '2DO INFORME DE BAJAS GRUPO - 10_ 2023 VF.xlsx'
+nombre_archivo = '3ER INFORME DE BAJAS GRUPO - 11_ 2023 VF.xlsx'
 ############################################################################
 
 'filas a skipear' ######################
@@ -36,9 +36,11 @@ filas_skip = 2
 ########################################
 #%% IMPORTANDO EL INFORME DE BAJAS
 
+os.chdir(directorio)
+
 bajas = pd.read_excel(nombre_archivo,
                       skiprows = filas_skip,
-                      dtype=({'Documento': object}))
+                      dtype = ({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
 bajas['Documento'] = bajas['Documento'].str.strip()
@@ -160,18 +162,21 @@ BETWEEN '20110101' AND '{fecha_hoy}' and s.codigosocio>0  and p.codestado = 341 
 order by socio asc, p.fechadesembolso desc
 
 '''
-vigentes = pd.read_sql_query(query, conn, dtype={'Doc_Identidad': object,
-       'codigosocio': object,
-       'pagare_fincore': object,
-       'fechadesembolso': object
-       })
+vigentes = pd.read_sql_query(query, 
+                             conn, 
+                             dtype = {'Doc_Identidad'  : object,
+                                      'codigosocio'    : object,
+                                      'pagare_fincore' : object,
+                                      'fechadesembolso': object
+                                      })
 
 del conn
 #%% PARSEO DE FECHAS
 
 formatos = ['%d/%m/%Y %H:%M:%S',
             '%d/%m/%Y',
-            '%Y%m%d', '%Y-%m-%d', 
+            '%Y%m%d', 
+            '%Y-%m-%d', 
             '%Y-%m-%d %H:%M:%S', 
             '%Y/%m/%d %H:%M:%S',
             '%Y-%m-%d %H:%M:%S PM',
@@ -209,21 +214,21 @@ vigentes2 = vigentes[["DOC_IDENTIDAD_ceros",
                       "CuotaFija", 
                       "Planilla"]]
 
-vigentes2 = vigentes2.rename(columns={"Doc_Identidad"   : "DOC_IDENTIDAD",
-                                      "Socio"           : "SOCIO",
-                                      "fechadesembolso" : "FECHA_DESEMBOLSO",
-                                      "pagare_fincore"  : "PAGARE_FINCORE",
-                                      "CuotaFija"       : "CUOTA MENSUAL",
-                                      "Planilla"        : "EMPRESA/PLANILLA"})
+vigentes2 = vigentes2.rename(columns = {"Doc_Identidad"   : "DOC_IDENTIDAD",
+                                        "Socio"           : "SOCIO",
+                                        "fechadesembolso" : "FECHA_DESEMBOLSO",
+                                        "pagare_fincore"  : "PAGARE_FINCORE",
+                                        "CuotaFija"       : "CUOTA MENSUAL",
+                                        "Planilla"        : "EMPRESA/PLANILLA"})
 
 bajas2 = bajas[['Documento', 'Documento original']]
 
 #%% INNER JOIN
 'inner join usando '
 df_resultado = vigentes2.merge(bajas2, 
-                               left_on=["DOC_IDENTIDAD_ceros"], 
-                               right_on=['Documento']
-                               ,how='inner')
+                               left_on  = ["DOC_IDENTIDAD_ceros"], 
+                               right_on = ['Documento'],
+                               how      = 'inner')
 
 #%% DATAFRAME FINAL
 '''creamos el archivo final'''
@@ -243,7 +248,7 @@ final = df_resultado[['Documento original',
 final = final.rename(columns={'Documento original': 'Documento'})
 
 # POR SI ACASO, ELIMINAMOS DUPLICADOS
-final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace=True)
+final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
 
 #%% CREACIÓN DE EXCEL
 
