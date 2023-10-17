@@ -164,7 +164,7 @@ dff3 = df3_cobranza.copy() #copia de seguridad
 #%% MERGE CON FINALIDAD DEL MES PASADO
 
 #df1 = df1.drop(columns=['CodPrestamoTXT'])
-df1 = df1.rename(columns={"Finalidad": "Finalidad TXT"})
+df1.rename(columns={"Finalidad": "Finalidad TXT"}, inplace = True)
 
 df2["CodFinalidad"] = df2["CodFinalidad"].astype(str)
 
