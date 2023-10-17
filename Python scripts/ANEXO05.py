@@ -24,7 +24,7 @@ fecha_corte = 'SETIEMBRE 2023'         ###########
 ##############################################
 #%%
 #ubicación ####################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\FINAL')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
 ###############################################################################
 
 #%%
@@ -104,18 +104,19 @@ pivot_A.fillna(0, inplace=True)
 'TABLA B'
 
 conteo_socios = anexo06[(anexo06['Saldos de Créditos Castigados 38/'] == 0)]
-#aqui va el nro de créditos y el nro de socios
-pivot_B = conteo_socios.pivot_table(columns='Clasificación del Deudor con Alineamiento 15/',
-                                      values=['Numero de Crédito 18/'], 
-                                      index=['Tipo de Crédito 19/'],
-                                      margins=True, margins_name='Total', #para sacar las sumatorias totales
-                                      aggfunc='count'
+# Aqui va el nro de créditos y el nro de socios
+# Esta tabla no incluye créditos castigados
+pivot_B = conteo_socios.pivot_table(columns   = 'Clasificación del Deudor con Alineamiento 15/',
+                                      values  = ['Numero de Crédito 18/'], 
+                                      index   = ['Tipo de Crédito 19/'],
+                                      margins = True, margins_name='Total', #para sacar las sumatorias totales
+                                      aggfunc ='count'
                                       )
 pivot_B = pivot_B.reset_index()
 pivot_B.fillna(0, inplace=True)
 
 conteo_socios['Código Socio 7/'] = conteo_socios['Código Socio 7/'].str.strip()
-#CALCULAMOS EL NRO DE SOCIOS
+# CALCULAMOS EL NRO DE SOCIOS
 
 socios_0 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineamiento 15/'] == 0)]['Código Socio 7/'].nunique()
 socios_1 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineamiento 15/'] == 1)]['Código Socio 7/'].nunique()
