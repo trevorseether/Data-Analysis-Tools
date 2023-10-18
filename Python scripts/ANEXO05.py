@@ -1100,7 +1100,7 @@ nueva_fila = pd.DataFrame([['Provisiones específicas constituidas',
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
 anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
 
-#%%
+#%% Exportación a excel
 
 'CREACIÓN DEL EXCEL'
 nombre = "Anexo 05 (para macros) - " + fecha_corte + ".xlsx"
@@ -1114,4 +1114,9 @@ anexo05.to_excel(nombre,
                  index = False,
                  sheet_name = fecha_corte)
 
+#%% ubicación actual
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
 
