@@ -4,105 +4,106 @@ Created on Tue Apr 11 17:13:05 2023
 
 @author: Joseph Montoya
 """
-
-#anexo 05
-
+# =============================================================================
+#                               ANEXO 05 PARA SBS
+# =============================================================================
 import pandas as pd
 import os
 import numpy as np
-from decimal import Decimal
+#from decimal import Decimal
 
-#%%
+#%% AVISO
 'ANTES DE EMPEZAR'
 'REDONDEAR diferidos, devengados y en suspenso'
 'también PROVISIONES CONSTITUIDAS'
 'Y RECIÉN REDONDEADO LE PASAMOS EL ANEXO A RIESGOS Y CONTABILIDAD'
 
-#%%
+#%% FECHA CORTE
 ##############################################
-fecha_corte = 'SETIEMBRE 2023'         ###########
+fecha_corte = 'SETIEMBRE 2023'         #######
 ##############################################
-#%%
-#ubicación ####################################################################
+#%% UBI
+# ubicación ###################################################################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
 ###############################################################################
+#%% ANX06
+# ANEXO 06 ####################################################################
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx"
+###############################################################################
 
-#%%
-#PONER EL ANEXO 06 FINAL
-df1=pd.read_excel("Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx",
-                 dtype={'Código Socio 7/'           : object, 
-                        'Número de Documento 10/'   : object,
-                        'Numero de Crédito 18/'     : object, 
-                        'Nro Prestamo \nFincore'    : object,
-                        'Moneda del crédito 17/'    : object, 
-                        'Tipo de Crédito 19/'       : object,
-                        'Clasificación del Deudor con Alineamiento 15/': object,
-                        'Fecha de Nacimiento 3/'    : object,
-                       },
-                 skiprows= 2 #ESTO VA A DEPENDER DEL ARCHIVO 
-                 )
+# filas ignoradas ###########
+filas_skip = 2              #  
+#############################
+#%% LECTURA DEL ANEXO 06
 
-#%%
-#para eliminar filas vacías
-df1.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
-                   'Fecha de Nacimiento 3/',
-                   'Número de Documento 10/',
-                   'Domicilio 12/',
-                   'Numero de Crédito 18/'], inplace=True, how='all')
+df1 = pd.read_excel(anx_06,
+                 dtype = {'Código Socio 7/'           : object, 
+                          'Número de Documento 10/'   : object,
+                          'Numero de Crédito 18/'     : object, 
+                          'Nro Prestamo \nFincore'    : object,
+                          'Moneda del crédito 17/'    : object, 
+                          'Tipo de Crédito 19/'       : object,
+                          'Clasificación del Deudor con Alineamiento 15/': object,
+                          'Fecha de Nacimiento 3/'    : object,
+                          },
+                 skiprows = filas_skip)
+
+# eliminación de filas vacías
+df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
+                     'Fecha de Nacimiento 3/',
+                     'Número de Documento 10/',
+                     'Domicilio 12/',
+                     'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 
-#%%
+#%% limpieza
 #ELIMINA ESPACIOS VACÍOS
 df1['Código Socio 7/'] = df1['Código Socio 7/'].str.strip()
 
 #%% REDONDEO DE LAS COLUMNAS
-df1['Ingresos Diferidos 42/'] = df1['Ingresos Diferidos 42/'].round(2)
+df1['Ingresos Diferidos 42/']     = df1['Ingresos Diferidos 42/'].round(2)
 df1['Rendimiento\nDevengado 40/'] = df1['Rendimiento\nDevengado 40/'].round(2)
+df1['Intereses en Suspenso 41/']  = df1['Intereses en Suspenso 41/'].round(2)
 
-df1['Intereses en Suspenso 41/'] = df1['Intereses en Suspenso 41/'].round(2)
-
-
-df1['Intereses en Suspenso 41/'].sum()
-#%%
+#%% copia
 #hacemos una copia, porque sí
 anexo06 = df1.copy()
 x = anexo06.columns
-#%%
+#%% CREACIÓN DE COLUMNAS NECESARIAS
 anexo06['24 - 42'] = anexo06['Saldo de colocaciones (créditos directos) 24/'] - anexo06['Ingresos Diferidos 42/']
+anexo06['24 - 42'] = anexo06['24 - 42'].round(2)
 anexo06['37 - 36'] = anexo06['Provisiones Constituidas 37/'] - anexo06['Provisiones Requeridas 36/']
 anexo06['37 - 36'] = anexo06['37 - 36'].round(2)
 
-
 #%%
 'TABLA A'
-pivot_A_A = anexo06.pivot_table(columns='Clasificación del Deudor con Alineamiento 15/',
-                                      values=['24 - 42'], 
-                                      index=['Tipo de Crédito 19/'],
-                                      margins=True, margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+pivot_A_A = anexo06.pivot_table(columns = 'Clasificación del Deudor con Alineamiento 15/',
+                                      values  = ['24 - 42'], 
+                                      index   = ['Tipo de Crédito 19/'],
+                                      margins = True, margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc = 'sum'
                                       )
 pivot_A_A = pivot_A_A.reset_index()
-pivot_A_A.fillna(0, inplace=True)
+pivot_A_A.fillna(0, inplace = True)
 
 #%%
-# aquí hay algo bien raro, en el mes de junio(trimestral) debió ser el saldo de cartera
-# y en julio nos está podiendo que vaya '24 - 42'
+# Aquí hay algo bien raro, en el mes de junio(trimestral) debió ser el saldo de cartera
+# y en julio nos está podiendo que vaya '24 - 42' (cartera neta)
 # que raro (ಠ_ಠ)
 ###################  'Saldo de colocaciones (créditos directos) 24/'    #######
 'TABLA A'
-pivot_A = anexo06.pivot_table(columns='Clasificación del Deudor con Alineamiento 15/',
-                                      values=['24 - 42'], 
-                                      index=['Tipo de Crédito 19/'],
-                                      margins=True, margins_name='Total', #para sacar las sumatorias totales                                      
-                                      aggfunc='sum'
+pivot_A = anexo06.pivot_table(columns = 'Clasificación del Deudor con Alineamiento 15/',
+                                      values  = ['24 - 42'], 
+                                      index   = ['Tipo de Crédito 19/'],
+                                      margins = True, margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                      aggfunc = 'sum'
                                       )
 pivot_A = pivot_A.reset_index()
-pivot_A.fillna(0, inplace=True)
-
+pivot_A.fillna(0, inplace = True)
 
 #%%
 'TABLA B'
-
+# eliminamos castigados
 conteo_socios = anexo06[(anexo06['Saldos de Créditos Castigados 38/'] == 0)]
 # Aqui va el nro de créditos y el nro de socios
 # Esta tabla no incluye créditos castigados
@@ -113,7 +114,7 @@ pivot_B = conteo_socios.pivot_table(columns   = 'Clasificación del Deudor con A
                                       aggfunc ='count'
                                       )
 pivot_B = pivot_B.reset_index()
-pivot_B.fillna(0, inplace=True)
+pivot_B.fillna(0, inplace = True)
 
 conteo_socios['Código Socio 7/'] = conteo_socios['Código Socio 7/'].str.strip()
 # CALCULAMOS EL NRO DE SOCIOS
@@ -124,8 +125,11 @@ socios_2 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineam
 socios_3 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineamiento 15/'] == 3)]['Código Socio 7/'].nunique()
 socios_4 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineamiento 15/'] == 4)]['Código Socio 7/'].nunique()
 
-# suma_socios = int(conteo_socios['Código Socio 7/'].nunique())  #cuando implementamos este código, nos rechazó la SBS
-suma_socios = socios_0 + socios_1 + socios_2 + socios_3 + socios_4
+suma_socios = int(conteo_socios['Código Socio 7/'].nunique())  #cuando implementamos este código, nos rechazó la SBS
+# si aplicamos esta metodología, hay que cambiar los subtotales de cada columna manualmente
+
+# código desactivado que podría servir algún día
+# suma_socios = socios_0 + socios_1 + socios_2 + socios_3 + socios_4
 
 #%%
 'TABLA C Y C' #PUROS CEROS
