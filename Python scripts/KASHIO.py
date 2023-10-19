@@ -17,19 +17,19 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\17 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\18 octure')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231017.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231018.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
-                       dtype={'ID CLIENTE'       : str,
-                              'TELEFONO'         : str,
-                              'NUMERO DOCUMENTO' : str}
+                       dtype = {'ID CLIENTE'       : str,
+                                'TELEFONO'         : str,
+                                'NUMERO DOCUMENTO' : str}
                        )
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
