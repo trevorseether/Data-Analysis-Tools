@@ -17,12 +17,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\18 octure')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\19 octubre 2023')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231018.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231019.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
