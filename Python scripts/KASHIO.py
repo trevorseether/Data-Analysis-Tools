@@ -74,12 +74,24 @@ kashio['EMAIL ANTERIOR'] = kashio.apply(limpieza, axis=1)
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL ANTERIOR'].str.strip()
 '''
 #%% LIMPIEZA DE DATOS:
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.PE'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.COM' , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILCON'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAI.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GGMIAL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GNMAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMN'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMNAIL.COM'    , '@GMAIL.COM')    
+    
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos las celdas anteriores, esto habría que eliminarlo
 
 def correccion(row):
-    palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
-                         'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', '@MAIL.COM',
-                         'Ñ', ' ', '  ', '   ', 'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú']
+    palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 
+                         'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
+                         'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 
+                         'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
+                         '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
+                         'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
@@ -117,11 +129,10 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
                                          'ID ORDEN DE PAGO' : str}
                                 )
 
-kashio_ampliado = kashio_ampliado.rename(columns={"NOMBRE": "NOMBRE_1"})
+kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
 
 valor1 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
-
 
 kashio_ampliado = kashio_ampliado.merge(kashio, 
                                         left_on=['ID CLIENTE (*)'],
@@ -129,7 +140,7 @@ kashio_ampliado = kashio_ampliado.merge(kashio,
                                         how='left')
 valor2 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
-if valor1 != valor2:    
+if valor1 != valor2:
     print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
 else:
     print('todo bien, no hay créditos duplicados')
