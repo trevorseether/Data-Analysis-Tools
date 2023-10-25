@@ -20,19 +20,19 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '16-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
+FECHATXT = '23-10-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\16 10'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 OCTUBRE\\23 10'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '3ER INFORME DE BAJAS GRUPO - 11_ 2023 VF.xlsx'
+nombre_archivo = 'IV INFORME DE BAJAS.xlsx'
 ############################################################################
 
 'filas a skipear' ######################
-filas_skip = 2
+filas_skip = 0
 ########################################
 #%% IMPORTANDO EL INFORME DE BAJAS
 
@@ -40,7 +40,7 @@ os.chdir(directorio)
 
 bajas = pd.read_excel(nombre_archivo,
                       skiprows = filas_skip,
-                      dtype = ({'Documento': object}))
+                      dtype    = ({'Documento': object}))
 
 bajas['Documento'] = bajas['Documento'].astype(str)
 bajas['Documento'] = bajas['Documento'].str.strip()
@@ -48,7 +48,7 @@ bajas['Documento'] = bajas['Documento'].str.strip()
 doc_nulos = bajas[pd.isna(bajas['Documento'])]
 print('Documentos que se hayan convertido en Null:')
 print(doc_nulos.shape[0])
-bajas['Documento original'] =   bajas['Documento']
+bajas['Documento original'] = bajas['Documento']
 bajas['Documento'] = bajas['Documento'].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
 
