@@ -19,12 +19,12 @@ import calendar
 import datetime
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\pruebita')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\25 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231026.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231025.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -143,9 +143,9 @@ kashio_ampliado = kashio_ampliado.merge(kashio,
 valor2 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 if valor1 != valor2:
-    print('si sale diferente hay que investigar, posiblemente hay créditos duplicados')
+    print('Si sale diferente hay que investigar, posiblemente hay créditos duplicados')
 else:
-    print('todo bien, no hay créditos duplicados')
+    print('Todo bien, no hay créditos duplicados')
 
 #%% ARCHIVO FINAL PARA CONVERTIR A CSV
 
@@ -171,7 +171,12 @@ kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana (act
 kashio_para_csv['VENCIMIENTO parseado'] = pd.to_datetime(kashio_para_csv['VENCIMIENTO'])
 
 # Obtén la fecha actual
-fecha_actual = datetime.date.today()
+# obtenemos la fecha del nombre del archivo que estamos trabajando
+fecha_actual = datetime.date(int(str(ARCHIVO_HOY[29:33])),
+                             int(str(ARCHIVO_HOY[33:35])),
+                             int(str(ARCHIVO_HOY[35:37])))
+
+# fecha_actual = datetime.date.today() # este método busca la fecha de hoy en el sistema
 
 # Obtiene el último día del mes
 ultimo_dia_del_mes = datetime.date(fecha_actual.year, 
@@ -192,13 +197,13 @@ else:
 # Comparación de fechas
 if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
     if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-        print('fechas bien puestas')
+        print('Fechas bien puestas')
     else:
-        print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+        print('Las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
 elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-    print('fechas bien puestas')
+    print('Fechas bien puestas')
 else:
-    print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+    print('Las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
     
 # Columna ya no necesaria
 kashio_para_csv.drop('VENCIMIENTO parseado', 
@@ -210,7 +215,6 @@ kashio_para_csv.drop('VENCIMIENTO parseado',
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
                        index    = False, 
                        encoding = 'utf-8')
-
 '''
 #BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
 '''
