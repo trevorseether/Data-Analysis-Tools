@@ -163,8 +163,8 @@ kashio_para_csv['DOCUMENTO'] = 'OTHER'
 
 kashio_para_csv['MONTO'] = kashio_para_csv['MONTO'].round(2)
 
-kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana
-                                #pd.Timestamp('2050-12-31') si es que necesitaramos que esté en formato fecha
+kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana (actualmente se está poniendo un str)
+                                #pd.Timestamp('2050-12-31') si es que necesitaramos que esté en formato DateTime
 
 #%% VERIFICADOR DE FECHAS DE VENCIMIENTO
 # Por lo menos debemos tener hasta fechas del fin de mes actual
@@ -199,7 +199,9 @@ if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
         print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
 else:
     print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
-kashio_para_csv.drop('VENCIMIENTO parseado', axis = 1, inplace = True)
+kashio_para_csv.drop('VENCIMIENTO parseado', 
+                     axis = 1, 
+                     inplace = True)
 
 #%% EXPORTAR A CSV 
 
