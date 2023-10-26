@@ -12,6 +12,7 @@ import pandas as pd
 import pyodbc
 import os
 
+#%%
 COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC SETIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
 CORTE_SQL = '20230930'

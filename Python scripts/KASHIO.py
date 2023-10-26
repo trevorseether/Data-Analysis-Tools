@@ -124,7 +124,7 @@ kashio.to_excel(nombre, index=False)
 
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
-#ESTE AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
+# AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
 kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
                                 dtype = {'ID CLIENTE (*)'   : str,
                                          'REFERENCIA'       : str,
@@ -179,8 +179,22 @@ ultimo_dia_del_mes = datetime.date(fecha_actual.year,
                                    calendar.monthrange(fecha_actual.year, 
                                                        fecha_actual.month)[1])
 
-if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-    print('fechas bien puestas')
+# Verifica si estás en diciembre
+if fecha_actual.month == 12:
+    # Si es diciembre, configura el mes al próximo año y el día al último día de enero
+    ultimo_dia_del_siguiente_mes = datetime.date(fecha_actual.year + 1, 1, 31)
+else:
+    # Si no es diciembre, calcula el último día del mes siguiente
+    ultimo_dia_del_siguiente_mes = datetime.date(fecha_actual.year, 
+                                                 fecha_actual.month + 1, 
+                                                 calendar.monthrange(fecha_actual.year, 
+                                                                     fecha_actual.month + 1)[1])
+
+if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
+    if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
+        print('fechas bien puestas')
+    elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
+        print('fechas bien puestas')
 else:
     print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
 
