@@ -15,14 +15,16 @@ import pandas as pd
 import os
 import warnings
 warnings.filterwarnings('ignore')
+import calendar
+import datetime
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\19 octubre 2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\25 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231019.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231025.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -163,6 +165,26 @@ kashio_para_csv['MONTO'] = kashio_para_csv['MONTO'].round(2)
 
 kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana
                                 #pd.Timestamp('2050-12-31') si es que necesitaramos que esté en formato fecha
+
+#%% VERIFICADOR DE FECHAS DE VENCIMIENTO
+# Por lo menos debemos tener hasta fechas del fin de mes actual
+kashio_para_csv['VENCIMIENTO parseado'] = pd.to_datetime(kashio_para_csv['VENCIMIENTO'])
+
+# Obtén la fecha actual
+fecha_actual = datetime.date.today()
+
+# Obtiene el último día del mes
+ultimo_dia_del_mes = datetime.date(fecha_actual.year, 
+                                   fecha_actual.month, 
+                                   calendar.monthrange(fecha_actual.year, 
+                                                       fecha_actual.month)[1])
+
+if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
+    print('fechas bien puestas')
+else:
+    print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+
+kashio_para_csv.drop('VENCIMIENTO parseado', axis = 1, inplace = True)
 
 #%% EXPORTAR A CSV 
 

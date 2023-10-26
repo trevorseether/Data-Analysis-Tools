@@ -50,31 +50,41 @@ del conn
 # Definir una función personalizada para calcular la morosidad
 
 # Crear la tabla pivote utilizando la función personalizada
-tabla_pivot_vencido = base.pivot_table(columns="year",
-                               values=['deteriorado'],
-                               index=["month"],
-                               margins=False,
-                               aggfunc='sum')
+tabla_pivot_vencido = base.pivot_table(columns = "year",
+                               values  = ['deteriorado'],
+                               index   = ["month"],
+                               margins = False,
+                               aggfunc = 'sum')
 
 
 # Draw a heatmap with the numeric values in each cell
 f, ax = plt.subplots(figsize=(9, 6))
+
 # Configura el formato 'f' en lugar de 'd' para números de punto flotante
-sns.heatmap(tabla_pivot_vencido, annot=True, fmt=".0f", linewidths=.5, ax=ax)
+sns.heatmap(tabla_pivot_vencido, 
+            annot=True, 
+            fmt=".0f", 
+            linewidths=.5, 
+            ax=ax)
 
 #%%
 
-tabla_pivot_saldo = base.pivot_table(columns="year",
-                               values=['Saldodecolocacionescreditosdirectos24'],
-                               index=["month"],
-                               margins=False,
-                               aggfunc='sum')
+tabla_pivot_saldo = base.pivot_table(columns = "year",
+                               values        = ['Saldodecolocacionescreditosdirectos24'],
+                               index         = ["month"],
+                               margins       = False,
+                               aggfunc       = 'sum')
 
 
 # Draw a heatmap with the numeric values in each cell
 f, ax = plt.subplots(figsize=(9, 6))
+
 # Configura el formato 'f' en lugar de 'd' para números de punto flotante
-sns.heatmap(tabla_pivot_saldo, annot=True, fmt=".0f", linewidths=.5, ax=ax)
+sns.heatmap(tabla_pivot_saldo, 
+            annot=True, 
+            fmt=".0f", 
+            linewidths=.5, 
+            ax=ax)
 
 #%% p_morosidad
 p_morosidad = tabla_pivot_vencido['deteriorado'] / tabla_pivot_saldo['Saldodecolocacionescreditosdirectos24']
@@ -82,5 +92,9 @@ p_morosidad = tabla_pivot_vencido['deteriorado'] / tabla_pivot_saldo['Saldodecol
 # Draw a heatmap with the numeric values in each cell
 f, ax = plt.subplots(figsize=(9, 6))
 # Configura el formato 'f' en lugar de 'd' para números de punto flotante
-sns.heatmap(p_morosidad, annot=True, fmt=".4f", linewidths=.5, ax=ax)
+sns.heatmap(p_morosidad, 
+            annot=True, 
+            fmt=".4f", 
+            linewidths=.5, 
+            ax=ax)
 

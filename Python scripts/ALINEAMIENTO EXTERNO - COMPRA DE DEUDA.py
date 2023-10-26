@@ -12,13 +12,13 @@ import pandas as pd
 import pyodbc
 import os
 
-COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'
+COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC SETIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL = '20230831'
+CORTE_SQL = '20230930'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 AGOSTO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 SET')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2792023131015_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_25102023151059_1.csv'
 
 #%%
 
@@ -92,7 +92,7 @@ a_e_filtrado = al_externo[['TIPO DE DOCUMENTO',
                            'NUMERO DE ENTIDADES SBS REPORTADAS',
                            'DEUDA TOTAL EN NO REGULADAS',
                            'DEUDA TOTAL EN SBS',
-                           'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023']]
+                           COLUMNA_ALINEAMIENTO]]
 
 a_e_filtrado['DOC ORIGINAL'] = a_e_filtrado['NUMERO DE DOCUMENTO']
 
@@ -127,15 +127,15 @@ print(a_e_filtrado[a_e_filtrado['NUMERO DOC CORREGIDO'] == '00000000000'].shape[
 
 #%% ALINEAMIENTO EXTERNO EN NUMÉRICO:
 def alineamiento_numerico(a_e_filtrado):
-    if a_e_filtrado['ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'] == 'NORMAL':
+    if a_e_filtrado[COLUMNA_ALINEAMIENTO] == 'NORMAL':
         return 0
-    elif a_e_filtrado['ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'] == 'CPP':
+    elif a_e_filtrado[COLUMNA_ALINEAMIENTO] == 'CPP':
         return 1
-    elif a_e_filtrado['ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'] == 'DEFICIENTE':
+    elif a_e_filtrado[COLUMNA_ALINEAMIENTO] == 'DEFICIENTE':
         return 2
-    elif a_e_filtrado['ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'] == 'DUDOSO':
+    elif a_e_filtrado[COLUMNA_ALINEAMIENTO] == 'DUDOSO':
         return 3
-    elif a_e_filtrado['ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023'] == 'PERDIDA':
+    elif a_e_filtrado[COLUMNA_ALINEAMIENTO] == 'PERDIDA':
         return 4
     else:
         return 'investigar caso'
@@ -275,8 +275,8 @@ UNION['ClasificaciondelDeudorconAlineamiento15'] = UNION['ClasificaciondelDeudor
 UNION['ALINEAMIENTO EXTERNO'] = UNION['ALINEAMIENTO EXTERNO'].astype(int)
 
 
-#filtrados_COMPRA_DEUDA = UNION[(UNION['ClasificaciondelDeudorconAlineamiento15'] == 0) & \
-#                               (UNION['ALINEAMIENTO EXTERNO'] == 3)]
+# filtrados_COMPRA_DEUDA = UNION[(UNION['ClasificaciondelDeudorconAlineamiento15'] == 0) & \
+#                                (UNION['ALINEAMIENTO EXTERNO'] == 3)]
 
 # este código de aquí abajo lo podemos comentar si queremos aplicar el filtro
 # y des-comentamos el filtrado anterior si es que necesitamos filtrar
@@ -313,7 +313,7 @@ filtrados_COMPRA_DEUDA = filtrados_COMPRA_DEUDA[['FechaCorte1',
                                                  'NUMERO DE ENTIDADES SBS REPORTADAS',
                                                  'DEUDA TOTAL EN NO REGULADAS',
                                                  'DEUDA TOTAL EN SBS',
-                                                 'ALINEAMIENTO EXTERNO SBS RCC AGOSTO 2023',
+                                                 COLUMNA_ALINEAMIENTO,
                                                  #'DOC ORIGINAL',
                                                  #'NUMERO DOC CORREGIDO',
                                                  'ALINEAMIENTO EXTERNO',
@@ -323,10 +323,40 @@ filtrados_COMPRA_DEUDA = filtrados_COMPRA_DEUDA[['FechaCorte1',
                                                  ]]
 #%% EXPORTACIÓN A EXCEL
 print('guardando excel')
-filtrados_COMPRA_DEUDA.to_excel('COMPRA DE DEUDA cartera total.xlsx',
+filtrados_COMPRA_DEUDA.to_excel(f'COMPRA DE DEUDA cartera total - {CORTE_SQL}.xlsx',
                                 index = False,
                                 sheet_name = 'COMPRA DE DEUDA')
 print('guardado concluido')
 
 #UNION.shape[0]
 
+#%% UBICACIÓN DE LOS ARCHIVOS
+# POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
+# Obtener la ubicación actual
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
+
+#%%%
+
+#EL QUE SE SUBE A SQL SE INSERTA CON EL SIGUIENTE CÓDIGO:
+'''
+    INSERT INTO anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AL_EXTERNO] 
+--(columna1, columna2, columna3, ...)
+SELECT 
+	NRO_fincore, 
+	NumerodeDocumento10,
+	[NUMERO DE ENTIDADES SBS REPORTADAS],
+	[ALINEAMIENTO EXTERNO],
+	[MAX CALIFICACION],
+	[TASA PROV# CON AL# EXTERNO],
+	[Provisiones Requeridas A#EXTERNO],
+	NULL AS 'ENTID FINANC CON PEOR CALIF',
+	NULL AS 'DEUDA TOTAL EN LA ENTIDAD',
+	NULL AS 'CATEGORIA DE RIESGO EN LA ENTIDAD',
+	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
+	[FechaCorte1]
+FROM 
+	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AGOSTO_2023]
+'''
