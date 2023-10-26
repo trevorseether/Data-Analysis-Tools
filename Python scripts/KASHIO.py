@@ -19,12 +19,12 @@ import calendar
 import datetime
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\25 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\pruebita')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231025.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231026.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -195,9 +195,10 @@ if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
         print('fechas bien puestas')
     elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
         print('fechas bien puestas')
+    else:
+        print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
 else:
     print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
-
 kashio_para_csv.drop('VENCIMIENTO parseado', axis = 1, inplace = True)
 
 #%% EXPORTAR A CSV 
