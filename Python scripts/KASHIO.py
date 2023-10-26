@@ -17,14 +17,15 @@ import warnings
 warnings.filterwarnings('ignore')
 import calendar
 import datetime
+from colorama import Fore, Back, Style, init
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\25 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\pruebita')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231025.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231026.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -172,9 +173,9 @@ kashio_para_csv['VENCIMIENTO parseado'] = pd.to_datetime(kashio_para_csv['VENCIM
 
 # Obtén la fecha actual
 # obtenemos la fecha del nombre del archivo que estamos trabajando
-fecha_actual = datetime.date(int(str(ARCHIVO_HOY[29:33])),
-                             int(str(ARCHIVO_HOY[33:35])),
-                             int(str(ARCHIVO_HOY[35:37])))
+fecha_actual = datetime.date(int(str(ARCHIVO_HOY[29:33])), # año
+                             int(str(ARCHIVO_HOY[33:35])), # mes
+                             int(str(ARCHIVO_HOY[35:37]))) # día
 
 # fecha_actual = datetime.date.today() # este método busca la fecha de hoy en el sistema
 
@@ -197,13 +198,13 @@ else:
 # Comparación de fechas
 if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
     if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-        print('Fechas bien puestas')
+        print(Back.GREEN + 'Fechas bien puestas')
     else:
-        print('Las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+        print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, debes cambiar la segunda en el fincore al último día del mes')
 elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-    print('Fechas bien puestas')
+    print(Back.GREEN + 'Fechas bien puestas')
 else:
-    print('Las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+    print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, debes cambiar la segunda en el fincore al último día del mes')
     
 # Columna ya no necesaria
 kashio_para_csv.drop('VENCIMIENTO parseado', 
