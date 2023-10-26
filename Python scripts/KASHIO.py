@@ -189,16 +189,18 @@ else:
                                                  fecha_actual.month + 1, 
                                                  calendar.monthrange(fecha_actual.year, 
                                                                      fecha_actual.month + 1)[1])
-
+# Comparación de fechas
 if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
     if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
         print('fechas bien puestas')
-    elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
-        print('fechas bien puestas')
     else:
         print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
+    print('fechas bien puestas')
 else:
     print('las fechas están mal, debes cambiar la segunda en el fincore al último día del mes')
+    
+# Columna ya no necesaria
 kashio_para_csv.drop('VENCIMIENTO parseado', 
                      axis = 1, 
                      inplace = True)
