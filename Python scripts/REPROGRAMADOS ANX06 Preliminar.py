@@ -13,6 +13,7 @@ Created on Tue Jun  6 10:40:15 2023
 import pandas as pd
 import os
 import numpy as np
+from colorama import Back # , Style, init, Fore
 
 #%% INDICACIONES PRELIMINARES
 'Revisar que estén bien las fechas:'
@@ -1501,9 +1502,9 @@ alertaaa['Nro Prestamo \nFincore']
     
 
 if alertaaa.shape[0] > 0:
-    print('ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
+    print(Back.RED + 'ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
 else:
-    print('todo bien q(≧▽≦q)')
+    print(Back.GREEN + 'todo bien q(≧▽≦q)')
 
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 

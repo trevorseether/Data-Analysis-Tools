@@ -4,23 +4,28 @@ Created on Mon Aug  7 15:00:55 2023
 
 @author: Joseph Montoya
 """
+# ============================================================================= #
+#                                                                               #
+#             PROCESAMIENTO DEL REPORTE DIARIO DE KASHIO                        #
+#                                                                               #
+# ============================================================================= #
 
 ###############################################################################
 ###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
 ###############################################################################
 # también hay que reemplazar las Ã‘ por Ñ
 
-
+#%% MÓDULOS
 import pandas as pd
 import os
 import warnings
 warnings.filterwarnings('ignore')
 import calendar
 import datetime
-from colorama import Fore, Back, Style, init
+from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\pruebita')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\26 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
@@ -84,9 +89,13 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAI.COM'      , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GGMIAL.COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GNMAIL.COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMN'    , '@GMAIL.COM')    
-kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMNAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMNAIL.COM'    , '@GMAIL.COM')
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GIMAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMA.IL.COM'    , '@GMAIL.COM')    
+
     
-kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos las celdas anteriores, esto habría que eliminarlo
+kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
 def correccion(row):
     palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 
@@ -94,7 +103,8 @@ def correccion(row):
                          'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 
                          'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
                          '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
-                         'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú']
+                         'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú',
+                         '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
@@ -214,8 +224,16 @@ kashio_para_csv.drop('VENCIMIENTO parseado',
 #%% EXPORTAR A CSV 
 
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
-                       index    = False, 
-                       encoding = 'utf-8')
+                       index    = False,
+                       encoding = 'utf-8-sig')
+# En esta línea de código, se utiliza la codificación 'utf-8-sig'. 
+# Esta codificación es similar a UTF-8, pero agrega un carácter de marca 
+# de orden de bytes (BOM) al principio del archivo CSV. El BOM es un 
+# indicador que algunos programas y sistemas utilizan para reconocer 
+# que el archivo está codificado en UTF-8. Esta opción es útil cuando 
+# necesitas garantizar que el archivo CSV se interprete correctamente 
+# en programas que requieren un BOM, como Microsoft Excel.
+
 '''
 #BUSCAR LOS Ã‘ Y REEMPLAZARLOS POR Ñ
 '''

@@ -2012,6 +2012,17 @@ ya_casi['Fecha de Vencimiento Actual del Crédito 49/']      = ya_casi['Fecha de
 
 ya_casi['Tasa de Interés Anual 23/'] = ya_casi['Tasa de Interés Anual 23/'].round(4)
 
+#%% COLUMNA DE LA PLANILLA CONSOLIDADA (HISTÓRICO)
+ya_casi['PLANILLA CONSOLIDADA'] = ya_casi['Nombre PlanillaTXT']
+def planilla_consolidada(ya_casi):
+    if ya_casi['PLANILLA CONSOLIDADA'] == 'PLANILLA LIQUIDADOS':
+        return ya_casi['Planilla Anterior TXT']
+    else:
+        return ya_casi['PLANILLA CONSOLIDADA']
+
+ya_casi['PLANILLA CONSOLIDADA'] = ya_casi.apply(planilla_consolidada, 
+                                                axis=1)
+
 #%% RECÁLCULO DE LA COLUMNA NRO_REGISTRO
 #por si acasito, corregimos la columna del nro Registro 1/
 print(ya_casi.shape[0])
@@ -2173,7 +2184,7 @@ dxp_castigados = list(dxp_castigados['Nro Prestamo \nFincore'])
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
 
 #para que funcione el match por tipo de producto que solicitó cesar
-df_diferidos['Tipo de Producto 43/'] == df_diferidos['Tipo de Producto 43/'].astype(int)
+df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int) # == antes había esto
 
 def prov_cons_37_FINAL(df_diferidos):
     if (df_diferidos['Nro Prestamo \nFincore'] in 
