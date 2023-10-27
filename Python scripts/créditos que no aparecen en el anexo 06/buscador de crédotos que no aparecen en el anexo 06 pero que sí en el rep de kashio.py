@@ -14,10 +14,13 @@ import os
 import pyodbc
 
 #%%
+# directorio de trabajo
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba búsqueda de créditos')
 
+# nombre del archivo de Kasnet
 archivo_excel_kashio = 'DATA_RECIBOS_COOP.SANMIGUEL_20231026.xlsx'
 
+# fecha para sql
 fecha_sql = '20230930'
 
 #%%

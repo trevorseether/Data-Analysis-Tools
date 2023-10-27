@@ -14,10 +14,13 @@ import os
 import pyodbc
 
 #%%
+# directorio de trabajo
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba búsqueda de créditos\\prueba busqueda kasnet')
 
+# archivo de kasnet
 archivo_excel_kasnet = 'SCBCM1027.txt'
 
+# fecha para sql
 fecha_sql = '20230930'
 
 #%%
