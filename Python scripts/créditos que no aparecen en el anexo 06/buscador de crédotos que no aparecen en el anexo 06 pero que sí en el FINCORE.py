@@ -1,17 +1,41 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  4 18:58:42 2023
+Created on Mon Oct 30 14:47:56 2023
 
-@author: Joseph Montoya
+@author: sanmiguel38
 """
 
-import pyodbc
+# =============================================================================
+# VERIFICACIÓN DE CRÉDITOS CON EL FINCORE
+# =============================================================================
+
+#%%
 import pandas as pd
+import os
+import pyodbc
+
+#%%
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
+
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
+
+fecha_inicio = '20220101' #formato para sql
+fecha_corte  = '20230930' #formato para sql
+
+#%%
+df_anx06 = pd.read_excel(io         = anexo06, 
+                         skiprows   = 2,
+                         dtype      = {'Nro Prestamo \nFincore' : str})
+
+df_anx06 = df_anx06[['Nro Prestamo \nFincore',
+                     'Fecha de Desembolso 21/',
+                     'Apellidos y Nombres / Razón Social 2/',
+                     'Saldo de colocaciones (créditos directos) 24/']]
+
+df_anx06['Nro Prestamo \nFincore'] = df_anx06['Nro Prestamo \nFincore'].str.strip()
 
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
-
-#%%
 
 server      = datos['DATOS'][0]
 username    = datos['DATOS'][2]
@@ -26,7 +50,7 @@ conn = pyodbc.connect(conn_str)
 ########################################################
 
 #extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
-query = '''
+query = f'''
 
 -- p.codcategoria = 351 -> nuevo
 -- p.codcategoria = 352 -> ampliacion
@@ -158,12 +182,16 @@ left join TipoCredito as TC on tc.CodTipoCredito = p.CodTipoCredito
 inner join usuario as u on p.CodUsuario = u.CodUsuario
 inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+LEFT JOIN PrestamosVendidos AS VENDIDOSS ON P.CodPrestamoPND = VENDIDOSS.CodPrestamoPND
 
 where 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20190101' AND '20231201' 
-and s.codigosocio>0  and p.codestado != 563 
+CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' and '{fecha_corte}' 
+and s.codigosocio>0  and p.codestado = 341
+and tm4.descripcion = 'HABIL'
+and VENDIDOSS.CodPrestamoPND IS NULL
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
--- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
+-- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null 
+-- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
 order by socio asc, p.fechadesembolso desc
 
@@ -171,3 +199,17 @@ order by socio asc, p.fechadesembolso desc
 
 df_fincore = pd.read_sql_query(query, conn)
 del conn
+
+df_fincore = df_fincore[['pagare_fincore', 
+                         'Socio', 
+                         'fechadesembolso',
+                         'Otorgado']]
+
+#%%
+filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
+
+
+
+
+
+
