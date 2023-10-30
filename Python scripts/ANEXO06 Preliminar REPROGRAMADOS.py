@@ -1449,6 +1449,8 @@ def calculo_53(anx06_ordenado):
 anx06_ordenado['Saldo Capital en Cuenta de Orden por efecto del Covid 53/'] = anx06_ordenado.apply(calculo_53, 
                                                                                                    axis = 1)
 
+anx06_ordenado['Saldo Capital en Cuenta de Orden por efecto del Covid 53/'] = 0 # desactivar esta línea si queremos volver a calcular
+
 #%% COLUMNA 54/
 def calculo_54(anx06_ordenado): #probar esta vaina
     if anx06_ordenado['Saldo de Créditos que no cuentan con cobertura 51/'] > 0 or \
@@ -1474,6 +1476,8 @@ def calculo_55(anx06_ordenado):
 
 anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = anx06_ordenado.apply(calculo_55,
                                                                                            axis = 1)
+
+anx06_ordenado['Rendimiento Devengado por efecto del COVID 19 55/'] = 0 # desactivar esta línea si queremos volver a calcular
 
 #%% Reemplazar solo el ';' por una cadena vacía en la columna 'Domicilio 12/' 
 anx06_ordenado['Domicilio 12/'] = anx06_ordenado['Domicilio 12/'].str.replace(';', '', regex = False)
