@@ -25,12 +25,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\27 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 10\\30 octubre')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231027.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231030.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
