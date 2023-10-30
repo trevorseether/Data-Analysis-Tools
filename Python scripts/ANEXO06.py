@@ -50,9 +50,10 @@ archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2023.xlsx' #nombre d
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
-############################################################################################
-mes_calif = 'Septiembre' #aqui debemos poner el mes donde esté la calificación más reciente  ###
-############################################################################################
+#################################################################################################
+mes_calif = 'Septiembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+# es el nombre de la columna más reciente que nos manda Enrique                               ###
+#################################################################################################
 #%% ESTABLECER FECHA CORTE
 
 #esta función nos permite obtener el número de días del mes de corte
