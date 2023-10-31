@@ -25,7 +25,15 @@ fecha_corte  = '20230930' #formato para sql
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 
                          skiprows   = 2,
-                         dtype      = {'Nro Prestamo \nFincore' : str})
+                         dtype      = {'Nro Prestamo \nFincore'  : str})
+
+df_anx06.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
+                          'Fecha de Nacimiento 3/',
+                          'Número de Documento 10/',
+                          'Domicilio 12/',
+                          'Numero de Crédito 18/'], 
+                inplace = True, 
+                how     = 'all')
 
 df_anx06 = df_anx06[['Nro Prestamo \nFincore',
                      'Fecha de Desembolso 21/',
@@ -33,6 +41,12 @@ df_anx06 = df_anx06[['Nro Prestamo \nFincore',
                      'Saldo de colocaciones (créditos directos) 24/']]
 
 df_anx06['Nro Prestamo \nFincore'] = df_anx06['Nro Prestamo \nFincore'].str.strip()
+
+# nans = df_anx06[pd.isna(df_anx06['Fecha de Desembolso 21/'])]
+df_anx06['Fecha de Desembolso 21/'] = df_anx06['Fecha de Desembolso 21/'].astype(float).astype(int)
+
+# nos quedamos solo con los créditos desembolsados posteriormente a la fecha que hemos establecido
+df_anx06 = df_anx06[df_anx06['Fecha de Desembolso 21/'] >= int(fecha_inicio)]
 
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
