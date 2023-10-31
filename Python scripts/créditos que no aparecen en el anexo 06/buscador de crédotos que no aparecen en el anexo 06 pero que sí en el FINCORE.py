@@ -206,6 +206,7 @@ df_fincore = df_fincore[['pagare_fincore',
                          'Otorgado']]
 
 #%%
+
 filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
 
 

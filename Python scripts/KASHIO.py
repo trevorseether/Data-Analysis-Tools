@@ -131,7 +131,7 @@ try:
 except FileNotFoundError:
     pass
 
-kashio.to_excel(nombre, index=False)
+kashio.to_excel(nombre, index = False)
 
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
@@ -148,9 +148,9 @@ valor1 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 
 kashio_ampliado = kashio_ampliado.merge(kashio, 
-                                        left_on=['ID CLIENTE (*)'],
-                                        right_on=['ID CLIENTE'],
-                                        how='left')
+                                        left_on  = ['ID CLIENTE (*)'],
+                                        right_on = ['ID CLIENTE'],
+                                        how      = 'left')
 valor2 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 if valor1 != valor2:
