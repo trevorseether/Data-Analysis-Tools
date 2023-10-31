@@ -143,11 +143,9 @@ print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]
 
 # Reemplazar el valor de 'Tipo de Documento 9/' donde 'Nro Prestamo Fincore' sea '00092306'
 # es una corrección recurrente
-df1.loc[df1['''Nro Prestamo 
-Fincore'''] == '00109244', 'Tipo de Documento 9/'] = '1'
-
-df1.loc[df1['''Nro Prestamo 
-Fincore'''] == '00092306', 'Tipo de Documento 9/'] = '1'
+df1.loc[df1['Nro Prestamo \nFincore'] == '00109244', 'Tipo de Documento 9/'] = '1'
+df1.loc[df1['Código Socio 7/']        == '00035504', 'Tipo de Documento 9/'] = '1'
+df1.loc[df1['Nro Prestamo \nFincore'] == '00092306', 'Tipo de Documento 9/'] = '1'
 
 tipo_cero = df1[(df1['Tipo de Documento 9/'] == 0) | \
                 (df1['Tipo de Documento 9/'] == '0')]
