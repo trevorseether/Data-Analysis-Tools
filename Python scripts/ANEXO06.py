@@ -5,17 +5,24 @@ Created on Wed Feb  8 11:37:33 2023
 
 @author: Joseph Montoya
 """
-# IMPORTACIÓN DE MÓDULOS
+# =============================================================================
+#                                                                                           
+# ........####...##..##..######..##..##...####............####.....##..........
+# .......##..##..###.##..##.......####...##..##..........##..##...##...........
+# .......######..##.###..####......##....##..##..........##..##..#####.........
+# .......##..##..##..##..##.......####...##..##..........##..##..##..##........
+# .......##..##..##..##..######..##..##...####............####....####.........
+# .............................................................................
+# =============================================================================
+
+ #%% IMPORTACIÓN DE MÓDULOS
 
 import pandas as pd
 import os
-import datetime
 import calendar
-from datetime import datetime, timedelta
 # import numpy as np
+from datetime import datetime #, timedelta
 
-#%% importación de módulos
-import datetime
 #%% ADVERTENCIA
 #REVISAR EN EL EXCEL ANTES DE EMPEZAR A PROCESAR:
 
@@ -26,25 +33,15 @@ import datetime
 
 #%% PARÁMETROS INICIALES
 
-# DIRECTORIO DE TRABAJO #######################################################
+# DIRECTORIO DE TRABAJO ########################################################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE')
-###############################################################################
+################################################################################
 
-# ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #################
+# ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
 anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - SETIEMBRE 2023 - campos ampliados 01.xlsx"
-###############################################################################
+#####################################################################################
 
-###############################################
-uit = 4950 #valor de la uit en el año 2023  ###
-###############################################
-
-# FECHA DE CORTE ###################################
-fecha_corte     = '2023-09-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Setiembre 2023'
-####################################################
-
-'este es el archivo de la calificación que añade Enrique manualmente'
-########################################################################################################################
+# CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
 archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
@@ -54,15 +51,27 @@ archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2023.xlsx' #nombre d
 mes_calif = 'Septiembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
+
+###############################################
+uit = 4950 #valor de la uit en el año 2023  ###
+###############################################
+
+# FECHA DE CORTE #######################################
+fecha_corte     = '2023-09-30' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Setiembre 2023'
+########################################################
+
 #%% ESTABLECER FECHA CORTE
 
 #esta función nos permite obtener el número de días del mes de corte
 def dias_en_mes(fecha):
     # Convertimos la fecha en formato de cadena a objeto datetime
-    fecha_objeto = datetime.datetime.strptime(fecha, '%Y-%m-%d')
+    fecha_objeto = datetime.strptime(fecha, '%Y-%m-%d')
     
     # Obtenemos el número de días del mes utilizando el método monthrange del módulo calendar
+    # esta linea desempaqueta una tupla y descarta el primer valor
     _, dias_en_el_mes = calendar.monthrange(fecha_objeto.year, fecha_objeto.month)
+    # dias_en_el_mes = calendar.monthrange(fecha_objeto.year, fecha_objeto.month)[1] #alternativa al código anterior
     
     # Retornamos el número de días en el mes
     return dias_en_el_mes
@@ -93,7 +102,7 @@ df1=pd.read_excel(anexo_del_mes,
                         'Código Socio 7/'               : object,
                         'Tipo de Documento 9/'          : object,
                         'Número de Documento 10/'       : object,
-                        'Relación Laboral con la Cooperativa 13/'   : object, 
+                        'Relación Laboral con la Cooperativa 13/'       : object, 
                         'Código de Agencia 16/'         : object,
                         'Moneda del crédito 17/'        : object, 
                         'Numero de Crédito 18/'         : object,
@@ -101,21 +110,23 @@ df1=pd.read_excel(anexo_del_mes,
                         'Sub Tipo de Crédito 20/'       : object,
                         'Fecha de Desembolso 21/'       : object,
                         'Cuenta Contable 25/'           : object,
-                        'Cuenta Contable Crédito Castigado 39/'     : object,
+                        'Cuenta Contable Crédito Castigado 39/'         : object,
                         'Tipo de Producto 43/'          : object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                        'Fecha de Vencimiento Actual del Crédito 49/': object,
+                        'Fecha de Vencimiento Actual del Crédito 49/'   : object,
                         'Nro Prestamo \nFincore'        : object,
                         'Refinanciado TXT'              : object
                         },
                  skiprows = 2)
 
 #eliminando las filas con NaN en las siguiente columnas al mismo tiempo:
-df1.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
-                   'Fecha de Nacimiento 3/',
-                   'Número de Documento 10/',
-                   'Domicilio 12/',
-                   'Numero de Crédito 18/'], inplace=True, how='all')
+df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
+                     'Fecha de Nacimiento 3/',
+                     'Número de Documento 10/',
+                     'Domicilio 12/',
+                     'Numero de Crédito 18/'], 
+           inplace = True, 
+           how     = 'all')
 
 #leyendo la lista de socios con cred < 100 soles
 df_100=pd.read_excel(anexo_del_mes,
@@ -887,7 +898,7 @@ def producto_43(row): #aparentemente este sí funciona, seguir investigando
     if (row['Partida Registral 8/'] != '') & \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31')) | \
      ((row['Partida Registral 8/'] != '') & \
-     (row['Origen\nPrestamo'] == 'POND')):
+     (row['Origen\n Prestamo'] == 'POND')):
         return '41'
     else:
         return row['Tipo de Producto 43/ original']
@@ -1342,7 +1353,7 @@ df_resultado_2['rendimiento devengado'].sum()
 fecha_fija = pd.to_datetime(fecha_corte)
 
 import pandas as pd
-from datetime import datetime
+#from datetime import datetime
 
 def dias_suspenso(row):
     # verificamos que las columnas 'Capital Vigente 26/' y 'Capital Vencido 29/' sean mayores que cero
