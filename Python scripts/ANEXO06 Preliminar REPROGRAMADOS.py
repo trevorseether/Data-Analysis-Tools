@@ -17,8 +17,8 @@ from colorama import Back # , Style, init, Fore
 
 #%% INDICACIONES PRELIMINARES
 'Revisar que estén bien las fechas:'
-#"Fecha Creacion Reprogramacion Nacimiento TXT"
-#"Fecha Creacion Reprogramacion Corte TXT"
+# "Fecha Creacion Reprogramacion Nacimiento TXT"
+# "Fecha Creacion Reprogramacion Corte TXT"
 
 #%% ESTABLECER FECHA DEL MES
 
@@ -71,7 +71,7 @@ bruto = pd.read_excel(anx06_actual,
                              'Fecha de Vencimiento Origuinal del Credito 48/' : object,
                              'Fecha de Vencimiento Actual del Crédito 49/'    : object,
                              'Nro Prestamo \nFincore'   : object,
-                             'Refinanciado TXT'         : object}))
+                             'Refinanciado TXT'         : object }))
 
 menos_bruto = bruto.drop(columns=[col for col in bruto.columns if 'Unnamed' in col]) #elimina columnas Unnamed
 
