@@ -13,11 +13,17 @@ Created on Thu Apr 27 12:24:36 2023
 import pandas as pd
 import os
 import pyodbc
-import numpy as np
+# import numpy as np
+
+#%%
+FECHA_SQL = '20230831'
+
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
+
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
-FECHA_SQL = '20230630'
 
 QUERY = f'''
                             
@@ -25,12 +31,18 @@ declare @fecha as datetime
 set @fecha = '{FECHA_SQL}'
 
 select 
-Nro_Fincore, ApellidosyNombresRazonSocial2, FechadeNacimiento3,
-NumerodeDocumento10, DiasdeMora33, ClasificaciondelDeudorconAlineamiento15
-from anexos_riesgos2..Anx06_preliminar
-where FechaCorte1 = @fecha
-
-order by ApellidosyNombresRazonSocial2
+    Nro_Fincore, 
+    ApellidosyNombresRazonSocial2, 
+    FechadeNacimiento3,
+    NumerodeDocumento10, 
+    DiasdeMora33, 
+    ClasificaciondelDeudorconAlineamiento15
+from 
+    anexos_riesgos2..Anx06_preliminar
+where 
+    FechaCorte1 = @fecha
+order by 
+    ApellidosyNombresRazonSocial2
                             '''
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -50,8 +62,7 @@ df_mes_pasado = df_mes_pasado.rename(columns={'ClasificaciondelDeudorconAlineami
 
 #%% ANEXO AMPLIADO MES ACTUAL
 #leemos el anexo ampliado de este mes
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JULIO\\parte 2')
-df = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx',
+df = pd.read_excel(anx06_final,
                  dtype={'Registro 1/'               : object, 
                         'Fecha de Nacimiento 3/'    : object,
                         'Código Socio 7/'           : object, 
@@ -68,7 +79,7 @@ df = pd.read_excel('Rpt_DeudoresSBS Anexo06 - JULIO 2023 Versión Final.xlsx',
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
                         'Fecha de Vencimiento Actual del Crédito 49/': object,
                         'Nro Prestamo \nFincore'    : object},
-                     skiprows=2
+                     skiprows = 2
                      )
 
 #eliminación de filas vacías
@@ -120,6 +131,7 @@ union = df_filtrado.merge(df_mes_pasado,
 
 nombres_diferentes = union[union['nombres y apellidos mes actual'] != \
                            union['nombres y apellidos mes pasado']]
+    
 nombres_diferentes = nombres_diferentes[['fincore',
                                          'nombres y apellidos mes actual',
                                          'nombres y apellidos mes pasado'
@@ -128,10 +140,12 @@ nombres_diferentes = nombres_diferentes[['fincore',
 #%%% verificamos los documentos
 documento_diferente = union[union['Documento mes pasado'] != \
                             union['Número de Documento 10/']]
+    
 documento_diferente = documento_diferente[['fincore',
-                                         'Número de Documento 10/',
-                                         'Documento mes pasado'
+                                           'Número de Documento 10/',
+                                           'Documento mes pasado'
                                          ]]
+
 #%%% verificamos fecha de nacimiento
 #parseo de la fecha
 formatos = ['%Y%m%d']
