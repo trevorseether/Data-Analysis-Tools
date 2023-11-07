@@ -2497,7 +2497,7 @@ writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine='xlsxwriter')
 espacio_entre_tablas = pd.DataFrame([''])
 
 # Guarda los dataframes en el archivo Excel
-pivot_mes_actual.to_excel(writer, 
+pivot_mes_actual.to_excel(writer,
                           sheet_name='Brechas', 
                           startrow=0, 
                           startcol=0, 

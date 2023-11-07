@@ -1646,6 +1646,7 @@ print(para_reporte)
 
 import pandas as pd
 import os
+# from openpyxl import Workbook
 
 #%%
 # REPROGRAMADOS ACTUALES ======================================================
@@ -1828,5 +1829,69 @@ anterior_tipo_repro = anterior_tipo_repro.loc[repro_lista]
 dif_credi = actual_tipo_credito - anterior_tipo_credito
 dif_plazo = actual_plazo        - anterior_plazo
 dif_repro = actual_tipo_repro   - anterior_tipo_repro
+
+#%% CREACIÓN DEL EXCEL
+writer = pd.ExcelWriter('BRECHAS DE REPROGRAMADOS.xlsx', engine='xlsxwriter')
+sheet = 'BrechasReprogramados'
+
+anterior_tipo_credito.to_excel(writer, 
+                               sheet_name = sheet, 
+                               startrow   = 0, 
+                               startcol   = 0, 
+                               index      = True)
+
+anterior_plazo.to_excel(writer, 
+                        sheet_name = sheet, 
+                        startrow   = anterior_tipo_credito.shape[0] + 2, 
+                        startcol   = 0, 
+                        index      = True)
+
+anterior_tipo_repro.to_excel(writer, 
+                             sheet_name = sheet, 
+                             startrow   = anterior_tipo_credito.shape[0] + anterior_plazo.shape[0] + 4, 
+                             startcol   = 0, 
+                             index      = True)
+
+# =============================================================================
+actual_tipo_credito.to_excel(writer, 
+                             sheet_name = sheet, 
+                             startrow   = 0, 
+                             startcol   = 4, 
+                             index      = True)
+
+actual_plazo.to_excel(writer, 
+                      sheet_name = sheet, 
+                      startrow   = actual_tipo_credito.shape[0] + 2, 
+                      startcol   = 4, 
+                      index      = True)
+
+actual_tipo_repro.to_excel(writer, 
+                           sheet_name = sheet, 
+                           startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0] + 4, 
+                           startcol   = 4, 
+                           index      = True)
+
+# =============================================================================
+dif_credi.to_excel(writer, 
+                   sheet_name = sheet, 
+                   startrow   = 0, 
+                   startcol   = 8, 
+                   index      = True)
+
+dif_plazo.to_excel(writer, 
+                   sheet_name = sheet, 
+                   startrow   = actual_tipo_credito.shape[0] + 2, 
+                   startcol   = 8, 
+                   index      = True)
+
+dif_repro.to_excel(writer, 
+                   sheet_name = sheet, 
+                   startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0] + 4, 
+                   startcol   = 8, 
+                   index      = True)
+
+
+writer.save()
+
 
 
