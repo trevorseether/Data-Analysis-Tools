@@ -14,6 +14,7 @@ Created on Fri Nov  3 16:50:14 2023
 import pandas as pd
 import os
 import pyodbc
+from colorama import Back # , Style, init, Fore
 
 #%%
 # FECHA CORTE PARA SQL ========================================================
@@ -35,23 +36,26 @@ ubi_anx = 'C:\\Users\\sanmiguel38\\Desktop'
 # NOMBRE DEL ANEXO 06 =========================================================
 anexo_06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
 # =============================================================================
-#%%
+
 # AQUÍ AÑADIMOS O QUITAMOS LAS PESTAÑAS DEL EXCEL, en el primero va el nombre de la columna
 datos = {'cs': ['Masivo - CS'],
          'ml': ['Masivo - ML'],
          'av': ['Masivo - AV'],
          'kt': ['Masivo - KT'],
          }
+# ============================================================================= 
+#%%
+# Convertimos el diccionario en dataframe
 datos = pd.DataFrame(datos)
 
 dataframes = {}  # Diccionario para almacenar los DataFrames
 # Creación de diccionario donde estarán almacenados los DataFrames
 for columna in datos.columns:
     nombre_df = columna  # Utilizamos el nombre de la columna como nombre del DataFrame
-    dataframes[nombre_df] = pd.read_excel(io = nombre, 
+    dataframes[nombre_df] = pd.read_excel(io         = nombre, 
                                           sheet_name = datos[columna][0], 
-                                          skiprows=4, 
-                                          dtype={})
+                                          skiprows   = 4, # todas las sheets deben tener 4 filas para skip 
+                                          dtype      = {})
 
 # =============================================================================
 # cs = pd.read_excel(nombre,
@@ -110,9 +114,17 @@ for nombre_columna, dataframe in dataframes.items():
 # Concatenamos
 df_concatenado = pd.concat(dataframes_filtrados, 
                            ignore_index = True)
-
 # Mayúsculas
 df_concatenado['PLANILLA'] = df_concatenado['PLANILLA'].str.upper()
+
+# debemos revisar si hay duplicados
+duplicados = df_concatenado[df_concatenado.duplicated(subset = 'PLANILLA', 
+                                                      keep   = False)]
+if duplicados.shape[0] == 0:
+    print(Back.GREEN + 'SIN DUPLICADOS')
+else:
+    print(Back.RED + '🚨 PLANILLAS DUPLICADAS 🚨')
+    print(duplicados['PLANILLA'])
 
 df_concatenado.to_excel('concatenado.xlsx',
                         index = False)
@@ -167,7 +179,7 @@ df_resultado = base.merge(df_concatenado[['PLANILLA COBRANZAS',
 # vemos qué planillas del reporte de recaudación NO hacen match
 # no_match = df_concatenado[~df_concatenado['PLANILLA COBRANZAS'].isin(base['PLANILLA BIEN'])] # coincidencia exacta
 
-base_sin_duplicados = base[['PLANILLA BIEN', 'PLANILLA', 'NUEVA_PLANILLA']].drop_duplicates(subset=['PLANILLA BIEN'])
+base_sin_duplicados = base[['PLANILLA BIEN', 'PLANILLA', 'NUEVA_PLANILLA']].drop_duplicates(subset = ['PLANILLA BIEN'])
 no_match = df_concatenado.merge(base_sin_duplicados, #AÑADIR LAS COLUMNAS QUE PODRÍAN SER NECESARIAS
                          left_on  = ['PLANILLA COBRANZAS'], 
                          right_on = ['PLANILLA BIEN'],
@@ -222,6 +234,7 @@ base_final = pd.read_sql_query(f'''
 
 del conn
 
+#%%
 # AQUÍ PONERLE EL RESULTADO DEL OTRO, HACER UN MERGE
 
 

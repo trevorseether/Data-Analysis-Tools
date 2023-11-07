@@ -15,16 +15,16 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE')
 
-anexo06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - OCTUBRE 2023 - campos ampliados REPROk.xlsx'
 
 fecha_inicio = '20220101' #formato para sql
-fecha_corte  = '20230930' #formato para sql
+fecha_corte  = '202301031' #formato para sql
 
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 
-                         skiprows   = 2,
+                         skiprows   = 0,
                          dtype      = {'Nro Prestamo \nFincore'  : str})
 
 df_anx06.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
@@ -222,9 +222,4 @@ df_fincore = df_fincore[['pagare_fincore',
 #%%
 
 filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
-
-
-
-
-
 

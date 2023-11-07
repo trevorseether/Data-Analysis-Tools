@@ -15,15 +15,15 @@ import os
 
 #%% INSUMOS
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
 ###############################################################################
 
 # mes y año ###################################################################
-mes = 'setiembre'
+mes = 'octubre'
 año = 2023
 ###############################################################################
 #%% IMPORTACIÓN DE ARCHIVOS
@@ -31,15 +31,15 @@ año = 2023
 os.chdir(directorio)
 tabla1 = pd.read_excel(anx06_repro,
                        skiprows = 2,
-                       dtype={'Número de Documento 10/' : str,
-                              'Código Socio 7/'         : str})
+                       dtype = {'Número de Documento 10/' : str,
+                                'Código Socio 7/'         : str})
 
 #eliminación de filas vacías si es que las hay
-tabla1.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
-                      'Fecha de Nacimiento 3/',
-                      'Número de Documento 10/',
-                      'Domicilio 12/',
-                      'Numero de Crédito 18/'], inplace = True, how = 'all')
+tabla1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
+                        'Fecha de Nacimiento 3/',
+                        'Número de Documento 10/',
+                        'Domicilio 12/',
+                        'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
 
@@ -48,17 +48,17 @@ df['TIPO DOCUMENTO']    = tabla1['Tipo de Documento 9/']
 df['NUMERO DOCUMENTO']  = tabla1["Número de Documento 10/"]
 df['TIPO DE CREDITO']   = tabla1["Tipo de Crédito 19/"]
 df['DEUDA DIRECTA']     = tabla1["Saldo de colocaciones (créditos directos) 24/"]
-df['TIPO DE REPROGRAMACION']    = tabla1["TIPO_REPRO"]
-df['DEUDA REPROGRAMADA']        = tabla1["Saldo de colocaciones (créditos directos) 24/"]
+df['TIPO DE REPROGRAMACION']  = tabla1["TIPO_REPRO"]
+df['DEUDA REPROGRAMADA']      = tabla1["Saldo de colocaciones (créditos directos) 24/"]
 
 df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].astype(int)
-df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9:'09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
-                                                   8: '08',
-                                                   10:'10',
-                                                   11:'11',
-                                                   12:'12',
-                                                   13:'13'},
-                                                 na_action=None) #EN CASO DE NULO NO HACER NADA
+df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+                                                   8  : '08',
+                                                   10 : '10',
+                                                   11 : '11',
+                                                   12 : '12',
+                                                   13 : '13'},
+                                                 na_action = None) #EN CASO DE NULO NO HACER NADA
 
 df['CODIGO SOCIO']      = df['CODIGO SOCIO'].str.strip()
 df['NUMERO DOCUMENTO']  = df['NUMERO DOCUMENTO'].str.strip()
@@ -170,12 +170,12 @@ df['13/CLADEU/ Clasificación del deudor']     = tabla1["Clasificación del Deud
 df['14/REP_EME']                              = tabla1["Saldo de colocaciones (créditos directos) 24/"]
 
 df['8/TCR/Tipo de crédito según reporte crediticio de deudores'] = df['8/TCR/Tipo de crédito según reporte crediticio de deudores'].map({9:'09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
-                                                   8: '08',
-                                                   10:'10',
-                                                   11:'11',
-                                                   12:'12',
-                                                   13:'13'},
-                                                  na_action=None) #EN CASO DE NULO NO HACER NADA
+                                                   8  : '08',
+                                                   10 : '10',
+                                                   11 : '11',
+                                                   12 : '12',
+                                                   13 : '13'},
+                                                  na_action = None) #EN CASO DE NULO NO HACER NADA
 
 '''
 df['9/MDREPRP/ Modalidad de reprogramación'] = df['9/MDREPRP/ Modalidad de reprogramación'].map(
@@ -203,9 +203,11 @@ df.drop(['NIVEL DE RIESGO'],
 df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['10/SEGRIESGO/ Segmentación de Riesgos'].map({"BAJO"  : '1',
                                                                                                "MEDIO" : '2',
                                                                                                "ALTO"  : '3',
-                                                                                               'SIN INFORMACION': '2'}, na_action = None)
+                                                                                               'SIN INFORMACION': '2'}, 
+                                                                                              na_action = None)
 
-df['12/FREP/ Fecha en que se realizó la reprogramación'] = pd.to_datetime(df['12/FREP/ Fecha en que se realizó la reprogramación'], format='%d/%m/%Y')
+df['12/FREP/ Fecha en que se realizó la reprogramación'] = pd.to_datetime(df['12/FREP/ Fecha en que se realizó la reprogramación'], 
+                                                                          format = '%d/%m/%Y')
 
 mesesito = str(mes)
 añito = str(año)

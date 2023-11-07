@@ -22,9 +22,9 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'SETIEMBRE 2023'
-fecha_corte             = '2023-09-30'
-fecha_corte_inicial     = '2023-09-01'
+fecha_mes               = 'OCTUBRE 2023'
+fecha_corte             = '2023-10-31'
+fecha_corte_inicial     = '2023-10-01'
 
 #%% UIT actual
 uit = 4950
@@ -32,21 +32,21 @@ uit = 4950
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE\\anexo correcto'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Setiembre2023 - campos ampliados (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Octubre2023 - campos ampliados 02 (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 AGOSTO\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 - campos ampliados 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - SETIEMBRE 2023 - campos ampliados 01.xlsx'
 ############################################################################################
 
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
@@ -54,24 +54,24 @@ nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - AGOSTO 2023 - campos ampliados 01.xlsx
 os.chdir(directorio)
 
 bruto = pd.read_excel(anx06_actual,
-                      skiprows=4,
-                      dtype=({'Registro 1/'             : object, 
-                             'Fecha de Nacimiento 3/'   : object,
-                             'Código Socio 7/'          : object,
-                             'Número de Documento 10/'  : object,
-                             'Relación Laboral con la Cooperativa 13/'        :object, 
-                             'Código de Agencia 16/'    : object,
-                             'Moneda del crédito 17/'   : object, 
-                             'Numero de Crédito 18/'    : object,
-                             'Tipo de Crédito 19/'      : object,
-                             'Sub Tipo de Crédito 20/'  : object,
-                             'Fecha de Desembolso 21/'  : object,
-                             'Cuenta Contable 25/'      : object,
-                             'Tipo de Producto 43/'     : object,
-                             'Fecha de Vencimiento Origuinal del Credito 48/' : object,
-                             'Fecha de Vencimiento Actual del Crédito 49/'    : object,
-                             'Nro Prestamo \nFincore'   : object,
-                             'Refinanciado TXT'         : object }))
+                      skiprows = 4,
+                      dtype = ({'Registro 1/'             : object, 
+                                'Fecha de Nacimiento 3/'   : object,
+                                'Código Socio 7/'          : object,
+                                'Número de Documento 10/'  : object,
+                                'Relación Laboral con la Cooperativa 13/'        :object, 
+                                'Código de Agencia 16/'    : object,
+                                'Moneda del crédito 17/'   : object, 
+                                'Numero de Crédito 18/'    : object,
+                                'Tipo de Crédito 19/'      : object,
+                                'Sub Tipo de Crédito 20/'  : object,
+                                'Fecha de Desembolso 21/'  : object,
+                                'Cuenta Contable 25/'      : object,
+                                'Tipo de Producto 43/'     : object,
+                                'Fecha de Vencimiento Origuinal del Credito 48/' : object,
+                                'Fecha de Vencimiento Actual del Crédito 49/'    : object,
+                                'Nro Prestamo \nFincore'   : object,
+                                'Refinanciado TXT'         : object }))
 
 menos_bruto = bruto.drop(columns=[col for col in bruto.columns if 'Unnamed' in col]) #elimina columnas Unnamed
 
@@ -1514,7 +1514,7 @@ else:
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados REPROk.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
 try:
     ruta = nombre
     os.remove(ruta)
@@ -1581,10 +1581,11 @@ df_mes_actual_copia #original antes de procesarlo
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 #donde dice @fechacorte se debe poner el mes
 
-fecha_corte_actual  = '20230830' #mes actual
-fecha_corte_menos_1 = '20230731' #mes anterior
-fecha_corte_menos_2 = '20230630' #mes anterior del anterior
+fecha_corte_actual  = '20231031' #mes actual
+fecha_corte_menos_1 = '20230930' #mes anterior
+fecha_corte_menos_2 = '20230831' #mes anterior del anterior
 
+#%%
 query_sql = f'''
 SELECT 
 	FechaCorte1 as 'FECHA CORTE',
@@ -1637,4 +1638,195 @@ para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 
                             'Nro Prestamo \nFincore', 'Saldo de colocaciones (créditos directos) 24/']]
 
 print(para_reporte)
+
+#%%
+# =============================================================================
+#                🅱🆁🅴🅲🅷🅰🆂 🅳🅴 🆁🅴🅿🆁🅾🅶🆁🅰🅼🅰🅲🅸🅾🅽🅴🆂
+# =============================================================================
+
+import pandas as pd
+import os
+
+#%%
+# REPROGRAMADOS ACTUALES ======================================================
+repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
+ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
+# =============================================================================
+
+# REPROGRAMADOS DEL MES PASADO ================================================
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
+# =============================================================================
+
+#%% LECTURA
+os.chdir(ubi_actual)
+
+# Lectura de los archivos de reprogramados
+
+actual = pd.read_excel(ubi_actual + '\\' + repro_actual,
+                       skiprows = 2,
+                       dtype = {'Tipo de Crédito 19/'   : str,
+                                'Nro Prestamo \nFincore': str})
+
+anterior = pd.read_excel(ubi_anterior + '\\' + repro_anterior,
+                         skiprows = 2,
+                         dtype = {'Tipo de Crédito 19/'   : str,
+                                  'Nro Prestamo \nFincore': str})
+
+#%% FILTRADO DE COLUMNAS
+columnas = ['Tipo de Crédito 19/',
+            'PLAZO_REPR',
+            'TIPO_REPRO',
+            'Saldo de colocaciones (créditos directos) 24/',
+            'Nro Prestamo \nFincore']
+
+actual   = actual[columnas]
+anterior = anterior[columnas]
+
+actual['Tipo de Crédito 19/'] = actual['Tipo de Crédito 19/'].astype(str).str.strip()
+anterior['Tipo de Crédito 19/'] = anterior['Tipo de Crédito 19/'].astype(str).str.strip()
+
+#%% COLUMNAS AUXILIARES PARA REALIZAR LA TABLA PIVOT
+def tipo_credito(df):
+    if df['Tipo de Crédito 19/'] in ['06', '07', '08', '6', '7', '8', 6, 7, 8]:
+        return 'No minorista'
+    elif df['Tipo de Crédito 19/'] in ['09' , '9', 9]:
+        return 'Pequeña Empresa'
+    elif df['Tipo de Crédito 19/'] in ['10', 10]:
+        return 'Microempresa'
+    elif df['Tipo de Crédito 19/'] in ['11', 11]:
+        return 'Consumo Revolvente'
+    elif df['Tipo de Crédito 19/'] in ['12', 12]:
+        return 'Consumo No Revolvente'
+    elif df['Tipo de Crédito 19/'] in ['13', 13]:
+        return 'Hipotecario'
+    else:
+        return 'investigar caso'
+
+actual['Tipo de Crédito'] = actual.apply(tipo_credito, axis=1)
+anterior['Tipo de Crédito'] = anterior.apply(tipo_credito, axis=1)
+
+def dias_plazo(df):
+    if df['PLAZO_REPR']   <= 60:
+        return '60 días'
+    elif df['PLAZO_REPR'] <= 90:
+        return '90 días'
+    elif df['PLAZO_REPR'] <= 120:
+        return '120 días'
+    elif df['PLAZO_REPR'] <= 180:
+        return '180 días'
+    elif df['PLAZO_REPR'] >  180:
+        return 'Más de 180 días'
+    
+actual['Plazo'] = actual.apply(dias_plazo, axis=1)
+anterior['Plazo'] = anterior.apply(dias_plazo, axis=1)
+
+#%% Listas para el ordenamiento de los índices
+credito_lista = ['No minorista',
+                 'Pequeña Empresa',
+                 'Microempresa',
+                 #'Consumo Revolvente',
+                 'Consumo No Revolvente',
+                 'Hipotecario',
+                 'Total']
+
+plazo_lista = ['60 días',
+               '90 días',
+               '120 días',
+               '180 días',
+               'Más de 180 días',
+               'Total']
+
+repro_lista = ['TIPO 1',
+               'TIPO 2',
+               'TIPO 3',
+               'Total']
+
+#%% PIVOT TABLES TABLAS ACTUALES
+actual_tipo_credito = actual.pivot_table(#columns = ,
+                                         values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                                    'Nro Prestamo \nFincore'],
+                                         index   = 'Tipo de Crédito',
+                                         margins = True,
+                                         margins_name = 'Total',
+                                         aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                                    'Nro Prestamo \nFincore' : 'count'}
+                                        )
+actual_tipo_credito = actual_tipo_credito[['Saldo de colocaciones (créditos directos) 24/',
+                                           'Nro Prestamo \nFincore']]
+
+actual_tipo_credito = actual_tipo_credito.loc[credito_lista]
+# =============================================================================
+actual_plazo = actual.pivot_table(#columns = ,
+                                  values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                             'Nro Prestamo \nFincore'],
+                                  index   = 'Plazo',
+                                  margins = True,
+                                  margins_name = 'Total',
+                                  aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                             'Nro Prestamo \nFincore' : 'count'}
+                                 )
+actual_plazo = actual_plazo[['Saldo de colocaciones (créditos directos) 24/',
+                             'Nro Prestamo \nFincore']]
+
+actual_plazo = actual_plazo.loc[plazo_lista]
+# =============================================================================
+actual_tipo_repro = actual.pivot_table(#columns = ,
+                                       values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                                  'Nro Prestamo \nFincore'],
+                                       index   = 'TIPO_REPRO',
+                                       margins = True,
+                                       margins_name = 'Total',
+                                       aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                                  'Nro Prestamo \nFincore' : 'count'}
+                                      )
+actual_tipo_repro = actual_tipo_repro[['Saldo de colocaciones (créditos directos) 24/',
+                                       'Nro Prestamo \nFincore']]
+
+actual_tipo_repro = actual_tipo_repro.loc[repro_lista]
+#%% PIVOT TABLES TABLAS ANTERIORES
+anterior_tipo_credito = anterior.pivot_table(#columns = ,
+                                             values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                                        'Nro Prestamo \nFincore'],
+                                             index   = 'Tipo de Crédito',
+                                             margins = True,
+                                             margins_name = 'Total',
+                                             aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                                        'Nro Prestamo \nFincore' : 'count'}
+                                             )
+anterior_tipo_credito = anterior_tipo_credito[['Saldo de colocaciones (créditos directos) 24/',
+                                               'Nro Prestamo \nFincore']]
+anterior_tipo_credito = anterior_tipo_credito.loc[credito_lista]
+# =============================================================================
+anterior_plazo = anterior.pivot_table(#columns = ,
+                                      values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                                 'Nro Prestamo \nFincore'],
+                                      index   = 'Plazo',
+                                      margins = True,
+                                      margins_name = 'Total',
+                                      aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                                 'Nro Prestamo \nFincore' : 'count'}
+                                      )
+anterior_plazo = anterior_plazo[['Saldo de colocaciones (créditos directos) 24/',
+                                 'Nro Prestamo \nFincore']]
+anterior_plazo = anterior_plazo.loc[plazo_lista]
+# =============================================================================
+anterior_tipo_repro = anterior.pivot_table(#columns = ,
+                                           values  = ['Saldo de colocaciones (créditos directos) 24/',
+                                                      'Nro Prestamo \nFincore'],
+                                           index   = 'TIPO_REPRO',
+                                           margins = True,
+                                           margins_name = 'Total',
+                                           aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
+                                                      'Nro Prestamo \nFincore' : 'count'}
+                                           )
+anterior_tipo_repro = anterior_tipo_repro[['Saldo de colocaciones (créditos directos) 24/',
+                                           'Nro Prestamo \nFincore']]
+anterior_tipo_repro = anterior_tipo_repro.loc[repro_lista]
+
+#%% resta de la variación en los dataframes
+dif_credi = actual_tipo_credito - anterior_tipo_credito
+dif_plazo = actual_plazo        - anterior_plazo
+dif_repro = actual_tipo_repro   - anterior_tipo_repro
+
 
