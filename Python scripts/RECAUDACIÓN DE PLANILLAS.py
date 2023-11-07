@@ -194,7 +194,8 @@ no_match[['PLANILLA COBRANZAS',
           'PAGO INDEPENDIENTE',
           'REINTEGROS',
           'SALDO',
-          '% COBRANZA']].to_excel('NO HACEN MATCH.xlsx', index = False)
+          '% COBRANZA']].to_excel('NO HACEN MATCH.xlsx', 
+                                  index = False)
 
 #%% BUSCADOR DE NOMBRE DE LAS PLANILLAS
 texto = 'tli alma'
@@ -231,7 +232,6 @@ base_final = pd.read_sql_query(f'''
                 FROM  anexos_riesgos2..Anx06_preliminar A
                 WHERE FechaCorte1 = @fechacorte
 ''', conn)
-
 del conn
 
 #%%
