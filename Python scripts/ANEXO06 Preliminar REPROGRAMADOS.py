@@ -1581,9 +1581,11 @@ df_mes_actual_copia #original antes de procesarlo
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 #donde dice @fechacorte se debe poner el mes
 
+# FECHAS EN FORMATO SQL =======================================================
 fecha_corte_actual  = '20231031' #mes actual
 fecha_corte_menos_1 = '20230930' #mes anterior
 fecha_corte_menos_2 = '20230831' #mes anterior del anterior
+# =============================================================================
 
 #%%
 query_sql = f'''
@@ -1646,12 +1648,15 @@ print(para_reporte)
 
 import pandas as pd
 import os
-# from openpyxl import Workbook
 
 #%%
+# REPROGRAMADOS ACTUALES SI ES QUE CONTINUAMOS EN LA MISMA SESIÓN =============
+actual = reprogramados.copy()
+# =============================================================================
+
 # REPROGRAMADOS ACTUALES ======================================================
-repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
-ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
+# repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
+# ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
@@ -1659,15 +1664,21 @@ repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incl
 ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
 # =============================================================================
 
+
+# NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
+mes_actual_txt   = 'Oct-23'
+mes_anterior_txt = 'Set-23'
+# =============================================================================
 #%% LECTURA
-os.chdir(ubi_actual)
+
+# os.chdir(ubi_actual)
 
 # Lectura de los archivos de reprogramados
 
-actual = pd.read_excel(ubi_actual + '\\' + repro_actual,
-                       skiprows = 2,
-                       dtype = {'Tipo de Crédito 19/'   : str,
-                                'Nro Prestamo \nFincore': str})
+# actual = pd.read_excel(ubi_actual + '\\' + repro_actual,
+#                        skiprows = 2,
+#                        dtype = {'Tipo de Crédito 19/'   : str,
+#                                 'Nro Prestamo \nFincore': str})
 
 anterior = pd.read_excel(ubi_anterior + '\\' + repro_anterior,
                          skiprows = 2,
@@ -1744,149 +1755,193 @@ repro_lista = ['TIPO 1',
                'Total']
 
 #%% PIVOT TABLES TABLAS ACTUALES
+NUEVO_NOMBRE_FINCORE = 'Nro. Operaciones'
+NUEVO_NOMBRE_SALDO   = 'Saldo Cartera'
+
+actual.rename(columns ={'Nro Prestamo \nFincore': NUEVO_NOMBRE_FINCORE},
+              inplace = True)
+actual.rename(columns ={'Saldo de colocaciones (créditos directos) 24/': NUEVO_NOMBRE_SALDO},
+              inplace = True)
+anterior.rename(columns ={'Nro Prestamo \nFincore': NUEVO_NOMBRE_FINCORE},
+              inplace = True)
+anterior.rename(columns ={'Saldo de colocaciones (créditos directos) 24/': NUEVO_NOMBRE_SALDO},
+              inplace = True)
+
 actual_tipo_credito = actual.pivot_table(#columns = ,
-                                         values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                                    'Nro Prestamo \nFincore'],
+                                         values  = [NUEVO_NOMBRE_SALDO,
+                                                    NUEVO_NOMBRE_FINCORE],
                                          index   = 'Tipo de Crédito',
                                          margins = True,
                                          margins_name = 'Total',
-                                         aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                                    'Nro Prestamo \nFincore' : 'count'}
+                                         aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                                    NUEVO_NOMBRE_FINCORE : 'count'}
                                         )
-actual_tipo_credito = actual_tipo_credito[['Saldo de colocaciones (créditos directos) 24/',
-                                           'Nro Prestamo \nFincore']]
+actual_tipo_credito = actual_tipo_credito[[NUEVO_NOMBRE_SALDO,
+                                           NUEVO_NOMBRE_FINCORE]]
 
 actual_tipo_credito = actual_tipo_credito.loc[credito_lista]
 # =============================================================================
 actual_plazo = actual.pivot_table(#columns = ,
-                                  values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                             'Nro Prestamo \nFincore'],
+                                  values  = [NUEVO_NOMBRE_SALDO,
+                                             NUEVO_NOMBRE_FINCORE],
                                   index   = 'Plazo',
                                   margins = True,
                                   margins_name = 'Total',
-                                  aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                             'Nro Prestamo \nFincore' : 'count'}
+                                  aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                             NUEVO_NOMBRE_FINCORE : 'count'}
                                  )
-actual_plazo = actual_plazo[['Saldo de colocaciones (créditos directos) 24/',
-                             'Nro Prestamo \nFincore']]
+actual_plazo = actual_plazo[[NUEVO_NOMBRE_SALDO,
+                             NUEVO_NOMBRE_FINCORE]]
 
 actual_plazo = actual_plazo.loc[plazo_lista]
 # =============================================================================
 actual_tipo_repro = actual.pivot_table(#columns = ,
-                                       values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                                  'Nro Prestamo \nFincore'],
+                                       values  = [NUEVO_NOMBRE_SALDO,
+                                                  NUEVO_NOMBRE_FINCORE],
                                        index   = 'TIPO_REPRO',
                                        margins = True,
                                        margins_name = 'Total',
-                                       aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                                  'Nro Prestamo \nFincore' : 'count'}
+                                       aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                                  NUEVO_NOMBRE_FINCORE : 'count'}
                                       )
-actual_tipo_repro = actual_tipo_repro[['Saldo de colocaciones (créditos directos) 24/',
-                                       'Nro Prestamo \nFincore']]
+actual_tipo_repro = actual_tipo_repro[[NUEVO_NOMBRE_SALDO,
+                                       NUEVO_NOMBRE_FINCORE]]
 
 actual_tipo_repro = actual_tipo_repro.loc[repro_lista]
 #%% PIVOT TABLES TABLAS ANTERIORES
 anterior_tipo_credito = anterior.pivot_table(#columns = ,
-                                             values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                                        'Nro Prestamo \nFincore'],
+                                             values  = [NUEVO_NOMBRE_SALDO,
+                                                        NUEVO_NOMBRE_FINCORE],
                                              index   = 'Tipo de Crédito',
                                              margins = True,
                                              margins_name = 'Total',
-                                             aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                                        'Nro Prestamo \nFincore' : 'count'}
+                                             aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                                        NUEVO_NOMBRE_FINCORE : 'count'}
                                              )
-anterior_tipo_credito = anterior_tipo_credito[['Saldo de colocaciones (créditos directos) 24/',
-                                               'Nro Prestamo \nFincore']]
+anterior_tipo_credito = anterior_tipo_credito[[NUEVO_NOMBRE_SALDO,
+                                               NUEVO_NOMBRE_FINCORE]]
 anterior_tipo_credito = anterior_tipo_credito.loc[credito_lista]
 # =============================================================================
 anterior_plazo = anterior.pivot_table(#columns = ,
-                                      values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                                 'Nro Prestamo \nFincore'],
+                                      values  = [NUEVO_NOMBRE_SALDO,
+                                                 NUEVO_NOMBRE_FINCORE],
                                       index   = 'Plazo',
                                       margins = True,
                                       margins_name = 'Total',
-                                      aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                                 'Nro Prestamo \nFincore' : 'count'}
+                                      aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                                 NUEVO_NOMBRE_FINCORE : 'count'}
                                       )
-anterior_plazo = anterior_plazo[['Saldo de colocaciones (créditos directos) 24/',
-                                 'Nro Prestamo \nFincore']]
+anterior_plazo = anterior_plazo[[NUEVO_NOMBRE_SALDO,
+                                 NUEVO_NOMBRE_FINCORE]]
 anterior_plazo = anterior_plazo.loc[plazo_lista]
 # =============================================================================
 anterior_tipo_repro = anterior.pivot_table(#columns = ,
-                                           values  = ['Saldo de colocaciones (créditos directos) 24/',
-                                                      'Nro Prestamo \nFincore'],
+                                           values  = [NUEVO_NOMBRE_SALDO,
+                                                      NUEVO_NOMBRE_FINCORE],
                                            index   = 'TIPO_REPRO',
                                            margins = True,
                                            margins_name = 'Total',
-                                           aggfunc = {'Saldo de colocaciones (créditos directos) 24/' : 'sum',
-                                                      'Nro Prestamo \nFincore' : 'count'}
+                                           aggfunc = {NUEVO_NOMBRE_SALDO : 'sum',
+                                                      NUEVO_NOMBRE_FINCORE : 'count'}
                                            )
-anterior_tipo_repro = anterior_tipo_repro[['Saldo de colocaciones (créditos directos) 24/',
-                                           'Nro Prestamo \nFincore']]
+anterior_tipo_repro = anterior_tipo_repro[[NUEVO_NOMBRE_SALDO,
+                                           NUEVO_NOMBRE_FINCORE]]
 anterior_tipo_repro = anterior_tipo_repro.loc[repro_lista]
 
-#%% resta de la variación en los dataframes
+#%% resta de la variación en los 
+# =============================================================================
 dif_credi = actual_tipo_credito - anterior_tipo_credito
 dif_plazo = actual_plazo        - anterior_plazo
 dif_repro = actual_tipo_repro   - anterior_tipo_repro
+# =============================================================================
 
-#%% CREACIÓN DEL EXCEL
-writer = pd.ExcelWriter('BRECHAS DE REPROGRAMADOS.xlsx', engine='xlsxwriter')
+# =============================================================================
+# #%% CREACIÓN DEL EXCEL
+writer = pd.ExcelWriter(f'BRECHAS DE REPROGRAMADOS {mes_actual_txt}.xlsx', engine='xlsxwriter')
+# =============================================================================
 sheet = 'BrechasReprogramados'
+fila_inicial = 3
 
-anterior_tipo_credito.to_excel(writer, 
+anterior_tipo_credito.to_excel(writer,
                                sheet_name = sheet, 
-                               startrow   = 0, 
+                               startrow   = fila_inicial, 
                                startcol   = 0, 
                                index      = True)
+# este cuadro de texto solo funciona si va debajo del código anterior (ಠಿ_ಠ)
+writer.sheets[sheet].write(0, #número de fila
+                           1, #número de columna
+                           f'{mes_anterior_txt}')
+writer.sheets[sheet].write(1, #número de fila
+                           0, #número de columna
+                           'Cuadro N°1: Reprogramaciones por Tipo de Crédito')
 
-anterior_plazo.to_excel(writer, 
+anterior_plazo.to_excel(writer,
                         sheet_name = sheet, 
-                        startrow   = anterior_tipo_credito.shape[0] + 2, 
+                        startrow   = anterior_tipo_credito.shape[0] + fila_inicial + 3, 
                         startcol   = 0, 
                         index      = True)
+writer.sheets[sheet].write(anterior_tipo_credito.shape[0] + fila_inicial + 2, #número de fila
+                           0, #número de columna
+                           'Cuadro N°2: Reprogramaciones según plazo')
 
-anterior_tipo_repro.to_excel(writer, 
+anterior_tipo_repro.to_excel(writer,
                              sheet_name = sheet, 
-                             startrow   = anterior_tipo_credito.shape[0] + anterior_plazo.shape[0] + 4, 
+                             startrow   = anterior_tipo_credito.shape[0] + anterior_plazo.shape[0] + fila_inicial + 6, 
                              startcol   = 0, 
                              index      = True)
-
+writer.sheets[sheet].write(anterior_tipo_credito.shape[0] + anterior_plazo.shape[0] + fila_inicial + 5, #número de fila
+                           0, #número de columna
+                           'Cuadro N°3: Reprogramaciones según tipo de rprogramación')
 # =============================================================================
 actual_tipo_credito.to_excel(writer, 
                              sheet_name = sheet, 
-                             startrow   = 0, 
+                             startrow   = fila_inicial, 
                              startcol   = 4, 
                              index      = True)
+writer.sheets[sheet].write(0, #número de fila
+                           5, #número de columna
+                           f'{mes_actual_txt}')
+writer.sheets[sheet].write(1, #número de fila
+                           4, #número de columna
+                           'Cuadro N°1: Reprogramaciones por Tipo de Crédito')
 
 actual_plazo.to_excel(writer, 
                       sheet_name = sheet, 
-                      startrow   = actual_tipo_credito.shape[0] + 2, 
+                      startrow   = actual_tipo_credito.shape[0] + fila_inicial + 3, 
                       startcol   = 4, 
                       index      = True)
+writer.sheets[sheet].write(anterior_tipo_credito.shape[0] + fila_inicial + 2, #número de fila
+                           4, #número de columna
+                           'Cuadro N°2: Reprogramaciones según plazo')
 
 actual_tipo_repro.to_excel(writer, 
                            sheet_name = sheet, 
-                           startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0] + 4, 
+                           startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0]+ fila_inicial + 6, 
                            startcol   = 4, 
                            index      = True)
+writer.sheets[sheet].write(anterior_tipo_credito.shape[0] + anterior_plazo.shape[0] + fila_inicial + 5, #número de fila
+                           4, #número de columna
+                           'Cuadro N°3: Reprogramaciones según tipo de rprogramación')
 
 # =============================================================================
 dif_credi.to_excel(writer, 
                    sheet_name = sheet, 
-                   startrow   = 0, 
+                   startrow   = fila_inicial, 
                    startcol   = 8, 
                    index      = True)
+writer.sheets[sheet].write(1, #número de fila
+                           9, #número de columna
+                           'DIFERENCIAS')
 
 dif_plazo.to_excel(writer, 
                    sheet_name = sheet, 
-                   startrow   = actual_tipo_credito.shape[0] + 2, 
+                   startrow   = actual_tipo_credito.shape[0] + fila_inicial + 3, 
                    startcol   = 8, 
                    index      = True)
 
 dif_repro.to_excel(writer, 
                    sheet_name = sheet, 
-                   startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0] + 4, 
+                   startrow   = actual_tipo_credito.shape[0] + actual_plazo.shape[0] + fila_inicial + 6, 
                    startcol   = 8, 
                    index      = True)
 
