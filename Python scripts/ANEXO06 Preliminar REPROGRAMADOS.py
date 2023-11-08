@@ -1642,9 +1642,11 @@ para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 
 print(para_reporte)
 
 #%%
-# =============================================================================
-#                🅱🆁🅴🅲🅷🅰🆂 🅳🅴 🆁🅴🅿🆁🅾🅶🆁🅰🅼🅰🅲🅸🅾🅽🅴🆂
-# =============================================================================
+# =========================================================================== #
+# =========================================================================== #
+#                🅱🆁🅴🅲🅷🅰🆂 🅳🅴 🆁🅴🅿🆁🅾🅶🆁🅰🅼🅰🅲🅸🅾🅽🅴🆂                     #
+# =========================================================================== #
+# =========================================================================== #
 
 import pandas as pd
 import os
@@ -1654,7 +1656,7 @@ import os
 actual = reprogramados.copy()
 # =============================================================================
 
-# REPROGRAMADOS ACTUALES ======================================================
+# REPROGRAMADOS ACTUALES (si ya no tenemos abierto el dataframe reprogramados)=
 # repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
 # ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
 # =============================================================================
@@ -1671,14 +1673,15 @@ mes_anterior_txt = 'Set-23'
 # =============================================================================
 #%% LECTURA
 
-# os.chdir(ubi_actual)
-
 # Lectura de los archivos de reprogramados
 
+# descomentamos este fragmento de código si es que no estamos continuando con el reporte de reprogramados
+# os.chdir(ubi_actual)
 # actual = pd.read_excel(ubi_actual + '\\' + repro_actual,
 #                        skiprows = 2,
 #                        dtype = {'Tipo de Crédito 19/'   : str,
 #                                 'Nro Prestamo \nFincore': str})
+# =============================================================================
 
 anterior = pd.read_excel(ubi_anterior + '\\' + repro_anterior,
                          skiprows = 2,
