@@ -2541,6 +2541,7 @@ espacio_entre_tablas.to_excel(writer,
 
 # Guarda y cierra el archivo Excel
 writer.save()
+writer.close()
 
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS

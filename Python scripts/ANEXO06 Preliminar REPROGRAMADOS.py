@@ -1678,8 +1678,8 @@ mes_anterior_txt = 'Set-23'
 # descomentamos este fragmento de código si es que no estamos continuando con el reporte de reprogramados
 # os.chdir(ubi_actual)
 # actual = pd.read_excel(ubi_actual + '\\' + repro_actual,
-#                        skiprows = 2,
-#                        dtype = {'Tipo de Crédito 19/'   : str,
+#                         skiprows = 2,
+#                         dtype = {'Tipo de Crédito 19/'   : str,
 #                                 'Nro Prestamo \nFincore': str})
 # =============================================================================
 
@@ -1950,6 +1950,7 @@ dif_repro.to_excel(writer,
 
 
 writer.save()
+writer.close()
 
 
 
