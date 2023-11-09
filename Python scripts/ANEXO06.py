@@ -2257,22 +2257,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Setiembre 2023'  #se pone el corte actual
+fecha_corte = 'Octubre 2023'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20230831" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20230930" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados CONTABILIDAD.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados CONT.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\CONTAB'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\contab'
 
 #%% importación de módulos
 import os
@@ -2401,7 +2401,7 @@ df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_F
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 
 print(df_diferidos['Provisiones Constituidas 37/'].sum())
-print(df_diferidos['Provisiones Constituidas 37/'].sum() - 9164865.1000)
+
 #%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado
 'AQUI HAY QUE CAMBIAR LA FECHA PARA QUE VAYA DEL MES PASADO al que estamos elaborando'
@@ -2662,53 +2662,53 @@ diferencias_porcentuales.fillna(0, inplace=True)
 import pandas as pd
 
 # Crea un objeto ExcelWriter para guardar los dataframes en un solo archivo
-writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine = 'xlsxwriter')
 
 # Define el espacio entre las tablas
 espacio_entre_tablas = pd.DataFrame([''])
 
 # Guarda los dataframes en el archivo Excel
 pivot_mes_actual.to_excel(writer,
-                          sheet_name='Brechas', 
-                          startrow=0, 
-                          startcol=0, 
-                          index=True)
+                          sheet_name = 'Brechas', 
+                          startrow   = 0, 
+                          startcol   = 0, 
+                          index      = True)
 writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + 1, #número de fila
                                0,                             #número de columna
                                'DATOS DEL MES ACTUAL')        #valor en esa fila y columna
 
 pivot_mes_pasado.to_excel(writer, 
-                          sheet_name='Brechas', 
-                          startrow=pivot_mes_actual.shape[0] + 3, 
-                          startcol=0, 
-                          index=True)
+                          sheet_name = 'Brechas', 
+                          startrow   = pivot_mes_actual.shape[0] + 3, 
+                          startcol   = 0, 
+                          index      = True)
 writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 4, #número de fila
                                0,                                                         #número de columna
                                'DATOS DEL MES PASADO')                                    #valor en esa fila y columna
 
 diferencias.to_excel(writer, 
-                     sheet_name='Brechas', 
-                     startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 6, 
-                     startcol=0, 
-                     index=True)
+                     sheet_name = 'Brechas', 
+                     startrow   = pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + 6, 
+                     startcol   = 0, 
+                     index      = True)
 writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 7, #número de fila
                                0,                                                                                #número de columna
                                'DIFERENCIAS DE UN MES A OTRO')                                                   #valor en esa fila y columna
 
 diferencias_porcentuales.to_excel(writer, 
-                                  sheet_name='Brechas', 
-                                  startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 9, 
-                                  startcol=0, 
-                                  index=True)
+                                  sheet_name = 'Brechas', 
+                                  startrow   = pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + 9, 
+                                  startcol   = 0, 
+                                  index      = True)
 writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 10, #número de fila
                                0,                                                                                                                     #número de columna
                                'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')                                                                           #valor en esa fila y columna
 
 espacio_entre_tablas.to_excel(writer, 
-                              sheet_name='Brechas', 
-                              startrow=pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, 
-                              startcol=0, 
-                              index=False)
+                              sheet_name = 'Brechas', 
+                              startrow   = pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, 
+                              startcol   = 0, 
+                              index = False)
 
 # Guarda y cierra el archivo Excel
 writer.save()
