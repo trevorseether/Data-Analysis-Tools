@@ -962,4 +962,4 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
 #%% GUARDAR LOS CAMBIOS EN EL EXCEL
 
 book.save(nombre)
-
+book.close(nombre)

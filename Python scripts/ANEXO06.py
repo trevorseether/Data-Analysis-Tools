@@ -34,21 +34,21 @@ from datetime import datetime #, timedelta
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - SETIEMBRE 2023 - campos ampliados 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - OCTUBRE 2023 - campos ampliados.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2023.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 10 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Septiembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Octubre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -57,8 +57,8 @@ uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2023-09-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Setiembre 2023'
+fecha_corte     = '2023-10-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Octubre 2023'
 ########################################################
 
 #%% ESTABLECER FECHA CORTE
@@ -2048,6 +2048,177 @@ ya_casi['Registro 1/'] = [f'{i+1:06}' for i in range(total_filas)]
 #%% rename del anexo06 
 #
 anexo06_casi = ya_casi.copy()
+
+#%% REORDENAMIENTO UNA VEZ MÁS:
+COL = ['''Socios al menos con un cred < 100 soles
+amarillo =  cred <100
+rosado =  cred >= 100
+ PROV.REQUERIDA A SER EVALUADA.''',
+'''Registro 1/''',
+'''Apellidos y Nombres / Razón Social 2/''',
+'''Fecha de Nacimiento 3/''',
+'''Género 4/''',
+'''Estado Civil 5/''',
+'''Sigla de la Empresa 6/''',
+'''Código Socio 7/''',
+'''Partida Registral 8/''',
+'''Tipo de Documento 9/''',
+'''Número de Documento 10/''',
+'''Tipo de Persona 11/''',
+'''Domicilio 12/''',
+'''Relación Laboral con la Cooperativa 13/''',
+'''Tasa de Provisión SA''',
+'''Tasa de Provisión''',
+'''Clasificación del Deudor 14/''',
+'''alineamiento 15 anterior''',
+'''Clasificación del Deudor con Alineamiento 15/''',
+'''Código de Agencia 16/''',
+'''Moneda del crédito 17/''',
+'''Numero de Crédito 18/''',
+'''Tipo de Crédito 19/''',
+'''Sub Tipo de Crédito 20/''',
+'''Fecha de Desembolso 21/''',
+'''Monto de Desembolso Origuinal TXT''',
+'''Monto de Desembolso 22/''',
+'''Tasa de Interés Anual 23/''',
+'''Saldo de colocaciones (créditos directos) 24/''',
+'''Cuenta Contable 25/''',
+'''Capital Vigente 26/''',
+'''Capital Reestrucutado 27/''',
+'''Capital Refinanciado 28/''',
+'''Capital Vencido 29/''',
+'''Capital en Cobranza Judicial 30/''',
+'''Cartera Atrasada''',
+'''Capital Contingente 31/''',
+'''Cuenta Contable Capital Contingente 32/''',
+'''Dias de Mora 33/''',
+'''Saldos de Garantías Preferidas 34/''',
+'''Saldo de Garantías Autoliquidables 35/''',
+'''Provisiones Requeridas 36/ SA''',
+'''Provisiones Requeridas 36/''',
+'''Provisiones Constituidas 37/''',
+'''Saldos de Créditos Castigados 38/''',
+'''Cuenta Contable Crédito Castigado 39/''',
+'''Rendimiento
+Devengado 40/''',
+'''Intereses en Suspenso 41/''',
+'''Ingresos Diferidos 42/''',
+'''Tipo de Producto 43/ original''',
+'''Tipo de Producto 43/''',
+'''Número de Cuotas Programadas 44/''',
+'''Número de Cuotas Pagadas 45/''',
+'''Periodicidad de la cuota 46/''',
+'''Periodo de Gracia 47/''',
+'''Fecha de Vencimiento Origuinal del Credito 48/''',
+'''Fecha de Vencimiento Actual del Crédito 49/''',
+'''Saldo de Créditos con Sustitución de Contraparte Crediticia 50/''',
+'''Saldo de Créditos que no cuentan con cobertura 51/''',
+'''Saldo Capital de Créditos Reprogramados 52/''',
+'''Saldo Capital en Cuenta de Orden por efecto del Covid 53/''',
+'''Subcuenta de orden 
+54/
+''',
+'''Rendimiento Devengado por efecto del COVID 19 55/''',
+'''Saldo de Garantías con Sustitución de Contraparte 56/''',
+'''Saldo Capital de Créditos Reprogramados por efecto del COVID 19 57/''',
+'''Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/''',
+'''Rendimiento Devengado por Programa IMPULSO MYPERU 59/''',
+'''FEC_ULT_REPROG''',
+'''PLAZO_REPR''',
+'''TIPO_REPRO''',
+'''PLAZO REPRO ACUMULADO''',
+'''NRO CUOTAS REPROG CANCELADAS''',
+'''NRO REPROG''',
+'''fecha desemb (v)''',
+'''fecha término de gracia por desembolso ["v" + dias gracia (av)]''',
+'''periodo de gracia por Reprog inicio''',
+'''periodo de gracia por Reprog Término''',
+'''Fecha Venc de Ult Cuota Cancelada
+(NVO)''',
+'''Categoria TXT''',
+'''Saldo Colocacion Con Capitalizacion de Intereses TXT''',
+'''Fecha Castigo TXT''',
+'''Dscto Enviado TXT''',
+'''Desc Pagado TXT''',
+'''Fecha Vencimiento 
+Origuinal TXT''',
+'''Fecha Vencimiento Actual TXT''',
+'''Fecha Creacion Reprogramacion Nacimiento TXT''',
+'''Fecha Creacion Reprogramacion Corte TXT''',
+'''Nro Dias Gracia Corte RPG TXT''',
+'''Nro Cuotas Canc Post Regro''',
+'''Nro Prestamos X Deudor TXT''',
+'''Fecha Ultimo 
+Pago TXT''',
+'''Tipo Reprogramacion TXT''',
+'''Fecha Primer Cuota Gracia Nacimiento RPG TXT''',
+'''Primer Fecha Cuota Gracia Corte RPG TXT''',
+'''Nro Reprogramaciones TXT''',
+'''Origen
+ Prestamo''',
+'''Nro Prestamo 
+Fincore''',
+'''Por Cobrar Mes Actual TXT''',
+'''Reprogramado TXT''',
+'''Funcionaria TXT''',
+'''Nombre Empresa TXT''',
+'''Nombre PlanillaTXT''',
+'''Planilla Anterior TXT''',
+'''PLANILLA CONSOLIDADA''',
+'''Cod Usuario Pri Aprob''',
+'''Cod Usuario Seg Aprob''',
+'''Profesion''',
+'''Ocupacion''',
+'''Actividad Economica''',
+'''Fecha Venc Ult Cuota Cancelada''',
+'''Departamento''',
+'''Provincia''',
+'''Distrito''',
+'''Tipo Credito TXT''',
+'''TEA TXT''',
+'''Refinanciado TXT''',
+'''Situacion TXT''',
+'''Fecha Situacion TXT''',
+'''Abogado TXT''',
+'''Fecha Asignacion Abogado TXT''',
+'''Nro Expediente TXT''',
+'''Fecha Expediente TXT''',
+'''Tasa Clasificacion  Deudor con Alineamiento TXT''',
+'''Monto de Garantías Preferidas''',
+'''Monto de Garantías Autoliquidables''',
+'''Importe Vencido > 60d
+(Solo DxP)''',
+'''Dias vencido (Solo DxP)''',
+'''Porción Vencido''',
+'''Situación del Credito (Solo DxP)''',
+'''Tasa Diaria''',
+'''Fecha Ultimo Pago''',
+'''fecha término de gracia por desembolso''',
+'''Fecha Venc de Ult Cuota Cancelada Contabilidad''',
+'''dias int suspenso''',
+'''Cartera Neta''',
+'''FEC_REPROG''',
+'''Días de Diferido 1''',
+'''Ingresos Diferidos 1''',
+'''Días de Diferido 2''',
+'''Ingresos Diferidos 2''',
+'''Interes
+Devengado Total''',
+'''Interes 
+Suspenso Total''',
+'''Nombre Negocio''',
+'''Domicilio Negocio''',
+'''Distrito Negocio''',
+'''Dpto Negocio''',
+'''Provincia Negocio''',
+'''Funcionario Origuinador''',
+'''Funcionario Actual''',
+'''Fecha Desembolso TXT''',
+'''9/MDREPRP/ Modalidad de reprogramación''',
+'''TIPO DE PRODUCTO TXT'''
+]
+
+anexo06_casi = anexo06_casi[COL]
 
 #%% CREACIÓN DEL EXCEL
 

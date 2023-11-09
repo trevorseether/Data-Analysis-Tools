@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 SETIEMBRE'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 octubre'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202301126_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL.xlsx'
+calificacion = '20523941047_70369063_PE202301249_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'setiembre'
+mes = 'octubre'
 año = 2023
 ###############################################################################
 
@@ -206,8 +206,37 @@ df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['10/SEGRIESGO/ Segmentación d
                                                                                                'SIN INFORMACION': '2'}, 
                                                                                               na_action = None)
 
-df['12/FREP/ Fecha en que se realizó la reprogramación'] = pd.to_datetime(df['12/FREP/ Fecha en que se realizó la reprogramación'], 
-                                                                          format = '%d/%m/%Y')
+formatos = ['%d/%m/%Y %H:%M:%S',
+            '%d/%m/%Y',
+            '%Y%m%d', '%Y-%m-%d', 
+            '%Y-%m-%d %H:%M:%S', 
+            '%Y/%m/%d %H:%M:%S',
+            '%Y-%m-%d %H:%M:%S PM',
+            '%Y-%m-%d %H:%M:%S AM',
+            '%Y/%m/%d %H:%M:%S PM',
+            '%Y/%m/%d %H:%M:%S AM']
+
+# Función de análisis de fechas
+def parse_dates(date_str):
+    '''
+    Parameters
+    ----------
+    date_str : Es el formato que va a analizar dentro de la columna del DataFrame.
+
+    Returns
+    -------
+    Si el date_str tiene una estructura compatible con los formatos preestablecidos
+    para su iteración, la convertirá en un DateTime
+
+    '''
+    for formato in formatos:
+        try:
+            return pd.to_datetime(date_str, format=formato)
+        except ValueError:
+            pass
+    return pd.NaT
+
+df['12/FREP/ Fecha en que se realizó la reprogramación'] = df['12/FREP/ Fecha en que se realizó la reprogramación'].apply(parse_dates)
 
 mesesito = str(mes)
 añito = str(año)
