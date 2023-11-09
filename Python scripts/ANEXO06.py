@@ -2394,13 +2394,14 @@ def prov_cons_37_FINAL(df_diferidos):
     #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.6367 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.5982 #0.6367 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 
-print(df_diferidos['Provisiones Constituidas 37/'].sum())
+print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
+print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - 9165145.82),2))
 
 #%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado

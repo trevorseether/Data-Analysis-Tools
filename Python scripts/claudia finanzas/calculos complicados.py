@@ -257,7 +257,9 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
                             --------
   
 -- WHERE        (ccab.Fecha >= '01-01-2020' and ccab.Fecha <= '31-12-2020') and cdet.flagponderosa is null
--- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  -- 376 Anulado and cdet.flagponderosa is null
+-- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  
+-- 376 Anulado and cdet.flagponderosa is null
+
 Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20220101' AND '20231031' and cdet.CodEstado <> 376   
 ORDER BY socio, ccab.fecha
 
@@ -288,7 +290,6 @@ int_cuota_sin_retenciones = cobranza_sin_retenciones.pivot_table(values  = 'INT_
 int_cuota_con_retenciones = cobranza_de_retenciones.pivot_table(values  = 'INT_CUOTA',
                                                                 index   = 'PagareFincore',
                                                                 aggfunc = 'sum')
-
 
 #%% cuota en la que hicieron la retención
 
