@@ -23,8 +23,8 @@ from colorama import Back # , Style, init, Fore
 #%% ESTABLECER FECHA DEL MES
 
 fecha_mes               = 'OCTUBRE 2023'
-fecha_corte             = '2023-09-30'
-fecha_corte_inicial     = '2023-09-01'
+fecha_corte             = '2023-10-31'
+fecha_corte_inicial     = '2023-10-01'
 
 #%% UIT actual
 uit = 4950
@@ -32,11 +32,11 @@ uit = 4950
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\experimentos'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE\\anexo correcto\\ahora sí'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Setiembre2023 - campos ampliados (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Octubre2023 - campos ampliados 02 (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
@@ -613,8 +613,9 @@ ordenado = ordenado.merge(calificacion,
 ordenado.drop(['cod socio para merge'], axis=1, inplace=True)
 
 # =============================================================================
-ordenado.to_excel('asdasd.xlsx',
-                  index = False)
+# para hacer pruebitas con el excel
+# ordenado.to_excel('asdasd.xlsx',
+#                   index = False)
 # =============================================================================
 #%% ASIGNACIÓN ALINEMIENTO 15/ CONDICIONAL
 #finalmente, función para asignar el alineamiento 15/
@@ -1186,12 +1187,12 @@ def filtracion_E1_E2(anx06_ordenado):
         return 'vigente'
             
 anx06_ordenado['vigentes??'] = anx06_ordenado.apply(filtracion_E1_E2, 
-                                                    axis=1)
+                                                    axis = 1)
 
 anx06_ordenado = anx06_ordenado[anx06_ordenado['vigentes??'] == 'vigente']
 anx06_ordenado.drop(['vigentes??'], 
-                    axis=1, 
-                    inplace=True)
+                    axis = 1, 
+                    inplace = True)
 
 #VERIFICACIÓN
 print(anx06_ordenado[~pd.isna(anx06_ordenado['E2'])]['E2']) #con esto podemos ver que solo queden créditos con cancelaciones posteriores a la fecha de corte

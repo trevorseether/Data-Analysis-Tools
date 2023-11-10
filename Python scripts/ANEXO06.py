@@ -34,7 +34,7 @@ from datetime import datetime #, timedelta
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
@@ -394,7 +394,8 @@ df_resultado['porcentaje del total'] =  df_resultado['Saldo de colocaciones (cr�
 #%% PARTE 2 ALINEAMIENTO 15/
 #creamos función que crea columna auxiliar para escoger los que sirven para el alineamiento
 def monto_menor(df_resultado):
-    if (df_resultado['Saldo de colocaciones (créditos directos) 24/'] < 100) or \
+    if ((df_resultado['Saldo de colocaciones (créditos directos) 24/'] < 100) and \
+        (df_resultado['porcentaje del total'] < 0.01)) or \
         ((df_resultado['porcentaje del total'] < 0.01) and \
         (df_resultado['Saldo de colocaciones (créditos directos) 24/'] < 3*uit)):
         return 'menor'
@@ -405,17 +406,15 @@ df_resultado['credito menor'] = df_resultado.apply(monto_menor, axis=1)
 
 #SENTINEL EXPERIAN inicio 1
 #parte del código que servirá para el reporte de SENTINEL - EXPERIAN
-nro_creditos_por_socio = df_resultado.groupby('Código Socio 7/').agg({'''Nro Prestamo 
-Fincore''': 'nunique'}).reset_index()
-nro_creditos_por_socio = nro_creditos_por_socio.rename(columns={"Código Socio 7/": 'cod socio unico'})
-nro_creditos_por_socio = nro_creditos_por_socio.rename(columns={'''Nro Prestamo 
-Fincore''': 'nro de préstamos'})
+nro_creditos_por_socio = df_resultado.groupby('Código Socio 7/').agg({'Nro Prestamo \nFincore': 'nunique'}).reset_index()
+nro_creditos_por_socio = nro_creditos_por_socio.rename(columns={"Código Socio 7/" : 'cod socio unico'})
+nro_creditos_por_socio = nro_creditos_por_socio.rename(columns={'Nro Prestamo \nFincore' : 'nro de préstamos'})
 
 #MERGE PARA INDICAR AL ANEXO06, EL NRO DE CRÉDITOS QUE TIENE AL MISMO TIEMPO
 df_resultado = df_resultado.merge(nro_creditos_por_socio, 
-                                  how='left', 
-                                  left_on=['Código Socio 7/'], 
-                                  right_on=['cod socio unico'])
+                                  how      = 'left', 
+                                  left_on  = ['Código Socio 7/'], 
+                                  right_on = ['cod socio unico'])
 df_resultado.drop(['cod socio unico'], axis=1, inplace=True)
 #SENTINEL EXPERIAN final 1
 
@@ -430,9 +429,9 @@ calificacion = calificacion.rename(columns={'Clasificación del Deudor 14/': 'ca
 
 #hora del merge
 df_resultado = df_resultado.merge(calificacion, 
-                                  how='left', 
-                                  left_on=['Código Socio 7/'], 
-                                  right_on=['cod socio para merge'])
+                                  how     = 'left', 
+                                  left_on = ['Código Socio 7/'], 
+                                  right_on= ['cod socio para merge'])
 #hasta aquí ya hemos asignado el tipo de producto, de manera general, debería estar todo unificado. falta poner las excepciones,
 
 #para sentinel-experian iniico 2
@@ -533,12 +532,12 @@ print(result)
     
 def provision_SA(df_resultado):
     if df_resultado['Clasificación del Deudor 14/'] == 0:
-        if df_resultado['Tipo de Crédito 19/'] in ['12','11','10', '09','08']:                                                   
+        if df_resultado['Tipo de Crédito 19/'] in ['12','11','10', '09','08', 12,11,10,9,8]:                                                   
             return 0.01
-        elif df_resultado['Tipo de Crédito 19/'] in ['13', '07', '06']:
+        elif df_resultado['Tipo de Crédito 19/'] in ['13', '07', '06',13,7,6]:
             return 0.007
     elif df_resultado['Saldo de Garantías Autoliquidables 35/'] > 0:
-        if df_resultado['Clasificación del Deudor 14/'] in [1,2,3,4]:
+        if df_resultado['Clasificación del Deudor 14/'] in [1,2,3,4,'1','2','3','4']:
             return 0.01
     elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0:
         if df_resultado['Clasificación del Deudor 14/'] == 1:
@@ -565,83 +564,14 @@ def provision_SA(df_resultado):
 df_resultado['Tasa de Provisión SA'] = df_resultado.apply(provision_SA, axis=1)
 
 #%%% PROVISIONES P2
-'''
-def provision(df_resultado):
-    
-    #entra el dataframe df_resultado
-    #----------
-    #df_resultado : 
-    #    va a calcular [Tasa de Provisión]
-
-    #Returns
-    #-------
-    #None.
-
-    
-    # tasa de provisión genérica
-    if df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '06':
-        return 0.0070
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '07':
-        return 0.0070
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '08':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '09':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '10':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '11':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '12':
-        return 0.0100
-    elif df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0 \
-    and df_resultado['Tipo de Crédito 19/'] == '13':
-        return 0.0070
-    ## tasa de provisión específica
-    elif df_resultado['Saldo de Garantías Autoliquidables 35/'] > 0:
-        return 0.0100
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 1:
-        return 0.0250  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 1:
-        return 0.0500  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 2:
-        return 0.1250  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 2:
-        return 0.2500 
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 3:
-        return 0.3000  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 3:
-        return 0.6000 
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 4:
-        return 0.6000  
-    elif df_resultado['Saldos de Garantías Preferidas 34/'] == 0 \
-    and df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 4:
-        return 1.0000
-    else:
-        return 'revisar caso'
-'''
-###
 def provision(df_resultado):
     if df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 0:
-        if df_resultado['Tipo de Crédito 19/'] in ['12','11','10', '09','08']:                                                   
+        if df_resultado['Tipo de Crédito 19/'] in ['12','11','10', '09','08',12,11,10,9,8]:                                                   
             return 0.01
-        elif df_resultado['Tipo de Crédito 19/'] in ['13', '07', '06']:
+        elif df_resultado['Tipo de Crédito 19/'] in ['13', '07', '06',13,7,6]:
             return 0.007
     elif df_resultado['Saldo de Garantías Autoliquidables 35/'] > 0:
-        if df_resultado['Clasificación del Deudor con Alineamiento 15/'] in [1,2,3,4]:
+        if df_resultado['Clasificación del Deudor con Alineamiento 15/'] in [1,2,3,4,'1','2','3','4']:
             return 0.01
     elif df_resultado['Saldos de Garantías Preferidas 34/'] > 0:
         if df_resultado['Clasificación del Deudor con Alineamiento 15/'] == 1:
