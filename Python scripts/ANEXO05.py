@@ -20,7 +20,7 @@ import numpy as np
 
 #%% FECHA CORTE
 ##############################################
-fecha_corte = 'OCTUBRE 2023'         #######
+fecha_corte = 'OCTUBRE 2023'           #######
 ##############################################
 #%% UBI
 # ubicación ###################################################################
@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\fi
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados FINAL.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados FINAL 02.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
@@ -106,11 +106,13 @@ pivot_A.fillna(0, inplace = True)
 # eliminamos castigados
 conteo_socios = anexo06[(anexo06['Saldos de Créditos Castigados 38/'] == 0)]
 # Aqui va el nro de créditos y el nro de socios
-# Esta tabla no incluye créditos castigados
+
+# ESTA TABLA NO INCLUYE A LOS SOCIOS CASTIGADOS:
 pivot_B = conteo_socios.pivot_table(columns   = 'Clasificación del Deudor con Alineamiento 15/',
                                       values  = ['Numero de Crédito 18/'], 
                                       index   = ['Tipo de Crédito 19/'],
-                                      margins = True, margins_name='Total', #para sacar las sumatorias totales
+                                      margins = True, 
+                                      margins_name='Total', #para sacar las sumatorias totales
                                       aggfunc ='count'
                                       )
 pivot_B = pivot_B.reset_index()

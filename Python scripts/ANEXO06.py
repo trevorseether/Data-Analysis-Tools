@@ -1273,9 +1273,7 @@ def devengados_genericos(df_resultado_2):
 df_resultado_2['rendimiento devengado'] = df_resultado_2.apply(devengados_genericos, axis=1)
 df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2)
 
-df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['rendimiento devengado']
-
-df_resultado_2['rendimiento devengado'].sum()
+# df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['rendimiento devengado']
 
 #%% días para intereses en suspenso
 'intereses en suspenso, calculados de manera genérica'
@@ -1350,7 +1348,7 @@ def modificacion_dias_suspenso(row):
 df_resultado_2['dias int suspenso 2'] = df_resultado_2.apply(modificacion_dias_suspenso, 
                                                             axis=1)
 df_resultado_2['dias int suspenso'] = df_resultado_2['dias int suspenso 2']
-df_resultado_2.drop(['dias int suspenso 2'], axis=1, inplace=True)
+df_resultado_2.drop(['dias int suspenso 2'], axis = 1, inplace=True)
     
 #%% INTERESES EN SUSPENSO
 'intereses en suspenso'
@@ -2241,8 +2239,8 @@ df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                             'Numero de Crédito 18/'], inplace=True, how= 'all')
 
 #%% #asignamos los diferidos
-df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
-df_diferidos['Ingresos Diferidos 42/']  = df_diferidos['Ingresos Diferidos 2']
+# df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
+# df_diferidos['Ingresos Diferidos 42/']  = df_diferidos['Ingresos Diferidos 2']
 print('no debe salir cero: ' + str(df_diferidos['Ingresos Diferidos 42/'].sum()))
 
 #%% CARTERA NETA FINAL
@@ -2326,7 +2324,7 @@ def prov_cons_37_FINAL(df_diferidos):
     #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.59815 #0.6367 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.60155  #0.6367 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
