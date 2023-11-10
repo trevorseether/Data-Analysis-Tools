@@ -1391,6 +1391,8 @@ df_resultado_2['Cartera Neta'] = df_resultado_2.apply(cartera_neta, axis=1)
 df_resultado_2['Provisiones Requeridas 36/ SA'] = df_resultado_2['Cartera Neta'] * \
                                                   df_resultado_2['Tasa de Provisión SA']
 
+df_resultado_2['Provisiones Requeridas 36/ SA'] = df_resultado_2['Provisiones Requeridas 36/ SA'].round(2)
+
 #%% Provisiones Constituidas 37/
 #cálculo de las provisiones constituidas 37/
 def prov_cons_37(df_resultado_2):
@@ -2198,11 +2200,11 @@ fechacorte_mes_pasado = "20230930" #  aqui cambiamos la fecha, se pone la del co
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados CONT.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados CONT 2.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\contab'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí\\SISISIIS'
 
 #%% importación de módulos
 import os
@@ -2324,7 +2326,7 @@ def prov_cons_37_FINAL(df_diferidos):
     #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
         return df_diferidos['Provisiones Requeridas 36/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.5982 #0.6367 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.59815 #0.6367 # 0.50 es lo mínimo
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
@@ -2339,6 +2341,7 @@ print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - 91651
 import pyodbc
 
 query = f'''
+
 DECLARE @fechacorte as DATETIME
 SET @fechacorte = '{fechacorte_mes_pasado}'
 
@@ -2347,6 +2350,7 @@ SELECT
 FROM 
     anexos_riesgos2..Anx06_preliminar
 where FechaCorte1 = @fechacorte
+
 '''
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -2369,16 +2373,15 @@ print('EL PORCENTAJE de constituidas / requeridas es: ',"{:.2f}%".format(div*100
 suma_atrasada = df_diferidos['Cartera Atrasada'].sum()
 div2 = suma_constituidas/suma_atrasada
 
-print('consti / atrasa: ',"{:.2f}%".format(div2*100))
-
+print('COBERTURA DE PROVISIÓN : consti / atrasa: ',"{:.2f}%".format(div2*100))
 
 print('variación de constituídas con el mes pasado', (suma_constituidas - float(mes_pasado)).round(2)) #aquí hacer una query para extraer los datos
 
-print('provisiones constituidas:')
-print(suma_constituidas)
+print('provisiones constituidas: ' + str(suma_constituidas))
 
 #%%% VERIFICACIÓN DE RESULTADOS 2
 print('saldo de provisiones constituidas')
+
 if mes_pasado < suma_constituidas:
     print('todo bien')
     print('mes actual: ', int(suma_constituidas))
@@ -2446,18 +2449,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 '###########             BRECHAS DE UN MES A OTRO               ##############'
 '#############################################################################'
 df_diferidos = df_diferidos_ampliado.copy()
-#EXTRAEMOS DATOS DEL MES PASADO
+# EXTRAEMOS DATOS DEL MES PASADO
 
-import pyodbc
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-
+# Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'SETIEMBRE 2023'
+fecha = 'OCTUBRE 2023'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20230831' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20230930' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
+
+#%%
+import pyodbc
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+
+
 
 query = f'''
 declare @fechacorte as datetime
