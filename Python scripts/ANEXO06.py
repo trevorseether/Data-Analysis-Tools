@@ -2642,12 +2642,6 @@ writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shap
                                0,                                                                                                                     #número de columna
                                'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')                                                                           #valor en esa fila y columna
 
-espacio_entre_tablas.to_excel(writer, 
-                              sheet_name = 'Brechas', 
-                              startrow   = pivot_mes_actual.shape[0] + pivot_mes_pasado.shape[0] + diferencias.shape[0] + diferencias_porcentuales.shape[0] + 12, 
-                              startcol   = 0, 
-                              index = False)
-
 # Guarda y cierra el archivo Excel
 writer.save()
 writer.close()
