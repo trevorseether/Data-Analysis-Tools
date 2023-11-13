@@ -10,8 +10,8 @@ import pandas as pd
 import os
 
 #%% PARÁMETROS INICIALES:
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
-ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados FINAL 02.xlsx'
+ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí\\SISISIIS'
 
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
@@ -57,8 +57,9 @@ df.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                    'Fecha de Nacimiento 3/',
                    'Número de Documento 10/',
                    'Domicilio 12/',
-                   'Numero de Crédito 18/'], inplace = True, how = 'all')
-
+                   'Numero de Crédito 18/'], 
+          inplace = True, 
+          how = 'all')
 
 #%% cambiando los formatos de fechas
 

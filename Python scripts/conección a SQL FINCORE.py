@@ -161,7 +161,7 @@ inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20190101' AND '20231201' 
-and s.codigosocio>0  and p.codestado != 563 
+and s.codigosocio>0  and p.codestado = 341
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351

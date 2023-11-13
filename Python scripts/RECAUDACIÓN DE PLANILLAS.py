@@ -22,11 +22,11 @@ fecha_corte = '20230930'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 SETIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 SETIEMBRE\\recaudación Setiembre')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '09 - SETIEMBRE 2023 (PRELIMINAR).xlsx'
+nombre = '09 - SETIEMBRE 2023 (CIERRE) (1).xlsx'
 # =============================================================================
 
 # UBICACIÓN DEL ANEXO 06=======================================================
@@ -162,12 +162,15 @@ LEFT JOIN Anexos_Riesgos..PLANILLA2 P
 del conn
 
 # base = pd.read_excel(ubi_anx + '\\' + anexo_06,
-#                      skiprows = 2)
+#                      skiprows = 2,
+#                      dtype    = {'Nro Prestamo \nFincore' : str})
 
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)
 
-df_resultado = base.merge(df_concatenado[['PLANILLA COBRANZAS', 
+df_resultado = base.merge(df_concatenado[['PLANILLA COBRANZAS',
+                                          'MONTO ENVIADO',
+                                          'MONTO DEL MES',
                                           'RECIBIDO MASIVO',
                                           'PAGO INDEPENDIENTE',
                                           'REINTEGROS',
@@ -215,24 +218,80 @@ aver = no_match[no_match['PLANILLA COBRANZAS'].str.contains(texto.upper(),
 #%%
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
-base_final = pd.read_sql_query(f'''
-                DECLARE @fechacorte as datetime
-                SET @fechacorte = '{fecha_corte}'
+query_final = f'''
+        declare @fechacorte as datetime
+        set @fechacorte = '{fecha_corte}'
 
-                SELECT 
-                    haCorte1			as 'FechaCorte',
-                    igoSocio7		as 'CodSocio',
-                    erodeCredito18	as 'CodCredito',
-                    edadelcredito17	as 'CodMoneda',
-                    as 'Desc_Envio',
-                    as 'Desc_pago',
-                    as 'recaudacion',
-                    _Fincore as 'Nro_Fincore'
+        SELECT  
+	         FechaCorte1        as 'FechaCorte',
+	         CodigoSocio7		as 'CodSocio',
+	         NumerodeCredito18	as 'CodCredito',
+	         Monedadelcredito17	as 'CodMoneda',
+	         '' as 'Desc_Envio',
+	         '' as 'Desc_pago',
+	         '' as 'recaudacion',
+	    Nro_Fincore as 'Nro_Fincore'
 
-                FROM  anexos_riesgos2..Anx06_preliminar A
-                WHERE FechaCorte1 = @fechacorte
-''', conn)
+        FROM  anexos_riesgos2..Anx06_preliminar A
+        WHERE FechaCorte1 = @fechacorte'''
+
+base_final = pd.read_sql_query(query_final, conn)
 del conn
+
+#%%
+
+df_resultado['MONTO DEL MES']      = df_resultado['MONTO DEL MES'].astype(float)
+df_resultado['RECIBIDO MASIVO']    = pd.to_numeric(df_resultado['RECIBIDO MASIVO'], errors = 'coerce')
+df_resultado['RECIBIDO MASIVO']    = df_resultado['RECIBIDO MASIVO'].fillna(0)
+df_resultado['PAGO INDEPENDIENTE'] = df_resultado['PAGO INDEPENDIENTE'].astype(float)
+df_resultado['REINTEGROS']         = df_resultado['REINTEGROS'].astype(float)
+df_resultado['REINTEGROS']         = pd.to_numeric(df_resultado['REINTEGROS'], errors = 'coerce')
+
+base_final2 = base_final.merge(df_resultado[['Nro_Fincore',
+                                             'MONTO DEL MES',
+                                             'RECIBIDO MASIVO',
+                                             'PAGO INDEPENDIENTE',
+                                             'REINTEGROS',
+                                             '% COBRANZA']], #AÑADIR LAS COLUMNAS QUE PODRÍAN SER NECESARIAS
+                         left_on  = ['Nro_Fincore'], 
+                         right_on = ['Nro_Fincore'],
+                         how      = 'left')
+
+base_final2['MONTO DEL MES'] = base_final2['MONTO DEL MES'].fillna(0)
+base_final2['RECIBIDO MASIVO'] = base_final2['RECIBIDO MASIVO'].fillna(0)
+base_final2['PAGO INDEPENDIENTE'] = base_final2['PAGO INDEPENDIENTE'].fillna(0)
+base_final2['REINTEGROS'] = base_final2['REINTEGROS'].fillna(0)
+
+base_final2['Desc_Envio']   = base_final2['MONTO DEL MES']
+base_final2['Desc_pago']    = base_final2['RECIBIDO MASIVO'] + base_final2['PAGO INDEPENDIENTE'] - base_final2['REINTEGROS']
+base_final2['recaudacion']  = base_final2['% COBRANZA']
+
+# Convertimos a numérico:
+base_final2['recaudacion'] = pd.to_numeric(base_final2['recaudacion'], 
+                                           errors = 'coerce')
+
+# Reemplaza NaN con cero:
+base_final2['recaudacion'].fillna(0,
+                                  inplace = True)
+base_final2['Desc_pago'].fillna(0,
+                                inplace = True)
+base_final2['Desc_Envio'].fillna(0,
+                                 inplace = True)
+
+base_final3 = base_final2[['FechaCorte',
+                           'CodSocio',
+                           'CodCredito',
+                           'CodMoneda',
+                           'Desc_Envio',
+                           'Desc_pago',
+                           'recaudacion',
+                           'Nro_Fincore']]
+
+#%% to excellllllll
+base_final3.to_excel('recaudación para sql.xlsx',
+                     index = False)
+
+
 
 #%%
 # AQUÍ PONERLE EL RESULTADO DEL OTRO, HACER UN MERGE
