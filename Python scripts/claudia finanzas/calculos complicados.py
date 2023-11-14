@@ -268,9 +268,25 @@ ORDER BY socio, ccab.fecha
 df_cobranza = pd.read_sql_query(query, conn)
 del conn
 
+#%% Columna fecha corte respecto a la fecha de cobranza
+from calendar import monthrange
+from datetime import datetime
+
+def ultimo_dia_del_mes(fecha):
+    # Obtener el último día del mes
+    ultimo_dia = monthrange(fecha.year, fecha.month)[1]
+
+    # Crear una nueva fecha con el último día del mes
+    ultimo_dia_del_mes = datetime(fecha.year, fecha.month, ultimo_dia)
+
+    return ultimo_dia_del_mes
+
+# Aplicar la función a la columna 'fecha_cob' de tu DataFrame
+df_cobranza['mes corte'] = df_cobranza['fecha_cob'].apply(ultimo_dia_del_mes)
+
 #%%
 # =============================================================================
-# agrupando INT_CUOTA (ingreso financiero) que no sean RETENCIONES
+# Agrupando INT_CUOTA (ingreso financiero) que no sean RETENCIONES
 # =============================================================================
 
 cobranza_sin_retenciones = df_cobranza[df_cobranza['tipoPago'] != 'RETENCIONES']
@@ -281,14 +297,16 @@ cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['codig
                                                                                           '34','35','36','37','38','39'])]
 
 # =============================================================================
-# Agrupando el INT_CUOTA
+# Agrupando el INT_CUOTA por nro fincore
 # =============================================================================
 int_cuota_sin_retenciones = cobranza_sin_retenciones.pivot_table(values  = 'INT_CUOTA',
                                                                  index   = 'PagareFincore',
+                                                                 # columns = 'mes corte',
                                                                  aggfunc = 'sum')
 
 int_cuota_con_retenciones = cobranza_de_retenciones.pivot_table(values  = 'INT_CUOTA',
                                                                 index   = 'PagareFincore',
+                                                                # columns = 'mes corte',
                                                                 aggfunc = 'sum')
 
 #%% cuota en la que hicieron la retención
@@ -298,7 +316,7 @@ cuota_de_retención = cobranza_de_retenciones.pivot_table(values  = 'numerocuota
                                                          aggfunc = 'min')
 
 #% por si acaso, lo vamos a calcular con las fechas, a ver qué diferencia hay
-from datetime import datetime
+# from datetime import datetime
 cobranza_de_retenciones_2 = cobranza_de_retenciones.drop_duplicates(subset  = 'PagareFincore')
 
 cobranza_de_retenciones_2['fecha_cob'] = cobranza_de_retenciones_2['fecha_cob'].astype(str)
