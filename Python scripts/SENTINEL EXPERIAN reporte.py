@@ -18,15 +18,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'SETIEMBRE 2023'
+FECHA_CORTE = 'OCTUBRE 2023'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 SETIEMBRE"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 OCTUBRE"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_0923 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - SETIEMBRE-23 - INSUMO.xlsx"
+insumo_principal = "SM_1023 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - OCTUBRE-23 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -36,12 +36,12 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20230930'
+f_corte_sql = '20231031'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
@@ -215,6 +215,7 @@ df_sentinel.drop(['cod pres para merge'], axis=1, inplace=True)
 #%%% verifiación de nulos
 
 sin_match = df_sentinel[pd.isna(df_sentinel['Nro_Fincore'])]
+
 print(sin_match.shape[0])
 print("si sale más de cero hay que revisar, pues signfica que hay espacios vacíos en la columna Nro_Fincore")
 if sin_match.shape[0] > 0:
@@ -974,6 +975,7 @@ df_sentinel.loc[(df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '0280
     
 datos_tipo_documento = df_sentinel['Tipo\nDocumento\nIdentidad (*)'].unique()
 print(datos_tipo_documento)
+print('''SOLO DEBE SALIR ['1' '6' '3']''')
 print('si después de arrelgar siguen apareciendo otros hay que buscarlos')
 
 #%% especificaciones finales

@@ -29,13 +29,14 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 SETIEMBRE\\recauda
 nombre = '09 - SETIEMBRE 2023 (CIERRE) (1).xlsx'
 # =============================================================================
 
-# UBICACIÓN DEL ANEXO 06=======================================================
-ubi_anx = 'C:\\Users\\sanmiguel38\\Desktop'
-# =============================================================================
+# # UBICACIÓN DEL ANEXO 06=======================================================
+# En caso de usar el anexo06 debemos reemplazar la conección a sql server (línea 150)
+# ubi_anx = 'C:\\Users\\sanmiguel38\\Desktop'
+# # =============================================================================
 
-# NOMBRE DEL ANEXO 06 =========================================================
-anexo_06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
-# =============================================================================
+# # NOMBRE DEL ANEXO 06 =========================================================
+# anexo_06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
+# # =============================================================================
 
 # AQUÍ AÑADIMOS O QUITAMOS LAS PESTAÑAS DEL EXCEL, en el primero va el nombre de la columna
 datos = {'cs': ['Masivo - CS'],
@@ -92,15 +93,6 @@ columnas = ['PLANILLA',
             'REINTEGROS',
             'SALDO',
             '% COBRANZA']
-
-# Filtramos las columnas necesarias, aquí también podríamos necesitar añadir o quitar algunas tablas
-# al tener nuevos funcionarios o que dejen de trabajar
-# df_sheets = [
-#              cs[columnas],
-#              ml[columnas],
-#              av[columnas],
-#              kt[columnas], 
-#             ]
 
 # Metemos los dataframes en una lista luego de filtrar las columnas necesarias para poder concatenarlos:
 dataframes_filtrados = []
