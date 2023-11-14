@@ -765,6 +765,10 @@ set administrador = 'JULY OLGA'
 where administrador like '%JULY GARCIA ALCANTARA%'
 
 update anexos_riesgos2..Anx06_preliminar
+set administrador = 'FIGARI VEGA'
+where administrador like '%FIGARI VEGA AYQUIPA%'
+
+update anexos_riesgos2..Anx06_preliminar
 set administrador = 'KATHERIN RAMOS'
 where administrador like '%KATHERIN RAMOS CCAMA%'
 

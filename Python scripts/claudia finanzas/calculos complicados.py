@@ -277,7 +277,7 @@ cobranza_sin_retenciones = df_cobranza[df_cobranza['tipoPago'] != 'RETENCIONES']
 
 cobranza_de_retenciones = df_cobranza[df_cobranza['tipoPago'] == 'RETENCIONES']
 cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['doc_ident'].isin(socios_con_ampl)]
-cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['codigo'].isin([34,35,36,37,38,39,
+cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['codigo'].isin([ 34,  35,  36,  37,  38,  39,
                                                                                           '34','35','36','37','38','39'])]
 
 # =============================================================================
