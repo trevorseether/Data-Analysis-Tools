@@ -17,15 +17,15 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'SETIEMBRE-23' #servirá para el nombre del archivo
+FECHA = 'OCTUBRE-23' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR REPORTE SALDOS TOTALES\\2023 setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2023 OCTUBRE')
 
-INSUMO           =    'CarteraTotalSMSet2023.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - AGOSTO-23_INC_CVV_DETALLADO final.xlsx'
-COBRANZA         =    'Ingresos por Cobranza Setiembre-23 - General.xlsx'
+INSUMO           =    'CarteraTotalSM_Oct2023.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - SETIEMBRE-23_INC_CVV_DETALLADO final.xlsx'
+COBRANZA         =    'Ingresos por Cobranza Octubre-23 - General.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
@@ -415,14 +415,14 @@ def alerta(df7):
     
 df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] = df7.apply(alerta, axis=1)
 
-#printeo de resultados solo para ver (no hay nada que corregir aunque salga alerta)
+# printeo de resultados solo para ver (no hay nada que corregir aunque salga alerta)
 kho = df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"][['SALDO REAL (S.DEUDOR Vs. GARANTIA)',
                                                                                         'VALOR GARANTIA', 
                                                                                         'Nuevo Saldo']]
-print(kho)
+# print(kho)
 
-print('en total hay ' + str(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"].shape[0]) + ' casos')
-print('es solo una alerta en el reporte, no hay que corregir nada realmente')
+# print('en total hay ' + str(df7[df7['ALERTA (Si Deuda sobrepasa V.Garantia)'] == "DEUDA SOBREPASA GARANTIA"].shape[0]) + ' casos')
+# print('es solo una alerta en el reporte, no hay que corregir nada realmente')
 
 #%% ORDENAMIENTO DE COLUMNAS
 
@@ -550,7 +550,7 @@ df_duplicados = df_finalizado[mask]
 
 print('NRO DE CRÉDITOS DUPLICADOS:')
 print(df_duplicados.shape[0])
-print(df_duplicados)
+print('existen ' + str(df_duplicados.shape[0]) + ' duplicados')
 
 df_finalizado = df_finalizado.drop_duplicates(subset = 'NroPrestamoFC')
 
@@ -962,4 +962,4 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
 #%% GUARDAR LOS CAMBIOS EN EL EXCEL
 
 book.save(nombre)
-book.close(nombre)
+book.close()
