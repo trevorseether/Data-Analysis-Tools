@@ -283,6 +283,7 @@ def ultimo_dia_del_mes(fecha):
 
 # Aplicar la función a la columna 'fecha_cob' de tu DataFrame
 df_cobranza['mes corte'] = df_cobranza['fecha_cob'].apply(ultimo_dia_del_mes)
+df_cobranza['mes corte numérica'] = df_cobranza['mes corte'].dt.strftime('%Y%m%d')
 
 #%%
 # =============================================================================
@@ -290,6 +291,8 @@ df_cobranza['mes corte'] = df_cobranza['fecha_cob'].apply(ultimo_dia_del_mes)
 # =============================================================================
 
 cobranza_sin_retenciones = df_cobranza[df_cobranza['tipoPago'] != 'RETENCIONES']
+cobranza_sin_retenciones = cobranza_sin_retenciones[cobranza_sin_retenciones['codigo'].isin([ 34,  35,  36,  37,  38,  39,
+                                                                                             '34','35','36','37','38','39'])]
 
 cobranza_de_retenciones = df_cobranza[df_cobranza['tipoPago'] == 'RETENCIONES']
 cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['doc_ident'].isin(socios_con_ampl)]
@@ -300,20 +303,36 @@ cobranza_de_retenciones = cobranza_de_retenciones[cobranza_de_retenciones['codig
 # Agrupando el INT_CUOTA por nro fincore
 # =============================================================================
 int_cuota_sin_retenciones = cobranza_sin_retenciones.pivot_table(values  = 'INT_CUOTA',
-                                                                 index   = 'PagareFincore',
+                                                                 index   = 'mes corte', #'PagareFincore',
                                                                  # columns = 'mes corte',
                                                                  aggfunc = 'sum')
 
 int_cuota_con_retenciones = cobranza_de_retenciones.pivot_table(values  = 'INT_CUOTA',
-                                                                index   = 'PagareFincore',
+                                                                index   = 'mes corte', #'PagareFincore',
                                                                 # columns = 'mes corte',
                                                                 aggfunc = 'sum')
 
 #%% cuota en la que hicieron la retención
+df = cobranza_de_retenciones.sort_values(by = 'numerocuota')
 
-cuota_de_retención = cobranza_de_retenciones.pivot_table(values  = 'numerocuota',
-                                                         index   = 'PagareFincore',
-                                                         aggfunc = 'min')
+sum_int_reten = df.pivot_table(values  = 'INT_CUOTA',
+                               index   = 'PagareFincore',
+                               aggfunc = 'sum')
+sum_int_reten = sum_int_reten.reset_index()
+sum_int_reten = sum_int_reten.rename(columns = {"INT_CUOTA" : "INT_CUOTA AGREGADO"})
+df = df.merge(sum_int_reten,
+              left_on  = 'PagareFincore',
+              right_on = 'PagareFincore',
+              how      = 'left')
+cuota_de_retención = df.drop_duplicates(subset = 'PagareFincore', 
+                                        keep   = 'first')
+# cuota_de_retención = cobranza_de_retenciones.pivot_table(values  = 'numerocuota',
+#                                                          index   = 'PagareFincore',
+#                                                          aggfunc = 'min')
+
+prom_cuota_retencion = cuota_de_retención.pivot_table(values  = 'numerocuota',
+                                                      index   = 'mes corte',
+                                                      aggfunc = 'mean')
 
 #% por si acaso, lo vamos a calcular con las fechas, a ver qué diferencia hay
 # from datetime import datetime
@@ -329,14 +348,14 @@ def diff_month(df):
 
 cobranza_de_retenciones_2['diferencia meses'] = cobranza_de_retenciones_2.apply(diff_month, 
                                                                                 axis = 1)
-cuota_de_retención = cuota_de_retención.reset_index()
-comparacion = cuota_de_retención.merge(cobranza_de_retenciones_2[['PagareFincore', 'diferencia meses']], 
-                                       left_on  = 'PagareFincore', 
-                                       right_on = 'PagareFincore',
-                                       how      = 'left')
+# cuota_de_retención = cuota_de_retención.reset_index()
+# comparacion = cuota_de_retención.merge(cobranza_de_retenciones_2[['PagareFincore', 'diferencia meses']], 
+#                                        left_on  = 'PagareFincore', 
+#                                        right_on = 'PagareFincore',
+#                                        how      = 'left')
 
-print(comparacion['numerocuota'].mean())
-print(comparacion['diferencia meses'].mean())
+# print(comparacion['numerocuota'].mean())
+# print(comparacion['diferencia meses'].mean())
 
 # =============================================================================
 # 8.2086599477417 antes de filtrar dxp
@@ -352,8 +371,8 @@ import matplotlib.pyplot as plt
 # import numpy as np
 
 # Crear datos de ejemplo para tres distribuciones en diferentes momentos
-datos_t0 = comparacion['numerocuota']  # Datos en el tiempo 0
-datos_t1 = comparacion['diferencia meses']  # Datos en el tiempo 1
+datos_t0 = cuota_de_retención['numerocuota']  # Datos en el tiempo 0
+datos_t1 = cuota_de_retención['diferencia meses']  # Datos en el tiempo 1
 
 # Combinar los datos en un DataFrame de Pandas (opcional)
 import pandas as pd
