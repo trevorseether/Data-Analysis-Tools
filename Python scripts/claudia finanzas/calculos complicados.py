@@ -13,7 +13,8 @@ warnings.filterwarnings('ignore')
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
-#%%
+fecha_desembolso_fincore = '20200101'
+#%% 
 # =============================================================================
 # leyendo creditos cancelados cuyo desembolso haya sido posterior al 2022
 # =============================================================================
@@ -164,7 +165,7 @@ inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
 where 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20220101'
+CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '{fecha_desembolso_fincore}'
 and s.codigosocio>0  and p.codestado = 342
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
@@ -333,6 +334,30 @@ cuota_de_retención = df.drop_duplicates(subset = 'PagareFincore',
 prom_cuota_retencion = cuota_de_retención.pivot_table(values  = 'numerocuota',
                                                       index   = 'mes corte',
                                                       aggfunc = 'mean')
+# ======================================
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.set(style="whitegrid")  # Estilo de fondo del gráfico
+plt.figure(figsize=(10, 6))  # Tamaño del gráfico
+
+# Crear el gráfico de líneas
+sns.lineplot(data = prom_cuota_retencion, 
+             x    = prom_cuota_retencion.index, 
+             y    = 'numerocuota', 
+             marker = 'o', 
+             color  = 'b')
+
+# Configuraciones adicionales
+plt.title('Promedio de cuota de retención')  # Título del gráfico
+plt.xlabel('Fechas')  # Etiqueta del eje x
+plt.ylabel('cuota promedio')  # Etiqueta del eje y
+plt.xticks(rotation=45)  # Rotar etiquetas del eje x para mejor visualización
+
+# Mostrar el gráfico
+plt.tight_layout()
+plt.show()
+# ======================================
 
 #% por si acaso, lo vamos a calcular con las fechas, a ver qué diferencia hay
 # from datetime import datetime
@@ -348,14 +373,14 @@ def diff_month(df):
 
 cobranza_de_retenciones_2['diferencia meses'] = cobranza_de_retenciones_2.apply(diff_month, 
                                                                                 axis = 1)
-# cuota_de_retención = cuota_de_retención.reset_index()
-# comparacion = cuota_de_retención.merge(cobranza_de_retenciones_2[['PagareFincore', 'diferencia meses']], 
-#                                        left_on  = 'PagareFincore', 
-#                                        right_on = 'PagareFincore',
-#                                        how      = 'left')
+cuota_de_retención = cuota_de_retención.reset_index()
+comparacion = cuota_de_retención.merge(cobranza_de_retenciones_2[['PagareFincore', 'diferencia meses']], 
+                                        left_on  = 'PagareFincore', 
+                                        right_on = 'PagareFincore',
+                                        how      = 'left')
 
-# print(comparacion['numerocuota'].mean())
-# print(comparacion['diferencia meses'].mean())
+print(cuota_de_retención['numerocuota'].mean())
+print(comparacion['diferencia meses'].mean())
 
 # =============================================================================
 # 8.2086599477417 antes de filtrar dxp
@@ -372,7 +397,7 @@ import matplotlib.pyplot as plt
 
 # Crear datos de ejemplo para tres distribuciones en diferentes momentos
 datos_t0 = cuota_de_retención['numerocuota']  # Datos en el tiempo 0
-datos_t1 = cuota_de_retención['diferencia meses']  # Datos en el tiempo 1
+datos_t1 = comparacion['diferencia meses']  # Datos en el tiempo 1
 
 # Combinar los datos en un DataFrame de Pandas (opcional)
 import pandas as pd
@@ -403,7 +428,7 @@ datos_t0 = comparacion['numerocuota']  # Datos en el tiempo 0
 datos_t1 = comparacion['diferencia meses']  # Datos en el tiempo 1
 
 # Crear un histograma para cada conjunto de datos y superponerlos
-plt.hist(datos_t0, bins = 120, alpha = 0.6,  label = 'nro cuota')
+plt.hist(datos_t0, bins = 120, alpha = 0.60, label = 'nro cuota')
 plt.hist(datos_t1, bins = 120, alpha = 0.45, label = 'dif meses')
 
 # Configurar etiquetas y leyenda
@@ -417,17 +442,22 @@ plt.show()
 
 #%%
 # =============================================================================
-# INGRESO FINANCIERO PACTADO 
+# INGRESO FINANCIERO PACTADO
 # =============================================================================
 
-df_fincore['INTERÉS PACTADO'] = df_fincore['NroPlazos'] * df_fincore['CuotaFija'] - df_fincore['Otorgado']
+df_fincore['INTERÉS PACTADO'] = (df_fincore['NroPlazos'] * df_fincore['CuotaFija']) - df_fincore['Otorgado']
 
 df_fincore['INTERÉS PACTADO'] = df_fincore['INTERÉS PACTADO'].round(2)
+
+# ingreso financiero pactado, agrupado por fecha de desembolso:
+df_fincore['mes desembolso'] = df_fincore['fechadesembolso'].apply(ultimo_dia_del_mes)
+
+i_fin_pactado_pivot = df_fincore.pivot_table(values = 'INTERÉS PACTADO',
+                                             index  = 'mes desembolso')
 
 # =============================================================================
 # Lo cobrado real
 # =============================================================================
+
 cobrado_real = int_cuota_sin_retenciones.copy()
-
-
 

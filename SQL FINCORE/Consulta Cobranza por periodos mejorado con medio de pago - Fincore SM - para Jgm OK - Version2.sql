@@ -1,40 +1,41 @@
 SELECT 
 	soc.codsocio, 
 	soc.codigosocio, 
-	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) as Socio, 
-	iif(soc.CodTipoPersona =1,soc.nrodocIdentidad,soc.nroRuc) as doc_ident, right(concat('0000000',pre.numero),8) as PagareFincore,
+	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) AS 'Socio', 
+	iif(soc.CodTipoPersona =1,soc.nrodocIdentidad,soc.nroRuc) AS 'doc_ident', 
+	right(concat('0000000',pre.numero),8)  AS 'PagareFincore',
 	pre.FechaDesembolso,
 	precuo.numerocuota, 
-	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS moneda, 
-	ccab.fecha as fecha_cob, 
+	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda', 
+	ccab.fecha as 'fecha_cob', 
 	cdet.Capital, 
-	cdet.aporte as Aporte,
-	cdet.interes AS INT_CUOTA, 
-	cdet.InteresCompensatorio as IntCompVencido, 
-	cdet.Mora AS INTCOMP_MORA, 
+	cdet.aporte as 'Aporte',
+	cdet.interes AS 'INT_CUOTA', 
+	cdet.InteresCompensatorio as 'IntCompVencido', 
+	cdet.Mora AS 'INTCOMP_MORA', 
 	cdet.GastoCobranza, 
-	cdet.FondoContigencia+cdet.MoraAnterior+cdet.GastoTeleOperador+cdet.GastoJudicial+cdet.GastoLegal+cdet.GastoOtros AS GTO_OTROS,
+	cdet.FondoContigencia+cdet.MoraAnterior+cdet.GastoTeleOperador+cdet.GastoJudicial+cdet.GastoLegal+cdet.GastoOtros AS 'GTO_OTROS',
 	cdoc.numeroOperacion,
 	cdoc.numeroOperacionDestino, --tmdet.descripcion as TipoDocmto, 
-	gr.descripcion as Funcionario, 
-	pla.descripcion as planilla, 
-	tc.Descripcion as TipoCredito, 
+	gr.descripcion as 'Funcionario', 
+	pla.descripcion as 'planilla', 
+	tc.Descripcion as 'TipoCredito', 
 	fin.codigo, 
-	fin.Descripcion as finalidad,  
+	fin.Descripcion as 'finalidad',  
 	pre.FechaVentaCartera, 
 	pre.FechaCastigo, 
 	cdoc.codestado, 
 	cDOC.NumeroOperacionDestino, 
 	CCAB.CODMEDIOPAGO, 
-	tmdet.descripcion as tipoPago, -- CDOC.CODCOBRANZADOCUMENTO,
-	tmdet5.Descripcion as SituacCred, 
+	tmdet.descripcion as 'tipoPago', -- CDOC.CODCOBRANZADOCUMENTO,
+	tmdet5.Descripcion as 'SituacCred', 
 	pre.FechaAsignacionAbogado, 
-	empl.NombreCompleto as Abogado, 
+	empl.NombreCompleto as 'Abogado', 
 
 --IIF(CDDNC.NumeroOperacionDestino IS NULL,cdoc.NumeroOperacionDestino,CDDNC.NumeroOperacionDestino) AS NumeroOperacionDestino,
-IIF(CDDNC.NumeroOperacionDestino IS NULL,CU.NumeroCuenta,CUNC.NumeroCuenta) AS NumeroCuenta,
+IIF(CDDNC.NumeroOperacionDestino IS NULL,CU.NumeroCuenta,CUNC.NumeroCuenta) AS 'NumeroCuenta',
 --IIF(CDDNC.NumeroOperacionDestino IS NULL,NULL,CONCAT('NC-',RIGHT(CONCAT('000000',NC.Correlativo),6))) AS NroNotaCredito,
-iif(cdet.FlagPonderosa=1,'POND','SM') as origen
+iif(cdet.FlagPonderosa=1,'POND','SM') as 'origen'
 
 
 FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.CodprestamoCuota = cdet.CodprestamoCuota
@@ -63,7 +64,8 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
   
 -- WHERE        (ccab.Fecha >= '01-01-2020' and ccab.Fecha <= '31-12-2020') and cdet.flagponderosa is null
 -- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  -- 376 Anulado and cdet.flagponderosa is null
-Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20231001' AND '20231031' and cdet.CodEstado <> 376   
+
+WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20231001' AND '20231031' and cdet.CodEstado <> 376   
 ORDER BY socio, ccab.fecha
 
 
