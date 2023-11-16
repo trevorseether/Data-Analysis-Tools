@@ -14,6 +14,7 @@ warnings.filterwarnings('ignore')
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
 fecha_desembolso_fincore = '20200101'
+
 #%% 
 # =============================================================================
 # leyendo creditos cancelados cuyo desembolso haya sido posterior al 2022
