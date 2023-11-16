@@ -19,9 +19,9 @@ fecha_desembolso_fincore = '20200101'
 # =============================================================================
 # leyendo creditos cancelados cuyo desembolso haya sido posterior al 2022
 # =============================================================================
-server      = datos['DATOS'][0]
-username    = datos['DATOS'][2]
-password    = datos['DATOS'][3]
+server    = datos['DATOS'][0]
+username  = datos['DATOS'][2]
+password  = datos['DATOS'][3]
 
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
