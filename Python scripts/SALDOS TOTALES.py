@@ -85,33 +85,33 @@ df1.dropna(subset=['CodigoSocio',
                    'NroPrestamoFC',
                    'TipoCredito'], inplace=True, how='all')
 
-vendidos = ['00001346',
-            '00050796',
-            '00000633',
-            '00000942',
-            '00020154',
-            '00054955',
-            '00001147',
-            '00001287']
+# vendidos = ['00001346',
+#             '00050796',
+#             '00000633',
+#             '00000942',
+#             '00020154',
+#             '00054955',
+#             '00001147',
+#             '00001287']
 
-def fecha_venta_cartera1(df1):
-    if df1['NroPrestamoFC'] in vendidos:
-        return '2023-08-29' #año-mes-día
-    else:
-        return df1['JFechaVentaCartera']
+# def fecha_venta_cartera1(df1):
+#     if df1['NroPrestamoFC'] in vendidos:
+#         return '2023-08-29' #año-mes-día
+#     else:
+#         return df1['JFechaVentaCartera']
 
-df1['JFechaVentaCartera'] = df1.apply(fecha_venta_cartera1, axis=1)
-df1['JFechaVentaCartera'] = df1['JFechaVentaCartera'].apply(parse_dates)
+# df1['JFechaVentaCartera'] = df1.apply(fecha_venta_cartera1, axis=1)
+# df1['JFechaVentaCartera'] = df1['JFechaVentaCartera'].apply(parse_dates)
 
 ############################################################
-##   2 aqui va el reporte del mes pasado                ####
+##        2 aqui va el reporte del mes pasado           ####
 ############################################################
 
 df2 = pd.read_excel(MES_PASADO,
-                  skiprows = 0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
-                  dtype = {'NroDocIdentidad' : object,
-                           'NumeroPrestamo'  : object,
-                           'NroPrestamoFC'   : object})
+                    skiprows = 0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
+                    dtype = {'NroDocIdentidad' : object,
+                             'NumeroPrestamo'  : object,
+                             'NroPrestamoFC'   : object})
 
 #eliminación de duplicados por si acaso
 df2 = df2.drop_duplicates(subset = 'NroPrestamoFC')
@@ -119,7 +119,7 @@ df2 = df2.drop_duplicates(subset = 'NroPrestamoFC')
 #eliminación de vacíos
 df2.dropna(subset = ['NroDocIdentidad', 
                      'NumeroPrestamo',
-                     'NroPrestamoFC'], inplace=True, how='all')
+                     'NroPrestamoFC'], inplace = True, how = 'all')
 
 ############################################################
 ##    3 ESTE TERCER ARCHIVO ES LA COBRANZA DEL MES       ###
@@ -284,9 +284,9 @@ df4 = df_resultado4.copy()
 mask2 = df4['CRED CON CAPITALIZ'].eq('revisar')
 
 #REDONDEO A DOS DECIMALES
-df4['MontoSolicitadoTXT'] = round(df4['MontoSolicitadoTXT'],2)
+df4['MontoSolicitadoTXT']    = round(df4['MontoSolicitadoTXT'],2)
 df4['SoloCapitalAmortizado'] = round(df4['SoloCapitalAmortizado'],2)
-df4['SaldoCapital'] = round(df4['SaldoCapital'],2)
+df4['SaldoCapital']          = round(df4['SaldoCapital'],2)
 
 df4.loc[mask2, 'SaldoCapital'] = round(df4.loc[mask2, 'MontoSolicitadoTXT'] - df4.loc[mask2, 'SoloCapitalAmortizado'],2)
 
@@ -299,7 +299,7 @@ df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)'] + df4['InteresCompensa
 'siguiente fase'
 
 #suma group by de la tabla donde está la cobranza del mes actual
-df_sum_capital = df3_cobranza.groupby('PagareFincore')['Capital'].sum().reset_index()
+df_sum_capital   = df3_cobranza.groupby('PagareFincore')['Capital'].sum().reset_index()
 df_sum_INT_OTROS = df3_cobranza.groupby('PagareFincore')['Ingresos Financ'].sum().reset_index()
 df_sum_INT_OTROS = df_sum_INT_OTROS.rename({'Ingresos Financ': 'Int y Otros mes actual'}, axis=1)
 
@@ -793,7 +793,7 @@ celda = 'L' + str(int(num_filas) + 5) #ya no sé para qué sirve esta vaina
 
 filas, columnas = tabla.shape
 
-fila_inicio = int(int(num_filas) + 5) 
+fila_inicio = int(int(num_filas) + 5)
 columna_inicio = 12
 # Insertar los nombres de las columnas y los datos del DataFrame en el archivo Excel
 for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las columnas
@@ -963,3 +963,5 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
 
 book.save(nombre)
 book.close()
+
+
