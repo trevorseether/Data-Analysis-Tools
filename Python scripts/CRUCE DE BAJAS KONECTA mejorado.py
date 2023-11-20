@@ -15,6 +15,9 @@ import pandas as pd
 import os
 import pyodbc
 from datetime import datetime
+import warnings
+warnings.filterwarnings('ignore')
+from colorama import Back # , Style, init, Fore
 
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
@@ -54,11 +57,11 @@ print('Documentos que se hayan convertido en Null:')
 
 if doc_nulos.shape[0] > 0:
     print(doc_nulos)
-    print('investigar qué ha pasado ( ´･･)ﾉ(._.`)')
+    print(Back.RED + 'investigar qué ha pasado')
 else:
     print(doc_nulos.shape[0])
     del doc_nulos
-    print('''todo bien (●'◡'●)''')
+    print(Back.GREEN + 'todo bien')
 
 #%% LECTURA DE LAS CREDENCIALES
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
