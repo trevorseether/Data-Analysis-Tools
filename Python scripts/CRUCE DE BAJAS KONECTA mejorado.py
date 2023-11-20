@@ -20,15 +20,15 @@ from datetime import datetime
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '14-11-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
+FECHATXT = '20-11-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 noviembre\\14 nov'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 noviembre\\20 nov'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '3ER INFORME DE BAJAS GRUPO - 11_ 2023.xlsx'
+nombre_archivo = '4TO INFORME DE BAJAS GRUPO - 11_ 2023 (A).xlsx'
 ############################################################################
 
 'filas a skipear' ######################
