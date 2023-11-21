@@ -109,9 +109,9 @@ df1.dropna(subset=['CodigoSocio',
 
 df2 = pd.read_excel(MES_PASADO,
                     skiprows = 0, #aqui podrían haber cambios dependiendo de dónde están las columnas con los nombres
-                    dtype = {'NroDocIdentidad' : object,
-                             'NumeroPrestamo'  : object,
-                             'NroPrestamoFC'   : object})
+                    dtype    = {'NroDocIdentidad' : object,
+                                'NumeroPrestamo'  : object,
+                                'NroPrestamoFC'   : object})
 
 #eliminación de duplicados por si acaso
 df2 = df2.drop_duplicates(subset = 'NroPrestamoFC')
@@ -258,14 +258,14 @@ df_resultado2['MonedaTXT'] = df_resultado2['MonedaTXT'].str.strip()
 mask = df_resultado2['MonedaTXT'].eq('US$')
 
 # Seleccionar solo las filas que cumplen la condición y asignarles el resultado de la división
-df_resultado2.loc[mask, 'SoloCapitalAmortizado']         = df_resultado2.loc[mask, 'SoloCapitalAmortizado']           / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'SaldoCapital']                  = df_resultado2.loc[mask, 'SaldoCapital']                    / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'InteresVencidoPactado']         = df_resultado2.loc[mask, 'InteresVencidoPactado']           / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'InteresPactadoPagado']          = df_resultado2.loc[mask, 'InteresPactadoPagado']            / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'SoloSaldoInteresVencido']       = df_resultado2.loc[mask, 'SoloSaldoInteresVencido']         / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'Saldo Deudor (Sobre la Cuota)'] = df_resultado2.loc[mask, 'Saldo Deudor (Sobre la Cuota)']   / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'InteresCompensatorioDeuda']     = df_resultado2.loc[mask, 'InteresCompensatorioDeuda']       / df_resultado2.loc[mask, 'TipoCambioTXT']
-df_resultado2.loc[mask, 'InteresMoratorioDeuda']         = df_resultado2.loc[mask, 'InteresMoratorioDeuda']           / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'SoloCapitalAmortizado']         = df_resultado2.loc[mask, 'SoloCapitalAmortizado']         / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'SaldoCapital']                  = df_resultado2.loc[mask, 'SaldoCapital']                  / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'InteresVencidoPactado']         = df_resultado2.loc[mask, 'InteresVencidoPactado']         / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'InteresPactadoPagado']          = df_resultado2.loc[mask, 'InteresPactadoPagado']          / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'SoloSaldoInteresVencido']       = df_resultado2.loc[mask, 'SoloSaldoInteresVencido']       / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'Saldo Deudor (Sobre la Cuota)'] = df_resultado2.loc[mask, 'Saldo Deudor (Sobre la Cuota)'] / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'InteresCompensatorioDeuda']     = df_resultado2.loc[mask, 'InteresCompensatorioDeuda']     / df_resultado2.loc[mask, 'TipoCambioTXT']
+df_resultado2.loc[mask, 'InteresMoratorioDeuda']         = df_resultado2.loc[mask, 'InteresMoratorioDeuda']         / df_resultado2.loc[mask, 'TipoCambioTXT']
 
 #con esto ya están divididas esas columnas entre el tipo de cambio si es que están en dólares
 #%% SUMA DEL SALDO Y CRÉDITOS CAPITALIZADOS, o algo así
@@ -277,7 +277,6 @@ def capitalizado(df_resultado3):
         return 'CAPITALIZADO'
     elif round(df_resultado3['MontoSolicitadoTXT'] - df_resultado3['SoloCapitalAmortizado'],2) > round(df_resultado3['SaldoCapital'],2):
         return 'revisar'
-
     else:
         return ''
 
@@ -296,7 +295,6 @@ df4.loc[mask2, 'SaldoCapital'] = round(df4.loc[mask2, 'MontoSolicitadoTXT'] - df
 
 df4['CRED CON CAPITALIZ'] = df4['CRED CON CAPITALIZ'].replace('revisar', '')
 
-
 df4['Nuevo Saldo'] = df4['Saldo Deudor (Sobre la Cuota)'] + df4['InteresCompensatorioDeuda'] + df4['InteresMoratorioDeuda']
 
 #%% DATOS DEL MES PASADO
@@ -309,7 +307,7 @@ df_sum_INT_OTROS = df_sum_INT_OTROS.rename({'Ingresos Financ': 'Int y Otros mes 
 
 #esto es del mes pasado
 #separo las columnas de nro de 'fincore' y 'IMPTE CASTIGADO (Asignado x PGB)' del mes pasado, para hacer un merge
-df_cosas_mes_pasado = df2[["NroPrestamoFC",
+df_cosas_mes_pasado = df2[['NroPrestamoFC',
                            'IMPTE CASTIGADO (Asignado x PGB)',
                            'FECHA DE CASTIGO',
                            'Capital Amortizado',
@@ -352,17 +350,17 @@ mascara = df5['IMPTE CASTIGADO (Asignado x PGB)'] != 0
 
 df6.loc[mascara, 'Capital Amortizado'] = df6.loc[mascara, 'Capital Amortizado'] + df6.loc[mascara, 'Capital']
 df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros'] + df6.loc[mascara, 'Int y Otros mes actual']
-#hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado
-#, y filtrado según saldo castigado
+# hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado
+# , y filtrado según saldo castigado
 
 #%% SALDO DEUDOR PGB
 
 #sumar y restar
 df6['Total Amortizado'] = df6['Capital Amortizado'] + df6['Int y Otros']
 df6['SALDO CASTIGADO']  = df6['IMPTE CASTIGADO (Asignado x PGB)'] - df6['Total Amortizado']
-df6.loc[mascara, 'SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.loc[mascara, 'Capital Amortizado']+df6.loc[mascara, 'Capital']
+df6.loc[mascara, 'SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.loc[mascara, 'Capital Amortizado'] + df6.loc[mascara, 'Capital']
 
-#df6.loc[mascara, 'columna'] = df6['columna5'].where(mascara, df6['columna6'])                  
+# df6.loc[mascara, 'columna'] = df6['columna5'].where(mascara, df6['columna6'])                  
 df6['booleando'] = mascara
 
 def asignar_saldo_deudor(df6):
@@ -538,7 +536,8 @@ def asignacion_auxiliar(df_finalizado):
     else:
         return 'investigar caso'
 
-df_finalizado['auxiliar1'] = df_finalizado.apply(asignacion_auxiliar, axis=1)
+df_finalizado['auxiliar1'] = df_finalizado.apply(asignacion_auxiliar, 
+                                                 axis=1)
 
 #%% REEMPLAZANDO NULOS EN VALOR GARANTIA
 df_finalizado['VALOR GARANTIA'] = df_finalizado['VALOR GARANTIA'].fillna(0)
@@ -720,7 +719,7 @@ tabla22 = tabla22.reset_index()
 #%%% TABLA 23
 
 datos_23 = datos_dolares[(datos_dolares['SituacionTXT'] == 'JUDICIAL NO ASIGNADO') | \
-                       (datos_dolares['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
+                         (datos_dolares['SituacionTXT'] == 'JUDICIAL SIN EXPEDIENTE')]
 tabla23 = datos_23.pivot_table(#columns = 'auxiliar1',
                                       values       = ['Nuevo Saldo'], 
                                       index        = ['auxiliar1'],
