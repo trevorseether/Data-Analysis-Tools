@@ -178,7 +178,7 @@ df_resultado = df1.merge(df2_finalidad,
 
 #%% ASIGNACIÓN CÓDIGO FINALIDAD
 
-df_resultado['CodFinalidad']= np.nan
+df_resultado['CodFinalidad'] = np.nan
 
 def finalidad_producto(df_resultado):
     if pd.isnull(df_resultado['CodFinalidad']):
@@ -234,8 +234,6 @@ def finalidad_producto(df_resultado):
     
 df_resultado['CodFinalidad'] = df_resultado.apply(finalidad_producto, 
                                                   axis = 1)
-print('debe salir cero:')
-print(df_resultado[df_resultado['CodFinalidad'] == 'investigar'].shape[0])
 
 #por si acasito, volvemos a corregir los 41 :v (cuanta inseguridad :'v)
 def pond_41(df_resultado):
@@ -246,6 +244,9 @@ def pond_41(df_resultado):
         return df_resultado['CodFinalidad']
     
 df_resultado['CodFinalidad'] = df_resultado.apply(pond_41, axis=1)
+
+print('debe salir cero:')
+print(df_resultado[df_resultado['CodFinalidad'] == 'investigar'].shape[0])
 
 #%% SOLARIZANDO LOS CRÉDITOS QUE ESTÁN EN DÓLARES
 
