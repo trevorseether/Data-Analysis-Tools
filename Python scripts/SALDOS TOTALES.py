@@ -232,7 +232,10 @@ def finalidad_producto(df_resultado):
     else:
         return df_resultado['CodFinalidad']
     
-df_resultado['CodFinalidad'] = df_resultado.apply(finalidad_producto, axis=1)
+df_resultado['CodFinalidad'] = df_resultado.apply(finalidad_producto, 
+                                                  axis = 1)
+print('debe salir cero:')
+print(df_resultado[df_resultado['CodFinalidad'] == 'investigar'].shape[0])
 
 #por si acasito, volvemos a corregir los 41 :v (cuanta inseguridad :'v)
 def pond_41(df_resultado):
