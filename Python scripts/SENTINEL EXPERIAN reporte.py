@@ -919,13 +919,13 @@ df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'PEÑA') & \
                 (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '07026251'), 
                 'Apellido Materno (*)'] = 'APALAYA'
                                                    
-df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'PEÑA') & \
-                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '07026251'), 
-                'Nombres (*)'] = 'EZEQUIEL'
+# df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'PEÑA') & \
+#                 (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '07026251'), 
+#                 'Nombres (*)'] = 'EZEQUIEL'
 
-df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'GRANDEZ') & \
-                (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '10304141'), 
-                'Apellido Paterno (*)'] = 'GRANDES'
+# df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'GRANDEZ') & \
+#                 (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '10304141'), 
+#                 'Apellido Paterno (*)'] = 'GRANDES'
 
 df_sentinel.loc[(df_sentinel['Apellido Paterno (*)'] == 'MC‘GUIRE') & \
                 (df_sentinel['N° Documento\nIdentidad (*)  DNI o RUC'] == '00243006'), 
