@@ -248,7 +248,7 @@ final = df_resultado[['Documento original',
                       'PAGARE_FINCORE', 
                       "EMPRESA/PLANILLA"]]
 
-final = final.rename(columns={'Documento original': 'Documento'})
+final = final.rename(columns = {'Documento original' : 'Documento'})
 
 # POR SI ACASO, ELIMINAMOS DUPLICADOS
 final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
@@ -256,8 +256,8 @@ final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
 #%% CREACIÓN DE EXCEL
 
 NOMBRE = 'BAJAS '+ FECHATXT + '.xlsx'
-try:
 
+try:
     os.remove(NOMBRE)
 except FileNotFoundError:
     pass
