@@ -13,13 +13,13 @@ import pyodbc
 import os
 
 #%%
-COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC SETIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
+COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC OCTUBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL = '20230930'
+CORTE_SQL = '20231031'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 SET')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 oct')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_25102023151059_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2411202318155_1.csv'
 
 #%%
 
@@ -28,7 +28,7 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 query = f'''
 SELECT
 	FechaCorte1,
-	Nro_Fincore, 
+	C.Nro_Fincore, 
 	ApellidosyNombresRazonSocial2,NumerodeDocumento10,
 	MontodeDesembolso22,
 	FechadeDesembolso21,
@@ -43,7 +43,11 @@ SELECT
 	SaldosdeGarantiasPreferidas34, SaldodeGarantiasAutoliquidables35,
 	ProvisionesConstituidas37,
 	ProvisionesRequeridas36,
-	originador, administrador,
+CASE 
+	WHEN B.FDN_DRIVE IS NULL THEN c.originador ELSE B.FDN_DRIVE END AS 'originador',
+	
+	
+	administrador,
 	LTRIM(RTRIM(P.NUEVA_PLANILLA_creada)) AS 'Planilla',
 	TipodeProducto43,
 	CASE
@@ -60,6 +64,8 @@ FROM
 LEFT JOIN 
     Anexos_Riesgos..planilla2 P 
     ON (LTRIM(RTRIM(C.NUEVA_PLANILLA)) =  LTRIM(RTRIM(P.NUEVA_PLANILLA)))
+
+LEFT JOIN anexos_riesgos2..ORIGINADOR_ENERO_2023 AS B ON (C.Nro_Fincore = B.NRO_FINCORE)
 
 WHERE	
     FechaCorte1 = '{CORTE_SQL}'
@@ -177,9 +183,9 @@ UNION['MAX CALIFICACION'] = UNION.apply(max_clasificacion, axis=1)
 #%% CÁLCULO DE PROVISIONES REQUERIDAS:
 def prov_alineadas_externamente(UNION):
     if UNION['MAX CALIFICACION'] == 0:
-        if UNION['TipodeCredito19'] in ['12','11','10', '09','08']:                                                   
+        if UNION['TipodeCredito19'] in ['12','11','10', '09','08', 12,11,10,9,8]:                                                   
             return 0.01
-        elif UNION['TipodeCredito19'] in ['13', '07', '06']:
+        elif UNION['TipodeCredito19'] in ['13', '07', '06', 13,7,6]:
             return 0.007
     elif UNION['SaldodeGarantiasAutoliquidables35'] > 0:
         if UNION['MAX CALIFICACION'] in [1,2,3,4]:
@@ -267,7 +273,7 @@ SELECT
 	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
 	[FechaCorte1]
 FROM 
-	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AGOSTO_2023]
+	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[OCT_2023]
 '''
 #%% FILTRADOS DXP PARA COMPRA DE DEUDA
 
@@ -359,5 +365,5 @@ SELECT
 	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
 	[FechaCorte1]
 FROM 
-	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AGOSTO_2023]
+	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[OCT_2023]
 '''
