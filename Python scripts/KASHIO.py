@@ -9,7 +9,7 @@ Created on Mon Aug  7 15:00:55 2023
 #              PROCESAMIENTO DEL REPORTE DIARIO DE KASHIO                       #
 #                                                                               #
 # ============================================================================= #
-
+ 
 ###############################################################################
 ###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
 ###############################################################################
@@ -25,12 +25,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 11\\22 nov')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 11\\23 nov')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231122.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231123.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
