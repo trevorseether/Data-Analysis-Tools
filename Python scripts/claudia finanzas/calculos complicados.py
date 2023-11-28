@@ -289,7 +289,7 @@ df_cobranza['mes corte numérica'] = df_cobranza['mes corte'].dt.strftime('%Y%m%
 
 #%%
 # =============================================================================
-# Agrupando INT_CUOTA (ingreso financiero) que no sean RETENCIONES
+# Agrupando INT_CUOTA (ingreso financiero) que no sean RETENCIONES y que sean DXP
 # =============================================================================
 
 cobranza_sin_retenciones = df_cobranza[df_cobranza['tipoPago'] != 'RETENCIONES']
