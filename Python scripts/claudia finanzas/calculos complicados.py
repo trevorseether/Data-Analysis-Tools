@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
-fecha_desembolso_fincore = '20200101'
+fecha_desembolso_fincore = '20000101'
 
 #%% 
 # =============================================================================
@@ -370,10 +370,13 @@ cobranza_de_retenciones_2['FechaDesembolso'] = cobranza_de_retenciones_2['FechaD
 def diff_month(df):
     d1 = datetime.strptime(df['fecha_cob'], '%Y-%m-%d')
     d2 = datetime.strptime(df['FechaDesembolso'], '%Y-%m-%d %H:%M:%S')
-    return (d1.year - d2.year) * 12 + d1.month - d2.month
+    diferencia = d1 - d2
+    
+    return round(((diferencia.days)/30),0)
 
 cobranza_de_retenciones_2['diferencia meses'] = cobranza_de_retenciones_2.apply(diff_month, 
                                                                                 axis = 1)
+
 cuota_de_retención = cuota_de_retención.reset_index()
 comparacion = cuota_de_retención.merge(cobranza_de_retenciones_2[['PagareFincore', 'diferencia meses']], 
                                         left_on  = 'PagareFincore', 

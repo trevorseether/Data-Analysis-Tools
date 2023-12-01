@@ -5,7 +5,7 @@ Created on Mon Oct  2 17:29:23 2023
 @author: sanmiguel38
 """
 import pandas as pd
-import numpy as np
+# import numpy as np
 import os
 
 ubicacion = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis'

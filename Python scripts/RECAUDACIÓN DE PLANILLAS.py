@@ -156,6 +156,10 @@ del conn
 # base = pd.read_excel(ubi_anx + '\\' + anexo_06,
 #                      skiprows = 2,
 #                      dtype    = {'Nro Prestamo \nFincore' : str})
+# 
+# base.rename(columns={'PLANILLA CONSOLIDADA'  : 'PLANILLA BIEN',
+#                      'Planilla Anterior TXT' : 'PLANILLA',
+#                      'Nombre PlanillaTXT'    : 'NUEVA_PLANILLA'}, inplace = True)
 
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)
