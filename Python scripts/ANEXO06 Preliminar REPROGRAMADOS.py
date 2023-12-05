@@ -22,31 +22,38 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'OCTUBRE 2023'
-fecha_corte             = '2023-10-31'
-fecha_corte_inicial     = '2023-10-01'
+fecha_mes               = 'NOVIEMBRE 2023'
+fecha_corte             = '2023-11-30'
+fecha_corte_inicial     = '2023-11-01'
 
 #%% UIT actual
 uit = 4950
 
+#%%
+generar_excels = True #booleano True o False
+
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE\\anexo correcto\\ahora sí'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Octubre2023 - campos ampliados 02 (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Noviembre2023 - campos ampliados (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
+ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\Octubre-23\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - SETIEMBRE 2023 - campos ampliados 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - OCTUBRE 2023 - campos ampliados.xlsx'
+############################################################################################
+
+# filas a omitir del anexo anterior ########################################################
+skip_rows_anterior = 2
 ############################################################################################
 
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
@@ -131,24 +138,24 @@ df_mes_actual_copia = menos_bruto.copy()
 #%% ANEXO PRELIMINAR DEL MES PASADO
 
 anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
-                               skiprows=2,
-                               dtype={'Registro 1/'                 : object, 
-                                      'Fecha de Nacimiento 3/'      : object,
-                                      'Código Socio 7/'             : object, 
-                                      'Número de Documento 10/'     : object,
-                                      'Relación Laboral con la Cooperativa 13/'         :object, 
-                                      'Código de Agencia 16/'       : object,
-                                      'Moneda del crédito 17/'      : object, 
-                                      'Numero de Crédito 18/'       : object,
-                                      'Tipo de Crédito 19/'         : object,
-                                      'Sub Tipo de Crédito 20/'     : object,
-                                      'Fecha de Desembolso 21/'     : object,
-                                      'Cuenta Contable 25/'         : object,
-                                      'Tipo de Producto 43/'        : object,
-                                      'Fecha de Vencimiento Origuinal del Credito 48/'  : object,
-                                      'Fecha de Vencimiento Actual del Crédito 49/'     : object,
-                                      'Nro Prestamo \nFincore'      : object,
-                                      'Refinanciado TXT'            : object}) #no está funcionando esta vaina, debería leer en str
+                               skiprows = skip_rows_anterior,
+                               dtype = {'Registro 1/'                 : object, 
+                                        'Fecha de Nacimiento 3/'      : object,
+                                        'Código Socio 7/'             : object, 
+                                        'Número de Documento 10/'     : object,
+                                        'Relación Laboral con la Cooperativa 13/'         :object, 
+                                        'Código de Agencia 16/'       : object,
+                                        'Moneda del crédito 17/'      : object, 
+                                        'Numero de Crédito 18/'       : object,
+                                        'Tipo de Crédito 19/'         : object,
+                                        'Sub Tipo de Crédito 20/'     : object,
+                                        'Fecha de Desembolso 21/'     : object,
+                                        'Cuenta Contable 25/'         : object,
+                                        'Tipo de Producto 43/'        : object,
+                                        'Fecha de Vencimiento Origuinal del Credito 48/'  : object,
+                                        'Fecha de Vencimiento Actual del Crédito 49/'     : object,
+                                        'Nro Prestamo \nFincore'      : object,
+                                        'Refinanciado TXT'            : object}) #no está funcionando esta vaina, debería leer en str
 del ubicacion_anx06_anterior
 del nombre_anx06
 
@@ -346,6 +353,10 @@ ordenado.drop(['garantias pref mes pasado','garantias autoli mes pasado','fincor
 #verificación si hizo buen match
 actual = ordenado['Saldos de Garantías Preferidas 34/'].sum()
 anterior = garantias['garantias pref mes pasado'].sum()
+
+print('saldo de garantías preferidas actual ' + str(actual))
+print('saldo de garantías preferidas anterior ' + str(anterior))
+print('es normal que mes a mes se reduzca un poquito')
 if actual == anterior:
     print('todo bien en traer saldos de garantías del mes pasado')
 else:
@@ -377,14 +388,15 @@ para_enviar['''Moneda e \nImporte'''] = ''
 para_enviar['Socio que Garantiza'] = ''
 
 #reporte para enviar a Juan Carlos o a Oswald
-try:
-    ruta = f'Créditos Garantizados con CD {fecha_mes}.xlsx'
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
+if generar_excels == True:
+    try:
+        ruta = f'Créditos Garantizados con CD {fecha_mes}.xlsx'
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
 
-para_enviar.to_excel(ruta,
-                      index=False)
+    para_enviar.to_excel(ruta,
+                         index=False)
 
 #%% indicaciones
 
@@ -476,13 +488,17 @@ ordenado.drop(['Tipo de Crédito 19/ (original)'], axis=1, inplace=True)
 filtrado_credito_19 = filtrado_credito_19.rename(columns={'Nro Prestamo \nFincore': "Fincore"})
 
 #guardamos este excel para mandárselo a Cesar
-try:
-    ruta = "Corrección Tipo de Crédito 19.xlsx"
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
+if generar_excels == True:
+    try:
+        ruta = "Corrección Tipo de Crédito 19.xlsx"
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
 
-filtrado_credito_19.to_excel(ruta, index=False)
+    filtrado_credito_19.to_excel(ruta, 
+                                 index=False)
+else:
+    pass
 
 #%% CLASIFICACIÓN SIN ALINEAMIENTO 14/
 #calculamos alineamiento 14/
@@ -549,7 +565,8 @@ nulos = ordenado[pd.isna(ordenado['Clasificación del Deudor 14/'])]
 print(nulos.shape[0])
 del nulos
 revisar = ordenado[ordenado['Clasificación del Deudor 14/'] == 'revisar caso']
-print(revisar)
+print(revisar.shape[0])
+print('revisar si sale más de cero')
 del revisar
 
 #%% CLASIFICACIÓN CON ALINEAMIENTO 15/
@@ -707,6 +724,11 @@ if 'CHUCUYA HERNANDEZ CLELIA MARIA' in list(revisar_en_fincore['Apellidos y Nomb
     ordenado.loc[(ordenado['Apellidos y Nombres / Razón Social 2/'] == 'CHUCUYA HERNANDEZ CLELIA MARIA') & \
                  (ordenado['Nro Prestamo \nFincore'] == '00073897'), 
                  'Saldos de Créditos Castigados 38/'] = 39.22
+        
+if 'RIOS GOMEZ RONALD' in list(revisar_en_fincore['Apellidos y Nombres / Razón Social 2/']):
+    ordenado.loc[(ordenado['Apellidos y Nombres / Razón Social 2/'] == 'RIOS GOMEZ RONALD') & \
+                 (ordenado['Nro Prestamo \nFincore'] == '00059697'), 
+                 'Saldos de Créditos Castigados 38/'] = 7
 
 revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
 print(revisar_en_fincore.shape[0])
@@ -1233,7 +1255,8 @@ anx06_ordenado['''fecha término de gracia por desembolso ["v" + dias gracia (av
     anx06_ordenado['''fecha desemb (v)'''] + pd.to_timedelta(anx06_ordenado['Periodo de Gracia 47/'], unit='D')
 
 # print para verificar que haya funcionado, esta vaina está medio rara    
-print(anx06_ordenado[['''fecha desemb (v)''', '''fecha término de gracia por desembolso ["v" + dias gracia (av)]''']])
+print(anx06_ordenado[['fecha desemb (v)', 
+                      'fecha término de gracia por desembolso ["v" + dias gracia (av)]']])
 
 #%% COL AMARILLA 3 y 4, primero datos del mes pasado
 
@@ -1246,12 +1269,12 @@ col3_4 = col3_4.rename(columns={'Nro Prestamo \nFincore'                : "Finco
 col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog inicio'   : "3 merge"})
 col3_4 = col3_4.rename(columns={'periodo de gracia por Reprog Término'  : "4 merge"})
 
-col3_4 = col3_4.drop_duplicates(subset="Fincore merge 3 y 4") #por si acaso eliminamos duplicados antes del merge
+col3_4 = col3_4.drop_duplicates(subset = "Fincore merge 3 y 4") #por si acaso eliminamos duplicados antes del merge
 #colocando los del mes pasado:
 anx06_ordenado = anx06_ordenado.merge(col3_4, 
-                                      left_on=['Nro Prestamo \nFincore'], 
-                                     right_on=["Fincore merge 3 y 4"]
-                                     ,how='left')
+                                      left_on  = ['Nro Prestamo \nFincore'], 
+                                      right_on = ["Fincore merge 3 y 4"],
+                                      how      = 'left')
 del col3_4
 anx06_ordenado['periodo de gracia por Reprog inicio']  = anx06_ordenado["3 merge"]
 anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado["4 merge"]
@@ -1259,12 +1282,12 @@ anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado["4 merg
 anx06_ordenado.drop(["3 merge", #eliminación de columnas auxiliares que ya no sirven
                      "4 merge",
                      "Fincore merge 3 y 4"], 
-                        axis=1, 
-                        inplace=True)
+                        axis    = 1, 
+                        inplace = True)
 
-print(anx06_ordenado[(anx06_ordenado['periodo de gracia por Reprog inicio'] != '--') & \
-                     (pd.isna(anx06_ordenado['periodo de gracia por Reprog inicio']))]['periodo de gracia por Reprog inicio'])
 
+# print(anx06_ordenado[(anx06_ordenado['periodo de gracia por Reprog inicio'] != '--') & \
+#                      (pd.isna(anx06_ordenado['periodo de gracia por Reprog inicio']))]['periodo de gracia por Reprog inicio'])
 
 #%%% columna 5
 anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
@@ -1280,6 +1303,7 @@ anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''].fillna('--')
 
 x = (anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
+print(x.shape[0])
 #hasta aquí todo bien
 
 #%%% col amarillas 3 y 4
@@ -1293,8 +1317,8 @@ def col3_actuales(anx06_ordenado):
     
 anx06_ordenado['periodo de gracia por Reprog inicio'] = anx06_ordenado.apply(col3_actuales, axis=1)
 
-print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
-#aparentemente todo bien
+print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--'].shape[0])
+print('para que esté bien, debe salir un número ligeramente menor cada mes')
 
 def col4_actuales(anx06_ordenado):
     if (anx06_ordenado["Fecha Creacion Reprogramacion Nacimiento TXT"] >= mes_inicio) & \
@@ -1305,7 +1329,9 @@ def col4_actuales(anx06_ordenado):
     
 anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado.apply(col4_actuales, axis=1)
 
-print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog Término'] != '--']['periodo de gracia por Reprog Término'])
+print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog Término'] != '--'].shape[0])
+print('para que esté bien, debe salir un número ligeramente menor cada mes')
+
 #aparentemente todo bien
 
 #%%% 5ta columna amarilla
@@ -1445,7 +1471,7 @@ anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado.
                                                                                      axis=1)
 
 anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'] = anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].round(2)
-print(anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum())
+# print(anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum())
 suma_saldo_reprogramados = anx06_ordenado['Saldo Capital de Créditos Reprogramados 52/'].sum()
 #%% COLUMNA 53/
 def calculo_53(anx06_ordenado):
@@ -1510,11 +1536,9 @@ anx06_ordenado.loc[(anx06_ordenado['Apellidos y Nombres / Razón Social 2/'] == 
 alertaaa = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') & \
                           (anx06_ordenado['Saldos de Garantías Preferidas 34/'] > 0)]
     
-alertaaa['Nro Prestamo \nFincore']
-    
-
 if alertaaa.shape[0] > 0:
     print(Back.RED + 'ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
+    print('Un Tipo 12 NO puede tener garantía preferida')
 else:
     print(Back.GREEN + 'todo bien q(≧▽≦q)')
 
@@ -1523,14 +1547,17 @@ df_vacío = pd.DataFrame({' ' : ['', '', ''],
                          '  ': ['', '', '']})
 
 nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
-try:
-    ruta = nombre
-    os.remove(ruta)
-except FileNotFoundError:
+if generar_excels == True:
+    
+    try:
+        ruta = nombre
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
+    df_vacío.to_excel(ruta,
+                      index = False)
+else:
     pass
-
-df_vacío.to_excel(ruta,
-                      index=False)
 
 ##################### ESCRIBIMOS EN ESE EXCEL VACÍO #####################
 
@@ -1548,7 +1575,8 @@ menores.to_excel(excel_writer,
 
 # Guardar los cambios y cerrar el objeto ExcelWriter
 excel_writer.save()
- 
+excel_writer.close()
+
 #%% FILTRADO DE CRÉDITOS REPROGRAMADOS
 anx06_repro = anx06_ordenado.copy()
 #filtramos créditos reprogramados NO castigados
@@ -1564,14 +1592,18 @@ print(investigar.shape[0])
 print('debe salir cero, sino investigar')
 
 #%% CREACIÓN DEL EXCEL DE REPROGRAMADOS
-try:
-    ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
+if generar_excels == True:
+    
+    try:
+        ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
 
-reprogramados.to_excel(ruta,
-                      index=False) 
+    reprogramados.to_excel(ruta,
+                           index=False)
+else:
+    pass
 
 ubicacion_actual = os.getcwd()
 
@@ -1590,9 +1622,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20231031' #mes actual
-fecha_corte_menos_1 = '20230930' #mes anterior
-fecha_corte_menos_2 = '20230831' #mes anterior del anterior
+fecha_corte_actual  = '20231130' #mes actual
+fecha_corte_menos_1 = '20231031' #mes anterior
+fecha_corte_menos_2 = '20230930' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1628,7 +1660,7 @@ creditos_en_3_meses = df_mes_actual_copia.loc[df_mes_actual_copia['Nro Prestamo 
 creditos_no_aparecidos = creditos_en_3_meses[~creditos_en_3_meses['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
 
 print(creditos_no_aparecidos)
-creditos_no_aparecidos['Nro Prestamo \nFincore']
+print(creditos_no_aparecidos['Nro Prestamo \nFincore'])
 #%% ahora vamos a buscar respecto al excel original antes de eliminar los cancelados
 'FILTRAMOS AQUELLOS CRÉDITOS QUE TENGAN FECHA DE DESEMBOLSO DE HACE DOS MESES AL CORTE ACTUAL'
 antiguos_aparecen = df_mes_actual_copia[df_mes_actual_copia['Fecha de Desembolso 21/'].astype(int) <= int(fecha_corte_menos_2)]
@@ -1670,14 +1702,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados SETIEMBRE 2023 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 SETIEMBRE\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
+ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\Octubre-23\\productos'
 # =============================================================================
 
-
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Oct-23'
-mes_anterior_txt = 'Set-23'
+mes_actual_txt   = 'Nov-23'
+mes_anterior_txt = 'Oct-23'
 # =============================================================================
 #%% LECTURA
 

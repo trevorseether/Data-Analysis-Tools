@@ -15,15 +15,15 @@ import os
 
 #%% INSUMOS
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados NOVIEMBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\productoi'
 ###############################################################################
 
 # mes y año ###################################################################
-mes = 'octubre'
+mes = 'noviembre'
 año = 2023
 ###############################################################################
 #%% IMPORTACIÓN DE ARCHIVOS
