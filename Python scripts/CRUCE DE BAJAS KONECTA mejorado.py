@@ -23,15 +23,15 @@ from colorama import Back # , Style, init, Fore
 
 'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
 ############################################################################
-FECHATXT = '22-11-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
+FECHATXT = '04-12-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 noviembre\\22 nov'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 diciembre\\04 dic'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = 'CM INFORME DE BAJAS GRUPO - 11_ 2023 (F) ULTIMO.xlsx'
+nombre_archivo = '1ER INFORME DE BAJAS GRUPO - 12_ 2023 (B).xlsx'
 ############################################################################
 
 'filas a skipear' ######################

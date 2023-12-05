@@ -107,7 +107,8 @@ select
 	CapitalRefinanciado28         as 'Capital Refinanciado 28/',
 	CapitalVencido29   as 'Capital Vencido 29/',
 	CapitalenCobranzaJudicial30   as 'Capital en Cobranza Judicial 30/',
-	SaldosdeCreditosCastigados38  as 'Saldos de Créditos Castigados 38/'
+	SaldosdeCreditosCastigados38  as 'Saldos de Créditos Castigados 38/',
+    Refinanciado as 'REFINANCIADO_FILTRO'
 from 
 	anexos_riesgos2..anx06_preliminar
 where FechaCorte1 = '{f_corte_sql}'                      
@@ -115,8 +116,8 @@ where FechaCorte1 = '{f_corte_sql}'
                        
 df_fincore = pd.read_sql_query(sql   = QUERY, 
                                con   = conn, 
-                               dtype ={'Nro Prestamo \nFincore' : str,
-                                       'Numero de Crédito 18/'  : str})
+                               dtype = {'Nro Prestamo \nFincore' : str,
+                                        'Numero de Crédito 18/'  : str})
 del conn  #para limpiar el explorador de variables
 
 df_fincore.dropna(subset=['Nro Prestamo \nFincore',
@@ -138,6 +139,9 @@ anexo_06_descap = df_fincore[['Nro Prestamo \nFincore',
                               'Capital Vencido 29/',
                               'Capital en Cobranza Judicial 30/',
                               'Saldos de Créditos Castigados 38/']]
+
+#lista de créditos refinanciados:
+anx06_refinanciados = df_fincore[df_fincore['REFINANCIADO_FILTRO'] == 'REFINANCIADO'][['Nro Prestamo \nFincore', 'Numero de Crédito 18/']]
 
 #anexo para relacionar nro fincore con nro crédito 18/
 df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
@@ -1005,4 +1009,113 @@ ubicacion_actual = os.getcwd()
 
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
+
+
+#%%
+# =============================================================================
+# 
+# REPORTE PARA EQUIFAX
+# 
+# =============================================================================
+
+df_equifax = df_sentinel.copy()
+df_equifax['Estado'] = ''
+
+#%%
+# CORREGIMOS MN DEUDA INDIRECTA Y MN DEUDA AVALADA PARA EQUIFAX
+avalados = list(df_equifax[df_equifax['Tipo Persona (*)'] == '3']['Cod. Prestamo'])
+
+df_aval_aux1 = df_equifax[(df_equifax['Cod. Prestamo'].isin(avalados)) & \
+                          (df_equifax['Tipo Persona (*)'] == '3')]
+    
+df_aval_aux1 = df_aval_aux1[['Cod. Prestamo',
+                             'MN Deuda Avalada (*)']]
+
+df_aval_aux1.rename(columns = {'MN Deuda Avalada (*)' : 'monto avalado'}, inplace = True)
+    
+df_aval_aux1.drop_duplicates(subset = 'Cod. Prestamo', inplace = True)
+
+df_equifax['MN Deuda Indirecta (avales,cartas fianza,credito) (*)'] = 0
+df_equifax['MN Deuda Avalada (*)'] = 0
+
+df_equifax = df_equifax.merge(df_aval_aux1, 
+                              on  = 'Cod. Prestamo', 
+                              how = 'left')
+
+df_equifax['monto avalado'].fillna(0, inplace = True)
+
+df_equifax['MN Deuda Avalada (*)'] = df_equifax['monto avalado']
+
+#%%
+def corr_avales1(df_equifax):
+    if df_equifax['Tipo Persona (*)'] == '3':
+        return df_equifax['MN Deuda Avalada (*)']
+    else:
+        return 0
+        
+df_equifax['MN Deuda Indirecta (avales,cartas fianza,credito) (*)'] = df_equifax.apply(corr_avales1, 
+                                                                                       axis = 1)
+###############################################################################
+def corr_avales2(df_equifax):
+    if df_equifax['Tipo Persona (*)'] == '3':
+        return 0
+    else:
+        return df_equifax['MN Deuda Avalada (*)']
+        
+df_equifax['MN Deuda Avalada (*)'] = df_equifax.apply(corr_avales2, 
+                                                      axis = 1)
+###############################################################################
+def avales_1(df_equifax):
+    if df_equifax['Tipo Persona (*)'] == '3':
+        return '1'
+    else:
+        return df_equifax['Tipo Persona (*)']
+    
+df_equifax['Tipo Persona (*)'] = df_equifax.apply(avales_1, 
+                                                  axis = 1)
+
+del df_equifax['monto avalado']
+
+#%% verificación de duplicados
+if df_equifax.shape[0] == df_sentinel.shape[0]:
+    print('todo bien')
+else:
+    print('mal, se han duplicado créditos, hay que investigar')
+
+#%%        
+# Corrección de refinanciados,
+
+df_equifax['cred 18'] = df_equifax['Cod. Prestamo'].str.split('-',
+                                                              expand = True)[1]
+refinanciados_list = list(anx06_refinanciados['Numero de Crédito 18/'])
+
+def refinanciados(row):
+    if row['cred 18'] in refinanciados_list:
+        return 'REFINANCIADO'
+    else:
+        return ''
+
+df_equifax['ref'] = df_equifax.apply(refinanciados, axis=1)
+
+#%%
+mask_refinanciados = df_equifax['ref'] == 'REFINANCIADO'
+mask = mask_refinanciados
+df_equifax.loc[mask, 'MN Deuda Directa Refinanciada (*)'] = df_equifax.loc[mask, 'MN Deuda Directa Vigente (*)'] + \
+                                                            df_equifax.loc[mask, 'MN Deuda Directa Venvida < = 30 (*)'] + \
+                                                            df_equifax.loc[mask, 'MN Deuda Directa Vencida > 30 (*)'] + \
+                                                            df_equifax.loc[mask, 'MN Deuda Directa Refinanciada (*)']
+                                                                                                                         
+df_equifax.loc[mask, 'MN Deuda Directa Vigente (*)']           = 0
+df_equifax.loc[mask, 'MN Deuda Directa Venvida < = 30 (*)']    = 0                                          
+df_equifax.loc[mask, 'MN Deuda Directa Vencida > 30 (*)']      = 0                     
+
+df_equifax.to_excel('refinanciados.xlsx',
+                    index = False)
+
+#%% verificación de duplicados
+if df_equifax.shape[0] == df_sentinel.shape[0]:
+    print('todo bien')
+else:
+    print('mal, se han duplicado créditos, hay que investigar')
+
 
