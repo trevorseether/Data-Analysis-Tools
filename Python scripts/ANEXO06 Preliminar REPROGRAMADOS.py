@@ -35,11 +35,11 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Noviembre2023 - campos ampliados (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Noviembre2023 - campos ampliados Final (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
@@ -320,8 +320,9 @@ Suspenso Total''',
 ]]
 
 #%% SALDO DE GARANTÍA DEL MES PASADO
-#PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
-#estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final ya se han cambiado estos datos y se han puesto en las columnas 'monto de garantías'
+# PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
+# estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final 
+# ya se han cambiado estos datos y se han puesto en las columnas 'monto de garantías'
 
 garantias = anx06_anterior[['Nro Prestamo \nFincore',
                             'Saldos de Garantías Preferidas 34/', 
@@ -399,8 +400,8 @@ if generar_excels == True:
                          index=False)
 
 #%% indicaciones
-
-#EL MONTO QUE ENVÍEN IRÁ EN GARANTÍA AUTOLIQUIDABLE
+# el código que envíe va en partida registral
+# EL MONTO QUE ENVÍEN IRÁ EN GARANTÍA AUTOLIQUIDABLE
 # puede que esté en dólares, hay que pasarlo a soles
 # esto se añade después de generar este archivo, para generar el anexo06 final, no este
 
