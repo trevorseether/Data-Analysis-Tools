@@ -34,21 +34,21 @@ from datetime import datetime #, timedelta
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - OCTUBRE 2023 - campos ampliados.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - NOVIEMBRE 2023 - campos ampliados 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 10 2023.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 11 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Octubre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Noviembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -57,9 +57,21 @@ uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2023-10-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Octubre 2023'
+fecha_corte     = '2023-11-30' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Noviembre 2023'
 ########################################################
+
+# Códigos de los productos
+prod43_mype = [15,16,17,18,19, '15','16','17','18','19',
+               21,22,23,24,25,26,27,28,29, '21','22','23','24','25','26','27','28','29',
+               95,96,97,98,99, '95','96','97','98','99']
+
+prod_dxp  = [34, 35, 36, 37, 38, 39]
+prod_ld   = [30, 31, 32, 33]
+prod_mic  = [20, 21, 22, 23, 24, 25, 26, 29]
+prod_peq  = [15, 16, 17, 18, 19]
+prod_med  = [95, 96, 97, 98, 99]
+prod_hip  = [41, 45]
 
 #%% ESTABLECER FECHA CORTE
 
@@ -96,28 +108,28 @@ df['Fecha'] = df['Fecha'].apply(convertir_formato_fecha)
 
 #%% IMPORTACIÓN DE ARCHIVOS
 #5
-df1=pd.read_excel(anexo_del_mes,
-                 dtype={'Registro 1/'                   : object, 
-                        'Fecha de Nacimiento 3/'        : object,
-                        'Código Socio 7/'               : object,
-                        'Tipo de Documento 9/'          : object,
-                        'Número de Documento 10/'       : object,
-                        'Relación Laboral con la Cooperativa 13/'       : object, 
-                        'Código de Agencia 16/'         : object,
-                        'Moneda del crédito 17/'        : object, 
-                        'Numero de Crédito 18/'         : object,
-                        'Tipo de Crédito 19/'           : object,
-                        'Sub Tipo de Crédito 20/'       : object,
-                        'Fecha de Desembolso 21/'       : object,
-                        'Cuenta Contable 25/'           : object,
-                        'Cuenta Contable Crédito Castigado 39/'         : object,
-                        'Tipo de Producto 43/'          : object,
-                        'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                        'Fecha de Vencimiento Actual del Crédito 49/'   : object,
-                        'Nro Prestamo \nFincore'        : object,
-                        'Refinanciado TXT'              : object
-                        },
-                 skiprows = 2)
+df1 = pd.read_excel(anexo_del_mes,
+                   dtype = {'Registro 1/'                   : object, 
+                            'Fecha de Nacimiento 3/'        : object,
+                            'Código Socio 7/'               : object,
+                            'Tipo de Documento 9/'          : object,
+                            'Número de Documento 10/'       : object,
+                            'Relación Laboral con la Cooperativa 13/'       : object, 
+                            'Código de Agencia 16/'         : object,
+                            'Moneda del crédito 17/'        : object, 
+                            'Numero de Crédito 18/'         : object,
+                            'Tipo de Crédito 19/'           : object,
+                            'Sub Tipo de Crédito 20/'       : object,
+                            'Fecha de Desembolso 21/'       : object,
+                            'Cuenta Contable 25/'           : object,
+                            'Cuenta Contable Crédito Castigado 39/'         : object,
+                            'Tipo de Producto 43/'          : object,
+                            'Fecha de Vencimiento Origuinal del Credito 48/': object,
+                            'Fecha de Vencimiento Actual del Crédito 49/'   : object,
+                            'Nro Prestamo \nFincore'        : object,
+                            'Refinanciado TXT'              : object
+                            },
+                   skiprows = 2)
 
 #eliminando las filas con NaN en las siguiente columnas al mismo tiempo:
 df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
@@ -130,7 +142,7 @@ df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
 
 #leyendo la lista de socios con cred < 100 soles
 df_100=pd.read_excel(anexo_del_mes,
-                 dtype      = {'Código Socio 7/':object},
+                 dtype      = {'Código Socio 7/' : object},
                  skiprows   = 0,
                  sheet_name = 'socios con cred < 100 soles')
                     
@@ -138,6 +150,15 @@ anexo06 = df1.columns  ; socios_menor_100 = df_100.columns
 del anexo_del_mes
 x = df1.columns
 
+# %% hay dos nuevos productos, el 26 y el 27
+# el 26 es emprendimiento mujer (microempresa)
+# el 27 es multioficios(hay que pasarlo a 32)
+df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].astype(str)
+df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].str.strip()
+df1.loc[df1['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
+
+print(df1[df1['Tipo de Producto 43/'] == '27'].shape[0])
+print('debe salir cero')
 #%% CRÉDITOS EN LA COOPAC
 #POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
@@ -227,13 +248,17 @@ del mes_calif
 'parseando datos de fechas'
 'hay que tener cuidado con esta vaina, si las fechas no están en el formato indicado se pierden'
 
-df1['Fecha de Nacimiento 3/'] = pd.to_datetime(df1['Fecha de Nacimiento 3/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
+df1['Fecha de Nacimiento 3/'] = pd.to_datetime(df1['Fecha de Nacimiento 3/'], 
+                                               format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
 print(df1[df1['Fecha de Nacimiento 3/'].isnull()].shape[0])
-df1['Fecha de Desembolso 21/'] = pd.to_datetime(df1['Fecha de Desembolso 21/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará 
+df1['Fecha de Desembolso 21/'] = pd.to_datetime(df1['Fecha de Desembolso 21/'], 
+                                                format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará 
 print(df1[df1['Fecha de Desembolso 21/'].isnull()].shape[0])
-df1['Fecha de Vencimiento Origuinal del Credito 48/'] = pd.to_datetime(df1['Fecha de Vencimiento Origuinal del Credito 48/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
+df1['Fecha de Vencimiento Origuinal del Credito 48/'] = pd.to_datetime(df1['Fecha de Vencimiento Origuinal del Credito 48/'], 
+                                                                       format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
 print(df1[df1['Fecha de Vencimiento Origuinal del Credito 48/'].isnull()])
-df1['Fecha de Vencimiento Actual del Crédito 49/'] = pd.to_datetime(df1['Fecha de Vencimiento Actual del Crédito 49/'], format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará  
+df1['Fecha de Vencimiento Actual del Crédito 49/'] = pd.to_datetime(df1['Fecha de Vencimiento Actual del Crédito 49/'], 
+                                                                    format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará  
 print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()].shape[0])
                     
 #%% limpieza de datos
@@ -869,9 +894,7 @@ df_corto.loc[:, 'monto mype'] = df_corto['Saldos de Créditos Castigados 38/'] +
 df_corto['Tipo de Producto 43/'] = df_corto['Tipo de Producto 43/'].astype(int)
 
 #filtrado
-corto_filtrado = df_corto.loc[df_corto['Tipo de Producto 43/'].isin([15,16,17,18,19,
-						                                             21,22,23,24,25,29, 
-                                                                     95,96,97,98,99])]
+corto_filtrado = df_corto.loc[df_corto['Tipo de Producto 43/'].isin(prod43_mype)]
 #tabla resumen de sumarización						                                          
 tabla_resumen = corto_filtrado.groupby('Código Socio 7/')['monto mype'].sum()
 tabla_resumen = tabla_resumen.reset_index()
@@ -893,9 +916,7 @@ df_resultado_2['monto mype'] = df_resultado_2['monto mype'].fillna(0)
 #%%% asignación mype
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].astype(float)
 def asignacion_mype(df_resultado_2):
-    if df_resultado_2['Tipo de Producto 43/'] in [15,16,17,18,19,
-        						                  21,22,23,24,25,29, 
-   						                          95,96,97,98,99]:
+    if df_resultado_2['Tipo de Producto 43/'] in prod43_mype:
         if (df_resultado_2['monto mype'] > 0) & \
         (df_resultado_2['monto mype'] <= 20220):
             return 20
@@ -994,7 +1015,7 @@ print('se reasignaron ' + str(df_resultado_2[df_resultado_2['dif_prod'] == 'dife
 anx06_filtered = df_resultado_2.copy()
 
 # Seleccionar los TipodeProducto43 deseados
-tipos_producto_deseados = [15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 29, 95, 96, 97, 98, 99]
+tipos_producto_deseados = prod43_mype
 anx06_filtered = anx06_filtered[anx06_filtered['Tipo de Producto 43/'].isin(tipos_producto_deseados)]
 
 # Calcular el conteo de diferentes productos por NumerodeDocumento10
@@ -1013,7 +1034,7 @@ del result
 # POR SI ACASO, BUSCAMOS CRÉDITOS CON MONTOS MAYORES A 50K QUE NO SEAN MYPE
 # En abril 2023 encotramos un crédito mediana empresa que estaba con etiqueda de dxp
 
-not_in = [15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 29, 95, 96, 97, 98, 99, 41, 45]
+not_in = prod43_mype + [41, 45, '41', '45']
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
 mayores_para_investigar = mayores_para_investigar[mayores_para_investigar['Saldo de colocaciones (créditos directos) 24/'] > 50000]
 print(mayores_para_investigar[['Nro Prestamo \nFincore', 'Fecha de Desembolso 21/']])
@@ -1499,68 +1520,27 @@ df_resultado_2['Saldo Capital de Créditos Reprogramados 52/'] = df_resultado_2.
 def producto_txt(df_resultado_2):
     tipo_producto = df_resultado_2['Tipo de Producto 43/']
     
-    if tipo_producto in [34, 35, 36, 37, 38, 39]:
+    if tipo_producto in prod_dxp:
         return 'DXP'
-    elif tipo_producto in [30, 31, 32, 33]:
+    elif tipo_producto in prod_ld:
         return 'LD'
-    elif tipo_producto in [20, 21, 22, 23, 24, 25, 29]:
+    elif tipo_producto in prod_mic:
         return 'MICRO'
-    elif tipo_producto in [15, 16, 17, 18, 19]:
+    elif tipo_producto in prod_peq:
         return 'PEQUEÑA'
-    elif tipo_producto in [95, 96, 97, 98, 99]:
+    elif tipo_producto in prod_med:
         return 'MEDIANA'
-    elif tipo_producto in [41, 45]:
+    elif tipo_producto in prod_hip:
         return 'HIPOTECARIA'
 
 df_resultado_2['TIPO DE PRODUCTO TXT'] = df_resultado_2.apply(producto_txt, axis=1) #chequear, aún no está probado
-
-# PROBAR SI EL SIGUIENTE CÓDIGO FUNCIONA
-''' 
-def producto_txt(df_resultado_2):
-    if ((df_resultado_2['Tipo de Producto 43/'] == 34) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 35) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 36) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 37) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 38) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 39)):
-        return 'DXP'
-    elif ((df_resultado_2['Tipo de Producto 43/'] == 30) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 31) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 32) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 33)):
-        return 'LD'
-    elif ((df_resultado_2['Tipo de Producto 43/'] == 21) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 22) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 23) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 24) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 25) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 29)):
-        return 'MICRO'
-    elif ((df_resultado_2['Tipo de Producto 43/'] == 15) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 16) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 17) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 18) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 19)):
-        return 'PEQUEÑA'
-    elif ((df_resultado_2['Tipo de Producto 43/'] == 95) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 96) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 97) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 98) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 99)):
-        return 'MEDIANA'
-    elif ((df_resultado_2['Tipo de Producto 43/'] == 41) or \
-        (df_resultado_2['Tipo de Producto 43/'] == 45)):
-        return 'HIPOTECARIA'
-    
-df_resultado_2['TIPO DE PRODUCTO TXT'] = df_resultado_2.apply(producto_txt, axis=1) #chequear, aún no está probado
-'''
 
 #%% COLUMNAS ROJAS
 #AÑADIENDO LAS COLUMNAS ROJAS PARA JENNY
-df_resultado_2['Días de Diferido 1'] =      ''
-df_resultado_2['Ingresos Diferidos 1'] =    ''
-df_resultado_2['Días de Diferido 2'] =      ''
-df_resultado_2['Ingresos Diferidos 2'] =    ''
+df_resultado_2['Días de Diferido 1']   =  ''
+df_resultado_2['Ingresos Diferidos 1'] =  ''
+df_resultado_2['Días de Diferido 2']   =  ''
+df_resultado_2['Ingresos Diferidos 2'] =  ''
 
 #%% COLUMNAS AZULES PARA EVALUAR LA MOROSIDAD DE DXP
 #primera columna
@@ -2128,10 +2108,10 @@ Fincore''',
 '''dias int suspenso''',
 '''Cartera Neta''',
 '''FEC_REPROG''',
-'''Días de Diferido 1''',
-'''Ingresos Diferidos 1''',
-'''Días de Diferido 2''',
-'''Ingresos Diferidos 2''',
+# '''Días de Diferido 1''',
+# '''Ingresos Diferidos 1''',
+# '''Días de Diferido 2''',
+# '''Ingresos Diferidos 2''',
 '''Interes
 Devengado Total''',
 '''Interes 
@@ -2153,7 +2133,7 @@ anexo06_casi = anexo06_casi[COL]
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
-nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados PROCESADO 02.xlsx"
+nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v02.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -2471,23 +2451,23 @@ set @fechacorte = '{fecha_mes_pasado}'
 SELECT
 	FechaCorte1, 
 	Nro_Fincore,
-	Saldodecolocacionescreditosdirectos24 as 'SALDO CARTERA', 
-	CapitalVigente26 AS 'CAPITAL VIGENTE',
-	nuevo_capitalvencido AS 'CAPITAL VENCIDO',
-	CapitalenCobranzaJudicial30 AS 'COBRANZA JUDICIAL',
-	SaldosdeCreditosCastigados38 AS 'SALDO CASTIGADO',
-	TipodeCredito19 AS 'TIPO DE CRÉDITO',
-	TipodeProducto43 AS 'TIPO DE PRODUCTO',
-	Monedadelcredito17 as 'MONEDA',
-	ProvisionesConstituidas37 as 'PROVISIONES CONSTITUIDAS',
-	ProvisionesRequeridas36  AS 'PROVISIONES REQUERIDAS',
-	Rendimiento_Devengado40 as 'INTERESES DEVENGADOS',
-	InteresesenSuspenso41 AS 'INTERESES EN SUSPENSO',
-	IngresosDiferidos42 AS 'INTERESES DIFERIDOS',
+	Saldodecolocacionescreditosdirectos24 AS 'SALDO CARTERA', 
+	CapitalVigente26                      AS 'CAPITAL VIGENTE',
+	nuevo_capitalvencido                  AS 'CAPITAL VENCIDO',
+	CapitalenCobranzaJudicial30           AS 'COBRANZA JUDICIAL',
+	SaldosdeCreditosCastigados38          AS 'SALDO CASTIGADO',
+	TipodeCredito19                       AS 'TIPO DE CRÉDITO',
+	TipodeProducto43                      AS 'TIPO DE PRODUCTO',
+	Monedadelcredito17                    AS 'MONEDA',
+	ProvisionesConstituidas37             AS 'PROVISIONES CONSTITUIDAS',
+	ProvisionesRequeridas36               AS 'PROVISIONES REQUERIDAS',
+	Rendimiento_Devengado40               AS 'INTERESES DEVENGADOS',
+	InteresesenSuspenso41                 AS 'INTERESES EN SUSPENSO',
+	IngresosDiferidos42                   AS 'INTERESES DIFERIDOS',
 	CASE
 		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
 		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
-		WHEN TipodeProducto43 IN (21,22,23,24,25,29) THEN 'MICRO'
+		WHEN TipodeProducto43 IN (21,22,23,24,25,26,28,27,29) THEN 'MICRO'
 		WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA'
 		WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA'
 		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIA'
@@ -2503,17 +2483,17 @@ anx06_mes_pasado = pd.read_sql_query(query, conn)
 COLUMNA_COMPARACION = 'TIPO DE PRODUCTO TXT'  ####
 ##################################################
 
-pivot_mes_pasado = anx06_mes_pasado.pivot_table(index=[COLUMNA_COMPARACION],
+pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                        #columns=,
-                                       values=['SALDO CARTERA', 
-                                               'CAPITAL VENCIDO', 
-                                               'COBRANZA JUDICIAL', 
-                                               'SALDO CASTIGADO',
-                                               'PROVISIONES CONSTITUIDAS',
-                                               'PROVISIONES REQUERIDAS',
-                                               'INTERESES DEVENGADOS',
-                                               'INTERESES EN SUSPENSO',
-                                               'INTERESES DIFERIDOS'], 
+                                       values = ['SALDO CARTERA', 
+                                                 'CAPITAL VENCIDO', 
+                                                 'COBRANZA JUDICIAL', 
+                                                 'SALDO CASTIGADO',
+                                                 'PROVISIONES CONSTITUIDAS',
+                                                 'PROVISIONES REQUERIDAS',
+                                                 'INTERESES DEVENGADOS',
+                                                 'INTERESES EN SUSPENSO',
+                                                 'INTERESES DIFERIDOS'], 
                                        margins=True, 
                                        margins_name='Total', #para sacar las sumatorias totales                                      
                                        aggfunc='sum'
