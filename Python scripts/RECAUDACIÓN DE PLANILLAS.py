@@ -18,15 +18,15 @@ from colorama import Back # , Style, init, Fore
 
 #%%
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20230930'
+fecha_corte = '20231031'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 SETIEMBRE\\recaudación Setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 octubre')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '09 - SETIEMBRE 2023 (CIERRE) (1).xlsx'
+nombre = '10 - OCTUBRE 2023 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=======================================================
@@ -89,7 +89,7 @@ columnas = ['PLANILLA',
             'MONTO ENVIADO',
             'MONTO DEL MES',
             'RECIBIDO MASIVO',
-            'PAGO INDEPENDIENTE',
+            #'PAGO INDEPENDIENTE',
             'REINTEGROS',
             'SALDO',
             '% COBRANZA']
@@ -168,7 +168,7 @@ df_resultado = base.merge(df_concatenado[['PLANILLA COBRANZAS',
                                           'MONTO ENVIADO',
                                           'MONTO DEL MES',
                                           'RECIBIDO MASIVO',
-                                          'PAGO INDEPENDIENTE',
+                                          #'PAGO INDEPENDIENTE',
                                           'REINTEGROS',
                                           '% COBRANZA']], #AÑADIR LAS COLUMNAS QUE PODRÍAN SER NECESARIAS
                          left_on  = ['PLANILLA BIEN'], 
@@ -180,17 +180,17 @@ df_resultado = base.merge(df_concatenado[['PLANILLA COBRANZAS',
 
 base_sin_duplicados = base[['PLANILLA BIEN', 'PLANILLA', 'NUEVA_PLANILLA']].drop_duplicates(subset = ['PLANILLA BIEN'])
 no_match = df_concatenado.merge(base_sin_duplicados, #AÑADIR LAS COLUMNAS QUE PODRÍAN SER NECESARIAS
-                         left_on  = ['PLANILLA COBRANZAS'], 
-                         right_on = ['PLANILLA BIEN'],
-                         how      = 'left')
-
+                                left_on  = ['PLANILLA COBRANZAS'], 
+                                right_on = ['PLANILLA BIEN'],
+                                how      = 'left')
+    
 no_match = no_match[pd.isna(no_match['PLANILLA BIEN'])]
 
 no_match[['PLANILLA COBRANZAS',
           'MONTO ENVIADO',
           'MONTO DEL MES',
           'RECIBIDO MASIVO',
-          'PAGO INDEPENDIENTE',
+          #'PAGO INDEPENDIENTE',
           'REINTEGROS',
           'SALDO',
           '% COBRANZA']].to_excel('NO HACEN MATCH.xlsx', 
@@ -239,14 +239,14 @@ del conn
 df_resultado['MONTO DEL MES']      = df_resultado['MONTO DEL MES'].astype(float)
 df_resultado['RECIBIDO MASIVO']    = pd.to_numeric(df_resultado['RECIBIDO MASIVO'], errors = 'coerce')
 df_resultado['RECIBIDO MASIVO']    = df_resultado['RECIBIDO MASIVO'].fillna(0)
-df_resultado['PAGO INDEPENDIENTE'] = df_resultado['PAGO INDEPENDIENTE'].astype(float)
+#df_resultado['PAGO INDEPENDIENTE'] = df_resultado['PAGO INDEPENDIENTE'].astype(float)
 df_resultado['REINTEGROS']         = df_resultado['REINTEGROS'].astype(float)
 df_resultado['REINTEGROS']         = pd.to_numeric(df_resultado['REINTEGROS'], errors = 'coerce')
 
 base_final2 = base_final.merge(df_resultado[['Nro_Fincore',
                                              'MONTO DEL MES',
                                              'RECIBIDO MASIVO',
-                                             'PAGO INDEPENDIENTE',
+                                             #'PAGO INDEPENDIENTE',
                                              'REINTEGROS',
                                              '% COBRANZA']], #AÑADIR LAS COLUMNAS QUE PODRÍAN SER NECESARIAS
                          left_on  = ['Nro_Fincore'], 
@@ -255,11 +255,11 @@ base_final2 = base_final.merge(df_resultado[['Nro_Fincore',
 
 base_final2['MONTO DEL MES'] = base_final2['MONTO DEL MES'].fillna(0)
 base_final2['RECIBIDO MASIVO'] = base_final2['RECIBIDO MASIVO'].fillna(0)
-base_final2['PAGO INDEPENDIENTE'] = base_final2['PAGO INDEPENDIENTE'].fillna(0)
+# base_final2['PAGO INDEPENDIENTE'] = base_final2['PAGO INDEPENDIENTE'].fillna(0)
 base_final2['REINTEGROS'] = base_final2['REINTEGROS'].fillna(0)
 
 base_final2['Desc_Envio']   = base_final2['MONTO DEL MES']
-base_final2['Desc_pago']    = base_final2['RECIBIDO MASIVO'] + base_final2['PAGO INDEPENDIENTE'] - base_final2['REINTEGROS']
+base_final2['Desc_pago']    = base_final2['RECIBIDO MASIVO'] +  - base_final2['REINTEGROS'] # + base_final2['PAGO INDEPENDIENTE']
 base_final2['recaudacion']  = base_final2['% COBRANZA']
 
 # Convertimos a numérico:
