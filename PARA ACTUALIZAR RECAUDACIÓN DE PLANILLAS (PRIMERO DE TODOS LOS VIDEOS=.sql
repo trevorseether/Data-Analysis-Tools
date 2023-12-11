@@ -86,7 +86,7 @@ where FechaCorte1 = @fechacorte
 ----------------------------------------------------------------------
 --para insertar la recaudación una vez creada
 insert into RECAUDACION..Cabecera_Pagos ---- ESTA TABLA ES NUEVA, SE HA CREADO PORQUE LA ORIGINAL YA SE LLENÓ
-select * from RECAUDACION..recaudacion20230930
+select * from RECAUDACION..recaudacion20231031
 ----------------------------------------------------------------------
 
 ----creando un esquema nuevo para más orden

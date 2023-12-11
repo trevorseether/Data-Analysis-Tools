@@ -123,9 +123,10 @@ else:
     print(Back.RED + '🚨 PLANILLAS DUPLICADAS 🚨')
     print(duplicados['PLANILLA'])
 
-df_concatenado.to_excel('concatenado.xlsx',
-                        index = False)
-
+# ====== por si necesitamos exportalo a excel (no creo) =======================
+# df_concatenado.to_excel('concatenado.xlsx',
+#                         index = False)
+# =============================================================================
 #%% CONECCIÓN AL SQL
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
@@ -304,12 +305,20 @@ base_final3 = base_final2[['FechaCorte',
                            'Nro_Fincore']]
 
 #%% to excellllllll
-base_final3.to_excel('recaudación para sql.xlsx',
+base_final3.to_excel(f'recaudación para sql {fecha_corte}.xlsx',
                      index = False)
-
-
 
 #%%
 # AQUÍ PONERLE EL RESULTADO DEL OTRO, HACER UN MERGE
+
+# = Para insertar la recaudación una vez creada ===============================
+# insert into RECAUDACION..Cabecera_Pagos
+# select * from RECAUDACION..recaudacion20230930
+# =============================================================================
+
+# añadir las planillas faltantes a la lista de planillas ======================
+
+
+
 
 
