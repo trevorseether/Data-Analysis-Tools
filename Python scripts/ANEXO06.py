@@ -1367,9 +1367,9 @@ def modificacion_dias_suspenso(row):
         return row['dias int suspenso']
 
 df_resultado_2['dias int suspenso 2'] = df_resultado_2.apply(modificacion_dias_suspenso, 
-                                                            axis=1)
+                                                             axis = 1)
 df_resultado_2['dias int suspenso'] = df_resultado_2['dias int suspenso 2']
-df_resultado_2.drop(['dias int suspenso 2'], axis = 1, inplace=True)
+df_resultado_2.drop(['dias int suspenso 2'], axis = 1, inplace = True)
     
 #%% INTERESES EN SUSPENSO
 'intereses en suspenso'
@@ -1388,6 +1388,14 @@ df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Interes\nDevengad
 
 df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
 
+#%% antes de asignar devengados, vamos a revisar unos casitos
+inv = df_resultado_2[(df_resultado_2['Interes\nDevengado Total'] == 0)          & \
+                     (df_resultado_2['Intereses en Suspenso 41/'] == 0)         & \
+                     (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) & \
+                     (df_resultado_2['Número de Cuotas Pagadas 45/'] == 0)      & \
+                     (pd.to_datetime(df_resultado_2['Fecha de Desembolso 21/'])) >= pd.Timestamp(fecha_corte[0:8] + '01')]
+
+             
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
 #necesario para poder calcular la cartera neta = 
@@ -2375,8 +2383,6 @@ print('diferencia:  '+ str(round(diferencia_cons,2)))
 calculo_que_pidio_enrique = suma_constituidas / (df_diferidos['Capital Vencido 29/'].sum() + df_diferidos['Capital en Cobranza Judicial 30/'].sum())
 print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 
-
-
 #%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso, provisiones y los redondeamos
 
 df_diferidos['Interes\nDevengado Total'] = df_diferidos['Interes\nDevengado Total'].round(2)
@@ -2494,8 +2500,8 @@ pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                                  'INTERESES DEVENGADOS',
                                                  'INTERESES EN SUSPENSO',
                                                  'INTERESES DIFERIDOS'], 
-                                       margins=True, 
-                                       margins_name='Total', #para sacar las sumatorias totales                                      
+                                       margins = True, 
+                                       margins_name ='Total', #para sacar las sumatorias totales                                      
                                        aggfunc='sum'
                                        )
 #pivot_mes_pasado = pivot_mes_pasado.reset_index()

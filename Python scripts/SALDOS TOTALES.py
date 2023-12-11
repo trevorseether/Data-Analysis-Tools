@@ -213,10 +213,12 @@ def finalidad_producto(df_resultado):
               ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'])):
             return '25'
         #no olvidar que aquí hay negaciones
-        elif ~('LIBRE DISPONIBILIDAD' in df_resultado['Finalidad TXT'] and 'INDEPENDIENTES - OTROS' in df_resultado['Finalidad TXT']) and \
-            ('CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']):
+        elif ~('LIBRE DISPONIBILIDAD' in df_resultado['Finalidad TXT'] and \
+               'INDEPENDIENTES - OTROS' in df_resultado['Finalidad TXT']) and \
+              ('CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']):
             return '34'
-        elif ('COMPRA DE SERVICIOS / OTROS' in df_resultado['Finalidad TXT'] or 'COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT']) and \
+        elif ('COMPRA DE SERVICIOS / OTROS' in df_resultado['Finalidad TXT'] or \
+              'COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT']) and \
             ('CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT']):
             return '39'
         elif ('COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT']) and \
@@ -225,7 +227,8 @@ def finalidad_producto(df_resultado):
         elif 'PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']:
             return '15'
         elif (('POND' in df_resultado['OrigenPrestamo']) and \
-              ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'] or ('PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']))):
+              ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'] \
+              or ('PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']))):
             return '41'
         else:
             return 'investigar'
