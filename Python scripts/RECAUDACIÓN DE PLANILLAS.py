@@ -109,6 +109,11 @@ df_concatenado = pd.concat(dataframes_filtrados,
 # Mayúsculas
 df_concatenado['PLANILLA'] = df_concatenado['PLANILLA'].str.upper()
 
+# Reemplazos recurrentes
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
+
 # debemos revisar si hay duplicados
 duplicados = df_concatenado[df_concatenado.duplicated(subset = 'PLANILLA', 
                                                       keep   = False)]
@@ -161,6 +166,12 @@ del conn
 #                      'Planilla Anterior TXT' : 'PLANILLA',
 #                      'Nombre PlanillaTXT'    : 'NUEVA_PLANILLA'}, inplace = True)
 
+#%% Reemplazos recurrentes
+base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
+base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
+base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
+
+
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)
 
@@ -195,7 +206,12 @@ no_match[['PLANILLA COBRANZAS',
           'SALDO',
           '% COBRANZA']].to_excel('NO HACEN MATCH.xlsx', 
                                   index = False)
+                                  
+#%% buscador del nombre de las planillas para corregirlas
 
+busqueda = 'poder judicial'
+planillas_masomenos_ese_nombre = base_sin_duplicados[base_sin_duplicados['PLANILLA BIEN'].str.contains(busqueda)]['PLANILLA BIEN']
+'revisar las planillas que masomenos contienen ese nombre'
 #%% BUSCADOR DE NOMBRE DE LAS PLANILLAS
 texto = 'tli alma'
 aver = no_match[no_match['PLANILLA COBRANZAS'].str.contains(texto.upper(), 
@@ -252,6 +268,10 @@ base_final2 = base_final.merge(df_resultado[['Nro_Fincore',
                          left_on  = ['Nro_Fincore'], 
                          right_on = ['Nro_Fincore'],
                          how      = 'left')
+print(base_final2.shape[0])
+base_final2.drop_duplicates(subset = 'Nro_Fincore', inplace = True)
+print(base_final2.shape[0])
+print('si sale menos en el segundo, es porque hubo duplicados')
 
 base_final2['MONTO DEL MES'] = base_final2['MONTO DEL MES'].fillna(0)
 base_final2['RECIBIDO MASIVO'] = base_final2['RECIBIDO MASIVO'].fillna(0)

@@ -61,7 +61,7 @@ SELECT
 	pla.descripcion as planilla, 
 	tc.Descripcion as TipoCredito, 
 	fin.codigo, 
-	fin.Descripcion as finalidad,  
+	fin.Descripcion as 'FINALIDAD',  
 	pre.FechaVentaCartera, 
 	pre.FechaCastigo, 
 	cdoc.codestado, 
@@ -145,8 +145,6 @@ creditos_con_retenciones = df_cobranza[df_cobranza['tipoPago'] == 'RETENCIONES']
 # creditos_con_retenciones = creditos_con_retenciones[(creditos_con_retenciones['mes corte numérica'] >= 20220101)  & \
 #                                                     (creditos_con_retenciones['mes corte numérica'] <= 20220131)]
 
-
-
 #%%
 # agrupamos por meses
 
@@ -228,7 +226,8 @@ SELECT
 	tc.CODTIPOCREDITO AS 'ClaseTipoCredito',
 	*/
 	tc.Descripcion as 'TipoCredito', 
-	FI.CODIGO AS 'COD_FINALIDAD', 
+	FI.CODIGO AS 'COD_FINALIDAD',
+	fi.Descripcion as 'FINALIDAD',  
 	FI.DESCRIPCION AS 'TipoCredito'--,
 	/*
 	s.FechaNacimiento, 
@@ -275,6 +274,7 @@ datos_creditos = df_creditos[['Socio', 'Doc_Identidad', 'pagare_fincore',
                               'moneda', 'Otorgado', 'fechadesembolso', 'Estado',
                               'fechaCancelacion', 'Planilla','COD_FINALIDAD',
                               'TipoCredito', 'FINALIDAD']]
+
 datos_creditos = datos_creditos.drop_duplicates(subset  = 'pagare_fincore')
 
 #%% merge de datos
@@ -282,6 +282,7 @@ dat = ing_fin_sin_retenciones.merge(datos_creditos,
                                     left_on  = 'PagareFincore', 
                                     right_on = 'pagare_fincore',
                                     how      = 'left')
+
 
 #%%
 # CREACIÓN DE DATAFRAMES PARA CADA MES
