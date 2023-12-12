@@ -55,10 +55,17 @@ df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
                      'Domicilio 12/',
                      'Numero de Crédito 18/'], inplace = True, how = 'all')
 
+# esta limpieza existe porque existe la posibilidad de que algunas columnas sean números en lugar de texto
 df1['Tipo de Crédito 19/'] = df1['Tipo de Crédito 19/'].astype(str)
-
-df1['Tipo de Crédito 19/'].unique()
+# df1['Tipo de Crédito 19/'].unique()
 df1['Tipo de Crédito 19/'] = df1['Tipo de Crédito 19/'].str.strip()
+
+tipos_nulos = df1[pd.isna(df1['Tipo de Crédito 19/'])].shape[0]
+if tipos_nulos > 0:
+    print('revisar, hay Tipo de Crédito 19/ con valores nulos')
+else:
+    print('todo bien')
+del tipos_nulos
 
 #%% limpieza
 #ELIMINA ESPACIOS VACÍOS
