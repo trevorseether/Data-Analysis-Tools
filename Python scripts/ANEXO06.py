@@ -2175,23 +2175,215 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Octubre 2023'  #se pone el corte actual
+fecha_corte = 'Noviembre 2023'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20230930" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20231031" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados CONT 2.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2023 - campos ampliados v02.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí\\SISISIIS'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE\\parte 2'
 
+lista_100_provisionales = ['00000681',
+                           '00025314',
+                           '00051147',
+                           '00019565',
+                           '00059920',
+                           '00025678',
+                           '00055472',
+                           '00001346', #
+                           '00009592',
+                           '00050796', #
+                           '00021245',
+                           '00014203',
+                           '00019911',
+                           '00052890',
+                           '00020153',
+                           '00000633', #
+                           '00021016',
+                           '00000942', #
+                           '00023215',
+                           '00020154', #
+                           '00054955', #
+                           '00016572',
+                           '00001147', #
+                           '00001287', #
+                           '00055472',
+                           '00061987',
+                           '00010827',
+                           '00021016',
+                           '00023215',
+                           '00014819',
+                           '00058140',
+                           '00057592',
+                           '00060249',
+                           '00016572',
+                           '00021994',
+                           '00087481',
+'00093507',
+'00098725',
+'00094791',
+'00103282',
+'00088637',
+'00080108',
+'00096417',
+'00068978',
+'00097332',
+'00098973',
+'00098454',
+'00082582',
+'00101711',
+'00091367',
+'00099619',
+'00084311',
+'00091354',
+'00085994',
+'00098112',
+'00100112',
+'00078588',
+'00096775',
+'00102941',
+'00085287',
+'00073062',
+'00086998',
+'00085544',
+'00088082',
+'00091858',
+'00090487',
+'00097094',
+'00102185',
+'00088217',
+'00096808',
+'00099864',
+'00088644',
+'00083469',
+'00102177',
+'00085358',
+'00094227',
+'00102322',
+'00084146',
+'00090588',
+'00099821',
+'00089733',
+'00088497',
+'00101038',
+'00100125',
+'00101012',
+'00084875',
+'00102430',
+'00092802',
+'00097977',
+'00086775',
+'00091004',
+'00091310',
+'00092930',
+'00097354',
+'00101033',
+'00085161',
+'00092292',
+'00091373',
+'00092595',
+'00099885',
+'00082054',
+'00101699',
+'00086604',
+'00081400',
+'00092060',
+'00095283',
+'00099348',
+'00098095',
+'00095355',
+'00072746',
+'00084530',
+'00093694',
+'00100895',
+'00095425',
+'00097641',
+'00067015',
+'00092751',
+'00091010',
+'00085926',
+'00090392',
+'00102370',
+'00095112',
+'00083885',
+'00088722',
+'00081477',
+'00103274',
+'00103362',
+'00099863',
+'00082785',
+'00093411',
+'00074648',
+'00089889',
+'00094732',
+'00081776',
+'00101647',
+'00093146',
+'00089808',
+'00100907',
+'00088965',
+'00090835',
+'00096505',
+'00078869',
+'00095031',
+'00099342',
+'00090816',
+'00099221',
+'00097237',
+'00101581',
+'00084039',
+'00094083',
+'00072567',
+'00087753',
+'00085628',
+'00087968',
+'00097960',
+'00072999',
+'00099858',
+'00086685',
+'00075441',
+'00098849',
+'00100986',
+'00101057',
+'00093332',
+'00100957',
+'00101875',
+'00090798',
+'00076590',
+'00090764',
+'00078831',
+'00088290',
+'00102535',
+'00081777',
+'00098957',
+'00084306',
+'00099407',
+'00089822',
+'00090170',
+'00102369',
+'00092291',
+'00092446',
+'00085151',
+'00083856',
+'00081296',
+'00098963',
+'00088014',
+'00074571',
+'00101726',
+'00085672',
+'00088666',
+'00083585',
+'00099717'
+]
 #%% importación de módulos
 import os
 import pandas as pd
@@ -2220,11 +2412,11 @@ df_diferidos = pd.read_excel(anx06_contabilidad,
                          skiprows = 2
                              )
 
-df_diferidos.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
-                            'Fecha de Nacimiento 3/',
-                            'Número de Documento 10/',
-                            'Domicilio 12/',
-                            'Numero de Crédito 18/'], inplace=True, how= 'all')
+df_diferidos.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
+                              'Fecha de Nacimiento 3/',
+                              'Número de Documento 10/',
+                              'Domicilio 12/',
+                              'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 #%% #asignamos los diferidos
 # df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
@@ -2256,7 +2448,8 @@ df_diferidos['Provisiones Requeridas 36/ SA'].sum()
 #cálculo de provisiones requeridas 36
 
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Cartera Neta'] * \
-                                                  df_diferidos['Tasa de Provisión']
+                                             df_diferidos['Tasa de Provisión']
+                                             
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 df_diferidos['Provisiones Requeridas 36/'].sum()
 
@@ -2287,39 +2480,19 @@ df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].asty
 
 def prov_cons_37_FINAL(df_diferidos):
     if (df_diferidos['Nro Prestamo \nFincore'] in 
-                ['00000681',
-                '00025314',
-                '00025678',
-                '00001346', #
-                '00009592',
-                '00050796', #
-                '00021245',
-                '00014203',
-                '00019911',
-                '00052890',
-                '00020153',
-                '00000633', #
-                '00021016',
-                '00000942', #
-                '00023215',
-                '00020154', #
-                '00054955', #
-                '00016572',
-                '00001147', #
-                '00001287', #
-                '00021994']) :
+                lista_100_provisionales) :
     #\
     #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
-        return df_diferidos['Provisiones Requeridas 36/'] * 1
+        return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.60155  #0.6367 # 0.50 es lo mínimo
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.509 #0.60155
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 
 print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
-print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - 9165145.82),2))
+print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - 9165469.1000),2))
 
 #%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado
@@ -2437,11 +2610,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'OCTUBRE 2023'
+fecha = 'NOVIEMBRE 2023'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20230930' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20231031' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%

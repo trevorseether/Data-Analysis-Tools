@@ -20,15 +20,15 @@ import numpy as np
 
 #%% FECHA CORTE
 ##############################################
-fecha_corte = 'OCTUBRE 2023'           #######
+fecha_corte = 'NOVIEMBRE 2023'           #######
 ##############################################
 #%% UBI
 # ubicación ###################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí\\SISISIIS')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE\\parte 2')
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados FINAL 02.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Noviembre 2023 - campos ampliados v03.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
@@ -42,8 +42,8 @@ df1 = pd.read_excel(anx_06,
                           'Numero de Crédito 18/'     : object, 
                           'Nro Prestamo \nFincore'    : object,
                           'Moneda del crédito 17/'    : object, 
-                          'Tipo de Crédito 19/'       : object,
-                          'Clasificación del Deudor con Alineamiento 15/': object,
+                          'Tipo de Crédito 19/'       : str,
+                          'Clasificación del Deudor con Alineamiento 15/' : object,
                           'Fecha de Nacimiento 3/'    : object,
                           },
                  skiprows = filas_skip)
@@ -55,6 +55,10 @@ df1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
                      'Domicilio 12/',
                      'Numero de Crédito 18/'], inplace = True, how = 'all')
 
+df1['Tipo de Crédito 19/'] = df1['Tipo de Crédito 19/'].astype(str)
+
+df1['Tipo de Crédito 19/'].unique()
+df1['Tipo de Crédito 19/'] = df1['Tipo de Crédito 19/'].str.strip()
 
 #%% limpieza
 #ELIMINA ESPACIOS VACÍOS
@@ -212,13 +216,13 @@ anexo05 = pd.DataFrame(columns=["A", "B", "C", "D", "E", "F", "G"])
 
 
 nueva_fila = pd.DataFrame([['100', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['200', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 
 nueva_fila = pd.DataFrame([['400', 
@@ -228,7 +232,7 @@ nueva_fila = pd.DataFrame([['400',
                             pivot_A_A.iloc[0,4], 
                             pivot_A_A.iloc[0,5],
                             pivot_A_A.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['500', 
                             pivot_A_A.iloc[1,1],
@@ -237,7 +241,7 @@ nueva_fila = pd.DataFrame([['500',
                             pivot_A_A.iloc[1,4], 
                             pivot_A_A.iloc[1,5],
                             pivot_A_A.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['600', 
                             pivot_A_A.iloc[2,1],
@@ -246,10 +250,10 @@ nueva_fila = pd.DataFrame([['600',
                             pivot_A_A.iloc[2,4], 
                             pivot_A_A.iloc[2,5],
                             pivot_A_A.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['800', 
                             pivot_A_A.iloc[3,1],
@@ -258,7 +262,7 @@ nueva_fila = pd.DataFrame([['800',
                             pivot_A_A.iloc[3,4], 
                             pivot_A_A.iloc[3,5],
                             pivot_A_A.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['900', 
                             pivot_A_A.iloc[4,1],
@@ -267,7 +271,7 @@ nueva_fila = pd.DataFrame([['900',
                             pivot_A_A.iloc[4,4], 
                             pivot_A_A.iloc[4,5],
                             pivot_A_A.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #primera suma
 nueva_fila = pd.DataFrame([['1000', 
@@ -277,7 +281,7 @@ nueva_fila = pd.DataFrame([['1000',
                             pivot_A_A.iloc[5,4], 
                             pivot_A_A.iloc[5,5],
                             pivot_A_A.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['1100', 
@@ -287,13 +291,13 @@ nueva_fila = pd.DataFrame([['1100',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1200', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1400', 
                             pivot_A.iloc[0,1],
@@ -302,7 +306,7 @@ nueva_fila = pd.DataFrame([['1400',
                             pivot_A.iloc[0,4], 
                             pivot_A.iloc[0,5],
                             pivot_A.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1500', 
                             pivot_A.iloc[1,1],
@@ -311,7 +315,7 @@ nueva_fila = pd.DataFrame([['1500',
                             pivot_A.iloc[1,4], 
                             pivot_A.iloc[1,5],
                             pivot_A.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1600', 
                             pivot_A.iloc[2,1],
@@ -320,10 +324,10 @@ nueva_fila = pd.DataFrame([['1600',
                             pivot_A.iloc[2,4], 
                             pivot_A.iloc[2,5],
                             pivot_A.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1800', 
                             pivot_A.iloc[3,1],
@@ -332,7 +336,7 @@ nueva_fila = pd.DataFrame([['1800',
                             pivot_A.iloc[3,4], 
                             pivot_A.iloc[3,5],
                             pivot_A.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['1900', 
                             pivot_A.iloc[4,1],
@@ -341,7 +345,7 @@ nueva_fila = pd.DataFrame([['1900',
                             pivot_A.iloc[4,4], 
                             pivot_A.iloc[4,5],
                             pivot_A.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #segunda suma
 nueva_fila = pd.DataFrame([['2000', 
@@ -351,7 +355,7 @@ nueva_fila = pd.DataFrame([['2000',
                             pivot_A.iloc[5,4], 
                             pivot_A.iloc[5,5],
                             pivot_A.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 
@@ -362,13 +366,13 @@ nueva_fila = pd.DataFrame([['2100',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2200', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2400', 
                             pivot_B.iloc[0,1],
@@ -377,7 +381,7 @@ nueva_fila = pd.DataFrame([['2400',
                             pivot_B.iloc[0,4], 
                             pivot_B.iloc[0,5],
                             pivot_B.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2500', 
                             pivot_B.iloc[1,1],
@@ -386,7 +390,7 @@ nueva_fila = pd.DataFrame([['2500',
                             pivot_B.iloc[1,4], 
                             pivot_B.iloc[1,5],
                             pivot_B.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2600', 
                             pivot_B.iloc[2,1],
@@ -395,10 +399,10 @@ nueva_fila = pd.DataFrame([['2600',
                             pivot_B.iloc[2,4], 
                             pivot_B.iloc[2,5],
                             pivot_B.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2800', 
                             pivot_B.iloc[3,1],
@@ -407,7 +411,7 @@ nueva_fila = pd.DataFrame([['2800',
                             pivot_B.iloc[3,4], 
                             pivot_B.iloc[3,5],
                             pivot_B.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['2900', 
                             pivot_B.iloc[4,1],
@@ -416,7 +420,7 @@ nueva_fila = pd.DataFrame([['2900',
                             pivot_B.iloc[4,4], 
                             pivot_B.iloc[4,5],
                             pivot_B.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #tercera suma, que no es suma
 nueva_fila = pd.DataFrame([['3000', 
@@ -426,7 +430,7 @@ nueva_fila = pd.DataFrame([['3000',
                             socios_3, 
                             socios_4,
                             suma_socios]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 #PURO CERO
@@ -437,35 +441,35 @@ nueva_fila = pd.DataFrame([['3100',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3200', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3400', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3800', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['3900', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #tercera suma, que no es suma
 nueva_fila = pd.DataFrame([['4000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 #PURO CERO 2
@@ -476,38 +480,38 @@ nueva_fila = pd.DataFrame([['4100',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4200', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4250', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4400', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['4900', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #tercera suma, que no es suma
 nueva_fila = pd.DataFrame([['5000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5100', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['5200', 
@@ -517,13 +521,13 @@ nueva_fila = pd.DataFrame([['5200',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5400', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5500', 
                             pivot_D.iloc[0,1],
@@ -532,7 +536,7 @@ nueva_fila = pd.DataFrame([['5500',
                             pivot_D.iloc[0,4], 
                             pivot_D.iloc[0,5],
                             pivot_D.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5600', 
                             pivot_D.iloc[1,1],
@@ -541,7 +545,7 @@ nueva_fila = pd.DataFrame([['5600',
                             pivot_D.iloc[1,4], 
                             pivot_D.iloc[1,5],
                             pivot_D.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5700', 
                             pivot_D.iloc[2,1],
@@ -550,10 +554,10 @@ nueva_fila = pd.DataFrame([['5700',
                             pivot_D.iloc[2,4], 
                             pivot_D.iloc[2,5],
                             pivot_D.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5800', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['5900', 
                             pivot_D.iloc[3,1],
@@ -562,7 +566,7 @@ nueva_fila = pd.DataFrame([['5900',
                             pivot_D.iloc[3,4], 
                             pivot_D.iloc[3,5],
                             pivot_D.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6000', 
                             pivot_D.iloc[4,1],
@@ -571,7 +575,7 @@ nueva_fila = pd.DataFrame([['6000',
                             pivot_D.iloc[4,4], 
                             pivot_D.iloc[4,5],
                             pivot_D.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #segunda suma
 nueva_fila = pd.DataFrame([['6100', 
@@ -581,7 +585,7 @@ nueva_fila = pd.DataFrame([['6100',
                             pivot_D.iloc[5,4], 
                             pivot_D.iloc[5,5],
                             pivot_D.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['6400', 
@@ -591,28 +595,28 @@ nueva_fila = pd.DataFrame([['6400',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6700', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6800', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['6900', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7100', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['7200', 
@@ -622,13 +626,13 @@ nueva_fila = pd.DataFrame([['7200',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7400', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7500', 
                             pivot_F.iloc[0,1],
@@ -637,7 +641,7 @@ nueva_fila = pd.DataFrame([['7500',
                             pivot_F.iloc[0,4], 
                             pivot_F.iloc[0,5],
                             pivot_F.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7600', 
                             pivot_F.iloc[1,1],
@@ -646,7 +650,7 @@ nueva_fila = pd.DataFrame([['7600',
                             pivot_F.iloc[1,4], 
                             pivot_F.iloc[1,5],
                             pivot_F.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['7700', 
                             pivot_F.iloc[2,1],
@@ -655,7 +659,7 @@ nueva_fila = pd.DataFrame([['7700',
                             pivot_F.iloc[2,4], 
                             pivot_F.iloc[2,5],
                             pivot_F.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8000', 
                             pivot_F.iloc[4,1],
@@ -664,7 +668,7 @@ nueva_fila = pd.DataFrame([['8000',
                             pivot_F.iloc[4,4], 
                             pivot_F.iloc[4,5],
                             pivot_F.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8100', 
                             pivot_F.iloc[5,1],
@@ -673,7 +677,7 @@ nueva_fila = pd.DataFrame([['8100',
                             pivot_F.iloc[5,4], 
                             pivot_F.iloc[5,5],
                             pivot_F.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['8200', 
@@ -683,10 +687,10 @@ nueva_fila = pd.DataFrame([['8200',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8300', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8400', 
                             np.nan,
@@ -695,15 +699,15 @@ nueva_fila = pd.DataFrame([['8400',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 
 nueva_fila = pd.DataFrame([['8500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8700', 
                             pivot_H.iloc[0,1],
@@ -712,7 +716,7 @@ nueva_fila = pd.DataFrame([['8700',
                             pivot_H.iloc[0,4], 
                             pivot_H.iloc[0,5],
                             pivot_H.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8800', 
                             pivot_H.iloc[1,1],
@@ -721,7 +725,7 @@ nueva_fila = pd.DataFrame([['8800',
                             pivot_H.iloc[1,4], 
                             pivot_H.iloc[1,5],
                             pivot_H.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['8900', 
                             pivot_H.iloc[2,1],
@@ -730,10 +734,10 @@ nueva_fila = pd.DataFrame([['8900',
                             pivot_H.iloc[2,4], 
                             pivot_H.iloc[2,5],
                             pivot_H.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9100', 
                             pivot_H.iloc[3,1],
@@ -742,7 +746,7 @@ nueva_fila = pd.DataFrame([['9100',
                             pivot_H.iloc[3,4], 
                             pivot_H.iloc[3,5],
                             pivot_H.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9200', 
                             pivot_H.iloc[4,1],
@@ -751,7 +755,7 @@ nueva_fila = pd.DataFrame([['9200',
                             pivot_H.iloc[4,4], 
                             pivot_H.iloc[4,5],
                             pivot_H.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9300', 
                             pivot_H.iloc[5,1],
@@ -760,7 +764,7 @@ nueva_fila = pd.DataFrame([['9300',
                             pivot_H.iloc[5,4], 
                             pivot_H.iloc[5,5],
                             pivot_H.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['9400', 
@@ -770,13 +774,13 @@ nueva_fila = pd.DataFrame([['9400',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9700', 
                             pivot_I.iloc[0,1],
@@ -785,7 +789,7 @@ nueva_fila = pd.DataFrame([['9700',
                             pivot_I.iloc[0,4], 
                             pivot_I.iloc[0,5],
                             pivot_I.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9800', 
                             pivot_I.iloc[1,1],
@@ -794,7 +798,7 @@ nueva_fila = pd.DataFrame([['9800',
                             pivot_I.iloc[1,4], 
                             pivot_I.iloc[1,5],
                             pivot_I.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['9900', 
                             pivot_I.iloc[2,1],
@@ -803,10 +807,10 @@ nueva_fila = pd.DataFrame([['9900',
                             pivot_I.iloc[2,4], 
                             pivot_I.iloc[2,5],
                             pivot_I.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10100', 
                             pivot_I.iloc[3,1],
@@ -815,7 +819,7 @@ nueva_fila = pd.DataFrame([['10100',
                             pivot_I.iloc[3,4], 
                             pivot_I.iloc[3,5],
                             pivot_I.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10200', 
                             pivot_I.iloc[4,1],
@@ -824,7 +828,7 @@ nueva_fila = pd.DataFrame([['10200',
                             pivot_I.iloc[4,4], 
                             pivot_I.iloc[4,5],
                             pivot_I.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10300', 
                             pivot_I.iloc[5,1],
@@ -833,7 +837,7 @@ nueva_fila = pd.DataFrame([['10300',
                             pivot_I.iloc[5,4], 
                             pivot_I.iloc[5,5],
                             pivot_I.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['10400', 
@@ -843,13 +847,13 @@ nueva_fila = pd.DataFrame([['10400',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila1 = pd.DataFrame([['10600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10700', 
                             pivot_J.iloc[0,1],
@@ -858,7 +862,7 @@ nueva_fila = pd.DataFrame([['10700',
                             pivot_J.iloc[0,4], 
                             pivot_J.iloc[0,5],
                             pivot_J.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10800', 
                             pivot_J.iloc[1,1],
@@ -867,7 +871,7 @@ nueva_fila = pd.DataFrame([['10800',
                             pivot_J.iloc[1,4], 
                             pivot_J.iloc[1,5],
                             pivot_J.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['10900', 
                             pivot_J.iloc[2,1],
@@ -876,10 +880,10 @@ nueva_fila = pd.DataFrame([['10900',
                             pivot_J.iloc[2,4], 
                             pivot_J.iloc[2,5],
                             pivot_J.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11100', 
                             pivot_J.iloc[3,1],
@@ -888,7 +892,7 @@ nueva_fila = pd.DataFrame([['11100',
                             pivot_J.iloc[3,4], 
                             pivot_J.iloc[3,5],
                             pivot_J.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11200', 
                             pivot_J.iloc[4,1],
@@ -897,7 +901,7 @@ nueva_fila = pd.DataFrame([['11200',
                             pivot_J.iloc[4,4], 
                             pivot_J.iloc[4,5],
                             pivot_J.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11300', 
                             pivot_J.iloc[5,1],
@@ -906,7 +910,7 @@ nueva_fila = pd.DataFrame([['11300',
                             pivot_J.iloc[5,4], 
                             pivot_J.iloc[5,5],
                             pivot_J.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 nueva_fila = pd.DataFrame([['11400', 
@@ -916,13 +920,13 @@ nueva_fila = pd.DataFrame([['11400',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11500', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11600', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11700', 
                             pivot_K.iloc[0,1],
@@ -931,7 +935,7 @@ nueva_fila = pd.DataFrame([['11700',
                             pivot_K.iloc[0,4], 
                             pivot_K.iloc[0,5],
                             pivot_K.iloc[0,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11800', 
                             pivot_K.iloc[1,1],
@@ -940,7 +944,7 @@ nueva_fila = pd.DataFrame([['11800',
                             pivot_K.iloc[1,4], 
                             pivot_K.iloc[1,5],
                             pivot_K.iloc[1,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['11900', 
                             pivot_K.iloc[2,1],
@@ -949,10 +953,10 @@ nueva_fila = pd.DataFrame([['11900',
                             pivot_K.iloc[2,4], 
                             pivot_K.iloc[2,5],
                             pivot_K.iloc[2,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['12000', 0, 0, 0, 0, 0, 0]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['12100', 
                             pivot_K.iloc[3,1],
@@ -961,7 +965,7 @@ nueva_fila = pd.DataFrame([['12100',
                             pivot_K.iloc[3,4], 
                             pivot_K.iloc[3,5],
                             pivot_K.iloc[3,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['12200', 
                             pivot_K.iloc[4,1],
@@ -970,7 +974,7 @@ nueva_fila = pd.DataFrame([['12200',
                             pivot_K.iloc[4,4], 
                             pivot_K.iloc[4,5],
                             pivot_K.iloc[4,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['12300', 
                             pivot_K.iloc[5,1],
@@ -979,7 +983,7 @@ nueva_fila = pd.DataFrame([['12300',
                             pivot_K.iloc[5,4], 
                             pivot_K.iloc[5,5],
                             pivot_K.iloc[5,6]]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%%
 
@@ -992,7 +996,7 @@ nueva_fila = pd.DataFrame([[np.nan,
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['CIFRAS DEL BALANCE', 
                             np.nan,
@@ -1001,7 +1005,7 @@ nueva_fila = pd.DataFrame([['CIFRAS DEL BALANCE',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['CREDITOS DIRECTOS', 
                             pivot_A_A.iloc[5,6],
@@ -1010,7 +1014,7 @@ nueva_fila = pd.DataFrame([['CREDITOS DIRECTOS',
                             pivot_I.iloc[5,6] - pivot_I.iloc[5,1], 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['creditos directos', 
                             pivot_A_A.iloc[5,6],
@@ -1019,7 +1023,7 @@ nueva_fila = pd.DataFrame([['creditos directos',
                             pivot_I.iloc[5,6] - pivot_I.iloc[5,1], 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['CREDITOS INDIRECTOS', 
                             np.nan,
@@ -1028,7 +1032,7 @@ nueva_fila = pd.DataFrame([['CREDITOS INDIRECTOS',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['a)', 
                             0,
@@ -1037,7 +1041,7 @@ nueva_fila = pd.DataFrame([['a)',
                             0, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['b)', 
                             0,
@@ -1046,7 +1050,7 @@ nueva_fila = pd.DataFrame([['b)',
                             0, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['c)', 
                             0,
@@ -1055,7 +1059,7 @@ nueva_fila = pd.DataFrame([['c)',
                             0, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['TOTAL', 
                             pivot_A_A.iloc[5,6],
@@ -1064,7 +1068,7 @@ nueva_fila = pd.DataFrame([['TOTAL',
                             pivot_I.iloc[5,6] - pivot_I.iloc[5,1], 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['W - ANEXO 5', 
                             np.nan,
@@ -1073,7 +1077,7 @@ nueva_fila = pd.DataFrame([['W - ANEXO 5',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['Créditos directos e indirectos afectos a provisiones', 
                             pivot_A_A.iloc[5,6],
@@ -1082,7 +1086,7 @@ nueva_fila = pd.DataFrame([['Créditos directos e indirectos afectos a provision
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['Provisiones Genéricas constituidas', 
                             pivot_I.iloc[5,1],
@@ -1091,7 +1095,7 @@ nueva_fila = pd.DataFrame([['Provisiones Genéricas constituidas',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['Provisiones específicas constituidas', 
                             pivot_I.iloc[5,6] - pivot_I.iloc[5,1],
@@ -1100,7 +1104,7 @@ nueva_fila = pd.DataFrame([['Provisiones específicas constituidas',
                             np.nan, 
                             np.nan,
                             np.nan]], columns=["A", "B", "C", "D", "E", "F", "G"])
-anexo05 = pd.concat([anexo05,nueva_fila], ignore_index=True)
+anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 #%% Exportación a excel
 
