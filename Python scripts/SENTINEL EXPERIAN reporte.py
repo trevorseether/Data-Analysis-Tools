@@ -1166,13 +1166,13 @@ f_equifax['ME DEUDA INDIRECTA  AVALES']                  = 0
 f_equifax['ME DEUDA AVALADA']                            = 0
 f_equifax['ME LINEA DE CREDITO']                         = ''
 f_equifax['ME CREDITOS CASTIGADOS']                      = 0
-f_equifax['CALIFICACION (*)']          = df_equifax['Calificación(*)']
-f_equifax['N° DIAS VENCIDOS MOROSOS (*)']          = df_equifax['N° de Días Vencidos o Morosos ( * )']
+f_equifax['CALIFICACION (*)']   = df_equifax['Calificación(*)']
+f_equifax['N° DIAS VENCIDOS MOROSOS (*)'] = df_equifax['N° de Días Vencidos o Morosos ( * )']
 f_equifax['DIRECCION']          = df_equifax['Dirección']
 f_equifax['DISTRITO']           = df_equifax['Distrito']
 f_equifax['PROVINCIA']          = df_equifax['Provincia']
-f_equifax['DEPARTAMENTO']          = df_equifax['Departamento']
-f_equifax['TELEFONO']          = df_equifax['Telefono']
+f_equifax['DEPARTAMENTO']       = df_equifax['Departamento']
+f_equifax['TELEFONO']           = df_equifax['Telefono']
 
 #%%
 nombre = f'Reporte COOPAC San Miguel - Periodo {f_corte_sql[4:6]}-{f_corte_sql[0:4]} 20523941047.xlsx'
