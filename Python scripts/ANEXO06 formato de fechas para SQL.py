@@ -10,8 +10,8 @@ import pandas as pd
 import os
 
 #%% PARÁMETROS INICIALES:
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Octubre 2023 - campos ampliados FINAL 02.xlsx'
-ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí\\SISISIIS'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2023 - campos ampliados v03.xlsx'
+ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE\\parte 2'
 
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado

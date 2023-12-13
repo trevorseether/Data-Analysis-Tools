@@ -18,15 +18,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'OCTUBRE 2023'
+FECHA_CORTE = 'NOVIEMBRE 2023'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 OCTUBRE"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 noviembre"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_1023 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - OCTUBRE-23 - INSUMO.xlsx"
+insumo_principal = "SM_1123 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - NOVIEMBRE-23 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -36,12 +36,12 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20231031'
+f_corte_sql = '20231130'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 OCTUBRE\\final ahora sí'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
@@ -1018,6 +1018,8 @@ print("La ubicación actual es: " + ubicacion_actual)
 # 
 # =============================================================================
 
+# ESTÁ PENDIENTE EL CÓDIGO DE ENTIDAD (NOS LO TIENEN QUE PSAR DE EQUIFAX)
+
 df_equifax = df_sentinel.copy()
 df_equifax['Estado'] = ''
 
@@ -1109,8 +1111,8 @@ df_equifax.loc[mask, 'MN Deuda Directa Vigente (*)']           = 0
 df_equifax.loc[mask, 'MN Deuda Directa Venvida < = 30 (*)']    = 0                                          
 df_equifax.loc[mask, 'MN Deuda Directa Vencida > 30 (*)']      = 0                     
 
-df_equifax.to_excel('refinanciados.xlsx',
-                    index = False)
+# df_equifax.to_excel('refinanciados.xlsx',
+#                     index = False)
 
 #%% verificación de duplicados
 if df_equifax.shape[0] == df_sentinel.shape[0]:
@@ -1118,4 +1120,10 @@ if df_equifax.shape[0] == df_sentinel.shape[0]:
 else:
     print('mal, se han duplicado créditos, hay que investigar')
 
+#%% EXPORTACIÓN A EXCEL
+del df_equifax['cred 18']
+del df_equifax['ref']
+
+df_equifax.to_excel(f'EQUIFAX {FECHA_CORTE}.xlsx',
+                    index = False)
 

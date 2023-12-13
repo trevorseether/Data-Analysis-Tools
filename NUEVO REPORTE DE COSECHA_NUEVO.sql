@@ -8,9 +8,9 @@
 use COSECHA
 go
 /*
-drop table [dbo].[cosecha_COPIA_JULIO23]
+drop table [dbo].[cosecha_COPIA_SETIEMBRE23]
 select * 
-into [dbo].[cosecha_COPIA_SETIEMBRE23]
+into [dbo].[cosecha_COPIA_Octubre23]
 from [dbo].[cosecha_nuevo]
 
 
@@ -18,7 +18,7 @@ drop table cosecha..cosecha_nuevo
 
 select * 
 into cosecha..cosecha_nuevo
-from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20220901'
+from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20221001'
 update cosecha..cosecha_nuevo ----esta parte creo que no hace falta ejecutarla, (investigar si hace falta recuperar los castigados incluyendo los vendidos)
 set MCastigadoxM = 0 ---
 --    [DESEMBOLSO_AGREGADO]
@@ -53,7 +53,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20221130' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20221231' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha..cosecha_nuevo (
 nro_fincore,
