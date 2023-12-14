@@ -677,27 +677,27 @@ df_resultado['MN Deuda Directa Cobranza Judicial (*)'] = 0
 df_resultado['Estado'] = ''
 df_sentinel['Estado']  = ''
 columnas = ['Fecha del\nPeriodo\n(*)', 'Codigo\nEntidad\n(*)', 'Cod. Prestamo',
-       'Tipo\nDocumento\nIdentidad (*)',
-       'N° Documento\nIdentidad (*)  DNI o RUC', 'Razon Social (*)',
-       'Apellido Paterno (*)', 'Apellido Materno (*)', 'Nombres (*)',
-       'Tipo Persona (*)', 'Modalidad de Credito (*)',
-       'MN Deuda Directa Vigente (*)', 'MN Deuda Directa Refinanciada (*)',
-       'MN Deuda Directa Venvida < = 30 (*)',
-       'MN Deuda Directa Vencida > 30 (*)',
-       'MN Deuda Directa Cobranza Judicial (*)',
-       'MN Deuda Indirecta (avales,cartas fianza,credito) (*)',
-       'MN Deuda Avalada (*)', 'MN Linea de Credito (*)',
-       'MN Creditos Cartigados (*)', 'ME Deuda Directa Vigente (*)',
-       'ME Deuda Directa Refinanciada (*)',
-       'ME Deuda Directa Venvida < = 30 (*)',
-       'ME Deuda Directa Vencida > 30 (*)',
-       'ME Deuda Directa Cobranza Judicial (*)',
-       'ME Deuda Indirecta (avales,cartas fianza,credito) (*)',
-       'ME Deuda Avalada (*)', 'ME Linea de Credito (*)',
-       'ME Creditos Cartigados (*)', 'Calificación(*)',
-       'N° de Días Vencidos o Morosos ( * )', 'Dirección', 'Distrito',
-       'Provincia', 'Departamento', 'Telefono', 'Estado',
-       'Fecha de Vencimiento (*)']
+            'Tipo\nDocumento\nIdentidad (*)',
+            'N° Documento\nIdentidad (*)  DNI o RUC', 'Razon Social (*)',
+            'Apellido Paterno (*)', 'Apellido Materno (*)', 'Nombres (*)',
+            'Tipo Persona (*)', 'Modalidad de Credito (*)',
+            'MN Deuda Directa Vigente (*)', 'MN Deuda Directa Refinanciada (*)',
+            'MN Deuda Directa Venvida < = 30 (*)',
+            'MN Deuda Directa Vencida > 30 (*)',
+            'MN Deuda Directa Cobranza Judicial (*)',
+            'MN Deuda Indirecta (avales,cartas fianza,credito) (*)',
+            'MN Deuda Avalada (*)', 'MN Linea de Credito (*)',
+            'MN Creditos Cartigados (*)', 'ME Deuda Directa Vigente (*)',
+            'ME Deuda Directa Refinanciada (*)',
+            'ME Deuda Directa Venvida < = 30 (*)',
+            'ME Deuda Directa Vencida > 30 (*)',
+            'ME Deuda Directa Cobranza Judicial (*)',
+            'ME Deuda Indirecta (avales,cartas fianza,credito) (*)',
+            'ME Deuda Avalada (*)', 'ME Linea de Credito (*)',
+            'ME Creditos Cartigados (*)', 'Calificación(*)',
+            'N° de Días Vencidos o Morosos ( * )', 'Dirección', 'Distrito',
+            'Provincia', 'Departamento', 'Telefono', 'Estado',
+            'Fecha de Vencimiento (*)']
 
 df_avales = df_resultado[columnas]
 
@@ -990,6 +990,9 @@ df_sentinel['Telefono'] = df_sentinel['Telefono'].astype(float)
 df_sentinel['Telefono'] = df_sentinel['Telefono'].fillna(0)
 df_sentinel['Telefono'] = df_sentinel['Telefono'].astype(np.int64)
 
+#%%
+df_sentinel['Fecha del\nPeriodo\n(*)'] = str(f_corte_sql[0:4]) + '/' + str(f_corte_sql[4:6])
+
 #%% especificaciones finales
 
 'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
@@ -1017,16 +1020,17 @@ ubicacion_actual = os.getcwd()
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
 
+#%% PARTE 2
 
-#%%
 # =============================================================================
 # 
 # REPORTE PARA EQUIFAX
 # 
 # =============================================================================
 
-
+#%%
 df_equifax = df_sentinel.copy()
+
 df_equifax['Estado'] = ''
 
 df_equifax['Fecha del\nPeriodo\n(*)'] = str(f_corte_sql[0:6])
@@ -1134,7 +1138,7 @@ del df_equifax['ref']
 #%%
 # formato de equifax
 f_equifax = pd.DataFrame()
-# f_equifax['ELIMINAR FILA (MARQUE X) '] = ''
+f_equifax['ELIMINAR FILA (MARQUE X) '] = ''
 f_equifax['FECHA DEL PERIODO  (*)']    = df_equifax['Fecha del\nPeriodo\n(*)']
 f_equifax['CODIGO DE ENTIDAD (*)']     = df_equifax['Codigo\nEntidad\n(*)']
 f_equifax['CODIGO TARJETA DE CREDITO'] = ''
