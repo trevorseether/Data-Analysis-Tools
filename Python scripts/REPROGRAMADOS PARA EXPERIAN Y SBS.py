@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 octubre'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 noviembre'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados NOVIEMBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202301249_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
+calificacion = '20523941047_70369063_PE202301402_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'octubre'
+mes = 'noviembre'
 año = 2023
 ###############################################################################
 
@@ -128,7 +128,7 @@ tabla1 = pd.read_excel(anx06_repro,
                        #sheet_name = "Hoja1",
                        skiprows = 2,
                        dtype = {'Número de Documento 10/' : str,
-                                "Código Socio 7/"         : str,
+                                'Código Socio 7/'         : str,
                                 'Nro Prestamo \nFincore'  : str
                                },
                        parse_dates=["FEC_ULT_REPROG"])

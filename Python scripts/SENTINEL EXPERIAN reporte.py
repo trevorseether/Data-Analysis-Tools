@@ -1134,7 +1134,7 @@ del df_equifax['ref']
 #%%
 # formato de equifax
 f_equifax = pd.DataFrame()
-f_equifax['ELIMINAR FILA (MARQUE X) '] = ''
+# f_equifax['ELIMINAR FILA (MARQUE X) '] = ''
 f_equifax['FECHA DEL PERIODO  (*)']    = df_equifax['Fecha del\nPeriodo\n(*)']
 f_equifax['CODIGO DE ENTIDAD (*)']     = df_equifax['Codigo\nEntidad\n(*)']
 f_equifax['CODIGO TARJETA DE CREDITO'] = ''
