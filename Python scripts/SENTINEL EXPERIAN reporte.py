@@ -18,15 +18,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'NOVIEMBRE 2023'
+FECHA_CORTE = 'JUNIO 2023'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 noviembre"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 junio ok"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_1123 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - NOVIEMBRE-23 - INSUMO.xlsx"
+insumo_principal = "SM_0623 - Sentinel-Experian Cart Vigente y Vencida - Junio-23.xls"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -36,12 +36,12 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20231130'
+f_corte_sql = '20230630'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 JUNIO'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
@@ -211,8 +211,8 @@ df_sentinel['cod pres para merge'] = df_sentinel['cod pres para merge'].str.stri
 
 #merge
 df_sentinel = df_sentinel.merge(df_fincore, 
-                                on='cod pres para merge', 
-                                how='left')
+                                on = 'cod pres para merge', 
+                                how = 'left')
 
 df_sentinel.drop(['cod pres para merge'], axis=1, inplace=True)
 
@@ -259,13 +259,13 @@ df_sentinel['MN Linea de Credito (*)']              = ''
 df_sentinel['MN Creditos Cartigados (*)']           = df_sentinel['Saldos de Créditos Castigados 38/']
 
 #%% ELIMINAMOS LAS COLUMNAS QUE YA NO NECESITAMOS
-df_sentinel.drop(["Nro_Fincore"],                       axis=1, inplace=True)
-df_sentinel.drop(["Numero de Crédito 18/"],             axis=1, inplace=True)
-df_sentinel.drop(["Capital Vigente 26/"],               axis=1, inplace=True)
-df_sentinel.drop(["Capital Refinanciado 28/"],          axis=1, inplace=True)
-df_sentinel.drop(["Capital Vencido 29/"],               axis=1, inplace=True)
-df_sentinel.drop(["Capital en Cobranza Judicial 30/"],  axis=1, inplace=True)
-df_sentinel.drop(["Saldos de Créditos Castigados 38/"], axis=1, inplace=True)
+df_sentinel.drop(["Nro_Fincore"],                       axis = 1, inplace = True)
+df_sentinel.drop(["Numero de Crédito 18/"],             axis = 1, inplace = True)
+df_sentinel.drop(["Capital Vigente 26/"],               axis = 1, inplace = True)
+df_sentinel.drop(["Capital Refinanciado 28/"],          axis = 1, inplace = True)
+df_sentinel.drop(["Capital Vencido 29/"],               axis = 1, inplace = True)
+df_sentinel.drop(["Capital en Cobranza Judicial 30/"],  axis = 1, inplace = True)
+df_sentinel.drop(["Saldos de Créditos Castigados 38/"], axis = 1, inplace = True)
 
 #%%% cambio de nombre
 df_fincore = df_fincore.rename(columns={'cod pres para merge': 
@@ -767,15 +767,15 @@ df_avales_mergeado = df_avales.merge(avales_datos_separados,
                                      right_on = ['dni para merge'],
                                      how      = 'left')
                                               
-#ASIGNAMOS LOS DATOS DE LOS AVALES A LAS COLUMNAS CORRESPONDIENTES                                    
-df_avales_mergeado['Apellido Paterno (*)'] = df_avales_mergeado['A paterno para merge']                                        
-df_avales_mergeado['Apellido Materno (*)'] = df_avales_mergeado['A materno para merge']                                        
-df_avales_mergeado['Nombres (*)'] = df_avales_mergeado['nombres para merge']                                        
-df_avales_mergeado['Dirección'] = df_avales_mergeado['domicilio para merge']                                        
-df_avales_mergeado['Distrito'] = df_avales_mergeado['distrito para merge']                                        
-df_avales_mergeado['Provincia'] = df_avales_mergeado['provincia para merge']                                        
-df_avales_mergeado['Departamento'] = df_avales_mergeado['dpto para merge']                                        
-df_avales_mergeado['Telefono'] = df_avales_mergeado['Celular1']                                        
+#ASIGNAMOS LOS DATOS DE LOS AVALES A LAS COLUMNAS CORRESPONDIENTES
+df_avales_mergeado['Apellido Paterno (*)'] = df_avales_mergeado['A paterno para merge']
+df_avales_mergeado['Apellido Materno (*)'] = df_avales_mergeado['A materno para merge']
+df_avales_mergeado['Nombres (*)']  = df_avales_mergeado['nombres para merge']
+df_avales_mergeado['Dirección']    = df_avales_mergeado['domicilio para merge']
+df_avales_mergeado['Distrito']     = df_avales_mergeado['distrito para merge']
+df_avales_mergeado['Provincia']    = df_avales_mergeado['provincia para merge']
+df_avales_mergeado['Departamento'] = df_avales_mergeado['dpto para merge']
+df_avales_mergeado['Telefono']     = df_avales_mergeado['Celular1']
 
 #eliminamos las columnas que ya no necesitamos
 df_avales_mergeado.drop(['dni para merge'], axis=1, inplace=True)
@@ -1028,6 +1028,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 # 
 # =============================================================================
 
+#%% código en caso tuviéramos que procesar un reporte anitguo
+
+# import pandas as pd
+# import os
+# import pyodbc
+
+# f_corte_sql = '20230630'
+
+# ubi = 'C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 JUNIO'
+# nombre = 'SM_0423 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - JUNIO 2023 final.xlsx'
+
+# os.chdir('C:\\Users\\sanmiguel38\\Desktop\\equifax antiguos')
+# df_sentinel = pd.read_excel(ubi + '\\' + nombre,
+#                            dtype = {'Cod. Prestamo'    : str,
+#                                     'Tipo Persona (*)' : str}) # esta línea es importante o no funciona
+
 #%%
 df_equifax = df_sentinel.copy()
 
@@ -1039,6 +1055,7 @@ df_equifax['Codigo\nEntidad\n(*)'] = '058295'
 
 #%%
 # CORREGIMOS MN DEUDA INDIRECTA Y MN DEUDA AVALADA PARA EQUIFAX
+
 avalados = list(df_equifax[df_equifax['Tipo Persona (*)'] == '3']['Cod. Prestamo'])
 
 df_aval_aux1 = df_equifax[(df_equifax['Cod. Prestamo'].isin(avalados)) & \
