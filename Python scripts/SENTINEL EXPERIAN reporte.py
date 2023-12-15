@@ -26,7 +26,7 @@ directorio = "C:\\Users\\sanmiguel38\\Desktop\\SENTINEL EXPERIAN\\2023 junio ok"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_0623 - Sentinel-Experian Cart Vigente y Vencida - Junio-23.xls"
+insumo_principal = "SM_0623 - Sentinel-Experian Cart Vigente y Vencida - Junio-23.xlsm"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -301,11 +301,11 @@ print(df_duplicados.shape[0])
 
 #%%% eliminación de duplicados
 
-df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
+df_sentinel = df_sentinel.drop_duplicates(subset = 'Cod. Prestamo')
 
 #%% IMPORTACIÓN DE LOS AVALES
 ##############################################
-#   AVALES: OBTENIDO DEL FINCORE
+#       AVALES: OBTENIDO DEL FINCORE
 ##############################################
 # en la misma ubicación que tenemos el archivo en bruto, debemos poner los avales
 # estos avales los sacamos del Fincore con los siguientes botones:
