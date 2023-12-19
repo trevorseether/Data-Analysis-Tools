@@ -2138,6 +2138,14 @@ Suspenso Total''',
 
 anexo06_casi = anexo06_casi[COL]
 
+#%% AJUSTE PUNTUAL DE VALORES, ANTES DE MANDARLO AL SUCAVE
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00016472', 'Sub Tipo de Crédito 20/'] = '99'
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00057366', 'Sub Tipo de Crédito 20/'] = '99'
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00014355', 'Sub Tipo de Crédito 20/'] = '99'
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00019911', 'Sub Tipo de Crédito 20/'] = '99'
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00020153', 'Sub Tipo de Crédito 20/'] = '99'
+anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00053525', 'Sub Tipo de Crédito 20/'] = '99'
+
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
