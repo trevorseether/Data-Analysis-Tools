@@ -21,22 +21,22 @@ from colorama import Back # , Style, init, Fore
 
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
-'AQUI SE PONE LA FECHA QUE UNO QUIERE QUE APAREZCA EN EL NOMBRE DEL ARCHIVO'
-############################################################################
-FECHATXT = '26-12-2023'  # FORMATO DÍA-MES-AÑO, importante porque sirve para la query, se pone el mismo día que lo mandan
+'AQUI SE PONE LA FECHA DE HOY' #############################################
+FECHATXT = '26-12-2023'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\bajas konecta 16 dic'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 diciembre\\18 dic\\Nueva carpeta'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '3ER INFORME DE BAJAS GRUPO (2) (2).xlsx'
+nombre_archivo = '3ER INFORME DE BAJAS GRUPO.xlsx'
 ############################################################################
 
 'filas a skipear' ######################
 filas_skip = 0
 ########################################
+
 #%% IMPORTANDO EL INFORME DE BAJAS
 
 os.chdir(directorio)

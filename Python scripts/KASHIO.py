@@ -33,6 +33,9 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\19 dic\\asdasd')
 ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231219.xlsx'
 ######################################################################
 
+#%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS
+crear_archivo = False #True o False
+
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
                        dtype = {'ID CLIENTE'       : str,
@@ -123,15 +126,19 @@ kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 kashio = kashio[columnas] #nos quedamos solo con las columnas necesarias
 
 #%% REPORTE DE CLIENTES CORREGIDO PARA CHEQUEAR LOS CORREOS
+if crear_archivo == True:
 
-# nombre = "Correo corregido " + str(ARCHIVO_HOY[29:37]) + ".xlsx"
-# try:
-#     ruta = nombre
-#     os.remove(ruta)
-# except FileNotFoundError:
-#     pass
+    nombre = "Correo corregido " + str(ARCHIVO_HOY[29:37]) + ".xlsx"
+    try:
+        ruta = nombre
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
 
-# kashio.to_excel(nombre, index = False)
+    kashio.to_excel(nombre, index = False)
+
+else:
+    pass
 
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
