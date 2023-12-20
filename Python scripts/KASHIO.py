@@ -13,7 +13,6 @@ Created on Mon Aug  7 15:00:55 2023
 ###############################################################################
 ###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
 ###############################################################################
-# también hay que reemplazar las Ã‘ por Ñ
 
 #%% MÓDULOS
 import pandas as pd
@@ -25,12 +24,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\19 dic\\asdasd')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\20 dic')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231219.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231220.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS
@@ -40,7 +39,7 @@ crear_archivo = False #True o False
 kashio = pd.read_excel(ARCHIVO_HOY,
                        dtype = {'ID CLIENTE'       : str,
                                 'TELEFONO'         : str,
-                                'NUMERO DOCUMENTO' : str}
+                                'NUMERO DOCUMENTO' : str }
                        )
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
@@ -116,14 +115,12 @@ def correccion(row):
     
 kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis=1)
 
-###############################################################################
-###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
-###############################################################################
-# también hay que reemplazar las Ã‘ por Ñ
-
 kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 
 kashio = kashio[columnas] #nos quedamos solo con las columnas necesarias
+
+#%% columna verificadora de correos
+kashio['dominio'] = kashio['EMAIL'].str.split('@', expand = True)[1]
 
 #%% REPORTE DE CLIENTES CORREGIDO PARA CHEQUEAR LOS CORREOS
 if crear_archivo == True:
