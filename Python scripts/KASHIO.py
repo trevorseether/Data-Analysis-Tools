@@ -25,12 +25,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\18 dic')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\19 dic\\asdasd')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231218.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231219.xlsx'
 ######################################################################
 
 #%%% lectura del archivo
@@ -94,8 +94,7 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GIMAIL.COM'    , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMA.IL.COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL..COM'    , '@GMAIL.COM')    
-
-    
+ 
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
 def correccion(row):
@@ -125,14 +124,14 @@ kashio = kashio[columnas] #nos quedamos solo con las columnas necesarias
 
 #%% REPORTE DE CLIENTES CORREGIDO PARA CHEQUEAR LOS CORREOS
 
-nombre = "Correo corregido " + str(ARCHIVO_HOY[29:37]) + ".xlsx"
-try:
-    ruta = nombre
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
+# nombre = "Correo corregido " + str(ARCHIVO_HOY[29:37]) + ".xlsx"
+# try:
+#     ruta = nombre
+#     os.remove(ruta)
+# except FileNotFoundError:
+#     pass
 
-kashio.to_excel(nombre, index = False)
+# kashio.to_excel(nombre, index = False)
 
 #%% ponemos los correos corregidos en el otro reporte (el más grande)
 
