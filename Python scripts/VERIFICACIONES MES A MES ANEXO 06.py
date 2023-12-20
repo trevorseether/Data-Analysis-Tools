@@ -16,11 +16,11 @@ import pyodbc
 # import numpy as np
 
 #%%
-FECHA_SQL = '20230831'
+FECHA_SQL = '20231031'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE\\FINAL')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE\\parte 2')
 
-anx06_final = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2023 - campos ampliados v03.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
@@ -87,7 +87,7 @@ df.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                   'Fecha de Nacimiento 3/',
                   'Número de Documento 10/',
                   'Domicilio 12/',
-                  'Numero de Crédito 18/'], inplace=True, how='all')
+                  'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 #limpieza de datos
 df['Apellidos y Nombres / Razón Social 2/'] = df['Apellidos y Nombres / Razón Social 2/'].str.strip()
