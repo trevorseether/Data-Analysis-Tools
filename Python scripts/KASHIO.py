@@ -24,12 +24,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\21 dic')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2023 12\\282828')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231221.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20231222.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS
@@ -241,6 +241,6 @@ kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv',
 #%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO CREAR EL REPORTE MENSUAL
 
 '''
-kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
+kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + '.xlsx',
                          index = False)
 '''
