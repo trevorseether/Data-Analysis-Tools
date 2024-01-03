@@ -11,15 +11,17 @@ Created on Tue Sep 26 14:04:26 2023
 import pandas as pd
 import pyodbc
 import os
+import warnings
+warnings.filterwarnings('ignore')
 
 #%%
-COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC OCTUBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
+# COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL = '20231031'
+CORTE_SQL = '20231130'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 oct')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 nov')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2411202318155_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_21202410273_1.csv'
 
 #%%
 
@@ -86,6 +88,11 @@ al_externo = pd.read_csv(NOMBRE_AL_EXTERNO,
                            dtype = {'NUMERO DE DOCUMENTO' : str},
                            skiprows = 1
                            )
+
+#%% SI LA ESTRUCTURA SE MANTIENE este debería ser una columna tipo 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023'
+COLUMNA_ALINEAMIENTO = al_externo.columns[31]
+print(COLUMNA_ALINEAMIENTO)
+print('''el nombre de la columna debe ser algo como 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' ''')
 
 #%%
 x = al_externo.columns
@@ -168,6 +175,8 @@ mask = pd.isna(UNION['ALINEAMIENTO EXTERNO'])
 UNION.loc[mask, 'ALINEAMIENTO EXTERNO'] = UNION.loc[mask, 'ClasificaciondelDeudorconAlineamiento15']
 
 print(UNION[pd.isna(UNION['ALINEAMIENTO EXTERNO'])]['ApellidosyNombresRazonSocial2'])
+print(UNION[pd.isna(UNION['ALINEAMIENTO EXTERNO'])]['ApellidosyNombresRazonSocial2'].shape[0])
+print('si sale más de cero, hay que investigar')
 print('sale null en aquellos registros que Experian no procesa')
 
 #%% máximo alineamiento:
@@ -365,5 +374,5 @@ SELECT
 	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
 	[FechaCorte1]
 FROM 
-	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[OCT_2023]
+	anexos_riesgos3.[ALINEAMIENTO EXTERNO].[2023_11]
 '''

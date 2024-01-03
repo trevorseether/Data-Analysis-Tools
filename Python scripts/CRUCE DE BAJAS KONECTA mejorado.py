@@ -22,15 +22,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' #############################################
-FECHATXT = '26-12-2023'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '03-01-2024'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2023 diciembre\\18 dic\\Nueva carpeta'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024 enero\\03 01'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '3ER INFORME DE BAJAS GRUPO.xlsx'
+nombre_archivo = 'VALIDACION 1ER INFORME 01_24 GRUPO KONECTA (A).xlsx'
 ############################################################################
 
 'filas a skipear' ######################
@@ -204,7 +204,7 @@ vigentes = vigentes[vigentes["Estado"] == 'PENDIENTE']
 
 #%% 14 ceros para merge
 'agregamos 14 ceros al reporte EXTRAIDO CON SQL'
-vigentes["Doc_Identidad"] = vigentes["Doc_Identidad"].astype(str)
+vigentes["Doc_Identidad"]       = vigentes["Doc_Identidad"].astype(str)
 vigentes["DOC_IDENTIDAD_ceros"] = vigentes["Doc_Identidad"].str.zfill(14)
 
 #%%SELECCIÓN DE COLUMNAS
@@ -262,7 +262,8 @@ try:
 except FileNotFoundError:
     pass
 
-final.to_excel(NOMBRE, index=False,
-               sheet_name=FECHATXT)
+final.to_excel(NOMBRE, 
+               index = False,
+               sheet_name = FECHATXT)
 
 
