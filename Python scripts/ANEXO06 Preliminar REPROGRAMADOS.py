@@ -108,14 +108,14 @@ print('si sale menos en el segundo es porque hubo duplicados')
 
 #%% ELIMINACIÓN DE CRÉDITOS VENDIDOS (por si acaso)
 
-vendidos = ['00001346',
-            '00050796',
-            '00000633',
-            '00000942',
-            '00020154',
-            '00054955',
-            '00001147',
-            '00001287']
+vendidos = ['00001346' ,
+            '00050796' ,
+            '00000633' ,
+            '00000942' ,
+            '00020154' ,
+            '00054955' ,
+            '00001147' ,
+            '00001287' ]
 
 def eliminar(menos_bruto):
     if menos_bruto['Nro Prestamo \nFincore'] in vendidos:
@@ -125,10 +125,8 @@ menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] = menos_bruto.apply(eliminar, axis=
 
 print(menos_bruto.shape[0])
 
-
 menos_bruto = menos_bruto[menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] != 'eliminar']
-menos_bruto = menos_bruto.drop('CRÉDITOS VENDIDOS (ELIMINAR)', axis=1)
-
+menos_bruto = menos_bruto.drop('CRÉDITOS VENDIDOS (ELIMINAR)', axis = 1)
 
 print('')
 print(menos_bruto.shape[0])
@@ -143,7 +141,7 @@ anx06_anterior = pd.read_excel(ubicacion_anx06_anterior + '\\' + nombre_anx06,
                                         'Fecha de Nacimiento 3/'      : object,
                                         'Código Socio 7/'             : object, 
                                         'Número de Documento 10/'     : object,
-                                        'Relación Laboral con la Cooperativa 13/'         :object, 
+                                        'Relación Laboral con la Cooperativa 13/'         : object, 
                                         'Código de Agencia 16/'       : object,
                                         'Moneda del crédito 17/'      : object, 
                                         'Numero de Crédito 18/'       : object,

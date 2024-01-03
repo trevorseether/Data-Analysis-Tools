@@ -26,11 +26,11 @@ FECHATXT = '03-01-2024'  # FORMATO DÍA-MES-AÑO
 ############################################################################
 
 'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024 enero\\03 01'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024 enero\\03 01 (2)'
 ############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = 'VALIDACION 1ER INFORME 01_24 GRUPO KONECTA (A).xlsx'
+nombre_archivo = 'VALIDACION 2do INFORME 01_24 GRUPO KONECTA (B).xlsx'
 ############################################################################
 
 'filas a skipear' ######################
