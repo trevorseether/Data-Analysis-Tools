@@ -22,9 +22,9 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'NOVIEMBRE 2023'
-fecha_corte             = '2023-11-30'
-fecha_corte_inicial     = '2023-11-01'
+fecha_mes               = 'DICIEMBRE 2023'
+fecha_corte             = '2023-12-31'
+fecha_corte_inicial     = '2023-12-01'
 
 #%% UIT actual
 uit = 4950
@@ -35,21 +35,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 diciembre'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06  - Noviembre2023 - campos ampliados Final (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS2022-04012024 (1).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\Octubre-23\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - OCTUBRE 2023 - campos ampliados.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - NOVIEMBRE 2023 - campos ampliados (2).xlsx'
 ############################################################################################
 
 # filas a omitir del anexo anterior ########################################################
@@ -105,6 +105,18 @@ print(menos_bruto.shape[0])
 menos_bruto = menos_bruto.drop_duplicates(subset = 'Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(menos_bruto.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
+
+#%% AJUSTE DE PRODUCTO
+# hay dos nuevos productos, el 26 y el 27
+# el 26 es emprendimiento mujer (microempresa)
+# el 27 es multioficios(hay que pasarlo a 32)
+menos_bruto['Tipo de Producto 43/'] = menos_bruto['Tipo de Producto 43/'].astype(str)
+menos_bruto['Tipo de Producto 43/'] = menos_bruto['Tipo de Producto 43/'].str.strip()
+menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
+menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT'] = 'LD-MULTIOFICIOS'
+
+print(menos_bruto[menos_bruto['Tipo de Producto 43/'] == '27'].shape[0])
+print('debe salir cero')
 
 #%% ELIMINACIÓN DE CRÉDITOS VENDIDOS (por si acaso)
 
@@ -327,9 +339,9 @@ garantias = anx06_anterior[['Nro Prestamo \nFincore',
                             'Saldo de Garantías Autoliquidables 35/']]
 
 nuevos_nombres = {
-                'Nro Prestamo \nFincore'                :   'fincore para merge',
-                'Saldos de Garantías Preferidas 34/'    :   'garantias pref mes pasado',
-                'Saldo de Garantías Autoliquidables 35/':   'garantias autoli mes pasado'
+                'Nro Prestamo \nFincore'                 :   'fincore para merge',
+                'Saldos de Garantías Preferidas 34/'     :   'garantias pref mes pasado',
+                'Saldo de Garantías Autoliquidables 35/' :   'garantias autoli mes pasado'
                  }
 
 garantias = garantias.rename(columns=nuevos_nombres)
@@ -353,7 +365,7 @@ ordenado.drop(['garantias pref mes pasado','garantias autoli mes pasado','fincor
 actual = ordenado['Saldos de Garantías Preferidas 34/'].sum()
 anterior = garantias['garantias pref mes pasado'].sum()
 
-print('saldo de garantías preferidas actual ' + str(actual))
+print('saldo de garantías preferidas actual '   + str(actual))
 print('saldo de garantías preferidas anterior ' + str(anterior))
 print('es normal que mes a mes se reduzca un poquito')
 if actual == anterior:
@@ -732,6 +744,31 @@ if 'RIOS GOMEZ RONALD' in list(revisar_en_fincore['Apellidos y Nombres / Razón 
 revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
 print(revisar_en_fincore.shape[0])
 print('debe salir cero, sino hay que reemplazar el monto castigado por su saldo')
+
+#%%
+def añadiendo_cuenta_contable(ordenado):
+    if ordenado['Saldos de Créditos Castigados 38/'] > 0:
+        return '811302'
+    else:
+        return ordenado['Cuenta Contable Crédito Castigado 39/']
+    
+ordenado['Cuenta Contable Crédito Castigado 39/'] = ordenado.apply(añadiendo_cuenta_contable, axis=1)    
+
+#arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
+ordenado['Cuenta Contable Crédito Castigado 39/'] = ordenado['Cuenta Contable Crédito Castigado 39/'].str.strip()
+
+def cuenta_contable_castigados(ordenado):
+    if '811302' in ordenado['Cuenta Contable Crédito Castigado 39/']:
+        return '8113020000'
+    else:
+        ''
+ordenado['Cuenta Contable Crédito Castigado 39/'] = ordenado.apply(cuenta_contable_castigados, axis=1)
+
+print(ordenado['Cuenta Contable Crédito Castigado 39/'].unique())
+print('si sale 8113020000 entonces todo bien')
+print(ordenado[ordenado['Cuenta Contable Crédito Castigado 39/'] == '8113020000'].shape[0])
+print(ordenado[ordenado['Saldos de Créditos Castigados 38/'] > 0].shape[0])
+print('debe salir el mismo número, sino hay que investigar, porque habrían castigados sin cuenta contable o viceversa')
 
 #%% AJUSTE EN CASO TENGAMOS QUE CORREGIR LOS CRÉDITOS QUE TIENEN VIGENTE A PESAR DE TENER MUCHOS DÍAS DE MORA
 
@@ -1621,9 +1658,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20231130' #mes actual
-fecha_corte_menos_1 = '20231031' #mes anterior
-fecha_corte_menos_2 = '20230930' #mes anterior del anterior
+fecha_corte_actual  = '20231231' #mes actual
+fecha_corte_menos_1 = '20231130' #mes anterior
+fecha_corte_menos_2 = '20231031' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1701,13 +1738,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
-ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\Octubre-23\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados NOVIEMBRE 2023 no incluye castigados (2).xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Nov-23'
-mes_anterior_txt = 'Oct-23'
+mes_actual_txt   = 'Dic-23'
+mes_anterior_txt = 'Nov-23'
 # =============================================================================
 #%% LECTURA
 
@@ -1722,7 +1759,7 @@ mes_anterior_txt = 'Oct-23'
 # =============================================================================
 
 anterior = pd.read_excel(ubi_anterior + '\\' + repro_anterior,
-                         skiprows = 2,
+                         skiprows = 0,
                          dtype = {'Tipo de Crédito 19/'   : str,
                                   'Nro Prestamo \nFincore': str})
 

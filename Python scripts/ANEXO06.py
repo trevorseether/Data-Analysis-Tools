@@ -156,6 +156,7 @@ x = df1.columns
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].astype(str)
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].str.strip()
 df1.loc[df1['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
+df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT'] = 'LD-MULTIOFICIOS'
 
 print(df1[df1['Tipo de Producto 43/'] == '27'].shape[0])
 print('debe salir cero')
@@ -197,19 +198,28 @@ else:
 del tipo_cero
 
 #%% CORRECCIÓN CUENTA CONTABLE CASTIGADOS
+# código añadido al reporte preliminar
 
-#arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
-df1['Cuenta Contable Crédito Castigado 39/'] = df1['Cuenta Contable Crédito Castigado 39/'].str.strip()
+# def añadiendo_cuenta_contable(df1):
+#     if df1['Saldos de Créditos Castigados 38/'] > 0:
+#         return '811302'
+#     else:
+#         return df1['Cuenta Contable Crédito Castigado 39/']
+    
+# df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(añadiendo_cuenta_contable, axis=1)    
 
-def cuenta_contable_castigados(df1):
-    if '811302' in df1['Cuenta Contable Crédito Castigado 39/']:
-        return '8113020000'
-    else:
-        ''
-df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castigados, axis=1)
+# #arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
+# df1['Cuenta Contable Crédito Castigado 39/'] = df1['Cuenta Contable Crédito Castigado 39/'].str.strip()
 
-print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
-print('si sale 8113020000 entonces todo bien')
+# def cuenta_contable_castigados(df1):
+#     if '811302' in df1['Cuenta Contable Crédito Castigado 39/']:
+#         return '8113020000'
+#     else:
+#         ''
+# df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castigados, axis=1)
+
+# print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
+# print('si sale 8113020000 entonces todo bien')
 
 #%% CLASIFICACIÓN DE LOS REFINANCIADOS
 
