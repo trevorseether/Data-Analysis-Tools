@@ -18,15 +18,15 @@ from colorama import Back # , Style, init, Fore
 
 #%%
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20231031'
+fecha_corte = '20231130'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 noviembre\\preliminar')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '10 - OCTUBRE 2023 (CIERRE).xlsx'
+nombre = '11 - NOVIEMBRE 2023.xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=======================================================
@@ -172,6 +172,8 @@ base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANI
 base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
 base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
 
+base.loc[base['PLANILLA BIEN'] == 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADOS',   'PLANILLA BIEN'] = 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADO'
+base.loc[base['PLANILLA BIEN'] == 'DIRECCION DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS',   'PLANILLA BIEN'] = 'DIRECCIÓN DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS'
 
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)

@@ -15,16 +15,16 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 diciembre\\prod')
 
-anexo06 = 'Rpt_DeudoresSBS Anexo06 - NOVIEMBRE 2023 - campos ampliados.xlsx'
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - DICIEMBRE 2023 - campos ampliados.xlsx'
 
 fecha_inicio = '20220101' #formato para sql
-fecha_corte  = '20231130' #formato para sql
+fecha_corte  = '20231231' #formato para sql
 
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 
-                         skiprows   = 0,
+                         skiprows   = 2,
                          dtype      = {'Nro Prestamo \nFincore'  : str})
 
 df_anx06.dropna(subset = ['Apellidos y Nombres / Razón Social 2/', 
@@ -201,7 +201,7 @@ LEFT JOIN PrestamosVendidos AS VENDIDOSS ON P.CodPrestamoPND = VENDIDOSS.CodPres
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' and '{fecha_corte}' 
 and s.codigosocio>0  and p.codestado = 341
-and tm4.descripcion = 'HABIL'
+--and tm4.descripcion = 'HABIL'
 and VENDIDOSS.CodPrestamoPND IS NULL
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null 
