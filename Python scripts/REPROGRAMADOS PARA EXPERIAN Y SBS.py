@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 noviembre'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2023 diciembre'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados NOVIEMBRE 2023 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados DICIEMBRE 2023 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202301402_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
+calificacion = '20523941047_70369063_PE202400019_COOPAC_SAN_MIGUEL_SEGMENTACION_RIESGO_SALIDA.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'noviembre'
+mes = 'diciembre'
 año = 2023
 ###############################################################################
 
