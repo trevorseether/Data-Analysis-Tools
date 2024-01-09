@@ -35,21 +35,21 @@ from colorama import Back # , Style, init, Fore
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - NOVIEMBRE 2023 - campos ampliados 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - DICIEMBRE 2023 - campos ampliados.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 11 2023.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 12 2023.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Noviembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Diciembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -58,8 +58,8 @@ uit = 4950 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2023-11-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Noviembre 2023'
+fecha_corte     = '2023-12-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Diciembre 2023'
 ########################################################
 
 # Códigos de los productos
@@ -276,7 +276,7 @@ df1['Fecha de Desembolso 21/'] = pd.to_datetime(df1['Fecha de Desembolso 21/'],
 print(df1[df1['Fecha de Desembolso 21/'].isnull()].shape[0])
 df1['Fecha de Vencimiento Origuinal del Credito 48/'] = pd.to_datetime(df1['Fecha de Vencimiento Origuinal del Credito 48/'], 
                                                                        format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará
-print(df1[df1['Fecha de Vencimiento Origuinal del Credito 48/'].isnull()])
+print(df1[df1['Fecha de Vencimiento Origuinal del Credito 48/'].isnull()].shape[0])
 df1['Fecha de Vencimiento Actual del Crédito 49/'] = pd.to_datetime(df1['Fecha de Vencimiento Actual del Crédito 49/'], 
                                                                     format='%Y%m%d') #no tiene ,errors='coerce'), si algo no hace match te avisará  
 print(df1[df1['Fecha de Vencimiento Actual del Crédito 49/'].isnull()].shape[0])
@@ -652,9 +652,6 @@ def int_diario(df_resultado):
 
 df_resultado['Tasa Diaria'] = df_resultado.apply(int_diario, axis=1)
 
-#%%
-#tal vez aquí debería ir 'Fecha Ultimo Pago'
-#creo que no realmente
 #%% ASIGNACIÓN DE GARANTÍAS
 'garantías preferidas'
 #para asignar las garantías preferidas, tenemos una lista de créditos con garantías preferidas,
@@ -707,9 +704,13 @@ verificacion_garantías = df_resultado[(df_resultado['Saldo de Garantías Autoli
                                       (df_resultado['Saldos de Garantías Preferidas 34/'] > 0)]
 
 print('hay ' + str(verificacion_garantías.shape[0]) + ' filas con garantías autoliquidables y preferidas al mismo tiempo')
+if verificacion_garantías.shape[0] == 0:
+    print(Back.GREEN + 'todo bien')
+else:
+    print(Back.RED +'investigar')
 
-#%% eliminación de la tabla que ya no necesitamos
 del verificacion_garantías
+
 #%% CARTERA ATRASADA
 'CARTERA ATRASADA'
 
@@ -1068,8 +1069,7 @@ df_resultado_2.loc[df_resultado_2['Nro Prestamo \nFincore'] == '00103786', 'Tipo
 
 #%% cambio de nombre
 #AÑADIENDO UNA COLUMNA QUE ES LO MISMO QUE OTRA PERO CON OTRO NOMBRE
-df_resultado_2['Fecha Ultimo Pago'] = df_resultado_2['''Fecha Ultimo 
-Pago TXT''']
+df_resultado_2['Fecha Ultimo Pago'] = df_resultado_2['Fecha Ultimo \nPago TXT']
 
 #%% REUBICACIÓN DE COLUMNAS
 #moviendo estas dos columnas al final
@@ -1205,7 +1205,6 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(dh_vs_cs_morosos,
                                                     axis=1,
                                                     args=(dias_corte,))
 
-
 df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
 
@@ -1310,7 +1309,6 @@ def devengados_genericos(df_resultado_2):
         return df_resultado_2['Capital Vigente 26/']* (\
        (((1+(df_resultado_2['Tasa Diaria']/100))**float(max((fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days, 0))))-1)
     
-            
 df_resultado_2['rendimiento devengado'] = df_resultado_2.apply(devengados_genericos, axis=1)
 df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2)
 
@@ -1409,13 +1407,55 @@ df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Interes\nDevengad
 df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
 
 #%% antes de asignar devengados, vamos a revisar unos casitos
-inv = df_resultado_2[(df_resultado_2['Interes\nDevengado Total'] == 0)          & \
-                     (df_resultado_2['Intereses en Suspenso 41/'] == 0)         & \
-                     (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) & \
-                     (df_resultado_2['Número de Cuotas Pagadas 45/'] == 0)      & \
-                     (pd.to_datetime(df_resultado_2['Fecha de Desembolso 21/'])) >= pd.Timestamp(fecha_corte[0:8] + '01')]
+fecha_corte_datetime = pd.Timestamp(fecha_corte[0:8] + '01')
 
-             
+df_resultado_2['Fecha de Desembolso 21/'] = pd.to_datetime(df_resultado_2['Fecha de Desembolso 21/'])
+
+inv = df_resultado_2[(df_resultado_2['Interes\nDevengado Total']          == 0) &
+                     (df_resultado_2['Intereses en Suspenso 41/']         == 0) &
+                     (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) &
+                     (df_resultado_2['Número de Cuotas Pagadas 45/']      == 0) &
+                     (df_resultado_2['Fecha de Desembolso 21/'] >= fecha_corte_datetime)]
+
+print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
+print('si sale más de cero, es porque hay unos casos a los cuales aplicarles cálculo de devengados')
+
+cred_para_calc = list(inv['Nro Prestamo \nFincore'])
+# asignación de devengados a los casos estos
+def dev_0_vigente(df_resultado_2):
+    if (df_resultado_2['Nro Prestamo \nFincore'] in cred_para_calc) and \
+        (1==1):
+        return df_resultado_2['Capital Vigente 26/']* (\
+        (((1+(df_resultado_2['Tasa Diaria']/100))**float(max((fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days, 0))))-1)
+    else:
+        return df_resultado_2['Interes\nDevengado Total']
+    
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_vigente, axis= 1)
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
+
+print(df_resultado_2['Interes\nDevengado Total'].sum())
+print(df_resultado_2['Rendimiento\nDevengado 40/'].sum())
+
+def dev_0_ref(df_resultado_2):
+    if (df_resultado_2['Nro Prestamo \nFincore'] in cred_para_calc) and (df_resultado_2['Capital Refinanciado 28/'] > 0):
+        return df_resultado_2['Capital Refinanciado 28/']* (\
+        (((1+(df_resultado_2['Tasa Diaria']/100))**float(max((fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days, 0))))-1)
+    else:
+        return df_resultado_2['Rendimiento\nDevengado 40/']
+    
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_ref, axis= 1)
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
+
+print(df_resultado_2['Interes\nDevengado Total'].sum())
+print(df_resultado_2['Rendimiento\nDevengado 40/'].sum())
+
+print(df_resultado_2[df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0])
+print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
+print('si sale el mismo número todo okey')
+
+if (df_resultado_2[df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0]) != inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0]:
+    print(Back.RED + 'investigar')
+    
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
 #necesario para poder calcular la cartera neta = 
@@ -2179,7 +2219,7 @@ except FileNotFoundError:
 anexo06_casi.to_excel(nombre,
                       sheet_name = fech_corte_txt,
                       index = False)
-
+inv['Nro Prestamo \nFincore']
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
 # Obtener la ubicación actual
@@ -2419,8 +2459,6 @@ print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 df_diferidos['Interes\nDevengado Total'] = df_diferidos['Interes\nDevengado Total'].round(2)
 
 df_diferidos['Interes \nSuspenso Total'] = df_diferidos['Interes \nSuspenso Total'].round(2)
-
-df_diferidos['Rendimiento\nDevengado 40/'] = df_diferidos['Interes\nDevengado Total']
 
 df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Total']
 

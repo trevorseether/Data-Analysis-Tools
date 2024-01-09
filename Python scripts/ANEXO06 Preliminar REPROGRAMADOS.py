@@ -184,7 +184,7 @@ anx06_anterior.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
 
 print(anx06_anterior.shape[0])
 
-anx06_anterior = anx06_anterior.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
+anx06_anterior = anx06_anterior.drop_duplicates(subset = 'Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(anx06_anterior.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
@@ -336,22 +336,24 @@ Suspenso Total''',
 
 garantias = anx06_anterior[['Nro Prestamo \nFincore',
                             'Saldos de Garantías Preferidas 34/', 
-                            'Saldo de Garantías Autoliquidables 35/']]
+                            'Saldo de Garantías Autoliquidables 35/',
+                            'Partida Registral 8/']]
 
 nuevos_nombres = {
                 'Nro Prestamo \nFincore'                 :   'fincore para merge',
                 'Saldos de Garantías Preferidas 34/'     :   'garantias pref mes pasado',
-                'Saldo de Garantías Autoliquidables 35/' :   'garantias autoli mes pasado'
+                'Saldo de Garantías Autoliquidables 35/' :   'garantias autoli mes pasado',
+                'Partida Registral 8/'                   :   'part registral mes pasado'
                  }
 
-garantias = garantias.rename(columns=nuevos_nombres)
+garantias = garantias.rename(columns = nuevos_nombres)
 del nuevos_nombres
 
 ###################### merge para poner del mes pasado
 ordenado = ordenado.merge(garantias, 
-                         left_on=['Nro Prestamo \nFincore'], 
-                         right_on=['fincore para merge']
-                         ,how='left')
+                         left_on   = ['Nro Prestamo \nFincore'], 
+                         right_on  = ['fincore para merge'],
+                         how       = 'left')
                                   
 ordenado['Saldos de Garantías Preferidas 34/'] = ordenado['garantias pref mes pasado']
 ordenado['Saldos de Garantías Preferidas 34/'] = ordenado['Saldos de Garantías Preferidas 34/'].fillna(0)
@@ -372,6 +374,25 @@ if actual == anterior:
     print('todo bien en traer saldos de garantías del mes pasado')
 else:
     print('habría que chequear si algún crédito se canceló \no quizás no hizo match')
+    
+#%% colocando bien las partidas registrales que se jalan desde el mes pasado
+# probar si funciona
+ordenado['Partida Registral 8/'] = ordenado['Partida Registral 8/'].fillna('')
+ordenado['Partida Registral 8/'] = ordenado['Partida Registral 8/'].str.strip()
+
+ordenado['part registral mes pasado'] = ordenado['part registral mes pasado'].fillna('')
+ordenado['part registral mes pasado'] = ordenado['part registral mes pasado'].str.strip()
+
+def partidas_registrales(ordenado):
+    if ordenado['Partida Registral 8/'] != '':
+        return ordenado['Partida Registral 8/']
+    elif ordenado['Partida Registral 8/'] == '':
+        return ordenado['part registral mes pasado']
+
+print(ordenado['Partida Registral 8/'].unique().shape[0])
+ordenado['Partida Registral 8/'] = ordenado.apply(partidas_registrales, axis = 1)
+print(ordenado['Partida Registral 8/'].unique().shape[0])
+print('en la segunda debe salir más')
 
 #%%% strip de texto
 ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombres / Razón Social 2/'].str.strip()
