@@ -22,6 +22,7 @@ import os
 import calendar
 # import numpy as np
 from datetime import datetime #, timedelta
+from colorama import Back # , Style, init, Fore
 
 #%% ADVERTENCIA
 #REVISAR EN EL EXCEL ANTES DE EMPEZAR A PROCESAR:
@@ -248,6 +249,15 @@ calif_ref.dropna(subset = ['fincore ref',
                            'calificacion especial'], 
                  inplace = True, 
                  how = 'all')
+
+# alerta de duplicados en el archivo de refinanciados
+duplicados = calif_ref[calif_ref.duplicated(subset = 'fincore ref', 
+                                            keep   = False)]
+if duplicados.shape[0] == 0:
+    print(Back.GREEN + 'SIN DUPLICADOS')
+else:
+    print(Back.RED + '🚨 NRO FINCORE DUPLICADOS 🚨')
+    print(duplicados['fincore ref'])
 
 del archivo_refinanciados
 del mes_calif
