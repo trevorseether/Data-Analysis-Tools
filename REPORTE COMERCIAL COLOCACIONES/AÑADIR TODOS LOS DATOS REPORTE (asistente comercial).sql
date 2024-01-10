@@ -130,8 +130,7 @@ from reportes_diana.PROSEVAS.DIC23 as A
 --- CODIGO PARA AÑADIR LOS MYPE
 --- esto genera una ramificación de los reportes a partir de mayo del 2023
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20231130'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
-
+SET @FECHACORTE = '20231231'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 INSERT INTO reportes_diana..DIANA_MYPE (
 	[FECHA_DESEMBOLSO],----check
@@ -180,8 +179,9 @@ SELECT
 	,@FECHACORTE
 
 from 
-	reportes_diana.MYPE.[2023_NOV] as A
+	reportes_diana.MYPE.[2023_12] as A
 WHERE 
 	Prooducto LIKE '%MULTIPRODUCTO%'
 	AND ([Tipo ] LIKE '%MICRO%'
 	OR [Tipo ] LIKE '%PEQUEÑA%')
+
