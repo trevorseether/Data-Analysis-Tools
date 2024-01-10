@@ -9,30 +9,12 @@ ALTER TABLE reportes_diana..DIANA_REPORTE
 ADD [FECHA_CORTE] DATETIME NULL
 */
 
-----CÓDIGO PARA ASIGNAR FECHA A ESAS COLUMNAS,
---- SE TIENE QUE ARREGLAR LOS DATOS PORQUE DIANA ES COJUDA
-update reportes_diana..DXP_LD_nov23
-set [FECHA_REVISIÓN] = [FECHA DESEMBOLSO]
-WHERE [FECHA_REVISIÓN] IS NULL
-AND [FECHA DESEMBOLSO] IS NOT NULL
-
-update reportes_diana..DXP_LD_nov23
-set [FECHA DESEMBOLSO] = [FECHA_REVISIÓN]
-WHERE [FECHA DESEMBOLSO] IS NULL
-AND [FECHA_REVISIÓN] IS NOT NULL
-
---CON ESTO REVISAS LAS FECHAS
-SELECT * FROM reportes_diana..DXP_LD_nov23
-WHERE ([FECHA_REVISIÓN] IS NULL
-OR [FECHA DESEMBOLSO] IS NULL
-OR [FECHA DESEMBOLSO] IS NULL)
-
 -----------------------------------------------------------
 --------PROCEDEMOS A INSERTAR TODOS MENOS PROSEVA----------SELECT * FROM reportes_diana..DXP_LD_nov23
 -----------------------------------------------------------
 
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20231130'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20231231'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
@@ -71,7 +53,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,NULL --META CUENTAS
 ,NULL --META MONTO
 ,A.[CANAL OFICINA] -- ANTERIORMENTE A.OFICINA
-,A.[FECHA_REVISIÓN]
+,A.[FECHA DE REVISION]
 ,A.ANALISTA
 ,A.[EMPRESA]
 ,A.[EMPRESA] -------todo check hasta planilla
@@ -81,7 +63,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from reportes_diana..DXP_LD_nov23 as A
+from reportes_diana..DXP_LD_dic23 as A
 --where [ESTADO FINAL] = 'APROBADO'
 
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -90,7 +72,7 @@ from reportes_diana..DXP_LD_nov23 as A
 ----------------------------------------------------------------------------------------------------------------------------------
 
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20231130'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20231231'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
 [FECHA_DESEMBOLSO],----check
@@ -131,7 +113,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 	WHEN [FUNCIONARIO/SEDE] LIKE '%PROSEVA%' THEN 'SALA PROSEVA'
 	WHEN [FUNCIONARIO/SEDE] LIKE '%CAÑETE%' THEN 'OFICINA INFORMATIVA'
 	ELSE 'OTROS' END--OFICINA
-,A.[FECHA REVISION]
+,A.[FECHA DE REVISION]
 ,A.ANALISTA
 ,a.[EMPRESA]
 ,A.[EMPRESA] -------todo check hasta planilla
@@ -141,7 +123,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from reportes_diana.PROSEVAS.NOV23 as A
+from reportes_diana.PROSEVAS.DIC23 as A
 --where [estado final] = 'APROBADO'
 
 --------------------------------------------------------------------

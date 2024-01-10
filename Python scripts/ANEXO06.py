@@ -157,7 +157,8 @@ x = df1.columns
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].astype(str)
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].str.strip()
 df1.loc[df1['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
-df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT'] = 'LD-MULTIOFICIOS'
+df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT']     = 'LD-MULTIOFICIOS'
+df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
 
 print(df1[df1['Tipo de Producto 43/'] == '27'].shape[0])
 print('debe salir cero')
@@ -1484,8 +1485,8 @@ df_resultado_2['Provisiones Requeridas 36/ SA'] = df_resultado_2['Provisiones Re
 #cálculo de las provisiones constituidas 37/
 def prov_cons_37(df_resultado_2):
     if df_resultado_2['''Nro Prestamo 
-Fincore'''] in ['00000681',
-                '00025314',
+Fincore'''] in ['00000681',*
+                '00025314',*
                 '00025678',
                 '00001346',
                 '00009592',
@@ -1866,7 +1867,7 @@ lista_columnas.remove('TIPO DE PRODUCTO TXT')
 
 ordenamiento_final = lista_columnas[0:65] + ['Saldo Capital en Cuenta de Orden Programa IMPULSO MYPERU 58/',
                                              'Rendimiento Devengado por Programa IMPULSO MYPERU 59/'] + \
-                                            lista_columnas[65:] + ['TIPO DE PRODUCTO TXT']
+                                             lista_columnas[65:] + ['TIPO DE PRODUCTO TXT']
 
 anexo06_casi = anexo06_casi[ordenamiento_final]
 
@@ -2243,22 +2244,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Noviembre 2023'  #se pone el corte actual
+fecha_corte = 'Diciembre 2023'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20231031" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20231130" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2023 - campos ampliados v02.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados v03 (reasignación de funcionario).xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 NOVIEMBRE\\parte 2'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE'
 
 lista_100_provisionales = ['00000681','00025314','00051147','00019565','00059920','00025678','00055472','00001346','00009592',
                            '00050796','00021245','00014203','00019911','00052890','00020153','00000633','00021016','00000942',
@@ -2369,28 +2370,6 @@ dxp_castigados = pd.read_excel('data para castigo junio 2023_vhf.xlsx',
 
 dxp_castigados = list(dxp_castigados['Nro Prestamo \nFincore'])
 '''
-#%% CÁLCULO DE PROVISIONES CONSTITUIDAS
-#cálculo de las provisiones constituidas 37/
-df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
-
-#para que funcione el match por tipo de producto que solicitó cesar
-df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int) # == antes había esto
-
-def prov_cons_37_FINAL(df_diferidos):
-    if (df_diferidos['Nro Prestamo \nFincore'] in 
-                lista_100_provisionales) :
-    #\
-    #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
-        return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] * 1
-    else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.509 #0.60155
-
-df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis=1)
-
-df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
-
-print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
-print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - 9165469.1000),2))
 
 #%% EXTRACCIÓN DE DATOS DEL MES PASADO
 #comparando provisiones constituidas contra el del mes pasado
@@ -2414,6 +2393,34 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 provisiones_mes_pasado = pd.read_sql_query(query, conn)
 
 mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
+
+#%%
+# =============================================================================
+# CÁLCULO DE PROVISIONES CONSTITUIDAS
+# =============================================================================
+
+#cálculo de las provisiones constituidas 37/
+df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
+
+#para que funcione el match por tipo de producto que solicitó cesar
+df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int)
+
+def prov_cons_37_FINAL(df_diferidos):
+    if (df_diferidos['Nro Prestamo \nFincore'] in 
+                lista_100_provisionales) :
+    #\
+    #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
+        return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] * 1
+    else:
+        return  df_diferidos['Provisiones Requeridas 36/'] * 0.58 #0.5615 #0.60155
+
+df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis = 1)
+
+df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
+
+print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
+print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - mes_pasado),2))
+
 
 #%%% VERIFICACIÓN DE RESULTADOS 1
 'VERIFICACIÓN'
