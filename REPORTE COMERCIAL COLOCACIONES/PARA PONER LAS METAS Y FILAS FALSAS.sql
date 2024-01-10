@@ -10,12 +10,12 @@ and funcionario like '%PROSEVA%TUMBES%'
 ----------------------------------------------------
 -- LO MISMO PERO PARA MYPE
 update top (1) reportes_diana..DIANA_MYPE
-set  META_CUENTAS = 10,
-	 META_MONTO   = 100000
+set  META_CUENTAS = 6,
+	 META_MONTO   = 40000
 ----     select top 1 * from reportes_diana..DIANA_MYPE
 where FECHA_CORTE = '20231231'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%ELBER%ALVARAD%'
+and funcionario like '%MARCO%NEY%'
 
 ---------------------------------------------------------------------------
 ----------------------------------------------------------------------------
