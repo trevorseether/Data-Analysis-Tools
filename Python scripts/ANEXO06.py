@@ -2472,6 +2472,31 @@ df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Tot
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 
+#%%
+# modificación del funcionario administrador JOSÉ SANCHEZ
+
+columna_funcionario = 'Funcionario Actual'
+
+delfin = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
+                       sheet_name = 'delfino',
+                       dtype = {'fincore':str})
+delfin['fincore'] = delfin['fincore'].str.strip()
+
+trujillo = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
+                         sheet_name = 'trujillo',
+                         dtype = {'fincore':str})
+trujillo['fincore'] = trujillo['fincore'].str.strip()
+
+def admin_reasignacion(df_diferidos):
+    if df_diferidos['Nro Prestamo \nFincore'] in list(delfin['fincore']):
+        return 'ENRIQUE IVAN DELFINO BAYLON'
+    elif df_diferidos['Nro Prestamo \nFincore'] in list(trujillo['fincore']):
+        return 'ADMINISTRADOR TRUJILLO'
+    else:
+        return df_diferidos[columna_funcionario]
+
+df_diferidos[columna_funcionario] = df_diferidos.apply(admin_reasignacion, axis = 1)
+
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
 df_diferidos_ampliado = df_diferidos.copy()
@@ -2481,7 +2506,8 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore',
                                       'Provisiones Requeridas 36/ SA', 
                                       'Provisiones Requeridas 36/', 
                                       'Provisiones Constituidas 37/',
-                                      'Saldo de Créditos que no cuentan con cobertura 51/']]
+                                      'Saldo de Créditos que no cuentan con cobertura 51/',
+                                      columna_funcionario]]
 
 #%% GENERACIÓN DEL EXCEL
 
