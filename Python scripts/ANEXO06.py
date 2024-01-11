@@ -2255,11 +2255,11 @@ fechacorte_mes_pasado = "20231130" #  aqui cambiamos la fecha, se pone la del co
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados v03 (reasignación de funcionario).xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados contabilidad.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\devuelto por contabilidad'
 
 lista_100_provisionales = ['00000681','00025314','00051147','00019565','00059920','00025678','00055472','00001346','00009592',
                            '00050796','00021245','00014203','00019911','00052890','00020153','00000633','00021016','00000942',
@@ -2350,7 +2350,7 @@ df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Cartera Neta'] * \
                                              df_diferidos['Tasa de Provisión']
                                              
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
-df_diferidos['Provisiones Requeridas 36/'].sum()
+print(df_diferidos['Provisiones Requeridas 36/'].sum())
 
 #%% Saldo de Créditos que no cuentan con cobertura 51/
 # Saldo de Créditos que no cuentan con cobertura 51/
@@ -2399,6 +2399,10 @@ mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 # CÁLCULO DE PROVISIONES CONSTITUIDAS
 # =============================================================================
 
+# ===========================
+tasa_provision = 0.585  #0.5615 #0.60155
+# ===========================
+
 #cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
 
@@ -2407,12 +2411,10 @@ df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].asty
 
 def prov_cons_37_FINAL(df_diferidos):
     if (df_diferidos['Nro Prestamo \nFincore'] in 
-                lista_100_provisionales) :
-    #\
-    #or (df_diferidos['Nro Prestamo \nFincore'] in dxp_castigados):  #esta parte posiblemente tendremos que quitarlo el próximo mes
+                lista_100_provisionales):
         return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * 0.58 #0.5615 #0.60155
+        return  df_diferidos['Provisiones Requeridas 36/'] * tasa_provision
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis = 1)
 
@@ -2531,19 +2533,19 @@ ubicacion_actual = os.getcwd()
 print("La ubicación actual es: " + ubicacion_actual)
 
 #%% REPORTE DE BRECHAS
-'#############################################################################'
-'###########             BRECHAS DE UN MES A OTRO               ##############'
-'#############################################################################'
+'##############################################################################'
+'###########             BRECHAS DE UN MES A OTRO                ##############'
+'##############################################################################'
 df_diferidos = df_diferidos_ampliado.copy()
 # EXTRAEMOS DATOS DEL MES PASADO
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'NOVIEMBRE 2023'
+fecha = 'DICIEMBRE 2023'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20231031' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20231130' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
@@ -2604,7 +2606,7 @@ pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                                  'INTERESES DIFERIDOS'], 
                                        margins = True, 
                                        margins_name ='Total', #para sacar las sumatorias totales                                      
-                                       aggfunc='sum'
+                                       aggfunc = 'sum'
                                        )
 #pivot_mes_pasado = pivot_mes_pasado.reset_index()
 pivot_mes_pasado.fillna(0, inplace=True)
