@@ -2507,7 +2507,7 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore',
                                       'Provisiones Requeridas 36/', 
                                       'Provisiones Constituidas 37/',
                                       'Saldo de Créditos que no cuentan con cobertura 51/',
-                                      columna_funcionario]]
+                                       columna_funcionario]]
 
 #%% GENERACIÓN DEL EXCEL
 
@@ -2520,7 +2520,7 @@ except FileNotFoundError:
     pass
 
 df_diferidos_columnas.to_excel(nombre,
-                      index=False)
+                               index = False)
 
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
