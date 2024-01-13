@@ -8,17 +8,13 @@
 use COSECHA
 go
 /*
-drop table [dbo].[cosecha_COPIA_SETIEMBRE23]
-select * 
-into [dbo].[cosecha_COPIA_Octubre23]
-from [dbo].[cosecha_nuevo]
-
 
 drop table cosecha..cosecha_nuevo
 
 select * 
 into cosecha..cosecha_nuevo
-from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20221001'
+from anexos_riesgos2..Anx06_preliminar where FechaCorte1 > '20221101'
+
 update cosecha..cosecha_nuevo ----esta parte creo que no hace falta ejecutarla, (investigar si hace falta recuperar los castigados incluyendo los vendidos)
 set MCastigadoxM = 0 ---
 --    [DESEMBOLSO_AGREGADO]
@@ -53,9 +49,9 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20221231' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20230131' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
-INSERT INTO cosecha..cosecha_nuevo (
+INSERT INTO cosecha_nuevo (
 nro_fincore,
 FechadeDesembolso21,
 FechaCorte1,
@@ -142,28 +138,28 @@ order by FechaCorte1
 /*
 update a
 set a.vencido_auxiliar = b.nuevo_capitalvencido
-from cosecha..cosecha_nuevo as a
+from cosecha_nuevo as a
 left join anexos_riesgos2..Anx06_preliminar as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.vencido_auxiliar is null
 
 update a
 set a.judicial_auxiliar = b.CapitalenCobranzaJudicial30
-from cosecha..cosecha_nuevo as a
+from cosecha_nuevo as a
 left join anexos_riesgos2..Anx06_preliminar as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.judicial_auxiliar is null
 
 update a
 set a.castigado_auxiliar = b.SaldosdeCreditosCastigados38
-from cosecha..cosecha_nuevo as a
+from cosecha_nuevo as a
 left join anexos_riesgos2..Anx06_preliminar as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.castigado_auxiliar is null
 
 update a
 set a.cuotas_pagadas_auxiliar = b.NumerodeCuotasPagadas45
-from cosecha..cosecha_nuevo as a
+from cosecha_nuevo as a
 left join anexos_riesgos2..Anx06_preliminar as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.cuotas_pagadas_auxiliar is null

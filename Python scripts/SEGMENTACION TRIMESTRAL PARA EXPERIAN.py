@@ -48,7 +48,8 @@ repo_reprogramados = 'Diciembre Reprogramados - 2023.xlsx'
 # 	TipodeCredito19 AS 'TIPO DE CREDITO',
 # 	Saldodecolocacionescreditosdirectos24 - IngresosDiferidos42 as 'DEUDA DIRECTA',
 # 	NULL as 'TIPO DE REPROGRAMACION',
-# 	Reprogramados52 AS 'DEUDA REPROGRAMADA' 
+# 	Reprogramados52 AS 'DEUDA REPROGRAMADA',
+#   SaldosdeCreditosCastigados38
 
 # FROM 
 # 	anexos_riesgos2..Anx06_preliminar
@@ -59,6 +60,9 @@ repo_reprogramados = 'Diciembre Reprogramados - 2023.xlsx'
                        
 # df = pd.read_sql_query(QUERY, conn, dtype = {'TIPO DOCUMENTO' : str})
 # del conn  #para limpiar el explorador de variables
+
+# df = df[df['SaldosdeCreditosCastigados38'] == 0]
+# del df['SaldosdeCreditosCastigados38']
 
 #%% IMPORTACIÓN DEL ANEXO06 DEL EXCEL
 ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\V FINAL'
@@ -72,8 +76,11 @@ df = pd.read_excel(io = ubi + '\\' + nom,
                             'Tipo de Crédito 19/'     : str,
                             'Saldo de colocaciones (créditos directos) 24/' : float,
                             'Ingresos Diferidos 42/'  : float,
-                            'Saldo Capital de Créditos Reprogramados 52/' : float},
+                            'Saldo Capital de Créditos Reprogramados 52/' : float,
+                            'Saldos de Créditos Castigados 38/'           : float},
                    skiprows = 2)
+
+df = df[df['Saldos de Créditos Castigados 38/'] == 0]
 
 df = df[['Código Socio 7/',
          'Tipo de Documento 9/',

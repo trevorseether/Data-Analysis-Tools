@@ -22,11 +22,11 @@ fecha_corte = '20231130'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 noviembre\\preliminar')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 noviembre\\ahora sí')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '11 - NOVIEMBRE 2023.xlsx'
+nombre = '11 - NOVIEMBRE 2023 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=======================================================
@@ -109,12 +109,21 @@ df_concatenado = pd.concat(dataframes_filtrados,
 # Mayúsculas
 df_concatenado['PLANILLA'] = df_concatenado['PLANILLA'].str.upper()
 
-# Reemplazos recurrentes
+#%% Reemplazos recurrentes
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
 
-# debemos revisar si hay duplicados
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADOS','PLANILLA'] = 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADO'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCION DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS',  'PLANILLA'] = 'DIRECCIÓN DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCIÓN REGIONAL DE TRANSPORTES PIURA - CAS',            'PLANILLA'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - CAS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCION REGIONAL DE TRANSPORTES PIURA - CONTRATADOS',    'PLANILLA'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - CONTRATADOS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCIÓN REGIONAL DE TRANSPORTES PIURA - NOMBRADOS',      'PLANILLA'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - NOMBRADOS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'UNIVERSIDAD NACIONAL DE TUMBES - ACTIVOS',                 'PLANILLA'] = 'UNIVERSIDAD NACIONAL DE TUMBES'
+
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOMBRADOS',     'PLANILLA'] = 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOBRADOS'
+
+#%% debemos revisar si hay duplicados
 duplicados = df_concatenado[df_concatenado.duplicated(subset = 'PLANILLA', 
                                                       keep   = False)]
 if duplicados.shape[0] == 0:
@@ -138,14 +147,17 @@ SELECT
 	Nro_Fincore, CodigoSocio7, NumerodeCredito18, 
 	Monedadelcredito17, ApellidosyNombresRazonSocial2,
 	Saldodecolocacionescreditosdirectos24, CapitalenCobranzaJudicial30,
-	CapitalVencido29, A.NUEVA_PLANILLA, A.PLANILLA,
+	CapitalVencido29, 
+    A.NUEVA_PLANILLA, 
+    A.PLANILLA,
     CASE
 		WHEN A.PLANILLA = 'PLANILLA LIQUIDADOS' THEN A.NUEVA_PLANILLA
 		ELSE A.PLANILLA
 		END AS 'PLANILLA BIEN',
 	a.Departamento, a.[Dpto Negocio],
 	Situacion_Credito, Origen_Coopac, 
-	P.EMPRESA, P.PLANILLA_CORREGIDA as 'PLANILLA_CORREGIDA',
+	P.EMPRESA, 
+    P.PLANILLA_CORREGIDA as 'PLANILLA_CORREGIDA',
 	a.Departamento
 
 FROM  
@@ -168,17 +180,9 @@ del conn
 #                      'Nombre PlanillaTXT'    : 'NUEVA_PLANILLA'}, inplace = True)
 
 #%% Reemplazos recurrentes
-base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
-base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
-base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
-
-base.loc[base['PLANILLA BIEN'] == 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADOS',   'PLANILLA BIEN'] = 'SOCIEDAD DE BENEFICENCIA PUBLICA DEL CALLAO - CONTRATADO'
-base.loc[base['PLANILLA BIEN'] == 'DIRECCION DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS',   'PLANILLA BIEN'] = 'DIRECCIÓN DE REDES INTEGRADAS DE SALUD LIMA NORTE - CAS'
-
-# si en el futuro se corrige este nombre de la planilla, habría que eliminar esta parte de la DIRECCIÓN REGIONAL DE TRANSPORTES PIURA
-base.loc[base['PLANILLA BIEN'] == 'DIRECCIÓN REGIONAL DE TRANSPORTES PIURA - CAS',         'PLANILLA BIEN'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - CAS'
-base.loc[base['PLANILLA BIEN'] == 'DIRECCION REGIONAL DE TRANSPORTES PIURA - CONTRATADOS', 'PLANILLA BIEN'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - CONTRATADOS'
-base.loc[base['PLANILLA BIEN'] == 'DIRECCIÓN REGIONAL DE TRANSPORTES PIURA - NOMBRADOS',   'PLANILLA BIEN'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - NOMBRADOS'
+# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
+# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
+# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
 
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)

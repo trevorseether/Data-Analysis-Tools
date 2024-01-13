@@ -2400,7 +2400,7 @@ mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.585  #0.5615 #0.60155
+tasa_provision = 0.61 #0.585  #0.5615 #0.60155
 # ===========================
 
 #cálculo de las provisiones constituidas 37/
@@ -2420,9 +2420,11 @@ df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_F
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 
+print('Provisiones Constituidas:')
 print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
+print('')
+print('Diferencia respecto al mes pasado:')
 print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - mes_pasado),2))
-
 
 #%%% VERIFICACIÓN DE RESULTADOS 1
 'VERIFICACIÓN'
@@ -2444,6 +2446,9 @@ print('COBERTURA DE PROVISIÓN : consti / atrasa: ',"{:.2f}%".format(div2*100))
 print('variación de constituídas con el mes pasado', (suma_constituidas - float(mes_pasado)).round(2)) #aquí hacer una query para extraer los datos
 
 print('provisiones constituidas: ' + str(suma_constituidas))
+
+print('')
+print('tasa de provisión general: ' ,"{:.2f}%".format(tasa_provision*100)) 
 
 #%%% VERIFICACIÓN DE RESULTADOS 2
 print('saldo de provisiones constituidas')
