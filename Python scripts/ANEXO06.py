@@ -2400,13 +2400,13 @@ mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.61 #0.585  #0.5615 #0.60155
+tasa_provision = 0.520 #0.607  #0.5615 #0.60155
 # ===========================
 
-#cálculo de las provisiones constituidas 37/
+# cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
 
-#para que funcione el match por tipo de producto que solicitó cesar
+# cambio de tipo de dato
 df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int)
 
 def prov_cons_37_FINAL(df_diferidos):
