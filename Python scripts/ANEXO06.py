@@ -2320,6 +2320,7 @@ df_diferidos.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
 #%% #asignamos los diferidos
 # df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
 # df_diferidos['Ingresos Diferidos 42/']  = df_diferidos['Ingresos Diferidos 2']
+df_diferidos['Ingresos Diferidos 42/'] = df_diferidos['Ingresos Diferidos 42/'].round(2)
 print('no debe salir cero: ' + str(df_diferidos['Ingresos Diferidos 42/'].sum()))
 
 #%% CARTERA NETA FINAL
