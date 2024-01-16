@@ -2199,6 +2199,22 @@ Suspenso Total''',
 
 anexo06_casi = anexo06_casi[COL]
 
+#%%
+#validación de que no haya intereses en suspenso si el crédito está castigado
+suspenso_castigados = anexo06_casi[(anexo06_casi['Saldos de Créditos Castigados 38/'] > 0) & \
+                                   (anexo06_casi['Intereses en Suspenso 41/'] > 0)]
+if suspenso_castigados.shape[0] > 0:
+    print('hay que quitar intereses en suspenso de los créditos castigados')
+else:
+    print('todo bien')
+
+anexo06_casi.loc[anexo06_casi['Saldos de Créditos Castigados 38/'] > 0, 'Intereses en Suspenso 41/'] = 0
+
+if suspenso_castigados.shape[0] > 0:
+    print('hay que quitar intereses en suspenso de los créditos castigados')
+else:
+    print('todo bien')
+    
 #%% AJUSTE PUNTUAL DE VALORES, ANTES DE MANDARLO AL SUCAVE
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00016472', 'Sub Tipo de Crédito 20/'] = '99'
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00057366', 'Sub Tipo de Crédito 20/'] = '99'
