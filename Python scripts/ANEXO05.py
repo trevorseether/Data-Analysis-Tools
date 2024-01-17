@@ -20,7 +20,7 @@ import numpy as np
 
 #%% FECHA CORTE
 ##############################################
-fecha_corte = 'DICIEMBRE 2023'           #######
+fecha_corte = 'DICIEMBRE 2023'           #####
 ##############################################
 #%% UBI
 # ubicación ###################################################################
@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados version final v4.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados version final v5.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########

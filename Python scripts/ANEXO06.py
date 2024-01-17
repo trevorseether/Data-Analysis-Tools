@@ -2417,12 +2417,12 @@ mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.520 #0.607  #0.5615 #0.60155
+tasa_provision = 0.529 #0.607 #0.5615 #0.60155
 # ===========================
 
 # cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
-
+df_diferidos['Moneda del crédito 17/'] = df_diferidos['Moneda del crédito 17/'].str.strip()
 # cambio de tipo de dato
 df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int)
 
@@ -2431,8 +2431,12 @@ def prov_cons_37_FINAL(df_diferidos):
                 lista_100_provisionales):
         return df_diferidos['Saldo de colocaciones (créditos directos) 24/'] * 1
     else:
-        return  df_diferidos['Provisiones Requeridas 36/'] * tasa_provision
-
+        return df_diferidos['Provisiones Requeridas 36/'] * tasa_provision
+    # elif df_diferidos['Moneda del crédito 17/'] == '01':
+    #     return  df_diferidos['Provisiones Requeridas 36/'] * tasa_provision
+    # elif df_diferidos['Moneda del crédito 17/'] == '02':
+    #     return  df_diferidos['Provisiones Requeridas 36/'] * 0.52
+    
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos.apply(prov_cons_37_FINAL, axis = 1)
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
