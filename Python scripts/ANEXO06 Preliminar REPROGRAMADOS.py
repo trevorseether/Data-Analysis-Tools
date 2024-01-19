@@ -984,6 +984,7 @@ anx06_ordenado = ordenado[columnas[0:57]+['FEC_ULT_REPROG',
                                           'NRO CUOTAS REPROG CANCELADAS',
                                           'NRO REPROG'] + \
                           columnas[57:129]]
+    
 #%% ahora a sacar datos del mes pasado
 #los 3 primeros
 anterior_para_merge = anx06_anterior[['Nro Prestamo \nFincore', 

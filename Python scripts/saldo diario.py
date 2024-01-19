@@ -11,6 +11,7 @@ Created on Thu Jan 18 13:05:08 2024
 
 import pandas as pd
 import pyodbc
+# import os
 
 #%%
 'Fecha de corte para el anexo06'####################
@@ -25,36 +26,47 @@ fecha_corte_cobranza = '20240131'                  #
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 #%% SELECCIÓN DE LA FECHA MÁS RECIENTE EN LA BASE DE DATOS
-anx06 = pd.read_sql_query(f'''
-SELECT 
-	FechaCorte1,
-	Nro_Fincore,
-	Saldodecolocacionescreditosdirectos24,
-	MontodeDesembolso22,
-	FechadeDesembolso21,
-	CapitalVencido29,
-	CapitalenCobranzaJudicial30,
-	SaldosdeCreditosCastigados38,
-	DiasdeMora33,
-	TipodeProducto43,
-	CASE
-		WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA EMPRESA'
-		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,28,29) THEN 'MICRO EMPRESA'
-		WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA EMPRESA'
-		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
-		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
-		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIO'
-	END AS 'PRODUCTO TXT',
-	PLANILLA_CONSOLIDADA,
-	originador,
-	administrador
 
-FROM anexos_riesgos3..ANX06
-WHERE FechaCorte1 = '{fecha_corte_anx06}' --(select distinct max(FechaCorte1) from anexos_riesgos3..ANX06)
-''', 
-    conn)
+# Nombre del DataFrame
+nombre_data_frame = 'anx06'
 
-del conn
+# Verifica si el DataFrame ya existe en el entorno de pandas
+if nombre_data_frame in globals() and isinstance(globals()[nombre_data_frame], pd.DataFrame):
+    print(f"El DataFrame '{nombre_data_frame}' ya existe. No se ejecutará la consulta SQL.")
+    df_anx06 = globals()[nombre_data_frame]
+else:
+
+    # Ejecuta la consulta SQL y crea el DataFrame
+    df_anx06 = pd.read_sql_query(f'''
+        SELECT 
+            FechaCorte1,
+            Nro_Fincore,
+            Saldodecolocacionescreditosdirectos24,
+            MontodeDesembolso22,
+            FechadeDesembolso21,
+            CapitalVigente26,
+            CapitalVencido29,
+            CapitalenCobranzaJudicial30,
+            SaldosdeCreditosCastigados38,
+            DiasdeMora33,
+            TipodeProducto43,
+            CASE
+                WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA EMPRESA'
+                WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,28,29) THEN 'MICRO EMPRESA'
+                WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA EMPRESA'
+                WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
+                WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
+                WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIO'
+            END AS 'PRODUCTO TXT',
+            PLANILLA_CONSOLIDADA,
+            originador,
+            administrador
+        FROM anexos_riesgos3..ANX06
+        WHERE FechaCorte1 = '{fecha_corte_anx06}'
+    ''', conn)
+
+    # Asigna el DataFrame a una variable global
+    globals()[nombre_data_frame] = df_anx06
 
 #%%
 #%%
@@ -94,7 +106,9 @@ SELECT
 
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
 	p.montosolicitado as 'MONTO_DESEMBOLSO',
+    p.montosolicitado as 'saldo_cartera1',
 	tm.descripcion as 'Estado',
+	p.fechadesembolso,
 	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
 	p.flagrefinanciado, 
 	pro.descripcion as 'ADMINISTRADOR',
@@ -131,7 +145,10 @@ CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' AND '{fecha_
 and s.codigosocio>0  and p.codestado = 341
 order by p.fechadesembolso desc
 '''
-df_desembolsados = pd.read_sql_query(query, conn)
+df_desembolsados = pd.read_sql_query(query, conn,
+                                     dtype = {'COD_FINALIDAD' : str})
+
+# df_desembolsados['TipoCredito'] = df_desembolsados['TipoCredito'].astype(str)
 
 #%% COBRANZA DEL MES
 query = f'''
@@ -169,8 +186,120 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
 
                             --------
 
-WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20240101' AND '20240131' and cdet.CodEstado <> 376   
+WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' and cdet.CodEstado <> 376   
 ORDER BY ccab.fecha
 
 '''
 df_cobranza = pd.read_sql_query(query, conn)
+
+#%%
+# concatenamos los créditos del anexo06 con los nuevos desembolsos
+desem_format = pd.DataFrame()
+
+desem_format['Nro_Fincore']         = df_desembolsados['pagare_fincore'].copy()
+desem_format['Saldodecolocacionescreditosdirectos24'] = df_desembolsados['MONTO_DESEMBOLSO'].copy()
+desem_format['MontodeDesembolso22'] = df_desembolsados['MONTO_DESEMBOLSO'].copy()
+desem_format['FechadeDesembolso21'] = df_desembolsados['fechadesembolso'].copy()
+desem_format['CapitalVigente26']    = df_desembolsados['MONTO_DESEMBOLSO'].copy()
+desem_format['CapitalVencido29']             = 0
+desem_format['CapitalenCobranzaJudicial30']  = 0
+desem_format['SaldosdeCreditosCastigados38'] = 0
+desem_format['DiasdeMora33']                 = 0
+desem_format['TipodeProducto43']     = df_desembolsados['COD_FINALIDAD'].copy()
+desem_format['PRODUCTO TXT']         = ''
+desem_format['PLANILLA_CONSOLIDADA'] = df_desembolsados['Planilla'].copy()
+desem_format['originador']           = df_desembolsados['ORIGINADOR'].copy()
+desem_format['administrador']        = df_desembolsados['ADMINISTRADOR'].copy()
+
+#%%
+desem_format.loc[desem_format['TipodeProducto43'] == '27', 'TipodeProducto43'] = '32'
+
+prod_dxp  = ['34', '35', '36', '37', '38', '39']
+prod_ld   = ['30', '31', '32', '33']
+prod_mic  = ['20', '21', '22', '23', '24', '25', '26', '29']
+prod_peq  = ['15', '16', '17', '18', '19']
+prod_med  = ['95', '96', '97', '98', '99']
+prod_hip  = ['41', '45']
+
+def producto_txt(df):
+    tipo_producto = df['TipodeProducto43']
+    
+    if tipo_producto in prod_dxp:
+        return 'DXP'
+    elif tipo_producto in prod_ld:
+        return 'LD'
+    elif tipo_producto in prod_mic:
+        return 'MICRO'
+    elif tipo_producto in prod_peq:
+        return 'PEQUEÑA'
+    elif tipo_producto in prod_med:
+        return 'MEDIANA'
+    elif tipo_producto in prod_hip:
+        return 'HIPOTECARIA'
+
+desem_format['PRODUCTO TXT'] = desem_format.apply(producto_txt, axis=1)
+
+print(desem_format[pd.isna(desem_format['PRODUCTO TXT'])].shape[0])
+print('debe salir cero')
+
+#%%
+columnas = desem_format.columns
+
+anx06_base = anx06[columnas]
+
+df_concatenado = pd.concat([anx06_base, desem_format], ignore_index = True)
+
+# quitamos créditos cancelados
+df_concatenado = df_concatenado[~df_concatenado['Nro_Fincore'].isin(list(df_cancelados['pagare_fincore']))]
+
+#%% calculamos la recaudación de los saldos de cartera
+recau = df_cobranza.pivot_table(index  = 'PagareFincore',
+                                values = 'Capital')
+recau = recau.reset_index()
+
+#%% merge con la recaudación
+df_mergeado = df_concatenado.merge(recau,
+                                   left_on  = 'Nro_Fincore',
+                                   right_on = 'PagareFincore',
+                                   how = 'left')
+del df_mergeado['PagareFincore']
+df_mergeado['Capital'] = df_mergeado['Capital'].fillna(0)
+
+# quitando la cobranza al saldo
+def cob1(df):
+    if (df['Saldodecolocacionescreditosdirectos24'] > 0):
+        return df['Saldodecolocacionescreditosdirectos24'] - df['Capital']
+    else:
+        return df['Saldodecolocacionescreditosdirectos24']
+        
+df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, axis=1)
+
+cosas_que_no_cuadran = df_mergeado[df_mergeado['Saldodecolocacionescreditosdirectos24'] < 0]
+fincore_no_cuadran = cosas_que_no_cuadran['Nro_Fincore']
+df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'Saldodecolocacionescreditosdirectos24'] = 0
+df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalVencido29'] = 0
+df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalenCobranzaJudicial30'] = 0
+
+df_mergeado.loc[df_mergeado['CapitalVencido29'] > 0,'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
+cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalVencido29'] < 0]
+
+def cob2_vencidos(df):
+    if (df['CapitalVencido29'] < 0):
+        return df['CapitalVigente26'] + df['CapitalVencido29']
+    else:
+        return df['CapitalVigente26']
+df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_vencidos, axis=1)
+
+#####
+df_mergeado.loc[df_mergeado['CapitalVencido29'] > 0,'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
+cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalVencido29'] < 0]
+
+def cob2_vencidos(df):
+    if (df['CapitalVencido29'] < 0):
+        return df['CapitalVigente26'] + df['CapitalVencido29']
+    else:
+        return df['CapitalVigente26']
+df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_vencidos, axis=1)
+
+
+    

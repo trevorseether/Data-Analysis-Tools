@@ -1602,7 +1602,7 @@ def producto_txt(df_resultado_2):
     elif tipo_producto in prod_hip:
         return 'HIPOTECARIA'
 
-df_resultado_2['TIPO DE PRODUCTO TXT'] = df_resultado_2.apply(producto_txt, axis=1) #chequear, aún no está probado
+df_resultado_2['TIPO DE PRODUCTO TXT'] = df_resultado_2.apply(producto_txt, axis=1)
 
 #%% COLUMNAS ROJAS
 #AÑADIENDO LAS COLUMNAS ROJAS PARA JENNY

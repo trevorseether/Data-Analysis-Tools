@@ -182,6 +182,8 @@ df_resultado['CodFinalidad'] = np.nan
 
 def finalidad_producto(df_resultado):
     if pd.isnull(df_resultado['CodFinalidad']):
+        if ('INDEPENDIENTES - MULTI OFICIOS' in df_resultado['Finalidad TXT']):
+            return '32'
         if (('POND' in df_resultado['OrigenPrestamo']) and \
               ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'] or ('PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']))):
             return '41'
