@@ -47,6 +47,7 @@ else:
             CapitalVigente26,
             CapitalVencido29,
             CapitalenCobranzaJudicial30,
+			CapitalRefinanciado28,
             SaldosdeCreditosCastigados38,
             DiasdeMora33,
             TipodeProducto43,
@@ -203,6 +204,7 @@ desem_format['FechadeDesembolso21'] = df_desembolsados['fechadesembolso'].copy()
 desem_format['CapitalVigente26']    = df_desembolsados['MONTO_DESEMBOLSO'].copy()
 desem_format['CapitalVencido29']             = 0
 desem_format['CapitalenCobranzaJudicial30']  = 0
+desem_format['CapitalRefinanciado28']        = 0
 desem_format['SaldosdeCreditosCastigados38'] = 0
 desem_format['DiasdeMora33']                 = 0
 desem_format['TipodeProducto43']     = df_desembolsados['COD_FINALIDAD'].copy()
@@ -261,10 +263,11 @@ recau = recau.reset_index()
 df_mergeado = df_concatenado.merge(recau,
                                    left_on  = 'Nro_Fincore',
                                    right_on = 'PagareFincore',
-                                   how = 'left')
+                                   how      = 'left')
 del df_mergeado['PagareFincore']
 df_mergeado['Capital'] = df_mergeado['Capital'].fillna(0)
 
+#%%
 # quitando la cobranza al saldo
 def cob1(df):
     if (df['Saldodecolocacionescreditosdirectos24'] > 0):
@@ -272,34 +275,72 @@ def cob1(df):
     else:
         return df['Saldodecolocacionescreditosdirectos24']
         
-df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, axis=1)
+df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, axis = 1)
 
+def vigentes(df):
+    if (df['CapitalVigente26'] > 0) and \
+       (df['CapitalVencido29'] == 0) and \
+       (df['CapitalenCobranzaJudicial30'] == 0):
+       return df['Saldodecolocacionescreditosdirectos24']
+    else:
+        return df['CapitalVigente26']
+df_mergeado['CapitalVigente26'] = df_mergeado.apply(vigentes, axis=1)
+
+#%% cuadramiento de valores negativos
 cosas_que_no_cuadran = df_mergeado[df_mergeado['Saldodecolocacionescreditosdirectos24'] < 0]
+print(cosas_que_no_cuadran.shape[0])
+print('debe salir un número bajo (<20)')
 fincore_no_cuadran = cosas_que_no_cuadran['Nro_Fincore']
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'Saldodecolocacionescreditosdirectos24'] = 0
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalVencido29'] = 0
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalenCobranzaJudicial30'] = 0
-
+# pensándolo bien, mejor es eliminar estos créditos
+df_mergeado = df_mergeado[~df_mergeado['Nro_Fincore'].isin(fincore_no_cuadran)]
+#hasta aquí todo bien
+#%%
 df_mergeado.loc[df_mergeado['CapitalVencido29'] > 0,'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
 cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalVencido29'] < 0]
 
 def cob2_vencidos(df):
-    if (df['CapitalVencido29'] < 0):
+    if (df['CapitalVencido29'] < 0) and\
+        (df['CapitalRefinanciado28'] == 0):
         return df['CapitalVigente26'] + df['CapitalVencido29']
     else:
         return df['CapitalVigente26']
 df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_vencidos, axis=1)
 
-#####
-df_mergeado.loc[df_mergeado['CapitalVencido29'] > 0,'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
-cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalVencido29'] < 0]
+df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0
 
-def cob2_vencidos(df):
-    if (df['CapitalVencido29'] < 0):
-        return df['CapitalVigente26'] + df['CapitalVencido29']
+# verificación
+decim = 10000
+wea = df_mergeado[(df_mergeado['Saldodecolocacionescreditosdirectos24']/decim).round(0) != \
+                  (df_mergeado['CapitalVigente26']/decim).round(0) + \
+                  (df_mergeado['CapitalVencido29']/decim).round(0) + \
+                  (df_mergeado['CapitalenCobranzaJudicial30']/decim).round(0)]
+
+#%% cap en cobranza judicial
+df_mergeado.loc[df_mergeado['CapitalenCobranzaJudicial30'] > 0,'CapitalenCobranzaJudicial30'] = df_mergeado['CapitalenCobranzaJudicial30'] - df_mergeado['Capital']
+# cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalenCobranzaJudicial30'] < 0]
+
+def cob2_judicial(df):
+    if (df['CapitalenCobranzaJudicial30'] < 0):
+        return df['CapitalVigente26'] + df['CapitalenCobranzaJudicial30']
     else:
         return df['CapitalVigente26']
-df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_vencidos, axis=1)
+df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_judicial, axis=1)
+
+#%% refinanciados
+def refinanciados(df):
+    if (df['CapitalRefinanciado28'] > 0) and \
+       (df['CapitalVencido29'] == 0) and \
+       (df['CapitalenCobranzaJudicial30'] == 0):
+       return df['Saldodecolocacionescreditosdirectos24']
+    else:
+        return df['CapitalRefinanciado28']
+df_mergeado['CapitalRefinanciado28'] = df_mergeado.apply(refinanciados, axis=1)
 
 
-    
+
+
+
+
