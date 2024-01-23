@@ -11,7 +11,7 @@ Created on Thu Jan 18 13:05:08 2024
 
 import pandas as pd
 import pyodbc
-# import os
+import os
 
 #%%
 'Fecha de corte para el anexo06'####################
@@ -19,14 +19,23 @@ fecha_corte_anx06 = '20231231'                     #
 ####################################################
 
 'Fechas para la cobranza y nuevos desembolsos'######
-fecha_inicio         = '20240101'                  #
-fecha_corte_cobranza = '20240131'                  #
+fecha_inicio = '20240101'                          #
+fecha_hoy    = '20240122'                          ############################
 ####################################################
+
+'Directorio de trabajo'#############################
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\saldos diarios')
+####################################################
+
+# appendeado = pd.DataFrame()
+# appendeado = pd.concat([appendeado, df_mergeado], ignore_index=True)
+# appendeado.to_excel('append.xlsx', index = False)
+
 #%%
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 #%% SELECCIÓN DE LA FECHA MÁS RECIENTE EN LA BASE DE DATOS
-
+fecha_corte_cobranza = fecha_hoy
 # Nombre del DataFrame
 nombre_data_frame = 'anx06'
 
@@ -231,13 +240,13 @@ def producto_txt(df):
     elif tipo_producto in prod_ld:
         return 'LD'
     elif tipo_producto in prod_mic:
-        return 'MICRO'
+        return 'MICRO EMPRESA'
     elif tipo_producto in prod_peq:
-        return 'PEQUEÑA'
+        return 'PEQUEÑA EMPRESA'
     elif tipo_producto in prod_med:
-        return 'MEDIANA'
+        return 'MEDIANA EMPRESA'
     elif tipo_producto in prod_hip:
-        return 'HIPOTECARIA'
+        return 'HIPOTECARIO'
 
 desem_format['PRODUCTO TXT'] = desem_format.apply(producto_txt, axis=1)
 
@@ -298,7 +307,8 @@ df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'Capi
 df_mergeado = df_mergeado[~df_mergeado['Nro_Fincore'].isin(fincore_no_cuadran)]
 #hasta aquí todo bien
 #%%
-df_mergeado.loc[df_mergeado['CapitalVencido29'] > 0,'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
+df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
+                (df_mergeado['CapitalRefinanciado28'] == 0),'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
 cosas_que_no_cuadran = df_mergeado[df_mergeado['CapitalVencido29'] < 0]
 
 def cob2_vencidos(df):
@@ -310,13 +320,6 @@ def cob2_vencidos(df):
 df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_vencidos, axis=1)
 
 df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0
-
-# verificación
-decim = 10000
-wea = df_mergeado[(df_mergeado['Saldodecolocacionescreditosdirectos24']/decim).round(0) != \
-                  (df_mergeado['CapitalVigente26']/decim).round(0) + \
-                  (df_mergeado['CapitalVencido29']/decim).round(0) + \
-                  (df_mergeado['CapitalenCobranzaJudicial30']/decim).round(0)]
 
 #%% cap en cobranza judicial
 df_mergeado.loc[df_mergeado['CapitalenCobranzaJudicial30'] > 0,'CapitalenCobranzaJudicial30'] = df_mergeado['CapitalenCobranzaJudicial30'] - df_mergeado['Capital']
@@ -334,13 +337,45 @@ def refinanciados(df):
     if (df['CapitalRefinanciado28'] > 0) and \
        (df['CapitalVencido29'] == 0) and \
        (df['CapitalenCobranzaJudicial30'] == 0):
-       return df['Saldodecolocacionescreditosdirectos24']
+        return df['Saldodecolocacionescreditosdirectos24']
     else:
         return df['CapitalRefinanciado28']
 df_mergeado['CapitalRefinanciado28'] = df_mergeado.apply(refinanciados, axis=1)
 
+df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
+                (df_mergeado['CapitalRefinanciado28'] > 0),'CapitalVencido29'] = df_mergeado['CapitalVencido29'] - df_mergeado['Capital']
 
+def cob2_vencidos_refinanciados(df):
+    if (df['CapitalVencido29'] < 0) and\
+        (df['CapitalRefinanciado28'] > 0):
+        return df['CapitalRefinanciado28'] + df['CapitalVencido29']
+    else:
+        return df['CapitalRefinanciado28']
+df_mergeado['CapitalRefinanciado28'] = df_mergeado.apply(cob2_vencidos_refinanciados, axis=1)
+df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0        
+    
+# verificación
+# decim = 10000
+# wea = df_mergeado[(df_mergeado['Saldodecolocacionescreditosdirectos24']/decim).round(0) != \
+#                   (df_mergeado['CapitalVigente26']/decim).round(0) + \
+#                   (df_mergeado['CapitalVencido29']/decim).round(0) + \
+#                   (df_mergeado['CapitalenCobranzaJudicial30']/decim).round(0) + \
+#                   (df_mergeado['CapitalRefinanciado28']/decim).round(0)]
 
+#%%
+df_mergeado['FECHA_DÍA'] = pd.Timestamp(fecha_hoy)
 
+#%% filtro de columnas necesarias:
+df_mergeado = df_mergeado[['Nro_Fincore',
+                           'Saldodecolocacionescreditosdirectos24',
+                           'FechadeDesembolso21',
+                           'PRODUCTO TXT',
+                           'PLANILLA_CONSOLIDADA',
+                           'originador',
+                           'administrador',
+                           'FECHA_DÍA']]
 
+#%%
+# df_mergeado.to_excel(fecha_hoy + 'xlsx',
+#                      index = False)
 
