@@ -352,7 +352,7 @@ def cob2_vencidos_refinanciados(df):
     else:
         return df['CapitalRefinanciado28']
 df_mergeado['CapitalRefinanciado28'] = df_mergeado.apply(cob2_vencidos_refinanciados, axis=1)
-df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0        
+df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0
     
 # verificación
 # decim = 10000
@@ -378,4 +378,49 @@ df_mergeado = df_mergeado[['Nro_Fincore',
 #%%
 # df_mergeado.to_excel(fecha_hoy + 'xlsx',
 #                      index = False)
+
+#%%
+# import pyodbc
+# import pandas as pd
+
+# df  = appendeado.copy()
+
+
+# cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+# cursor = cnxn.cursor()
+# # Inserta el DataFrame en SQL Server
+# # PARA QUE EL CÓDIGO FUNCIONES, PRIMERO DEBES CREAR UNA TABLA EN EL SQL SERVER CON:
+
+# # CREATE TABLE [HumanResources].[DepartmentTest](
+# # [DepartmentID] INT            NOT NULL,
+# # [Name]         VARCHAR(255)   NOT NULL,
+# # [ALTURA]    FLOAT          NOT NULL
+# # )
+
+
+# for index, row in df.iterrows():
+#     cursor.execute("""
+#         INSERT INTO saldos_diarios.dbo.[2024_01] 
+#         ([Nro_Fincore], 
+#          [Saldodecolocacionescreditosdirectos24], 
+#          [FechadeDesembolso21], 
+#          [PRODUCTO TXT], 
+#          [PLANILLA_CONSOLIDADA], 
+#          [originador], 
+#          [administrador], 
+#          [FECHA_DÍA])
+#         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+#     """,
+#     row['Nro_Fincore'],
+#     row['Saldodecolocacionescreditosdirectos24'],
+#     row['FechadeDesembolso21'],
+#     row['PRODUCTO TXT'],
+#     row['PLANILLA_CONSOLIDADA'],
+#     row['originador'],
+#     row['administrador'],
+#     row['FECHA_DÍA']
+#     )
+
+# cnxn.commit()
+# cursor.close()
 
