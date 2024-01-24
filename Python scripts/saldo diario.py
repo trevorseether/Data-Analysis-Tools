@@ -372,6 +372,59 @@ df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0
 #%%
 df_mergeado['FECHA_DÍA'] = pd.Timestamp(fecha_hoy)
 
+df_mergeado.columns
+#%% días de mora
+def dias_mora(df):
+    if (df['DiasdeMora33'] > 0) and \
+       (df['CapitalVencido29'] > 0):
+        return df['DiasdeMora33'] + incremento
+    elif (df['DiasdeMora33'] > 0) and \
+         (df['CapitalVencido29'] == 0):
+        return 0
+    else:
+        return df['DiasdeMora33']
+df_mergeado['DiasdeMora33'] = df_mergeado.apply(dias_mora, axis=1)
+
+#%% incremento del capital vencido para MYPE
+def aumento_vencido(df):
+    if df['PRODUCTO TXT'] in ['MICRO EMPRESA', 'PEQUEÑA EMPRESA', 'MEDIANA EMPRESA']:
+        if df['DiasdeMora33'] > 15:
+            return df['Saldodecolocacionescreditosdirectos24']
+        else:
+            return df['CapitalVencido29']
+    else:
+        return df['CapitalVencido29']
+df_mergeado['CapitalVencido29'] = df_mergeado.apply(aumento_vencido, axis=1)
+
+df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
+                (df_mergeado['PRODUCTO TXT'].isin(['MICRO EMPRESA', 'PEQUEÑA EMPRESA', 'MEDIANA EMPRESA'])),
+                'CapitalVigente26'] = 0
+
+df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
+                (df_mergeado['PRODUCTO TXT'].isin(['MICRO EMPRESA', 'PEQUEÑA EMPRESA', 'MEDIANA EMPRESA'])),
+                'CapitalRefinanciado28'] = 0
+
+#%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
+def vencid_consumo(df):
+    if df['PRODUCTO TXT'] in ['DXP', 'LD']:
+        if (df['DiasdeMora33'] > 30) and \
+           (df['DiasdeMora33'] <= 60):
+            return df['CUOTA']
+        elif (df['DiasdeMora33'] > 60) and \
+             (df['DiasdeMora33'] <= 90):
+            return df['CUOTA'] * 2
+        elif (df['DiasdeMora33'] > 90):
+            return df['Saldodecolocacionescreditosdirectos24']
+        else:
+            return df['CapitalVencido29']
+    else:
+        return df['CapitalVencido29']
+df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo, axis = 1)
+
+
+
+
+
 #%% filtro de columnas necesarias:
 df_mergeado = df_mergeado[['Nro_Fincore',
                            'Saldodecolocacionescreditosdirectos24',
