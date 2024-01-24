@@ -24,17 +24,21 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 01\\22 enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 01\\23 enero')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240122.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240123.xlsx'
 ######################################################################
 
-#%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS
+#%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
 crear_archivo = False #True o False
+######################################################################
 
+'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
+mensajeria_preventiva = True #True o False
+######################################################################
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
                        dtype = {'ID CLIENTE'       : str,
@@ -96,6 +100,7 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GIMAIL.COM'    , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMA.IL.COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL..COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL'         , '@GMAIL.COM')    
  
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
@@ -240,7 +245,10 @@ kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv',
 
 #%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO CREAR EL REPORTE MENSUAL
 
-'''
-kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + '.xlsx',
-                         index = False)
-'''
+if mensajeria_preventiva == True:
+    kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + '.xlsx',
+                             index = False)
+else:
+    pass
+
+

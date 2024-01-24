@@ -20,11 +20,15 @@ fecha_corte_anx06 = '20231231'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240122'                          ############################
+fecha_hoy    = '20240122'                          ## se pone la fecha de hoy ####
 ####################################################
 
 'Directorio de trabajo'#############################
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\saldos diarios')
+####################################################
+
+'Incremento de días mora'###########################
+incremento = int(fecha_hoy[-2:])
 ####################################################
 
 # appendeado = pd.DataFrame()
