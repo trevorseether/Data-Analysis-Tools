@@ -24,12 +24,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 01\\23 enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 01\\24 enero')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240123.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240124.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
@@ -37,7 +37,7 @@ crear_archivo = False #True o False
 ######################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
-mensajeria_preventiva = True #True o False
+mensajeria_preventiva = False #True o False
 ######################################################################
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,

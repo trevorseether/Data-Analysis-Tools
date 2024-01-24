@@ -372,7 +372,6 @@ df_mergeado.loc[df_mergeado['CapitalVencido29'] < 0,'CapitalVencido29'] = 0
 #%%
 df_mergeado['FECHA_DÍA'] = pd.Timestamp(fecha_hoy)
 
-df_mergeado.columns
 #%% días de mora
 def dias_mora(df):
     if (df['DiasdeMora33'] > 0) and \
@@ -405,35 +404,57 @@ df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
                 'CapitalRefinanciado28'] = 0
 
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
-def vencid_consumo(df):
-    if df['PRODUCTO TXT'] in ['DXP', 'LD']:
+# faltan otras cosas
+prom_ld = 1.2
+def vencid_consumo_ld(df):
+    if df['PRODUCTO TXT'] in ['LD']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
         if (df['DiasdeMora33'] > 30) and \
-           (df['DiasdeMora33'] <= 60):
-            return df['CUOTA']
+           (df['DiasdeMora33'] <= 60) and \
+           (df['CapitalVencido29'] == 0) and \
+           (df['Saldodecolocacionescreditosdirectos24'] > df['CUOTA']):
+            return df['CUOTA'] * prom_ld #este 1.2 y 2.4 son aproximaciones del promedio respecto a la cuota vencida aplicada con la división entre el monto desembolsado y el número de cuotas
+        elif (df['DiasdeMora33'] > 30) and \
+             (df['DiasdeMora33'] <= 60) and \
+             (df['CapitalVencido29'] > 0):
+            return df['CapitalVencido29']
+
         elif (df['DiasdeMora33'] > 60) and \
              (df['DiasdeMora33'] <= 90):
-            return df['CUOTA'] * 2
+            return df['CUOTA'] * prom_ld * 2
+
         elif (df['DiasdeMora33'] > 90):
             return df['Saldodecolocacionescreditosdirectos24']
         else:
             return df['CapitalVencido29']
     else:
         return df['CapitalVencido29']
-df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo, axis = 1)
+df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_ld, axis = 1)
 
+#%%
+prom_hipo = 1.1
+def vencid_consumo_hipo(df):
+    if df['PRODUCTO TXT'] in ['HIPOTECARIO']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
+        if (df['DiasdeMora33'] > 30) and \
+           (df['DiasdeMora33'] <= 60) and \
+           (df['CapitalVencido29'] == 0) and \
+           (df['Saldodecolocacionescreditosdirectos24'] > df['CUOTA']):
+            return df['CUOTA'] * prom_hipo
+        elif (df['DiasdeMora33'] > 30) and \
+             (df['DiasdeMora33'] <= 60) and \
+             (df['CapitalVencido29'] > 0):
+            return df['CapitalVencido29']
 
+        elif (df['DiasdeMora33'] > 60) and \
+             (df['DiasdeMora33'] <= 90):
+            return df['CUOTA'] * prom_hipo * 2
 
-
-
-#%% filtro de columnas necesarias:
-df_mergeado = df_mergeado[['Nro_Fincore',
-                           'Saldodecolocacionescreditosdirectos24',
-                           'FechadeDesembolso21',
-                           'PRODUCTO TXT',
-                           'PLANILLA_CONSOLIDADA',
-                           'originador',
-                           'administrador',
-                           'FECHA_DÍA']]
+        elif (df['DiasdeMora33'] > 90):
+            return df['Saldodecolocacionescreditosdirectos24']
+        else:
+            return df['CapitalVencido29']
+    else:
+        return df['CapitalVencido29']
+df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_hipo, axis = 1)
 
 #%%
 # df_mergeado.to_excel(fecha_hoy + 'xlsx',
@@ -443,44 +464,43 @@ df_mergeado = df_mergeado[['Nro_Fincore',
 # import pyodbc
 # import pandas as pd
 
-# df  = appendeado.copy()
+df  = df_mergeado.copy()
 
-
-# cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
-# cursor = cnxn.cursor()
+cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+cursor = cnxn.cursor()
 # # Inserta el DataFrame en SQL Server
 # # PARA QUE EL CÓDIGO FUNCIONES, PRIMERO DEBES CREAR UNA TABLA EN EL SQL SERVER CON:
 
 # # CREATE TABLE [HumanResources].[DepartmentTest](
 # # [DepartmentID] INT            NOT NULL,
 # # [Name]         VARCHAR(255)   NOT NULL,
-# # [ALTURA]    FLOAT          NOT NULL
+# # [ALTURA]       FLOAT          NOT NULL
 # # )
 
 
-# for index, row in df.iterrows():
-#     cursor.execute("""
-#         INSERT INTO saldos_diarios.dbo.[2024_01] 
-#         ([Nro_Fincore], 
-#          [Saldodecolocacionescreditosdirectos24], 
-#          [FechadeDesembolso21], 
-#          [PRODUCTO TXT], 
-#          [PLANILLA_CONSOLIDADA], 
-#          [originador], 
-#          [administrador], 
-#          [FECHA_DÍA])
-#         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-#     """,
-#     row['Nro_Fincore'],
-#     row['Saldodecolocacionescreditosdirectos24'],
-#     row['FechadeDesembolso21'],
-#     row['PRODUCTO TXT'],
-#     row['PLANILLA_CONSOLIDADA'],
-#     row['originador'],
-#     row['administrador'],
-#     row['FECHA_DÍA']
-#     )
+for index, row in df.iterrows():
+    cursor.execute("""
+        INSERT INTO saldos_diarios.dbo.[2024_01] 
+        ([Nro_Fincore], 
+          [Saldodecolocacionescreditosdirectos24], 
+          [FechadeDesembolso21], 
+          [PRODUCTO TXT], 
+          [PLANILLA_CONSOLIDADA], 
+          [originador], 
+          [administrador], 
+          [FECHA_DÍA])
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+    row['Nro_Fincore'],
+    row['Saldodecolocacionescreditosdirectos24'],
+    row['FechadeDesembolso21'],
+    row['PRODUCTO TXT'],
+    row['PLANILLA_CONSOLIDADA'],
+    row['originador'],
+    row['administrador'],
+    row['FECHA_DÍA']
+    )
 
-# cnxn.commit()
-# cursor.close()
+cnxn.commit()
+cursor.close()
 
