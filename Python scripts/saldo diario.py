@@ -20,7 +20,7 @@ fecha_corte_anx06 = '20231231'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240122'                          ## se pone la fecha de hoy ####
+fecha_hoy    = '20240122'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -62,6 +62,7 @@ else:
             CapitalenCobranzaJudicial30,
 			CapitalRefinanciado28,
             SaldosdeCreditosCastigados38,
+            isnull(ROUND((MontodeDesembolso22 / NumerodeCuotasProgramadas44),2),0) AS 'CUOTA',
             DiasdeMora33,
             TipodeProducto43,
             CASE
@@ -120,6 +121,8 @@ SELECT
 
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
 	p.montosolicitado as 'MONTO_DESEMBOLSO',
+    p.NroPlazos,
+    isnull(ROUND((p.montosolicitado / p.NroPlazos),2),0) as 'CUOTA',
     p.montosolicitado as 'saldo_cartera1',
 	tm.descripcion as 'Estado',
 	p.fechadesembolso,
@@ -192,12 +195,11 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
                            left join TablaMaestraDet as tmdet5 on pre.CodSituacion = tmdet5.CodTablaDet
 
                             -------
-                            left join CobranzaDocumento cdoc ON ccab.CodCobranzaDocumento =cdoc.CodCobranzaDocumento
-                            left join Cuenta  CU ON CU.CodCuenta  =cdoc.CodCuentaDestino
-                            left join NotaCredito  NC ON ccab.CodNotaCredito =NC.CodNotaCredito
-                            left join CobranzaDocumento CDDNC ON NC.CodCobranzaDocumento =CDDNC.CodCobranzaDocumento
-                            left join Cuenta  CUNC ON CDDNC.CodCuentaDestino=CUNC.CodCuenta
-
+                            left join CobranzaDocumento cdoc ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
+                            left join Cuenta  CU ON CU.CodCuenta  = cdoc.CodCuentaDestino
+                            left join NotaCredito  NC ON ccab.CodNotaCredito = NC.CodNotaCredito
+                            left join CobranzaDocumento CDDNC ON NC.CodCobranzaDocumento = CDDNC.CodCobranzaDocumento
+                            left join Cuenta  CUNC ON CDDNC.CodCuentaDestino = CUNC.CodCuenta
                             --------
 
 WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' and cdet.CodEstado <> 376   
@@ -219,6 +221,7 @@ desem_format['CapitalVencido29']             = 0
 desem_format['CapitalenCobranzaJudicial30']  = 0
 desem_format['CapitalRefinanciado28']        = 0
 desem_format['SaldosdeCreditosCastigados38'] = 0
+desem_format['CUOTA']                        = df_desembolsados['CUOTA']
 desem_format['DiasdeMora33']                 = 0
 desem_format['TipodeProducto43']     = df_desembolsados['COD_FINALIDAD'].copy()
 desem_format['PRODUCTO TXT']         = ''
@@ -252,7 +255,7 @@ def producto_txt(df):
     elif tipo_producto in prod_hip:
         return 'HIPOTECARIO'
 
-desem_format['PRODUCTO TXT'] = desem_format.apply(producto_txt, axis=1)
+desem_format['PRODUCTO TXT'] = desem_format.apply(producto_txt, axis = 1)
 
 print(desem_format[pd.isna(desem_format['PRODUCTO TXT'])].shape[0])
 print('debe salir cero')
@@ -260,7 +263,7 @@ print('debe salir cero')
 #%%
 columnas = desem_format.columns
 
-anx06_base = anx06[columnas]
+anx06_base = df_anx06[columnas]
 
 df_concatenado = pd.concat([anx06_base, desem_format], ignore_index = True)
 
