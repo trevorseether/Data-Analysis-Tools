@@ -12,6 +12,8 @@ Created on Thu Jan 18 13:05:08 2024
 import pandas as pd
 import pyodbc
 import os
+import warnings
+warnings.filterwarnings('ignore')
 
 #%%
 'Fecha de corte para el anexo06'####################
@@ -405,6 +407,7 @@ df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
 
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
 # faltan otras cosas
+'''
 prom_ld = 1.2
 def vencid_consumo_ld(df):
     if df['PRODUCTO TXT'] in ['LD']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
@@ -429,8 +432,54 @@ def vencid_consumo_ld(df):
     else:
         return df['CapitalVencido29']
 df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_ld, axis = 1)
+'''
+
+print(df_mergeado['CapitalVencido29'].sum())
+print(df_mergeado['CapitalVigente26'].sum())
+
+#%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
+# faltan otras cosas
+prom_ld = 1.2
+def vencid_consumo_ld(df):
+    if df['PRODUCTO TXT'] in ['LD']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
+        if (df['DiasdeMora33'] > 30) and \
+           (df['DiasdeMora33'] <= 60) and \
+           (df['CapitalVencido29'] == 0) and \
+           (df['Saldodecolocacionescreditosdirectos24'] > df['CUOTA']):
+               
+            df['CapitalVencido29'] = df['CUOTA'] * prom_ld
+            df['CapitalVigente26'] = df['CapitalVigente26'] - (df['CUOTA'] * prom_ld)
+            return df
+        elif (df['DiasdeMora33'] > 30) and \
+             (df['DiasdeMora33'] <= 60) and \
+             (df['CapitalVencido29'] > 0):
+             
+            df['CapitalVencido29'] = df['CapitalVencido29']
+            return df
+
+        elif (df['DiasdeMora33'] > 60) and \
+             (df['DiasdeMora33'] <= 90):
+            df['CapitalVencido29'] = df['CUOTA'] * prom_ld * 2
+            df['CapitalVigente26'] = df['CapitalVigente26'] - (df['CUOTA'] * prom_ld * 2)
+            return df
+
+        elif (df['DiasdeMora33'] > 90):
+            df['CapitalVencido29'] = df['Saldodecolocacionescreditosdirectos24']
+            df['CapitalVigente26'] = 0
+            return df
+        else:
+            df['CapitalVencido29'] = df['CapitalVencido29']
+            return df
+    else:
+        df['CapitalVencido29'] = df['CapitalVencido29']
+        return df
+df_mergeado = df_mergeado.apply(vencid_consumo_ld, axis = 1)
+
+print(df_mergeado['CapitalVencido29'].sum())
+print(df_mergeado['CapitalVigente26'].sum())
 
 #%%
+'''
 prom_hipo = 1.118
 def vencid_consumo_hipo(df):
     if df['PRODUCTO TXT'] in ['HIPOTECARIO']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
@@ -455,6 +504,47 @@ def vencid_consumo_hipo(df):
     else:
         return df['CapitalVencido29']
 df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_hipo, axis = 1)
+'''
+#%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
+# faltan otras cosas
+prom_hipo = 1.118
+def vencid_consumo_hipo(df):
+    if df['PRODUCTO TXT'] in ['HIPOTECARIO']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
+        if (df['DiasdeMora33'] > 30) and \
+           (df['DiasdeMora33'] <= 60) and \
+           (df['CapitalVencido29'] == 0) and \
+           (df['Saldodecolocacionescreditosdirectos24'] > df['CUOTA']):
+               
+            df['CapitalVencido29'] = df['CUOTA'] * prom_hipo
+            df['CapitalVigente26'] = df['CapitalVigente26'] - (df['CUOTA'] * prom_hipo)
+            return df
+        elif (df['DiasdeMora33'] > 30) and \
+             (df['DiasdeMora33'] <= 60) and \
+             (df['CapitalVencido29'] > 0):
+             
+            df['CapitalVencido29'] = df['CapitalVencido29']
+            return df
+
+        elif (df['DiasdeMora33'] > 60) and \
+             (df['DiasdeMora33'] <= 90):
+            df['CapitalVencido29'] = df['CUOTA'] * prom_hipo * 2
+            df['CapitalVigente26'] = df['CapitalVigente26'] - (df['CUOTA'] * prom_hipo * 2)
+            return df
+
+        elif (df['DiasdeMora33'] > 90):
+            df['CapitalVencido29'] = df['Saldodecolocacionescreditosdirectos24']
+            df['CapitalVigente26'] = 0
+            return df
+        else:
+            df['CapitalVencido29'] = df['CapitalVencido29']
+            return df
+    else:
+        df['CapitalVencido29'] = df['CapitalVencido29']
+        return df
+df_mergeado = df_mergeado.apply(vencid_consumo_hipo, axis = 1)
+
+print(df_mergeado['CapitalVencido29'].sum())
+print(df_mergeado['CapitalVigente26'].sum())
 
 #%%
 # df_mergeado.to_excel(fecha_hoy + 'xlsx',
