@@ -431,7 +431,7 @@ def vencid_consumo_ld(df):
 df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_ld, axis = 1)
 
 #%%
-prom_hipo = 1.1
+prom_hipo = 1.118
 def vencid_consumo_hipo(df):
     if df['PRODUCTO TXT'] in ['HIPOTECARIO']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
         if (df['DiasdeMora33'] > 30) and \
