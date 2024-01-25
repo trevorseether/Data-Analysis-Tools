@@ -637,14 +637,7 @@ df  = df_mergeado.copy()
 cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
 cursor = cnxn.cursor()
 # # Inserta el DataFrame en SQL Server
-# # PARA QUE EL CÓDIGO FUNCIONES, PRIMERO DEBES CREAR UNA TABLA EN EL SQL SERVER CON:
-
-# # CREATE TABLE [HumanResources].[DepartmentTest](
-# # [DepartmentID] INT            NOT NULL,
-# # [Name]         VARCHAR(255)   NOT NULL,
-# # [ALTURA]       FLOAT          NOT NULL
-# # )
-
+# # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
 
 for index, row in df.iterrows():
     cursor.execute("""
