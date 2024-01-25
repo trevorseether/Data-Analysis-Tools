@@ -22,7 +22,7 @@ fecha_corte_anx06 = '20231231'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240122'                          ## se pone la fecha de hoy ##
+fecha_hoy    = '20240124'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -437,9 +437,6 @@ df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_ld, axis = 1)
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalVigente26'] = df_mergeado['CapitalVigente26'].round(2)
 
-print(df_mergeado['CapitalVencido29'].sum())
-print(df_mergeado['CapitalVigente26'].sum())
-
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
 # faltan otras cosas
 prom_ld = 1.2
@@ -477,9 +474,6 @@ df_mergeado = df_mergeado.apply(vencid_consumo_ld, axis = 1)
 
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalVigente26'] = df_mergeado['CapitalVigente26'].round(2)
-
-print(df_mergeado['CapitalVencido29'].sum())
-print(df_mergeado['CapitalVigente26'].sum())
 
 #%%
 '''
@@ -543,9 +537,6 @@ df_mergeado = df_mergeado.apply(vencid_consumo_hipo, axis = 1)
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalVigente26'] = df_mergeado['CapitalVigente26'].round(2)
 
-print(df_mergeado['CapitalVencido29'].sum())
-print(df_mergeado['CapitalVigente26'].sum())
-
 #%% ahora para refinanciados LD
 prom_ld = 1.2
 def vencid_consumo_ld_ref(row):
@@ -583,9 +574,6 @@ df_mergeado = df_mergeado.apply(vencid_consumo_ld_ref, axis = 1)
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalRefinanciado28'] = df_mergeado['CapitalRefinanciado28'].round(2)
 
-print(df_mergeado['CapitalVencido29'].sum())
-print(df_mergeado['CapitalRefinanciado28'].sum())
-
 #%%
 prom_hipo = 1.118
 def vencid_consumo_hipo_ref(row):
@@ -621,12 +609,24 @@ df_mergeado = df_mergeado.apply(vencid_consumo_hipo_ref, axis = 1)
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalRefinanciado28'] = df_mergeado['CapitalRefinanciado28'].round(2)
 
-print(df_mergeado['CapitalVencido29'].sum())
-print(df_mergeado['CapitalRefinanciado28'].sum())
-
 #%%
-# df_mergeado.to_excel(fecha_hoy + 'xlsx',
-#                      index = False)
+# REDUCCIÓN DEL SALDO CASTIGADO
+
+def reduccion_castigado(df):
+    if df['SaldosdeCreditosCastigados38'] > 0:
+        if df['Capital'] > 0:
+            return df['SaldosdeCreditosCastigados38'] - df['Capital']
+        else:
+            return df['SaldosdeCreditosCastigados38']
+    else:
+        return df['SaldosdeCreditosCastigados38']
+    
+df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castigado, axis = 1)
+
+#%% SI QUEREMOS CONVERTI EL DATAFRAME A EXCEL
+
+# df_mergeado.to_excel(fecha_hoy + '.xlsx',
+#                       index = False)
 
 #%%
 # import pyodbc
@@ -648,27 +648,48 @@ cursor = cnxn.cursor()
 
 for index, row in df.iterrows():
     cursor.execute("""
-        INSERT INTO saldos_diarios.dbo.[2024_01] 
-        ([Nro_Fincore], 
-          [Saldodecolocacionescreditosdirectos24], 
+        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
+        ( [Nro_Fincore], 
+          [Saldodecolocacionescreditosdirectos24],
+          [MontodeDesembolso22],
           [FechadeDesembolso21], 
+          [CapitalVigente26],
+          [CapitalVencido29],
+          [CapitalenCobranzaJudicial30],
+          [CapitalRefinanciado28],
+          [SaldosdeCreditosCastigados38],
+          [CUOTA],
+          [DiasdeMora33],
+          [TipodeProducto43],
           [PRODUCTO TXT], 
           [PLANILLA_CONSOLIDADA], 
           [originador], 
-          [administrador], 
+          [administrador],
+          [Capital],
           [FECHA_DÍA])
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """,
     row['Nro_Fincore'],
     row['Saldodecolocacionescreditosdirectos24'],
+    row['MontodeDesembolso22'],
     row['FechadeDesembolso21'],
+    row['CapitalVigente26'],
+    row['CapitalVencido29'],
+    row['CapitalenCobranzaJudicial30'],
+    row['CapitalRefinanciado28'],
+    row['SaldosdeCreditosCastigados38'],
+    row['CUOTA'],
+    row['DiasdeMora33'],
+    row['TipodeProducto43'],
     row['PRODUCTO TXT'],
     row['PLANILLA_CONSOLIDADA'],
     row['originador'],
     row['administrador'],
+    row['Capital'],
     row['FECHA_DÍA']
     )
 
 cnxn.commit()
 cursor.close()
 
+print('fecha cargada: ' + fecha_hoy)
