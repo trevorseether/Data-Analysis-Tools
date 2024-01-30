@@ -2,7 +2,7 @@
 """
 Created on Thu Jan 18 13:05:08 2024
 
-@author: sanmiguel38
+@author: Joseph Montoya
 """
 
 # =============================================================================
@@ -22,7 +22,7 @@ fecha_corte_anx06 = '20231231'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240124'                          ## se pone la fecha de hoy ##
+fecha_hoy    = '20240129'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -110,7 +110,8 @@ FROM prestamo as p
 
 inner join socio as s on s.codsocio = p.codsocio
 where CONVERT(VARCHAR(10),p.fechadesembolso,112) > '20100101' 
-and s.codigosocio>0  and p.codestado = 342
+and s.codigosocio>0  
+and p.codestado = 342
 order by p.fechadesembolso desc
 
 '''
@@ -339,7 +340,7 @@ def cob2_judicial(df):
         return df['CapitalVigente26'] + df['CapitalenCobranzaJudicial30']
     else:
         return df['CapitalVigente26']
-df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_judicial, axis=1)
+df_mergeado['CapitalVigente26'] = df_mergeado.apply(cob2_judicial, axis = 1)
 
 #%% refinanciados
 def refinanciados(df):
@@ -632,57 +633,57 @@ df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castig
 # import pyodbc
 # import pandas as pd
 
-df  = df_mergeado.copy()
+# df  = df_mergeado.copy()
 
-cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
-cursor = cnxn.cursor()
-# # Inserta el DataFrame en SQL Server
-# # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
+# cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+# cursor = cnxn.cursor()
+# # # Inserta el DataFrame en SQL Server
+# # # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
 
-for index, row in df.iterrows():
-    cursor.execute("""
-        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
-        ( [Nro_Fincore], 
-          [Saldodecolocacionescreditosdirectos24],
-          [MontodeDesembolso22],
-          [FechadeDesembolso21], 
-          [CapitalVigente26],
-          [CapitalVencido29],
-          [CapitalenCobranzaJudicial30],
-          [CapitalRefinanciado28],
-          [SaldosdeCreditosCastigados38],
-          [CUOTA],
-          [DiasdeMora33],
-          [TipodeProducto43],
-          [PRODUCTO TXT], 
-          [PLANILLA_CONSOLIDADA], 
-          [originador], 
-          [administrador],
-          [Capital],
-          [FECHA_DÍA])
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-    row['Nro_Fincore'],
-    row['Saldodecolocacionescreditosdirectos24'],
-    row['MontodeDesembolso22'],
-    row['FechadeDesembolso21'],
-    row['CapitalVigente26'],
-    row['CapitalVencido29'],
-    row['CapitalenCobranzaJudicial30'],
-    row['CapitalRefinanciado28'],
-    row['SaldosdeCreditosCastigados38'],
-    row['CUOTA'],
-    row['DiasdeMora33'],
-    row['TipodeProducto43'],
-    row['PRODUCTO TXT'],
-    row['PLANILLA_CONSOLIDADA'],
-    row['originador'],
-    row['administrador'],
-    row['Capital'],
-    row['FECHA_DÍA']
-    )
+# for index, row in df.iterrows():
+#     cursor.execute("""
+#         INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
+#         ( [Nro_Fincore], 
+#           [Saldodecolocacionescreditosdirectos24],
+#           [MontodeDesembolso22],
+#           [FechadeDesembolso21], 
+#           [CapitalVigente26],
+#           [CapitalVencido29],
+#           [CapitalenCobranzaJudicial30],
+#           [CapitalRefinanciado28],
+#           [SaldosdeCreditosCastigados38],
+#           [CUOTA],
+#           [DiasdeMora33],
+#           [TipodeProducto43],
+#           [PRODUCTO TXT], 
+#           [PLANILLA_CONSOLIDADA], 
+#           [originador], 
+#           [administrador],
+#           [Capital],
+#           [FECHA_DÍA])
+#         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     """,
+#     row['Nro_Fincore'],
+#     row['Saldodecolocacionescreditosdirectos24'],
+#     row['MontodeDesembolso22'],
+#     row['FechadeDesembolso21'],
+#     row['CapitalVigente26'],
+#     row['CapitalVencido29'],
+#     row['CapitalenCobranzaJudicial30'],
+#     row['CapitalRefinanciado28'],
+#     row['SaldosdeCreditosCastigados38'],
+#     row['CUOTA'],
+#     row['DiasdeMora33'],
+#     row['TipodeProducto43'],
+#     row['PRODUCTO TXT'],
+#     row['PLANILLA_CONSOLIDADA'],
+#     row['originador'],
+#     row['administrador'],
+#     row['Capital'],
+#     row['FECHA_DÍA']
+#     )
 
-cnxn.commit()
-cursor.close()
+# cnxn.commit()
+# cursor.close()
 
-print('fecha cargada: ' + fecha_hoy)
+# print('fecha cargada: ' + fecha_hoy)
