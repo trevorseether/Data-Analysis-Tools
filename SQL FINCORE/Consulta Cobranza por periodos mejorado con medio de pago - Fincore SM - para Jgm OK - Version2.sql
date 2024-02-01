@@ -20,7 +20,7 @@ SELECT
 	gr.descripcion as 'Funcionario', 
 	pla.descripcion as 'planilla', 
 	tc.Descripcion as 'TipoCredito', 
-	fin.codigo, 
+	fin.codigo AS 'codigo', 
 	fin.Descripcion as 'finalidad',  
 	pre.FechaVentaCartera, 
 	pre.FechaCastigo, 

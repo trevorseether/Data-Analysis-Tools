@@ -22,7 +22,7 @@ fecha_corte_anx06 = '20231231'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240129'                          ## se pone la fecha de hoy ##
+fecha_hoy    = '20240131'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -62,7 +62,7 @@ else:
             CapitalVigente26,
             CapitalVencido29,
             CapitalenCobranzaJudicial30,
-			CapitalRefinanciado28,
+ 			CapitalRefinanciado28,
             SaldosdeCreditosCastigados38,
             isnull(ROUND((MontodeDesembolso22 / NumerodeCuotasProgramadas44),2),0) AS 'CUOTA',
             DiasdeMora33,
@@ -163,12 +163,15 @@ FROM prestamo as p
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' 
 and s.codigosocio>0  and p.codestado = 341
-order by p.fechadesembolso desc
+order by p.fechadesembolso DESC
 '''
 df_desembolsados = pd.read_sql_query(query, conn,
                                      dtype = {'COD_FINALIDAD' : str})
 
 # df_desembolsados['TipoCredito'] = df_desembolsados['TipoCredito'].astype(str)
+
+asdasdd = df_desembolsados[df_desembolsados['COD_FINALIDAD'].isin(['34','35','36','37','38','39'])]
+asdasdd['MONTO_DESEMBOLSO'].sum()
 
 #%% COBRANZA DEL MES
 query = f'''
@@ -180,7 +183,8 @@ SELECT
 	ccab.fecha as 'fecha_cob', 
 	cdet.Capital, 
 	cdet.aporte as 'Aporte',
-	cdet.interes AS 'INT_CUOTA'
+	cdet.interes AS 'INT_CUOTA',
+    fin.codigo as 'codigo'
 	
 FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.CodprestamoCuota = cdet.CodprestamoCuota
                            INNER JOIN CobranzaCab as ccab ON ccab.CodCobranzaCab = cdet.CodCobranzaCab
@@ -274,12 +278,21 @@ df_concatenado = pd.concat([anx06_base, desem_format], ignore_index = True)
 df_concatenado = df_concatenado[~df_concatenado['Nro_Fincore'].isin(list(df_cancelados['pagare_fincore']))]
 
 #%% calculamos la recaudación de los saldos de cartera
-recau = df_cobranza.pivot_table(index  = 'PagareFincore',
-                                values = 'Capital')
+recau = df_cobranza.pivot_table(index   = 'PagareFincore',
+                                values  = 'Capital',
+                                aggfunc = 'sum') #mucho cuidado porque por defecto la función en 'avg'
 recau = recau.reset_index()
 
+# cobranza y sus productos
+cob_cod_productos = df_cobranza[['PagareFincore', 'codigo']].drop_duplicates(subset = 'PagareFincore')
+
+recau = recau.merge(cob_cod_productos,
+                    on  = 'PagareFincore',
+                    how = 'left')
+
+recau = recau[['PagareFincore', 'Capital']]
 #%% merge con la recaudación
-df_mergeado = df_concatenado.merge(recau,
+df_mergeado = df_concatenado.merge(recau[['PagareFincore', 'Capital']],
                                    left_on  = 'Nro_Fincore',
                                    right_on = 'PagareFincore',
                                    how      = 'left')
@@ -295,6 +308,13 @@ def cob1(df):
         return df['Saldodecolocacionescreditosdirectos24']
         
 df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, axis = 1)
+
+# =============================================================================
+kho = df_mergeado[df_mergeado['PRODUCTO TXT'] == 'DXP']
+print(kho['Capital'].sum())
+print(kho['Saldodecolocacionescreditosdirectos24'].sum()) #70222650.65 #65071041.87
+
+# =============================================================================
 
 def vigentes(df):
     if (df['CapitalVigente26'] > 0) and \
@@ -633,57 +653,57 @@ df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castig
 # import pyodbc
 # import pandas as pd
 
-# df  = df_mergeado.copy()
+df  = df_mergeado.copy()
 
-# cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
-# cursor = cnxn.cursor()
-# # # Inserta el DataFrame en SQL Server
-# # # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
+cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+cursor = cnxn.cursor()
+# # Inserta el DataFrame en SQL Server
+# # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
 
-# for index, row in df.iterrows():
-#     cursor.execute("""
-#         INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
-#         ( [Nro_Fincore], 
-#           [Saldodecolocacionescreditosdirectos24],
-#           [MontodeDesembolso22],
-#           [FechadeDesembolso21], 
-#           [CapitalVigente26],
-#           [CapitalVencido29],
-#           [CapitalenCobranzaJudicial30],
-#           [CapitalRefinanciado28],
-#           [SaldosdeCreditosCastigados38],
-#           [CUOTA],
-#           [DiasdeMora33],
-#           [TipodeProducto43],
-#           [PRODUCTO TXT], 
-#           [PLANILLA_CONSOLIDADA], 
-#           [originador], 
-#           [administrador],
-#           [Capital],
-#           [FECHA_DÍA])
-#         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-#     """,
-#     row['Nro_Fincore'],
-#     row['Saldodecolocacionescreditosdirectos24'],
-#     row['MontodeDesembolso22'],
-#     row['FechadeDesembolso21'],
-#     row['CapitalVigente26'],
-#     row['CapitalVencido29'],
-#     row['CapitalenCobranzaJudicial30'],
-#     row['CapitalRefinanciado28'],
-#     row['SaldosdeCreditosCastigados38'],
-#     row['CUOTA'],
-#     row['DiasdeMora33'],
-#     row['TipodeProducto43'],
-#     row['PRODUCTO TXT'],
-#     row['PLANILLA_CONSOLIDADA'],
-#     row['originador'],
-#     row['administrador'],
-#     row['Capital'],
-#     row['FECHA_DÍA']
-#     )
+for index, row in df.iterrows():
+    cursor.execute("""
+        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
+        ( [Nro_Fincore], 
+          [Saldodecolocacionescreditosdirectos24],
+          [MontodeDesembolso22],
+          [FechadeDesembolso21], 
+          [CapitalVigente26],
+          [CapitalVencido29],
+          [CapitalenCobranzaJudicial30],
+          [CapitalRefinanciado28],
+          [SaldosdeCreditosCastigados38],
+          [CUOTA],
+          [DiasdeMora33],
+          [TipodeProducto43],
+          [PRODUCTO TXT], 
+          [PLANILLA_CONSOLIDADA], 
+          [originador], 
+          [administrador],
+          [Capital],
+          [FECHA_DÍA])
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+    row['Nro_Fincore'],
+    row['Saldodecolocacionescreditosdirectos24'],
+    row['MontodeDesembolso22'],
+    row['FechadeDesembolso21'],
+    row['CapitalVigente26'],
+    row['CapitalVencido29'],
+    row['CapitalenCobranzaJudicial30'],
+    row['CapitalRefinanciado28'],
+    row['SaldosdeCreditosCastigados38'],
+    row['CUOTA'],
+    row['DiasdeMora33'],
+    row['TipodeProducto43'],
+    row['PRODUCTO TXT'],
+    row['PLANILLA_CONSOLIDADA'],
+    row['originador'],
+    row['administrador'],
+    row['Capital'],
+    row['FECHA_DÍA']
+    )
 
-# cnxn.commit()
-# cursor.close()
+cnxn.commit()
+cursor.close()
 
-# print('fecha cargada: ' + fecha_hoy)
+print('fecha cargada: ' + fecha_hoy)
