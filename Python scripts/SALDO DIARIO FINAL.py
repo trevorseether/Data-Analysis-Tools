@@ -68,12 +68,14 @@ else:
             DiasdeMora33,
             TipodeProducto43,
             CASE
-                WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA EMPRESA'
-                WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,28,29) THEN 'MICRO EMPRESA'
-                WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA EMPRESA'
-                WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
-                WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
-                WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIO'
+                WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
+                WHEN TipodeProducto43 IN (21,22,23,24,25,27,28,29) THEN 'MICRO EMPRESA'
+                WHEN TipodeProducto43 IN (26)                      THEN 'EMPRENDE MUJER'
+                WHEN TipodeProducto43 IN (95,96,97,98,99)          THEN 'MEDIANA EMPRESA'
+                WHEN TipodeProducto43 IN (34,35,36,37,38,39)       THEN 'DXP'
+                WHEN TipodeProducto43 IN (30,31,33)                THEN 'LD'
+                WHEN TipodeProducto43 IN (32)                      THEN 'MULTIOFICIOS'
+                WHEN TipodeProducto43 IN (41,45)                   THEN 'HIPOTECARIO'
             END AS 'PRODUCTO TXT',
             PLANILLA_CONSOLIDADA,
             originador,
@@ -264,17 +266,22 @@ desem_format['administrador']        = df_desembolsados['ADMINISTRADOR'].copy()
 desem_format.loc[desem_format['TipodeProducto43'] == '27', 'TipodeProducto43'] = '32'
 
 prod_dxp  = ['34', '35', '36', '37', '38', '39']
-prod_ld   = ['30', '31', '32', '33']
-prod_mic  = ['20', '21', '22', '23', '24', '25', '26', '29']
+prod_ld   = ['30', '31', '33']
+prod_mic  = ['20', '21', '22', '23', '24', '25', '29']
 prod_peq  = ['15', '16', '17', '18', '19']
 prod_med  = ['95', '96', '97', '98', '99']
 prod_hip  = ['41', '45']
-
+prod_multi = ['32']
+prod_empre = ['26']
 def producto_txt(df):
     tipo_producto = df['TipodeProducto43']
     
     if tipo_producto in prod_dxp:
         return 'DXP'
+    elif tipo_producto in prod_multi:
+        return 'MULTIOFICIOS'
+    elif tipo_producto in prod_empre:
+        return 'EMPRENDE MUJER'
     elif tipo_producto in prod_ld:
         return 'LD'
     elif tipo_producto in prod_mic:
