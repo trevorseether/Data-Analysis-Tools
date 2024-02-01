@@ -108,7 +108,7 @@ SELECT
 
 FROM prestamo as p
 
-inner join socio as s on s.codsocio = p.codsocio
+INNER JOIN socio as s on s.codsocio = p.codsocio
 where CONVERT(VARCHAR(10),p.fechadesembolso,112) > '20100101' 
 and s.codigosocio>0  
 and p.codestado = 342
@@ -141,24 +141,24 @@ SELECT
 
 FROM prestamo as p
 
-    inner join socio as s on s.codsocio = p.codsocio
-    LEFT join sociocontacto as sc on sc.codsocio = s.codsocio
-    left join planilla as pla on p.codplanilla = pla.codplanilla
-    inner join grupocab as pro on pro.codgrupocab = p.codgrupocab
-    inner join distrito as d on d.coddistrito = sc.coddistrito
-    inner join provincia as pv on pv.codprovincia = d.codprovincia
-    inner join departamento as dp on dp.coddepartamento = pv.coddepartamento
-    inner join tablaMaestraDet as tm on tm.codtabladet = p.CodEstado
-    left join grupocab as gpo on gpo.codgrupocab = pla.codgrupocab
-    left join tablaMaestraDet as tm2 on tm2.codtabladet = s.codestadocivil
-    left join tablaMaestraDet as tm3 on tm3.codtabladet = p.CodSituacion
-    --inner join tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
-    inner join pais on pais.codpais = s.codpais
-    LEFT JOIN FINALIDAD AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-    left join TipoCredito as TC on tc.CodTipoCredito = p.CodTipoCredito
-    inner join usuario as u on p.CodUsuario = u.CodUsuario
-    inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
-    --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+    INNER JOIN socio              as s   on s.codsocio = p.codsocio
+    LEFT JOIN sociocontacto       as sc  on sc.codsocio = s.codsocio
+    LEFT JOIN planilla            as pla on p.codplanilla = pla.codplanilla
+    INNER JOIN grupocab           as pro on pro.codgrupocab = p.codgrupocab
+    INNER JOIN distrito           as d   on d.coddistrito = sc.coddistrito
+    INNER JOIN provincia          as pv  on pv.codprovincia = d.codprovincia
+    INNER JOIN departamento       as dp  on dp.coddepartamento = pv.coddepartamento
+    INNER JOIN tablaMaestraDet    as tm  on tm.codtabladet = p.CodEstado
+    LEFT JOIN grupocab            as gpo on gpo.codgrupocab = pla.codgrupocab
+    LEFT JOIN tablaMaestraDet     as tm2 on tm2.codtabladet = s.codestadocivil
+    LEFT JOIN tablaMaestraDet     as tm3 on tm3.codtabladet = p.CodSituacion
+    --INNER JOIN tablaMaestraDet  as tm3 on tm3.codtabladet = s.codcategoria
+    INNER JOIN pais                      on pais.codpais = s.codpais
+    LEFT JOIN FINALIDAD           AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
+    LEFT JOIN TipoCredito         AS TC on tc.CodTipoCredito = p.CodTipoCredito
+    INNER JOIN usuario            AS u on p.CodUsuario = u.CodUsuario
+    INNER JOIN TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
+    --LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' 
@@ -177,37 +177,37 @@ asdasdd['MONTO_DESEMBOLSO'].sum()
 #%% COBRANZA DEL MES
 query = f'''
 SELECT 
-	right(concat('0000000',pre.numero),8)  AS 'PagareFincore',
-	pre.FechaDesembolso,
-	precuo.numerocuota, 
+	right(concat('0000000',pre.numero),8)    AS 'PagareFincore',
+	pre.FechaDesembolso                      AS 'FechaDesembolso',
+	precuo.numerocuota                       AS 'numerocuota', 
 	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda', 
-	ccab.fecha as 'fecha_cob', 
-	cdet.Capital, 
-	cdet.aporte as 'Aporte',
-	cdet.interes AS 'INT_CUOTA',
-    fin.codigo as 'codigo'
+	ccab.fecha                               AS 'fecha_cob', 
+	cdet.Capital                             AS 'Capital', 
+	cdet.aporte                              AS 'Aporte',
+	cdet.interes                             AS 'INT_CUOTA',
+    fin.codigo                               AS 'codigo'
 	
 FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.CodprestamoCuota = cdet.CodprestamoCuota
-                           INNER JOIN CobranzaCab as ccab ON ccab.CodCobranzaCab = cdet.CodCobranzaCab
-                           Inner Join Prestamo as pre ON pre.codPrestamo = precuo.CodPrestamo 
-                           Left Join Planilla AS pla ON pre.CodPlanilla = pla.CodPlanilla
-                           Inner Join Socio as soc ON soc.CodSocio = pre.CodSocio
-                           inner join finalidad as fin on fin.CodFinalidad = pre.CodFinalidad
-                           inner join TipoCredito as tc on tc.CodTipoCredito = fin.CodTipoCredito
-                           left join grupoCab as gr on gr.codGrupoCab = pre.codGrupoCab
-						   --   LEFT JOIN CobranzaDocumento as cdoc on ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
-						   --   Inner Join TablaMaestraDet as tmdet on tmdet.CodTablaDet = cdoc.CodMedioPago (ORIGUINAL)
-                           LEft Join TablaMaestraDet as tmdet on tmdet.CodTablaDet = ccab.CodMedioPago --(NUEVO ACTIVAR)
+                           INNER JOIN CobranzaCab   AS ccab   ON ccab.CodCobranzaCab = cdet.CodCobranzaCab
+                           INNER JOIN Prestamo      AS pre    ON pre.codPrestamo = precuo.CodPrestamo 
+                           LEFT JOIN Planilla       AS pla    ON pre.CodPlanilla = pla.CodPlanilla
+                           INNER JOIN Socio         AS soc    ON soc.CodSocio = pre.CodSocio
+                           INNER JOIN finalidad     AS fin    ON fin.CodFinalidad = pre.CodFinalidad
+                           INNER JOIN TipoCredito   AS tc     ON tc.CodTipoCredito = fin.CodTipoCredito
+                           LEFT JOIN grupoCab       AS gr     ON gr.codGrupoCab = pre.codGrupoCab
+						   --   LEFT JOIN CobranzaDocumento  AS cdoc  ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
+						   --   INNER JOIN TablaMaestraDet   AS tmdet ON tmdet.CodTablaDet = cdoc.CodMedioPago (ORIGUINAL)
+                           LEFT JOIN TablaMaestraDet         AS tmdet ON tmdet.CodTablaDet = ccab.CodMedioPago --(NUEVO ACTIVAR)
 
-                           left join Empleado as empl on pre.CodAbogado = empl.CodEmpleado
-                           left join TablaMaestraDet as tmdet5 on pre.CodSituacion = tmdet5.CodTablaDet
+                           LEFT JOIN Empleado         AS empl    ON pre.CodAbogado = empl.CodEmpleado
+                           LEFT JOIN TablaMaestraDet  AS tmdet5  ON pre.CodSituacion = tmdet5.CodTablaDet
 
                             -------
-                            left join CobranzaDocumento cdoc ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
-                            left join Cuenta  CU ON CU.CodCuenta  = cdoc.CodCuentaDestino
-                            left join NotaCredito  NC ON ccab.CodNotaCredito = NC.CodNotaCredito
-                            left join CobranzaDocumento CDDNC ON NC.CodCobranzaDocumento = CDDNC.CodCobranzaDocumento
-                            left join Cuenta  CUNC ON CDDNC.CodCuentaDestino = CUNC.CodCuenta
+                            LEFT JOIN CobranzaDocumento  AS cdoc  ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
+                            LEFT JOIN Cuenta             AS CU    ON CU.CodCuenta  = cdoc.CodCuentaDestino
+                            LEFT JOIN NotaCredito        AS NC    ON ccab.CodNotaCredito = NC.CodNotaCredito
+                            LEFT JOIN CobranzaDocumento  AS CDDNC ON NC.CodCobranzaDocumento = CDDNC.CodCobranzaDocumento
+                            LEFT JOIN Cuenta             AS CUNC  ON CDDNC.CodCuentaDestino = CUNC.CodCuenta
                             --------
 
 WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' and cdet.CodEstado <> 376   
@@ -215,6 +215,29 @@ ORDER BY ccab.fecha
 
 '''
 df_cobranza = pd.read_sql_query(query, conn)
+
+#%% CRONOGRAMA DE LOS CRÉDITOS
+query = '''
+SELECT 	--TOP 1000
+	RIGHT(CONCAT('0000000',A.numero),8) as 'pagare_fincore', 
+	A.CodPrestamo,
+	B.Periodo,
+	B.NumeroCuota,
+	B.NroPlazos,
+	B.FechaVencimiento,
+	B.FechaUltimoPago,
+	B.Capital,
+	B.Interes,
+	B.Aporte,
+	B.CuotaMensual
+	 
+FROM Prestamo AS A
+
+LEFT JOIN PrestamoCuota AS B ON A.CodPrestamo = B.CodPrestamo
+WHERE A.CodPrestamo	IS NOT NULL
+AND a.codestado = 342
+'''
+df_cronograma = pd.read_sql_query(query, conn)
 
 #%%
 # concatenamos los créditos del anexo06 con los nuevos desembolsos
