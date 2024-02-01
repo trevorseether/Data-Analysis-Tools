@@ -165,7 +165,8 @@ CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' AND '{fecha_
 and s.codigosocio>0  and p.codestado = 341
 order by p.fechadesembolso DESC
 '''
-df_desembolsados = pd.read_sql_query(query, conn,
+df_desembolsados = pd.read_sql_query(query, 
+                                     conn,
                                      dtype = {'COD_FINALIDAD' : str})
 
 # df_desembolsados['TipoCredito'] = df_desembolsados['TipoCredito'].astype(str)
