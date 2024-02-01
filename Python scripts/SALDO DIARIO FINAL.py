@@ -67,6 +67,7 @@ else:
             isnull(ROUND((MontodeDesembolso22 / NumerodeCuotasProgramadas44),2),0) AS 'CUOTA',
             DiasdeMora33,
             TipodeProducto43,
+            NumerodeCuotasPagadas45,
             CASE
                 WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
                 WHEN TipodeProducto43 IN (21,22,23,24,25,27,28,29) THEN 'MICRO EMPRESA'
@@ -344,7 +345,6 @@ df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, a
 kho = df_mergeado[df_mergeado['PRODUCTO TXT'] == 'DXP']
 print(kho['Capital'].sum())
 print(kho['Saldodecolocacionescreditosdirectos24'].sum()) #70222650.65 #65071041.87
-
 # =============================================================================
 
 def vigentes(df):
