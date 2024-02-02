@@ -170,9 +170,6 @@ df_desembolsados = pd.read_sql_query(query,
 
 # df_desembolsados['TipoCredito'] = df_desembolsados['TipoCredito'].astype(str)
 
-asdasdd = df_desembolsados[df_desembolsados['COD_FINALIDAD'].isin(['34','35','36','37','38','39'])]
-asdasdd['MONTO_DESEMBOLSO'].sum()
-
 #%% COBRANZA DEL MES
 query = f'''
 SELECT 
@@ -234,7 +231,7 @@ FROM Prestamo AS A
 
 LEFT JOIN PrestamoCuota AS B ON A.CodPrestamo = B.CodPrestamo
 WHERE A.CodPrestamo	IS NOT NULL
-AND a.codestado = 342
+AND a.codestado = 341
 '''
 df_cronograma = pd.read_sql_query(query, 
                                   conn)
@@ -351,7 +348,7 @@ df_mergeado['CapitalVigente26'] = df_mergeado.apply(vigentes, axis=1)
 #%% cuadramiento de valores negativos
 cosas_que_no_cuadran = df_mergeado[df_mergeado['Saldodecolocacionescreditosdirectos24'] < 0]
 print(cosas_que_no_cuadran.shape[0])
-print('debe salir un número bajo (<20)')
+print('SON CRÉDITOS QUE HAN AMORTIZADO MÁS CAPITAL QUE EL QUE TENÍAN PENDIENTE (⊙_⊙)？')
 fincore_no_cuadran = cosas_que_no_cuadran['Nro_Fincore']
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'Saldodecolocacionescreditosdirectos24'] = 0
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalVencido29'] = 0
@@ -450,36 +447,43 @@ df_mergeado.loc[(df_mergeado['CapitalVencido29'] > 0) & \
                 'CapitalRefinanciado28'] = 0
 
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
-# faltan otras cosas
-'''
-prom_ld = 1.2
-def vencid_consumo_ld(df):
-    if df['PRODUCTO TXT'] in ['LD']: # no cambiaremos DXP, mejor esperaremos al anexo 06 
-        if (df['DiasdeMora33'] > 30) and \
-           (df['DiasdeMora33'] <= 60) and \
-           (df['CapitalVencido29'] == 0) and \
-           (df['Saldodecolocacionescreditosdirectos24'] > df['CUOTA']):
-            return df['CUOTA'] * prom_ld #este 1.2 y 2.4 son aproximaciones del promedio respecto a la cuota vencida aplicada con la división entre el monto desembolsado y el número de cuotas
-        elif (df['DiasdeMora33'] > 30) and \
-             (df['DiasdeMora33'] <= 60) and \
-             (df['CapitalVencido29'] > 0):
-            return df['CapitalVencido29']
-
-        elif (df['DiasdeMora33'] > 60) and \
-             (df['DiasdeMora33'] <= 90):
-            return df['CUOTA'] * prom_ld * 2
-
-        elif (df['DiasdeMora33'] > 90):
-            return df['Saldodecolocacionescreditosdirectos24']
-        else:
-            return df['CapitalVencido29']
-    else:
-        return df['CapitalVencido29']
-df_mergeado['CapitalVencido29'] = df_mergeado.apply(vencid_consumo_ld, axis = 1)
-'''
 
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalVigente26'] = df_mergeado['CapitalVigente26'].round(2)
+
+#%%
+# =============================================================================
+# INCREMENTO DEL CAPITAL VENCIDO
+# =============================================================================
+# MERGE DE LOS CRONOGRAMAS CON LA CUOTA ACTUAL
+df_mergeado.columns
+crono_cap = df_cronograma.merge(df_mergeado[['Nro_Fincore', 'NumerodeCuotasPagadas45']],
+                                left_on  = 'pagare_fincore',
+                                right_on = 'Nro_Fincore',
+                                how = 'left')
+
+del crono_cap['Nro_Fincore']
+crono_cap['NumerodeCuotasPagadas45'].fillna(0, inplace = True)
+
+crono_cap['CUOTA SIGUIENTE'] = crono_cap['NumerodeCuotasPagadas45'] + 1
+
+crono_1_cuota = crono_cap[crono_cap['NumeroCuota'] == crono_cap['CUOTA SIGUIENTE']]
+crono_1_cuota = crono_1_cuota[['pagare_fincore', 'Capital']]
+crono_1_cuota = crono_1_cuota.rename(columns = {'Capital' : 'Cap 1 cuota'})
+
+
+crono_2_cuota = crono_cap[(crono_cap['NumeroCuota'] == crono_cap['CUOTA SIGUIENTE']) |
+                          (crono_cap['NumeroCuota'] == crono_cap['CUOTA SIGUIENTE']+1)]
+crono_2_cuota = crono_2_cuota[['pagare_fincore', 'Capital']]
+crono_2_cuota = crono_2_cuota.rename(columns = {'Capital' : 'Cap 2 cuota'})
+
+crono_2_cuota = crono_2_cuota.pivot_table(index   = 'pagare_fincore',
+                                          values  = 'Cap 2 cuota',
+                                          aggfunc = 'sum').reset_index()
+
+crono_cuotas = crono_1_cuota.merge(crono_2_cuota,
+                                   on  = 'pagare_fincore',
+                                   how = 'left')
 
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
 # faltan otras cosas
@@ -667,8 +671,7 @@ def reduccion_castigado(df):
     
 df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castigado, axis = 1)
 
-
-#%% SI QUEREMOS CONVERTI EL DATAFRAME A EXCEL
+#%% SI QUEREMOS CONVERTIR EL DATAFRAME A EXCEL
 
 # df_mergeado.to_excel(fecha_hoy + '.xlsx',
 #                       index = False)
