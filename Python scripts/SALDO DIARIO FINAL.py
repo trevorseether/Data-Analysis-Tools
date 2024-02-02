@@ -140,24 +140,24 @@ SELECT
 
 FROM prestamo as p
 
-    INNER JOIN socio              as s   on s.codsocio = p.codsocio
-    LEFT JOIN sociocontacto       as sc  on sc.codsocio = s.codsocio
-    LEFT JOIN planilla            as pla on p.codplanilla = pla.codplanilla
-    INNER JOIN grupocab           as pro on pro.codgrupocab = p.codgrupocab
-    INNER JOIN distrito           as d   on d.coddistrito = sc.coddistrito
-    INNER JOIN provincia          as pv  on pv.codprovincia = d.codprovincia
-    INNER JOIN departamento       as dp  on dp.coddepartamento = pv.coddepartamento
-    INNER JOIN tablaMaestraDet    as tm  on tm.codtabladet = p.CodEstado
-    LEFT JOIN grupocab            as gpo on gpo.codgrupocab = pla.codgrupocab
-    LEFT JOIN tablaMaestraDet     as tm2 on tm2.codtabladet = s.codestadocivil
-    LEFT JOIN tablaMaestraDet     as tm3 on tm3.codtabladet = p.CodSituacion
-    --INNER JOIN tablaMaestraDet  as tm3 on tm3.codtabladet = s.codcategoria
-    INNER JOIN pais                      on pais.codpais = s.codpais
-    LEFT JOIN FINALIDAD           AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-    LEFT JOIN TipoCredito         AS TC on tc.CodTipoCredito = p.CodTipoCredito
-    INNER JOIN usuario            AS u on p.CodUsuario = u.CodUsuario
-    INNER JOIN TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
-    --LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+    INNER JOIN socio              AS s    ON s.codsocio = p.codsocio
+    LEFT JOIN sociocontacto       AS sc   ON sc.codsocio = s.codsocio
+    LEFT JOIN planilla            AS pla  ON p.codplanilla = pla.codplanilla
+    INNER JOIN grupocab           AS pro  ON pro.codgrupocab = p.codgrupocab
+    INNER JOIN distrito           AS d    ON d.coddistrito = sc.coddistrito
+    INNER JOIN provincia          AS pv   ON pv.codprovincia = d.codprovincia
+    INNER JOIN departamento       AS dp   ON dp.coddepartamento = pv.coddepartamento
+    INNER JOIN tablaMaestraDet    AS tm   ON tm.codtabladet = p.CodEstado
+    LEFT JOIN grupocab            AS gpo  ON gpo.codgrupocab = pla.codgrupocab
+    LEFT JOIN tablaMaestraDet     AS tm2  ON tm2.codtabladet = s.codestadocivil
+    LEFT JOIN tablaMaestraDet     AS tm3  ON tm3.codtabladet = p.CodSituacion
+    --INNER JOIN tablaMaestraDet  AS tm3  ON tm3.codtabladet = s.codcategoria
+    INNER JOIN pais                       ON pais.codpais = s.codpais
+    LEFT JOIN FINALIDAD           AS FI   ON FI.CODFINALIDAD = P.CODFINALIDAD
+    LEFT JOIN TipoCredito         AS TC   ON tc.CodTipoCredito = p.CodTipoCredito
+    INNER JOIN usuario            AS u    ON p.CodUsuario = u.CodUsuario
+    INNER JOIN TablaMaestraDet    AS tm4  ON s.codestado = tm4.CodTablaDet
+    --LEFT JOIN PrestamoCuota     AS pcu  ON p.CodPrestamo = pcu.CodPrestamo
 
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' AND '{fecha_corte_cobranza}' 
@@ -186,20 +186,20 @@ SELECT
 	cdet.interes                             AS 'INT_CUOTA',
     fin.codigo                               AS 'codigo'
 	
-FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.CodprestamoCuota = cdet.CodprestamoCuota
-                           INNER JOIN CobranzaCab   AS ccab   ON ccab.CodCobranzaCab = cdet.CodCobranzaCab
-                           INNER JOIN Prestamo      AS pre    ON pre.codPrestamo = precuo.CodPrestamo 
-                           LEFT JOIN Planilla       AS pla    ON pre.CodPlanilla = pla.CodPlanilla
-                           INNER JOIN Socio         AS soc    ON soc.CodSocio = pre.CodSocio
-                           INNER JOIN finalidad     AS fin    ON fin.CodFinalidad = pre.CodFinalidad
-                           INNER JOIN TipoCredito   AS tc     ON tc.CodTipoCredito = fin.CodTipoCredito
-                           LEFT JOIN grupoCab       AS gr     ON gr.codGrupoCab = pre.codGrupoCab
+FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota    AS precuo ON precuo.CodprestamoCuota = cdet.CodprestamoCuota
+                           INNER JOIN CobranzaCab      AS ccab   ON ccab.CodCobranzaCab = cdet.CodCobranzaCab
+                           INNER JOIN Prestamo         AS pre    ON pre.codPrestamo = precuo.CodPrestamo 
+                           LEFT JOIN Planilla          AS pla    ON pre.CodPlanilla = pla.CodPlanilla
+                           INNER JOIN Socio            AS soc    ON soc.CodSocio = pre.CodSocio
+                           INNER JOIN finalidad        AS fin    ON fin.CodFinalidad = pre.CodFinalidad
+                           INNER JOIN TipoCredito      AS tc     ON tc.CodTipoCredito = fin.CodTipoCredito
+                           LEFT JOIN grupoCab          AS gr     ON gr.codGrupoCab = pre.codGrupoCab
 						   --   LEFT JOIN CobranzaDocumento  AS cdoc  ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
 						   --   INNER JOIN TablaMaestraDet   AS tmdet ON tmdet.CodTablaDet = cdoc.CodMedioPago (ORIGUINAL)
                            LEFT JOIN TablaMaestraDet         AS tmdet ON tmdet.CodTablaDet = ccab.CodMedioPago --(NUEVO ACTIVAR)
 
-                           LEFT JOIN Empleado         AS empl    ON pre.CodAbogado = empl.CodEmpleado
-                           LEFT JOIN TablaMaestraDet  AS tmdet5  ON pre.CodSituacion = tmdet5.CodTablaDet
+                           LEFT JOIN Empleado          AS empl    ON pre.CodAbogado = empl.CodEmpleado
+                           LEFT JOIN TablaMaestraDet   AS tmdet5  ON pre.CodSituacion = tmdet5.CodTablaDet
 
                             -------
                             LEFT JOIN CobranzaDocumento  AS cdoc  ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
@@ -338,12 +338,6 @@ def cob1(df):
         return df['Saldodecolocacionescreditosdirectos24']
         
 df_mergeado['Saldodecolocacionescreditosdirectos24'] = df_mergeado.apply(cob1, axis = 1)
-
-# =============================================================================
-kho = df_mergeado[df_mergeado['PRODUCTO TXT'] == 'DXP']
-print(kho['Capital'].sum())
-print(kho['Saldodecolocacionescreditosdirectos24'].sum()) #70222650.65 #65071041.87
-# =============================================================================
 
 def vigentes(df):
     if (df['CapitalVigente26'] > 0) and \
@@ -679,12 +673,15 @@ df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castig
 # df_mergeado.to_excel(fecha_hoy + '.xlsx',
 #                       index = False)
 
-#%%
-# anx06_base['Capital'] = 0
+#%% COD PARA INCLUIR EL CORTE ANTERIOR O EL CÁLCULO DEL DÍA
+
 # anx06_base['Capital'] = 0
 # anx06_base['FECHA_DÍA'] = pd.Timestamp(fecha_corte_anx06)
 
 # df = anx06_base.copy() #si deseamos incluir los datos del anexo06 (corte anterior)
+
+###############################################################################
+
 df  = df_mergeado.copy() #si deseamos incluir los datos de hoy
 #%%
 
