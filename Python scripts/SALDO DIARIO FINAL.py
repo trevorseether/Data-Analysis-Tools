@@ -33,10 +33,6 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\saldos diarios')
 incremento = int(fecha_hoy[-2:])
 ####################################################
 
-# appendeado = pd.DataFrame()
-# appendeado = pd.concat([appendeado, df_mergeado], ignore_index=True)
-# appendeado.to_excel('append.xlsx', index = False)
-
 #%%
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
@@ -240,7 +236,8 @@ LEFT JOIN PrestamoCuota AS B ON A.CodPrestamo = B.CodPrestamo
 WHERE A.CodPrestamo	IS NOT NULL
 AND a.codestado = 342
 '''
-df_cronograma = pd.read_sql_query(query, conn)
+df_cronograma = pd.read_sql_query(query, 
+                                  conn)
 
 #%%
 # concatenamos los créditos del anexo06 con los nuevos desembolsos
@@ -255,6 +252,7 @@ desem_format['CapitalVencido29']             = 0
 desem_format['CapitalenCobranzaJudicial30']  = 0
 desem_format['CapitalRefinanciado28']        = 0
 desem_format['SaldosdeCreditosCastigados38'] = 0
+desem_format['NumerodeCuotasPagadas45']      = 0
 desem_format['CUOTA']                        = df_desembolsados['CUOTA']
 desem_format['DiasdeMora33']                 = 0
 desem_format['TipodeProducto43']     = df_desembolsados['COD_FINALIDAD'].copy()
@@ -675,16 +673,20 @@ def reduccion_castigado(df):
     
 df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castigado, axis = 1)
 
+
 #%% SI QUEREMOS CONVERTI EL DATAFRAME A EXCEL
 
 # df_mergeado.to_excel(fecha_hoy + '.xlsx',
 #                       index = False)
 
 #%%
-# import pyodbc
-# import pandas as pd
+# anx06_base['Capital'] = 0
+# anx06_base['Capital'] = 0
+# anx06_base['FECHA_DÍA'] = pd.Timestamp(fecha_corte_anx06)
 
-df  = df_mergeado.copy()
+# df = anx06_base.copy() #si deseamos incluir los datos del anexo06 (corte anterior)
+df  = df_mergeado.copy() #si deseamos incluir los datos de hoy
+#%%
 
 cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
 cursor = cnxn.cursor()
