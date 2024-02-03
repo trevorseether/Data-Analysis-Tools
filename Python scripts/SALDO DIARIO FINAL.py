@@ -484,7 +484,6 @@ crono_cuotas = crono_1_cuota.merge(crono_2_cuota,
                                    on  = 'pagare_fincore',
                                    how = 'left')
 
-
 #%% INCREMENTO DEL CAPITAL VENCIDO PARA CONSUMO NO REVOLVENTE E HIPOTECARIO
 df_mergeado = df_mergeado.merge(crono_cuotas,
                                 left_on  = 'Nro_Fincore',
