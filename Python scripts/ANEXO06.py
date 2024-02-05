@@ -1055,7 +1055,6 @@ del grouped
 del result
 #%% CRÉDITOS MAYORES A 50K QUE NO SEAN MYPE PARA ANALIZARLOS
 # POR SI ACASO, BUSCAMOS CRÉDITOS CON MONTOS MAYORES A 50K QUE NO SEAN MYPE
-# En abril 2023 encotramos un crédito mediana empresa que estaba con etiqueda de dxp
 
 not_in = prod43_mype + [41, 45, '41', '45']
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
@@ -1064,7 +1063,7 @@ print(mayores_para_investigar[['Nro Prestamo \nFincore', 'Fecha de Desembolso 21
 
 #%% conclusión
 #########################################################################################
-#### HASTA AQUÍ YA TERMINAMOS EL TIPO DE PRODUCTO 43, LO QUE SIGUE SON OTRAS COSAS  #####
+#### HASTA AQUÍ YA TERMINAMOS EL TIPO DE PRODUCTO 43/, LO QUE SIGUE SON OTRAS COSAS  #####
 #########################################################################################
 
 #%% cambio de nombre
