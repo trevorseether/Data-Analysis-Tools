@@ -20,14 +20,30 @@ from colorama import Back # , Style, init, Fore
 # "Fecha Creacion Reprogramacion Nacimiento TXT"
 # "Fecha Creacion Reprogramacion Corte TXT"
 
+# Fecha Primer Cuota Gracia Nacimiento RPG TXT
+# Primer Fecha Cuota Gracia Corte RPG TXT
+
+# Fecha Ultimo 
+# Pago TXT
+# 'Fecha Ultimo \nPago TXT'
+
+# Fecha Vencimiento Actual TXT
+
+# Fecha Vencimiento 
+# Origuinal TXT
+
+# Fecha Venc Ult Cuota Cancelada
+
+# E2
+
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'DICIEMBRE 2023'
-fecha_corte             = '2023-12-31'
-fecha_corte_inicial     = '2023-12-01'
+fecha_mes               = 'ENERO 2024'
+fecha_corte             = '2024-01-31'
+fecha_corte_inicial     = '2024-01-01'
 
 #%% UIT actual
-uit = 4950
+uit = 5150
 
 #%%
 generar_excels = True #booleano True o False
@@ -35,21 +51,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 diciembre'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024 enero'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS2022-04012024 (1).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2023 diciembre\\prod'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - NOVIEMBRE 2023 - campos ampliados (2).xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - DICIEMBRE 2023 - campos ampliados.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo anterior ########################################################
@@ -61,8 +77,8 @@ skip_rows_anterior = 2
 os.chdir(directorio)
 
 bruto = pd.read_excel(anx06_actual,
-                      skiprows = 4,
-                      dtype = ({'Registro 1/'             : object, 
+                      skiprows = 3,
+                      dtype = ({'Registro 1/'              : object, 
                                 'Fecha de Nacimiento 3/'   : object,
                                 'Código Socio 7/'          : object,
                                 'Número de Documento 10/'  : object,
@@ -113,7 +129,9 @@ print('si sale menos en el segundo es porque hubo duplicados')
 menos_bruto['Tipo de Producto 43/'] = menos_bruto['Tipo de Producto 43/'].astype(str)
 menos_bruto['Tipo de Producto 43/'] = menos_bruto['Tipo de Producto 43/'].str.strip()
 menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
+menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '26', 'Tipo Credito TXT'] = 'EMPRENDE MUJER'
 menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT'] = 'LD-MULTIOFICIOS'
+menos_bruto.loc[menos_bruto['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
 
 print(menos_bruto[menos_bruto['Tipo de Producto 43/'] == '27'].shape[0])
 print('debe salir cero')
@@ -174,7 +192,7 @@ anx06_anterior['Nro Prestamo \nFincore'] = anx06_anterior['Nro Prestamo \nFincor
 
 mask = anx06_anterior['Nro Prestamo \nFincore'].duplicated(keep=False)
 df_duplicadossss = anx06_anterior[mask]
-print(df_duplicadossss)
+print(df_duplicadossss.shape[0])
 
 anx06_anterior.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
                    'Fecha de Nacimiento 3/',
@@ -393,6 +411,7 @@ print(ordenado['Partida Registral 8/'].unique().shape[0])
 ordenado['Partida Registral 8/'] = ordenado.apply(partidas_registrales, axis = 1)
 print(ordenado['Partida Registral 8/'].unique().shape[0])
 print('en la segunda debe salir más')
+del ordenado['part registral mes pasado']
 
 #%%% strip de texto
 ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombres / Razón Social 2/'].str.strip()
@@ -746,7 +765,6 @@ print('si sale menos es porque hubo duplicados')
 #%% SALDOS CASTIGADOS NEGATIVOS LUEGO DE DESCAPITALIZAR:
 # buscar en CRONOGRAMA DE PRÉSTAMO si aparece alguno:
 revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
-print(revisar_en_fincore)
 print(revisar_en_fincore.shape[0])
 print('debe salir cero, sino hay que reemplazar el monto castigado por su saldo que aparece en el Fincore')
 
@@ -1604,7 +1622,7 @@ else:
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados procesado 01.xlsx'
 if generar_excels == True:
     
     try:
@@ -1680,9 +1698,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20231231' #mes actual
-fecha_corte_menos_1 = '20231130' #mes anterior
-fecha_corte_menos_2 = '20231031' #mes anterior del anterior
+fecha_corte_actual  = '20240131' #mes actual
+fecha_corte_menos_1 = '20231231' #mes anterior
+fecha_corte_menos_2 = '20231130' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1742,7 +1760,7 @@ print(para_reporte)
 #%%
 # =========================================================================== #
 # =========================================================================== #
-#                🅱🆁🅴🅲🅷🅰🆂 🅳🅴 🆁🅴🅿🆁🅾🅶🆁🅰🅼🅰🅲🅸🅾🅽🅴🆂                     #
+#             🅱🆁🅴🅲🅷🅰🆂 🅳🅴 🆁🅴🅿🆁🅾🅶🆁🅰🅼🅰🅲🅸🅾🅽🅴🆂                     #
 # =========================================================================== #
 # =========================================================================== #
 
@@ -1760,13 +1778,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados NOVIEMBRE 2023 no incluye castigados (2).xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 NOVIEMBRE\\versión final'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados DICIEMBRE 2023 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2023 diciembre\\prod'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Dic-23'
-mes_anterior_txt = 'Nov-23'
+mes_actual_txt   = 'Ene-24'
+mes_anterior_txt = 'Dic-23'
 # =============================================================================
 #%% LECTURA
 
@@ -1781,7 +1799,7 @@ mes_anterior_txt = 'Nov-23'
 # =============================================================================
 
 anterior = pd.read_excel(ubi_anterior + '\\' + repro_anterior,
-                         skiprows = 0,
+                         skiprows = 2,
                          dtype = {'Tipo de Crédito 19/'   : str,
                                   'Nro Prestamo \nFincore': str})
 
@@ -1831,6 +1849,8 @@ def dias_plazo(df):
         return 'Más de 180 días'
     
 actual['Plazo'] = actual.apply(dias_plazo, axis=1)
+
+anterior['PLAZO_REPR'] = pd.to_numeric(anterior['PLAZO_REPR'], errors='coerce')
 anterior['Plazo'] = anterior.apply(dias_plazo, axis=1)
 
 #%% Listas para el ordenamiento de los índices

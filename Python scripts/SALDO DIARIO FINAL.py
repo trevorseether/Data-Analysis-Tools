@@ -492,18 +492,16 @@ df_mergeado = df_mergeado.merge(crono_cuotas,
 del df_mergeado['pagare_fincore']
 
 def vencido_real(df):
-    if (df['CapitalenCobranzaJudicial30']  == 0) and \
-       (df['CapitalRefinanciado28']        == 0) and \
-       (df['SaldosdeCreditosCastigados38'] == 0) and \
-       (df['TipodeProducto43'] in ['30','31','32','33','34','35','36','37','38','39','41','45']):
+    if  (df['CapitalenCobranzaJudicial30']  == 0) and \
+        (df['CapitalRefinanciado28']        == 0) and \
+        (df['SaldosdeCreditosCastigados38'] == 0) and \
+        (df['TipodeProducto43'] in ['30','31','32','33','34','35','36','37','38','39','41','45']):
         if (df['DiasdeMora33'] > 30) and (df['DiasdeMora33'] <= 60):
             return df['Cap 1 cuota']
         if (df['DiasdeMora33'] > 60) and (df['DiasdeMora33'] <= 90):
             return df['Cap 2 cuota']
         if (df['DiasdeMora33'] > 90):
             return df['Saldodecolocacionescreditosdirectos24']
-        
-
 
         
 df_mergeado.columns

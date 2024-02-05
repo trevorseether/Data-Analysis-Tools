@@ -157,6 +157,7 @@ x = df1.columns
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].astype(str)
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].str.strip()
 df1.loc[df1['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
+df1.loc[df1['Tipo de Producto 43/'] == '26', 'Tipo Credito TXT']     = 'EMPRENDE MUJER'
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT']     = 'LD-MULTIOFICIOS'
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
 
@@ -851,7 +852,7 @@ df_resultado['Tipo de Producto 43/ original'] = df_resultado['Tipo de Producto 4
 df_resultado['Partida Registral 8/'] = df_resultado['Partida Registral 8/'].str.strip()
 #primero verificar si existen créditos que deben ser hipotecarios
 
-def producto_43(row): #aparentemente está funcionando, funciona cuando la aplico 2 veces :'v
+def producto_43(row): #aparentemente está funcionando
     if ((len(str(row['Partida Registral 8/'])) > 2) and \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31'))) or \
      ((len(str(row['Partida Registral 8/'])) > 2) and \
@@ -1060,8 +1061,6 @@ not_in = prod43_mype + [41, 45, '41', '45']
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
 mayores_para_investigar = mayores_para_investigar[mayores_para_investigar['Saldo de colocaciones (créditos directos) 24/'] > 50000]
 print(mayores_para_investigar[['Nro Prestamo \nFincore', 'Fecha de Desembolso 21/']])
-
-df_resultado_2.loc[df_resultado_2['Nro Prestamo \nFincore'] == '00103786', 'Tipo de Producto 43/'] = 96
 
 #%% conclusión
 #########################################################################################
