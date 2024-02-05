@@ -34,8 +34,12 @@ incremento = int(fecha_hoy[-2:])
 ####################################################
 
 #%%
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-
+if 'conn_anx06' not in locals():
+    conn_anx06 = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+else:
+    print("La conexión ya existe. No se estableció una nueva conexión.")
+    
+    
 #%% SELECCIÓN DE LA FECHA MÁS RECIENTE EN LA BASE DE DATOS
 fecha_corte_cobranza = fecha_hoy
 # Nombre del DataFrame
@@ -79,7 +83,7 @@ else:
             administrador
         FROM anexos_riesgos3..ANX06
         WHERE FechaCorte1 = '{fecha_corte_anx06}'
-    ''', conn)
+    ''', conn_anx06)
 
     # Asigna el DataFrame a una variable global
     globals()[nombre_data_frame] = df_anx06
