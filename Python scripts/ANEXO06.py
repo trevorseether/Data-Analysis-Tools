@@ -35,31 +35,31 @@ from colorama import Back # , Style, init, Fore
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - DICIEMBRE 2023 - campos ampliados.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - ENERO 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 12 2023.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 01 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Diciembre' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente  ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
 ###############################################
-uit = 4950 #valor de la uit en el año 2023  ###
+uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2023-12-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Diciembre 2023'
+fecha_corte     = '2024-01-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Enero 2024'
 ########################################################
 
 # Códigos de los productos
@@ -158,6 +158,7 @@ df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].astype(str)
 df1['Tipo de Producto 43/'] = df1['Tipo de Producto 43/'].str.strip()
 df1.loc[df1['Tipo de Producto 43/'] == '27', 'Tipo de Producto 43/'] = '32'
 df1.loc[df1['Tipo de Producto 43/'] == '26', 'Tipo Credito TXT']     = 'EMPRENDE MUJER'
+
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT']     = 'LD-MULTIOFICIOS'
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
 
@@ -1414,7 +1415,8 @@ inv = df_resultado_2[(df_resultado_2['Interes\nDevengado Total']          == 0) 
                      (df_resultado_2['Intereses en Suspenso 41/']         == 0) &
                      (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) &
                      (df_resultado_2['Número de Cuotas Pagadas 45/']      == 0) &
-                     (df_resultado_2['Fecha de Desembolso 21/'] >= fecha_corte_datetime)]
+                     (df_resultado_2['Fecha de Desembolso 21/'] >= fecha_corte_datetime) &
+                     (df_resultado_2['Fecha de Desembolso 21/'] < pd.Timestamp(fecha_corte))]
 
 print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
 print('si sale más de cero, es porque hay unos casos a los cuales aplicarles cálculo de devengados')
@@ -1429,7 +1431,7 @@ def dev_0_vigente(df_resultado_2):
     else:
         return df_resultado_2['Interes\nDevengado Total']
     
-df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_vigente, axis= 1)
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_vigente, axis = 1)
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
 
 print(df_resultado_2['Interes\nDevengado Total'].sum())
@@ -1452,8 +1454,9 @@ print(df_resultado_2[df_resultado_2['Interes\nDevengado Total'] != df_resultado_
 print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
 print('si sale el mismo número todo okey')
 
-if (df_resultado_2[df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0]) != inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0]:
-    print(Back.RED + 'investigar')
+if (df_resultado_2[(df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']) & \
+                (df_resultado_2['Fecha de Desembolso 21/'] != pd.Timestamp(fecha_corte))].shape[0]) != inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0]:
+    print(Back.RED + 'investigar, son casos en los que no se han aplicado devengados (los desembolsados )')
     
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
@@ -2221,10 +2224,35 @@ anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00019911', 'Sub Tipo
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00020153', 'Sub Tipo de Crédito 20/'] = '99'
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00053525', 'Sub Tipo de Crédito 20/'] = '99'
 
+#%%
+# modificación del funcionario administrador JOSÉ SANCHEZ
+
+columna_funcionario = 'Funcionario Actual'
+
+delfin = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
+                       sheet_name = 'delfino',
+                       dtype = {'fincore':str})
+delfin['fincore'] = delfin['fincore'].str.strip()
+
+trujillo = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
+                         sheet_name = 'trujillo',
+                         dtype = {'fincore':str})
+trujillo['fincore'] = trujillo['fincore'].str.strip()
+
+def admin_reasignacion(anexo06_casi):
+    if anexo06_casi['Nro Prestamo \nFincore'] in list(delfin['fincore']):
+        return 'ENRIQUE IVAN DELFINO BAYLON'
+    elif anexo06_casi['Nro Prestamo \nFincore'] in list(trujillo['fincore']):
+        return 'ADMINISTRADOR TRUJILLO'
+    else:
+        return anexo06_casi[columna_funcionario]
+
+anexo06_casi[columna_funcionario] = anexo06_casi.apply(admin_reasignacion, axis = 1)
+
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
-nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v02.xlsx"
+nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v03.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -2498,31 +2526,6 @@ df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Tot
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 
-#%%
-# modificación del funcionario administrador JOSÉ SANCHEZ
-
-columna_funcionario = 'Funcionario Actual'
-
-delfin = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
-                       sheet_name = 'delfino',
-                       dtype = {'fincore':str})
-delfin['fincore'] = delfin['fincore'].str.strip()
-
-trujillo = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
-                         sheet_name = 'trujillo',
-                         dtype = {'fincore':str})
-trujillo['fincore'] = trujillo['fincore'].str.strip()
-
-def admin_reasignacion(df_diferidos):
-    if df_diferidos['Nro Prestamo \nFincore'] in list(delfin['fincore']):
-        return 'ENRIQUE IVAN DELFINO BAYLON'
-    elif df_diferidos['Nro Prestamo \nFincore'] in list(trujillo['fincore']):
-        return 'ADMINISTRADOR TRUJILLO'
-    else:
-        return df_diferidos[columna_funcionario]
-
-df_diferidos[columna_funcionario] = df_diferidos.apply(admin_reasignacion, axis = 1)
-
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
 df_diferidos_ampliado = df_diferidos.copy()
@@ -2532,8 +2535,7 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore',
                                       'Provisiones Requeridas 36/ SA', 
                                       'Provisiones Requeridas 36/', 
                                       'Provisiones Constituidas 37/',
-                                      'Saldo de Créditos que no cuentan con cobertura 51/',
-                                       columna_funcionario]]
+                                      'Saldo de Créditos que no cuentan con cobertura 51/']]
 
 #%% GENERACIÓN DEL EXCEL
 
