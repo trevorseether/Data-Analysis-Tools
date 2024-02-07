@@ -2261,8 +2261,8 @@ except FileNotFoundError:
 
 anexo06_casi.to_excel(nombre,
                       sheet_name = fech_corte_txt,
-                      index = False)
-inv['Nro Prestamo \nFincore']
+                      index      = False)
+
 #%% UBICACIÓN DE LOS ARCHIVOS
 # POR SI NO SABEMOS DÓNDE ESTÁN LOS ARCHIVOS
 # Obtener la ubicación actual
@@ -2270,7 +2270,6 @@ ubicacion_actual = os.getcwd()
 
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
-
 
 #%% PARTE 2
 #######################################################
@@ -2281,7 +2280,7 @@ print("La ubicación actual es: " + ubicacion_actual)
 #██║     ██║  ██║██║  ██║   ██║   ███████╗    ███████╗#
 #╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚══════╝#
 #######################################################                                                                                                                                                                                                 
-'UNA VEZ QUE JENNY NOS DE EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
+'UNA VEZ QUE NOS PASEN EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
 
 #%% PARÁMETROS INCIALES
 
@@ -2302,6 +2301,7 @@ anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliado
 
 # DIRECTORIO DE TRABAJO ##########################################
 directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\devuelto por contabilidad'
+##################################################################
 
 lista_100_provisionales = ['00000681','00025314','00051147','00019565','00059920','00025678','00055472','00001346','00009592',
                            '00050796','00021245','00014203','00019911','00052890','00020153','00000633','00021016','00000942',
@@ -2325,6 +2325,7 @@ lista_100_provisionales = ['00000681','00025314','00051147','00019565','00059920
                            '00081777','00098957','00084306','00099407','00089822','00090170','00102369','00092291','00092446',
                            '00085151','00083856','00081296','00098963','00088014','00074571','00101726','00085672','00088666',
                            '00083585','00099717']
+
 #%% importación de módulos
 import os
 import pandas as pd
@@ -2571,7 +2572,7 @@ fecha = 'DICIEMBRE 2023'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20231130' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20231231' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
@@ -2630,9 +2631,9 @@ pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                                  'INTERESES DEVENGADOS',
                                                  'INTERESES EN SUSPENSO',
                                                  'INTERESES DIFERIDOS'], 
-                                       margins = True, 
+                                       margins      = True, 
                                        margins_name ='Total', #para sacar las sumatorias totales                                      
-                                       aggfunc = 'sum'
+                                       aggfunc      = 'sum'
                                        )
 #pivot_mes_pasado = pivot_mes_pasado.reset_index()
 pivot_mes_pasado.fillna(0, inplace=True)
@@ -2676,9 +2677,9 @@ pivot_mes_actual = datos_actuales.pivot_table(index=[COLUMNA_COMPARACION],
                                                'Rendimiento\nDevengado 40/', 
                                                'Intereses en Suspenso 41/', 
                                                'Ingresos Diferidos 42/'], 
-                                       margins=True, 
-                                       margins_name='Total', #para sacar las sumatorias totales                                      
-                                       aggfunc='sum'
+                                       margins      = True, 
+                                       margins_name = 'Total', #para sacar las sumatorias totales                                      
+                                       aggfunc      = 'sum'
                                        )
 #pivot_mes_actual = pivot_mes_actual.reset_index()
 pivot_mes_actual.fillna(0, inplace=True)
