@@ -18,11 +18,11 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Diciembre 2023'
+FECHA_CORTE = 'Enero 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2023 diciembre"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024 enero"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
@@ -36,19 +36,19 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20231231'
+f_corte_sql = '20240131'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
 
 ''' #lo eliminaremos si todos los meses simplemente extraemos datos desde el sql server
-ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 SETIEMBRE'
-nombre          = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados PROCESADO 03.xlsx'
+ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO'
+nombre          = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados v03.xlsx'
 filas_para_skip = 2
 '''
 
@@ -99,17 +99,17 @@ del nombre
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 QUERY = f'''
-select
+SELECT
 	FechaCorte1,
-	Nro_Fincore        as 'Nro Prestamo \nFincore',
-	NumerodeCredito18  as 'Numero de Crédito 18/',
-	CapitalVigente26   as 'Capital Vigente 26/' ,
-	CapitalRefinanciado28         as 'Capital Refinanciado 28/',
-	CapitalVencido29   as 'Capital Vencido 29/',
-	CapitalenCobranzaJudicial30   as 'Capital en Cobranza Judicial 30/',
-	SaldosdeCreditosCastigados38  as 'Saldos de Créditos Castigados 38/',
-    Refinanciado as 'REFINANCIADO_FILTRO'
-from 
+	Nro_Fincore                   AS 'Nro Prestamo \nFincore',
+	NumerodeCredito18             AS 'Numero de Crédito 18/',
+	CapitalVigente26              AS 'Capital Vigente 26/' ,
+	CapitalRefinanciado28         AS 'Capital Refinanciado 28/',
+	CapitalVencido29              AS 'Capital Vencido 29/',
+	CapitalenCobranzaJudicial30   AS 'Capital en Cobranza Judicial 30/',
+	SaldosdeCreditosCastigados38  AS 'Saldos de Créditos Castigados 38/',
+    Refinanciado                  AS 'REFINANCIADO_FILTRO'
+FROM 
 	anexos_riesgos2..anx06_preliminar
 where FechaCorte1 = '{f_corte_sql}'                      
 '''
@@ -132,13 +132,13 @@ df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].ast
 df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].str.strip()
 
 #generamos el anexo para las saldos descapitalizados
-anexo_06_descap = df_fincore[['Nro Prestamo \nFincore',
-                              'Numero de Crédito 18/',
-                              'Capital Vigente 26/',
-                              'Capital Refinanciado 28/',
-                              'Capital Vencido 29/',
-                              'Capital en Cobranza Judicial 30/',
-                              'Saldos de Créditos Castigados 38/']]
+anexo_06_descap = df_fincore[[  'Nro Prestamo \nFincore',
+                                'Numero de Crédito 18/',
+                                'Capital Vigente 26/',
+                                'Capital Refinanciado 28/',
+                                'Capital Vencido 29/',
+                                'Capital en Cobranza Judicial 30/',
+                                'Saldos de Créditos Castigados 38/'  ]]
 
 #lista de créditos refinanciados:
 anx06_refinanciados = df_fincore[df_fincore['REFINANCIADO_FILTRO'] == 'REFINANCIADO'][['Nro Prestamo \nFincore', 'Numero de Crédito 18/']]
