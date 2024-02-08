@@ -73,13 +73,13 @@ df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].ast
 df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].str.strip()
 
 #generamos el anexo para las saldos descapitalizados
-anexo_06_descap = df_fincore[['Nro Prestamo \nFincore',
-                              'Numero de Crédito 18/',
-                              'Capital Vigente 26/',
-                              'Capital Refinanciado 28/',
-                              'Capital Vencido 29/',
-                              'Capital en Cobranza Judicial 30/',
-                              'Saldos de Créditos Castigados 38/']]
+anexo_06_descap = df_fincore[[  'Nro Prestamo \nFincore',
+                                'Numero de Crédito 18/',
+                                'Capital Vigente 26/',
+                                'Capital Refinanciado 28/',
+                                'Capital Vencido 29/',
+                                'Capital en Cobranza Judicial 30/',
+                                'Saldos de Créditos Castigados 38/'  ]]
 
 #anexo para relacionar nro fincore con nro crédito 18/
 df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
@@ -152,7 +152,6 @@ df_fincore = df_fincore[['NumerodeCredito18', 'Nro_Fincore']]
 df_fincore['NumerodeCredito18'] = df_fincore['NumerodeCredito18'].str.strip()
 df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
 
- 
 #%% LECTURA DEL REPORTE EN BRUTO
 
 ubicacion = directorio
