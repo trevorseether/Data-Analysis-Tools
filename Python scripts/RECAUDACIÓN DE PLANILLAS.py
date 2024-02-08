@@ -17,6 +17,10 @@ import pyodbc
 from colorama import Back # , Style, init, Fore
 
 #%%
+# PROCEDER CON CARGA A SQL SERVER? ============================================
+CARGA_SQL_SERVER = False #True o False
+# =============================================================================
+
 # FECHA CORTE PARA SQL ========================================================
 fecha_corte = '20231231'
 # =============================================================================
@@ -44,7 +48,7 @@ datos = {'cs': ['Masivo - CS'],
          'av': ['Masivo - AV'],
          'kt': ['Masivo - KT'],
          }
-# ============================================================================= 
+# =============================================================================
 #%%
 # Convertimos el diccionario en dataframe
 datos = pd.DataFrame(datos)
@@ -187,11 +191,6 @@ del conn
 # base.rename(columns={'PLANILLA CONSOLIDADA'  : 'PLANILLA BIEN',
 #                      'Planilla Anterior TXT' : 'PLANILLA',
 #                      'Nombre PlanillaTXT'    : 'NUEVA_PLANILLA'}, inplace = True)
-
-#%% Reemplazos recurrentes
-# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
-# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - PENSIONISTA', 'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - PENSIONISTA'
-# base.loc[base['PLANILLA BIEN'] == 'MINISTERIO DE JUSTICIA - NOMBRADOS',   'PLANILLA BIEN'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - NOMBRADOS'
 
 #%% MERGE
 df_concatenado.rename(columns={'PLANILLA': 'PLANILLA COBRANZAS'}, inplace = True)
@@ -337,6 +336,43 @@ base_final3.to_excel(f'recaudación para sql {fecha_corte}.xlsx',
 # =============================================================================
 
 # añadir las planillas faltantes a la lista de planillas ======================
+
+#%%
+if CARGA_SQL_SERVER == True:
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    df = base_final3.copy()
+    
+    for index, row in df.iterrows():
+        cursor.execute("""
+            INSERT INTO RECAUDACION..Cabecera_Pagos 
+            ([FechaCorte], 
+             [CodSocio], 
+             [CodCredito], 
+             [CodMoneda], 
+             [Desc_Envio], 
+             [Desc_pago], 
+             [recaudacion], 
+             [Nro_Fincore])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        row['FechaCorte'],
+        row['CodSocio'],
+        row['CodCredito'],
+        row['CodMoneda'],
+        row['Desc_Envio'],
+        row['Desc_pago'],
+        row['recaudacion'],
+        row['Nro_Fincore']
+        )
+    
+    cnxn.commit()
+    cursor.close()
+    
+    print('Se cargaron los datos a SQL SERVER -> RECAUDACION..Cabecera_Pagos')
+    
+else:
+    print('No se ha cargado a SQL SERVER')
 
 
 
