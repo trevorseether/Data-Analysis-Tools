@@ -26,7 +26,7 @@ directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024 
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_1223 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - DICIEMBRE-23 - INSUMO.xlsx"
+insumo_principal = "SM_0124 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ENERO-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -84,6 +84,9 @@ anexo_06_descap = df_fincore[[  'Nro Prestamo \nFincore',
 #anexo para relacionar nro fincore con nro crédito 18/
 df_fincore['NumerodeCredito18'] = df_fincore['Numero de Crédito 18/']
 df_fincore['Nro_Fincore'] = df_fincore['Nro Prestamo \nFincore']
+
+#lista de créditos refinanciados:
+anx06_refinanciados = df_fincore[df_fincore['Refinanciado TXT'] == 'REFINANCIADO'][['Nro Prestamo \nFincore', 'Numero de Crédito 18/']]
 
 df_fincore = df_fincore[['NumerodeCredito18', 'Nro_Fincore']]
 
@@ -157,8 +160,8 @@ df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
 ubicacion = directorio
 os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
-df_sentinel=pd.read_excel(insumo_principal,    # aqui se cambia el nombre del archivo si es necesario
-                  dtype={
+df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del archivo si es necesario
+                  dtype = {
                       'Fecha del\nPeriodo\n(*)'         : object, 
                       'Codigo\nEntidad\n(*)'            : object,
                       'Tipo\nDocumento\nIdentidad (*)'  : object,
@@ -168,10 +171,10 @@ df_sentinel=pd.read_excel(insumo_principal,    # aqui se cambia el nombre del ar
                         })
 
 #limpieza de filas vacías
-df_sentinel.dropna(subset=['Cod. Prestamo', 
-                           'N° Documento\nIdentidad (*)  DNI o RUC',
-                           'Razon Social (*)',
-                           'Apellido Paterno (*)'], 
+df_sentinel.dropna(subset = ['Cod. Prestamo', 
+                             'N° Documento\nIdentidad (*)  DNI o RUC',
+                             'Razon Social (*)',
+                             'Apellido Paterno (*)'], 
                    inplace = True, 
                    how     = 'all')
 
@@ -1154,29 +1157,30 @@ del df_equifax['ref']
 #%%
 # formato de equifax
 f_equifax = pd.DataFrame()
-f_equifax['ELIMINAR FILA (MARQUE X) '] = ''
-f_equifax['FECHA DEL PERIODO  (*)']    = df_equifax['Fecha del\nPeriodo\n(*)']
-f_equifax['CODIGO DE ENTIDAD (*)']     = df_equifax['Codigo\nEntidad\n(*)']
-f_equifax['CODIGO TARJETA DE CREDITO'] = ''
-f_equifax['CODIGO PRESTAMO']           = df_equifax['Cod. Prestamo']
-f_equifax['CODIGO AGENCIA']            = ''
-f_equifax['TIPO DE DOCUMENTO IDENTIDAD (*)']       = df_equifax['Tipo\nDocumento\nIdentidad (*)']
-f_equifax['N° DOCUMENTO IDENTIDAD DNI O RUC  (*)'] = df_equifax['N° Documento\nIdentidad (*)  DNI o RUC']
-f_equifax['RAZON SOCIAL (*)']          = df_equifax['Razon Social (*)']
-f_equifax['APELLIDO PATERNO (*)']      = df_equifax['Apellido Paterno (*)']
-f_equifax['APELLIDO MATERNO (*)']      = df_equifax['Apellido Materno (*)']
-f_equifax['NOMBRES (*)']               = df_equifax['Nombres (*)']
-f_equifax['TIPO DE PERSONA']           = df_equifax['Tipo Persona (*)']
-f_equifax['TIPO DE CREDITO SBS ']      = df_equifax['Modalidad de Credito (*)']
-f_equifax['MN DEUDA DIRECTA VIGENTE  < = 8 DIAS']  = df_equifax['MN Deuda Directa Vigente (*)']
-f_equifax['MN DEUDA DIRECTA REFINANCIADA']         = df_equifax['MN Deuda Directa Refinanciada (*)']
+
+f_equifax['ELIMINAR FILA (MARQUE X) ']                   = ''
+f_equifax['FECHA DEL PERIODO  (*)']                      = df_equifax['Fecha del\nPeriodo\n(*)']
+f_equifax['CODIGO DE ENTIDAD (*)']                       = df_equifax['Codigo\nEntidad\n(*)']
+f_equifax['CODIGO TARJETA DE CREDITO']                   = ''
+f_equifax['CODIGO PRESTAMO']                             = df_equifax['Cod. Prestamo']
+f_equifax['CODIGO AGENCIA']                              = ''
+f_equifax['TIPO DE DOCUMENTO IDENTIDAD (*)']             = df_equifax['Tipo\nDocumento\nIdentidad (*)']
+f_equifax['N° DOCUMENTO IDENTIDAD DNI O RUC  (*)']       = df_equifax['N° Documento\nIdentidad (*)  DNI o RUC']
+f_equifax['RAZON SOCIAL (*)']                            = df_equifax['Razon Social (*)']
+f_equifax['APELLIDO PATERNO (*)']                        = df_equifax['Apellido Paterno (*)']
+f_equifax['APELLIDO MATERNO (*)']                        = df_equifax['Apellido Materno (*)']
+f_equifax['NOMBRES (*)']                                 = df_equifax['Nombres (*)']
+f_equifax['TIPO DE PERSONA']                             = df_equifax['Tipo Persona (*)']
+f_equifax['TIPO DE CREDITO SBS ']                        = df_equifax['Modalidad de Credito (*)']
+f_equifax['MN DEUDA DIRECTA VIGENTE  < = 8 DIAS']        = df_equifax['MN Deuda Directa Vigente (*)']
+f_equifax['MN DEUDA DIRECTA REFINANCIADA']               = df_equifax['MN Deuda Directa Refinanciada (*)']
 f_equifax['MN DEUDA DIRECTA VENCIDA > 8 <= 30 DIAS (*)'] = df_equifax['MN Deuda Directa Venvida < = 30 (*)']
 f_equifax['MN DEUDA DIRECTA VENCIDA > 30 DIAS (*)']      = df_equifax['MN Deuda Directa Vencida > 30 (*)']
 f_equifax['MN DEUDA DIRECTA COBRANZA JUDICIAL  (*)']     = df_equifax['MN Deuda Directa Cobranza Judicial (*)']
-f_equifax['MN DEUDA INDIRECTA  AVALES']            = df_equifax['MN Deuda Indirecta (avales,cartas fianza,credito) (*)']
-f_equifax['MN DEUDA AVALADA']          = df_equifax['MN Deuda Avalada (*)']
-f_equifax['MN LINEA DE CREDITO']       = df_equifax['MN Linea de Credito (*)']
-f_equifax['MN CREDITOS CASTIGADOS']    = df_equifax['MN Creditos Cartigados (*)']
+f_equifax['MN DEUDA INDIRECTA  AVALES']                  = df_equifax['MN Deuda Indirecta (avales,cartas fianza,credito) (*)']
+f_equifax['MN DEUDA AVALADA']                            = df_equifax['MN Deuda Avalada (*)']
+f_equifax['MN LINEA DE CREDITO']                         = df_equifax['MN Linea de Credito (*)']
+f_equifax['MN CREDITOS CASTIGADOS']                      = df_equifax['MN Creditos Cartigados (*)']
 f_equifax['ME DEUDA DIRECTA VIGENTE  < = 8 DIAS']        = 0
 f_equifax['ME DEUDA DIRECTA REFINANCIADA']               = 0
 f_equifax['ME DEUDA DIRECTA VENCIDA > 8 <= 30 DIAS (*)'] = 0
@@ -1186,13 +1190,13 @@ f_equifax['ME DEUDA INDIRECTA  AVALES']                  = 0
 f_equifax['ME DEUDA AVALADA']                            = 0
 f_equifax['ME LINEA DE CREDITO']                         = ''
 f_equifax['ME CREDITOS CASTIGADOS']                      = 0
-f_equifax['CALIFICACION (*)']   = df_equifax['Calificación(*)']
-f_equifax['N° DIAS VENCIDOS MOROSOS (*)'] = df_equifax['N° de Días Vencidos o Morosos ( * )']
-f_equifax['DIRECCION']          = df_equifax['Dirección']
-f_equifax['DISTRITO']           = df_equifax['Distrito']
-f_equifax['PROVINCIA']          = df_equifax['Provincia']
-f_equifax['DEPARTAMENTO']       = df_equifax['Departamento']
-f_equifax['TELEFONO']           = df_equifax['Telefono']
+f_equifax['CALIFICACION (*)']                            = df_equifax['Calificación(*)']
+f_equifax['N° DIAS VENCIDOS MOROSOS (*)']                = df_equifax['N° de Días Vencidos o Morosos ( * )']
+f_equifax['DIRECCION']                                   = df_equifax['Dirección']
+f_equifax['DISTRITO']                                    = df_equifax['Distrito']
+f_equifax['PROVINCIA']                                   = df_equifax['Provincia']
+f_equifax['DEPARTAMENTO']                                = df_equifax['Departamento']
+f_equifax['TELEFONO']                                    = df_equifax['Telefono']
 
 #%%
 nombre = f'Reporte COOPAC San Miguel - Periodo {f_corte_sql[4:6]}-{f_corte_sql[0:4]} 20523941047.xlsx'

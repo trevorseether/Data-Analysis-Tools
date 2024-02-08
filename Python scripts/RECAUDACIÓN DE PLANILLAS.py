@@ -339,6 +339,7 @@ base_final3.to_excel(f'recaudación para sql {fecha_corte}.xlsx',
 
 #%%
 if CARGA_SQL_SERVER == True:
+    
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
     df = base_final3.copy()
@@ -365,7 +366,7 @@ if CARGA_SQL_SERVER == True:
         row['recaudacion'],
         row['Nro_Fincore']
         )
-    
+
     cnxn.commit()
     cursor.close()
     
