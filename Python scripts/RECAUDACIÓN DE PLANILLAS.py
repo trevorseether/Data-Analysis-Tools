@@ -18,15 +18,15 @@ from colorama import Back # , Style, init, Fore
 
 #%%
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20231130'
+fecha_corte = '20231231'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 noviembre\\ahora sí')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 diciembre')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '11 - NOVIEMBRE 2023 (CIERRE).xlsx'
+nombre = '12 - DICIEMBRE 2023 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=======================================================
@@ -108,6 +108,7 @@ df_concatenado = pd.concat(dataframes_filtrados,
                            ignore_index = True)
 # Mayúsculas
 df_concatenado['PLANILLA'] = df_concatenado['PLANILLA'].str.upper()
+df_concatenado['PLANILLA'] = df_concatenado['PLANILLA'].str.strip()
 
 #%% Reemplazos recurrentes
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MINISTERIO DE JUSTICIA - RECAS',       'PLANILLA'] = 'MINISTERIO DE JUSTICIA Y DERECHOS HUMANOS - RECAS'
@@ -122,6 +123,14 @@ df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCIÓN REGIONAL DE TRANSPO
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'UNIVERSIDAD NACIONAL DE TUMBES - ACTIVOS',                 'PLANILLA'] = 'UNIVERSIDAD NACIONAL DE TUMBES'
 
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOMBRADOS',     'PLANILLA'] = 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOBRADOS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'PROGRAMA NACIONAL DE CENTROS JUVENILES - CONTRATADOS ',    'PLANILLA'] = 'PROGRAMA NACIONAL DE CENTROS JUVENILES - CONTRATADOS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'AUTORIDAD PARA LA RECONSTRUCCION CON CAMBIOS - CONTRATADOS','PLANILLA'] = 'AUTORIDAD PARA LA RECONSTRUCCIÓN CON CAMBIOS - CONTRATADOS'
+
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MERCADOTECNIA DIR.Y CONTACT CENTER PERU SAC - ADMIMISTRATIVOS','PLANILLA'] = 'MERCADOTECNIA DIRECTA Y CONTACT CENTER PERU SAC - ADMINISTRATIVOS'
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MERCADOTECNIA DIR.Y CONTACT CENTER PERU SAC - OPERATIVOS','PLANILLA'] = 'MERCADOTECNIA DIRECTA Y CONTACT CENTER PERU SAC - OPERATIVOS'
+
+#%% Eliminación de filas vacías
+df_concatenado = df_concatenado[~pd.isna(df_concatenado['PLANILLA'])]
 
 #%% debemos revisar si hay duplicados
 duplicados = df_concatenado[df_concatenado.duplicated(subset = 'PLANILLA', 
