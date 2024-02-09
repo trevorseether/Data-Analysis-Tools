@@ -23,6 +23,9 @@ import calendar
 # import numpy as np
 from datetime import datetime #, timedelta
 from colorama import Back # , Style, init, Fore
+import pyodbc
+import warnings
+warnings.filterwarnings('ignore')
 
 #%% ADVERTENCIA
 #REVISAR EN EL EXCEL ANTES DE EMPEZAR A PROCESAR:
@@ -63,9 +66,9 @@ fech_corte_txt  = 'Enero 2024'
 ########################################################
 
 # Códigos de los productos
-prod43_mype = [15,16,17,18,19, '15','16','17','18','19',
+prod43_mype = [15,16,17,18,19,             '15','16','17','18','19',
                21,22,23,24,25,26,27,28,29, '21','22','23','24','25','26','27','28','29',
-               95,96,97,98,99, '95','96','97','98','99']
+               95,96,97,98,99,             '95','96','97','98','99']
 
 prod_dxp  = [34, 35, 36, 37, 38, 39]
 prod_ld   = [30, 31, 32, 33]
@@ -903,6 +906,57 @@ print('en total son: ' + str(df_resultado[df_resultado['Tipo de Producto 43/'] =
 
 df_resultado['Código Socio 7/'] = df_resultado['Código Socio 7/'].str.strip()
 
+#%% LECTURA DE INFORMACIÓN DE LOS 6 ÚLTIMOS MESES
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+
+f_corte_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+
+query = f'''
+DECLARE @fechacorte AS VARCHAR(8) = '{f_corte_sql}';
+
+DECLARE @fecha6MESES AS DATETIME;
+SET @fecha6MESES = EOMONTH(DATEADD(MONTH, -5, EOMONTH(CONVERT(DATETIME, @fechacorte, 112))));
+
+SELECT 
+	Nro_Fincore, 
+	CodigoSocio7,
+	Saldodecolocacionescreditosdirectos24,
+	FechaCorte1,
+	TipodeProducto43,
+	CASE 
+		WHEN TipodeProducto43 IN (34,35,36,37,38,39)       THEN 'DXP'
+		WHEN TipodeProducto43 IN (30,31,32,33)             THEN 'LIBRE DISPONIBILIDAD'
+		WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
+		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,29) THEN 'MICRO EMPRESA'
+		WHEN TipodeProducto43 IN (95,96,97,98,99)          THEN 'MEDIANA EMPRESA'
+		WHEN TipodeProducto43 IN (41,45)                   THEN 'HIPOTECARIA'
+		    ELSE 'OTROS'
+            
+		END AS 'TIPO_PRODUCTO'
+FROM 
+	anexos_riesgos3..ANX06
+WHERE 
+	FechaCorte1 >= @fecha6MESES
+ORDER BY 
+	FechaCorte1,
+	CodigoSocio7
+'''
+    
+base_6meses = pd.read_sql_query(query, conn)
+
+base_6meses['Saldodecolocacionescreditosdirectos24'] = pd.to_numeric(base_6meses['Saldodecolocacionescreditosdirectos24'])
+
+del conn
+
+#%% PIVOT DE CODIGO SOCIO Y FECHA CORTE (SOLO MYPES)
+base_6meses = base_6meses[base_6meses['TipodeProducto43'].isin(prod43_mype)]
+
+pivot_6meses = base_6meses.pivot_table( values  = 'Saldodecolocacionescreditosdirectos24',
+                                        index   = 'CodigoSocio7',
+                                        columns = 'FechaCorte1',
+                                        aggfunc = 'sum').reset_index()
+pivot_6meses = pivot_6meses.fillna(0)
+
 #%% RECALCULAR PROD 43
 #vamos a volver a calcular el tipo de producto43
 
@@ -912,7 +966,7 @@ df_corto = df_resultado[['Tipo de Producto 43/',
                          'Código Socio 7/']]
 
 #sumamos saldo de cartera y saldo castigado
-df_corto.loc[:, 'monto mype'] = df_corto['Saldos de Créditos Castigados 38/'] + df_corto['Saldo de colocaciones (créditos directos) 24/']
+df_corto.loc[:, 'monto mype'] = df_corto['Saldo de colocaciones (créditos directos) 24/'] + df_corto['Saldos de Créditos Castigados 38/']
 
 # convierte la columna 'Tipo de Producto 43/' al tipo de dato int
 df_corto['Tipo de Producto 43/'] = df_corto['Tipo de Producto 43/'].astype(int)
@@ -926,25 +980,41 @@ tabla_resumen = tabla_resumen.reset_index()
 #rename
 tabla_resumen = tabla_resumen.rename(columns={"Código Socio 7/": "socio mype"})
 
+tabla_resumen = tabla_resumen.merge(pivot_6meses,
+                                    left_on  = "socio mype",
+                                    right_on = 'CodigoSocio7',
+                                    how      = 'left')
+del tabla_resumen['CodigoSocio7']
+tabla_resumen.fillna(0, inplace = True)
+
+def verificar_mype(fila):
+    if any(valor > 300000 for valor in fila[1:]):
+        return 'MEDIANA'
+    elif any(valor > 20220 for valor in fila[1:]):
+        return 'PEQUE'
+    else:
+        return 'MICRO'
+    
+tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis=1)
 #%%% asignación del monto mype sumado
 #asignamos
 df_resultado_2 = df_resultado.copy()
 
-df_resultado_2 = df_resultado_2.merge(tabla_resumen[['socio mype','monto mype']], 
-                                      how='left', 
-                                      left_on=['Código Socio 7/'], 
-                                      right_on=['socio mype'])
+df_resultado_2 = df_resultado_2.merge(tabla_resumen[['socio mype','tipo mype']], 
+                                      how      ='left', 
+                                      left_on  =['Código Socio 7/'], 
+                                      right_on =['socio mype'])
 
-df_resultado_2['monto mype'] = df_resultado_2['monto mype'].fillna(0)
+df_resultado_2['tipo mype'] = df_resultado_2['tipo mype'].fillna('no es mype')
 
 #%%% asignación mype
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].astype(float)
+
 def asignacion_mype(df_resultado_2):
     if df_resultado_2['Tipo de Producto 43/'] in prod43_mype:
-        if (df_resultado_2['monto mype'] > 0) & \
-        (df_resultado_2['monto mype'] <= 20220):
+        if df_resultado_2['tipo mype'] == 'MICRO':
             return 20
-        elif df_resultado_2['monto mype'] <= 300000:
+        elif df_resultado_2['tipo mype'] == 'PEQUE':
             return 10
         else:
             return 90
@@ -961,17 +1031,19 @@ df_resultado_2['resta_decenas'] = ((df_resultado_2['producto_mype_2'] // 10) - (
 #%%% asignación mype
 'ahora que ya tenemos la diferencia del tipo de producto, asignamos el tipo de producto que deben de tener'
 def asign_mype(df_resultado_2):
-#    if (df_resultado_2['resta_decenas'] == 1):
-#        if (df_resultado_2['Tipo de Producto 43/'] == 15):
-#            return 22
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 16):
-#            return 23
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 17):
-#            return 24
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 18):
-#            return 20 #no tiene equivalente
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 19):
-#            return 29
+    if (df_resultado_2['resta_decenas'] == 1):
+        ######################################################################
+        if (df_resultado_2['Tipo de Producto 43/'] == 15):                   #
+            return 22                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 16):                 #
+            return 23                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 17):                 #
+            return 24                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 18):                 #
+            return 18 #20 #no tiene equivalente                              #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 19):                 #
+            return 29                                                        #
+        ######################################################################
     if (df_resultado_2['resta_decenas'] == -1):
         if (df_resultado_2['Tipo de Producto 43/'] == 21):
             return 16 #no tenía equivalente
@@ -996,17 +1068,19 @@ def asign_mype(df_resultado_2):
             return 98
         elif (df_resultado_2['Tipo de Producto 43/'] == 19):
             return 99
-#    elif (df_resultado_2['resta_decenas'] == -8):
-#        if (df_resultado_2['Tipo de Producto 43/'] == 95):
-#            return 15 #no tiene equivalente
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 96):
-#            return 16
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 97):
-#            return 17
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 98):
-#            return 18
-#        elif (df_resultado_2['Tipo de Producto 43/'] == 99):
-#            return 19
+        ######################################################################
+    elif (df_resultado_2['resta_decenas'] == -8):                            #
+        if (df_resultado_2['Tipo de Producto 43/'] == 95):                   #
+            return 15 #no tiene equivalente                                  #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 96):                 #
+            return 16                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 97):                 #
+            return 17                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 98):                 #
+            return 18                                                        #
+        elif (df_resultado_2['Tipo de Producto 43/'] == 99):                 #
+            return 19                                                        #
+        ######################################################################
     else:
         return df_resultado_2.loc['Tipo de Producto 43/']
 
