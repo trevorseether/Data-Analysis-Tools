@@ -1048,12 +1048,29 @@ grouped.columns = ['DIFERENTES PRODUCTOS']
 
 # Filtrar los grupos con más de un producto diferente
 result = grouped[grouped['DIFERENTES PRODUCTOS'] > 1]
+# SI SALE UN DATAFRAME VACÍO, TODO ESTÁ BIEN
+
+result = result.reset_index()
 print(result)
-#SI SALE UN DATAFRAME VACÍO, TODO ESTÁ BIEN
-del tipos_producto_deseados
-del anx06_filtered
-del grouped
-del result
+# 'alinear alineamiento de los que tienen diferentes productos'
+# anx06_filtered['Tipo de Producto 43/'] = anx06_filtered['Tipo de Producto 43/'].astype(int)
+
+# aver = df_resultado_2[df_resultado_2['Código Socio 7/'].isin(list(result['Código Socio 7/']))][['Código Socio 7/', 'Tipo de Producto 43/']]
+
+# def prod_mype_aux(df):
+#     if df['Tipo de Producto 43/'] in prod_mic:
+#         return 'micro'
+#     if df['Tipo de Producto 43/'] in prod_peq:
+#         return 'peque'
+#     if df['Tipo de Producto 43/'] in prod_med:
+#         return 'media'
+# aver['tipo'] = aver.apply(prod_mype_aux, axis=1)
+
+# grouped = aver.groupby('Código Socio 7/').agg({'tipo': 'nunique'}).reset_index()
+# modificar = grouped[grouped['tipo'] > 1]
+
+# def ahora_si(df):
+
 #%% CRÉDITOS MAYORES A 50K QUE NO SEAN MYPE PARA ANALIZARLOS
 # POR SI ACASO, BUSCAMOS CRÉDITOS CON MONTOS MAYORES A 50K QUE NO SEAN MYPE
 
