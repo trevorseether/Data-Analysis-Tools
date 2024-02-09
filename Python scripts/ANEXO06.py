@@ -995,7 +995,8 @@ def verificar_mype(fila):
     else:
         return 'MICRO'
     
-tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis=1)
+tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis = 1)
+
 #%%% asignación del monto mype sumado
 #asignamos
 df_resultado_2 = df_resultado.copy()

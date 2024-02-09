@@ -459,22 +459,14 @@ if generar_excels == True:
 #HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
-ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+# ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 
-#%%% función escoger menor saldo de cartera
-'''
-#solución provisional, nos quedamos con el menor monto de ambos.
-# de momento hay que esperar a que Oscar nos diga algo
-ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
-
-def mayor_saldo_cartera(ordenado):
-    if ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT'] <= ordenado['Saldo de colocaciones (créditos directos) 24/']:
-        return ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
-    else:
-        return ordenado['Saldo de colocaciones (créditos directos) 24/']
-
-ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado.apply(mayor_saldo_cartera, axis=1)
-'''
+print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
+print(ordenado['Capital Vigente 26/'].sum())
+print(ordenado['Capital Vencido 29/'].sum())
+print(ordenado['Capital en Cobranza Judicial 30/'].sum())
+print(ordenado['Saldos de Créditos Castigados 38/'].sum())
 
 #%% diferencia negativa
 def negativos_saldo_cartera(ordenado):
@@ -755,6 +747,12 @@ def arreglo2_3(ordenado):
         return ordenado['Capital Refinanciado 28/']
 ordenado['Capital Refinanciado 28/'] = ordenado.apply(arreglo2_3, axis=1)
 
+print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
+print(ordenado['Capital Vigente 26/'].sum())
+print(ordenado['Capital Vencido 29/'].sum())
+print(ordenado['Capital en Cobranza Judicial 30/'].sum())
+print(ordenado['Saldos de Créditos Castigados 38/'].sum())
+
 #%% Eliminación de duplicados
 
 print(ordenado.shape[0])
@@ -783,6 +781,12 @@ if 'RIOS GOMEZ RONALD' in list(revisar_en_fincore['Apellidos y Nombres / Razón 
 revisar_en_fincore = ordenado[ordenado['Saldos de Créditos Castigados 38/'] < 0]
 print(revisar_en_fincore.shape[0])
 print('debe salir cero, sino hay que reemplazar el monto castigado por su saldo')
+
+print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
+print(ordenado['Capital Vigente 26/'].sum())
+print(ordenado['Capital Vencido 29/'].sum())
+print(ordenado['Capital en Cobranza Judicial 30/'].sum())
+print(ordenado['Saldos de Créditos Castigados 38/'].sum())
 
 #%%
 def añadiendo_cuenta_contable(ordenado):
@@ -970,6 +974,12 @@ def caso_consum_judicial2(ordenado):
         return ordenado['Capital Vigente 26/']
 
 ordenado['Capital Vigente 26/'] = ordenado.apply(caso_consum_judicial2, axis=1)
+
+print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
+print(ordenado['Capital Vigente 26/'].sum())
+print(ordenado['Capital Vencido 29/'].sum())
+print(ordenado['Capital en Cobranza Judicial 30/'].sum())
+print(ordenado['Saldos de Créditos Castigados 38/'].sum())
 
 #%% VERIFICACIÓN DE QUE SE CUMPLA LA SUMA CORRECTAMENTE
 suma_saldo_cartera = ordenado['Saldo de colocaciones (créditos directos) 24/'].sum()
