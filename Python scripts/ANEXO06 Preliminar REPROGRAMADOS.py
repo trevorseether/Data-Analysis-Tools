@@ -459,8 +459,16 @@ if generar_excels == True:
 #HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
-# ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
-ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
+
+# PONER SI O NO, SI ES QUE QUEREMOS DESCAPITALIZAR LOS SALDOS DE CARTERA (Y POR LO TANTO TAMBIÉN LOS VIGENTES, VENCIDOS, JUDICIALES, REFINANCIADOS Y CASTIGADOS)
+# =============================================================================
+descapitalizar_saldos = 'NO' # 'SI' o 'NO' 
+# =============================================================================
+
+if descapitalizar_saldos == 'SI':
+    ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Colocacion Sin Capitalizacion de Intereses TXT']
+elif descapitalizar_saldos == 'NO':
+    ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 
 print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
 print(ordenado['Capital Vigente 26/'].sum())
