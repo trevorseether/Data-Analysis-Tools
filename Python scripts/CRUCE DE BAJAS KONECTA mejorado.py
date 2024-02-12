@@ -21,20 +21,20 @@ from colorama import Back # , Style, init, Fore
 
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
-'AQUI SE PONE LA FECHA DE HOY' #############################################
-FECHATXT = '05-02-2024'  # FORMATO DÍA-MES-AÑO
-############################################################################
+'AQUI SE PONE LA FECHA DE HOY' ################################################
+FECHATXT = '12-02-2024'  # FORMATO DÍA-MES-AÑO
+###############################################################################
 
-'directorio de trabajo' ####################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\febrero'
-############################################################################
+'directorio de trabajo' #######################################################
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\febrero\\12 02'
+###############################################################################
 
-'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' ######################################
-nombre_archivo = '2DO INF BAJAS FEBRERO.xlsx'
-############################################################################
+'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
+nombre_archivo = '3er INFORME 02_24 GRUPO KONECTA (B).xlsx'
+###############################################################################
 
 'filas a skipear' ######################
-filas_skip = 0
+filas_skip = 0                        ##
 ########################################
 
 #%% IMPORTANDO EL INFORME DE BAJAS

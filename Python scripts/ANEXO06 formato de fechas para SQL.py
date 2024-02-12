@@ -10,9 +10,9 @@ import pandas as pd
 import os
 
 #%% PARÁMETROS INICIALES:
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados version final para reportes.xlsx'
-ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\V FINAL\\para reportes'
-
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados v05.xlsx'
+ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO\\enviado por contabilidad'
+filas_skip = 2
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
 formatos = [ '%Y%m%d' ]  # Lista de formatos a analizar
@@ -51,7 +51,7 @@ df =pd.read_excel(anexo_del_mes,
                         'Nro Prestamo \nFincore'        : object,
                         'Refinanciado TXT'              : object
                         },
-                 skiprows = 0)
+                 skiprows = filas_skip)
 
 df.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
                    'Fecha de Nacimiento 3/',
