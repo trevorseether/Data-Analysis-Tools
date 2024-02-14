@@ -17,12 +17,12 @@ warnings.filterwarnings('ignore')
 
 #%%
 'Fecha de corte para el anexo06'####################
-fecha_corte_anx06 = '20231231'                     #
+fecha_corte_anx06 = '20240131'                     #
 ####################################################
 
 'Fechas para la cobranza y nuevos desembolsos'######
-fecha_inicio = '20240101'                          #
-fecha_hoy    = '20240131'                          ## se pone la fecha de hoy ##
+fecha_inicio = '20240201'                          #
+fecha_hoy    = '20240210'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -38,8 +38,7 @@ if 'conn_anx06' not in locals():
     conn_anx06 = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 else:
     print("La conexión ya existe. No se estableció una nueva conexión.")
-    
-    
+
 #%% SELECCIÓN DE LA FECHA MÁS RECIENTE EN LA BASE DE DATOS
 fecha_corte_cobranza = fecha_hoy
 # Nombre del DataFrame
@@ -322,6 +321,7 @@ recau = recau.merge(cob_cod_productos,
                     how = 'left')
 
 recau = recau[['PagareFincore', 'Capital']]
+
 #%% merge con la recaudación
 df_mergeado = df_concatenado.merge(recau[['PagareFincore', 'Capital']],
                                    left_on  = 'Nro_Fincore',
@@ -512,11 +512,13 @@ df_mergeado.columns
 df_mergeado['CapitalVencido29'] = df_mergeado['CapitalVencido29'].round(2)
 df_mergeado['CapitalRefinanciado28'] = df_mergeado['CapitalRefinanciado28'].round(2)
 
+'''
           [CapitalVigente26],
           [CapitalVencido29],
           [CapitalenCobranzaJudicial30],
           [CapitalRefinanciado28],
           [SaldosdeCreditosCastigados38],
+'''
 
 #%%
 # REDUCCIÓN DEL SALDO CASTIGADO
@@ -545,6 +547,7 @@ df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castig
 # df = anx06_base.copy() #si deseamos incluir los datos del anexo06 (corte anterior)
 
 ###############################################################################
+df_mergeado = df_mergeado.drop_duplicates(subset = 'Nro_Fincore', keep = 'first')
 
 df  = df_mergeado.copy() #si deseamos incluir los datos de hoy
 #%%
@@ -556,7 +559,7 @@ cursor = cnxn.cursor()
 
 for index, row in df.iterrows():
     cursor.execute("""
-        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS] 
+        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS_2024_02] 
         ( [Nro_Fincore], 
           [Saldodecolocacionescreditosdirectos24],
           [MontodeDesembolso22],
