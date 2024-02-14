@@ -243,8 +243,8 @@ del tipo_cero
 
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows = 3,
-                          dtype={'Nº de Crédito FINCORE' : object,
-                                 'PAGARE ACTUAL'         : str})
+                          dtype = {'Nº de Crédito FINCORE' : object,
+                                   'PAGARE ACTUAL'         : str})
 
 calif_ref['PAGARE ACTUAL'] = calif_ref['PAGARE ACTUAL'].str.strip() #si aquí salta un error, es porque le han cambiado el nombre a la columna
 

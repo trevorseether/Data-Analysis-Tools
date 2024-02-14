@@ -550,6 +550,7 @@ df_mergeado['SaldosdeCreditosCastigados38'] = df_mergeado.apply(reduccion_castig
 df_mergeado = df_mergeado.drop_duplicates(subset = 'Nro_Fincore', keep = 'first')
 
 df  = df_mergeado.copy() #si deseamos incluir los datos de hoy
+
 #%%
 
 cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
