@@ -1,21 +1,21 @@
 
 -- INSERTAR METAS A DXP y LD
 update top (1) reportes_diana..DIANA_REPORTE
-set  META_CUENTAS = 75,
-	 META_MONTO   = 255000
+set  META_CUENTAS = 170,
+	 META_MONTO   = 460000
 ----     select top 1 * from reportes_diana..DIANA_REPORTE
-where FECHA_CORTE = '20231231'
+where FECHA_CORTE = '20240131'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%PROSEVA%TUMBES%'
+and funcionario like '%DAVID%BORJ%'
 ----------------------------------------------------
 -- LO MISMO PERO PARA MYPE
 update top (1) reportes_diana..DIANA_MYPE
-set  META_CUENTAS = 6,
-	 META_MONTO   = 40000
+set  META_CUENTAS = 10,
+	 META_MONTO   = 80000
 ----     select top 1 * from reportes_diana..DIANA_MYPE
-where FECHA_CORTE = '20231231'
+where FECHA_CORTE = '20240131'
 and [ESTADO FINAL] = 'aprobado'
-and funcionario like '%MARCO%NEY%'
+and funcionario like '%JES%PISCOY%'
 
 ---------------------------------------------------------------------------
 ----------------------------------------------------------------------------
@@ -39,3 +39,48 @@ values
 2023, 0, 8,50000, --estos son importantes, hay que cambiarlos según las metas
 'MICROEMPRESA', 'MICROEMPRESA', 'APROBADO', 'MICROEMPRESA',
 'MYPE', 'MICROEMPRESA', '20230731')
+
+------------------------------------------
+--añadir fila falsa a DXP
+-- where del reporte DXP
+where 
+--(PRODUCTO IS NULL OR 
+PRODUCTO LIKE '%DxP%'
+--)
+AND ([ESTADO FINAL] IS NULL OR [ESTADO FINAL] = 'APROBADO')
+AND FECHA_CORTE >= '20210101'
+AND FUNCIONARIO NOT LIKE '%ADMINISTRATIVO%'
+AND FUNCIONARIO NOT LIKE '%GERENCIA%'
+AND FUNCIONARIO NOT LIKE '%GRUPO%SAN%MIGU%'
+
+---------- PARA INSERTAR DATOS ---------------------------------
+INSERT INTO reportes_diana..DIANA_REPORTE 
+(FECHA_DESEMBOLSO,
+FUNCIONARIO,
+CONDICION,
+MESES,
+AÑO,
+MONTO_DESEMBOLSADO,
+META_CUENTAS,
+META_MONTO,
+OFICINA,
+[ESTADO FINAL],
+[CANAL OFICINA],
+PRODUCTO,
+FECHA_CORTE)
+VALUES
+('20240131',
+'LUIS JUSTO',
+'NO EXISTE',
+'Enero',
+2024,
+0,
+20,
+90000,
+'OFIC. MAGDALENA',
+'APROBADO',
+'OFIC. MAGDALENA',
+'DxP',
+'20240131')
+
+--------------------------------------

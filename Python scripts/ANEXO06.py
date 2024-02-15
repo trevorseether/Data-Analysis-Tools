@@ -56,7 +56,7 @@ archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 01 2024.xlsx' #nombre d
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente  ###
+mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -191,7 +191,7 @@ df1.loc[df1['Nro Prestamo \nFincore'] == '00109244', 'Tipo de Documento 9/'] = '
 df1.loc[df1['Código Socio 7/']        == '00035504', 'Tipo de Documento 9/'] = '1'
 df1.loc[df1['Nro Prestamo \nFincore'] == '00092306', 'Tipo de Documento 9/'] = '1'
 
-tipo_cero = df1[(df1['Tipo de Documento 9/'] == 0) | \
+tipo_cero = df1[(df1['Tipo de Documento 9/'] ==  0) | \
                 (df1['Tipo de Documento 9/'] == '0')]
 
 #si sale vacío, está todo bien
@@ -258,7 +258,7 @@ calif_ref = calif_ref[['fincore ref','calificacion especial']]
 calif_ref.dropna(subset = ['fincore ref', 
                            'calificacion especial'], 
                  inplace = True, 
-                 how = 'all')
+                 how     = 'all')
 
 # alerta de duplicados en el archivo de refinanciados
 duplicados = calif_ref[calif_ref.duplicated(subset = 'fincore ref', 
@@ -350,37 +350,37 @@ df_resultado['Dias de Mora 33/'] = df_resultado['Dias de Mora 33/'].astype(int)
 def alineamiento(df_resultado):
     if ('REFINANCIADO' not in df_resultado['Refinanciado TXT'] or 'Refinanciado' not in df_resultado['Refinanciado TXT']):
         if df_resultado['Tipo de Crédito 19/'] in ['06', '07', '08']:
-            if df_resultado['Dias de Mora 33/'] <=15:
+            if df_resultado['Dias de Mora 33/'] <= 15:
                 return '0'
-            elif df_resultado['Dias de Mora 33/'] <=60:
+            elif df_resultado['Dias de Mora 33/'] <= 60:
                 return '1'
-            elif df_resultado['Dias de Mora 33/'] <=120:
+            elif df_resultado['Dias de Mora 33/'] <= 120:
                 return '2'
-            elif df_resultado['Dias de Mora 33/'] <=365:
+            elif df_resultado['Dias de Mora 33/'] <= 365:
                 return '3'
-            elif df_resultado['Dias de Mora 33/'] >365:
+            elif df_resultado['Dias de Mora 33/'] > 365:
                 return '4'
         elif df_resultado['Tipo de Crédito 19/'] in ['09', '10', '11','12']:
-            if df_resultado['Dias de Mora 33/'] <=8:
+            if df_resultado['Dias de Mora 33/'] <= 8:
                 return '0'
-            elif df_resultado['Dias de Mora 33/'] <=30:
+            elif df_resultado['Dias de Mora 33/'] <= 30:
                 return '1'
-            elif df_resultado['Dias de Mora 33/'] <=60:
+            elif df_resultado['Dias de Mora 33/'] <= 60:
                 return '2'
-            elif df_resultado['Dias de Mora 33/'] <=120:
+            elif df_resultado['Dias de Mora 33/'] <= 120:
                 return '3'
-            elif df_resultado['Dias de Mora 33/'] >120:
+            elif df_resultado['Dias de Mora 33/'] > 120:
                 return '4'
         elif df_resultado['Tipo de Crédito 19/'] in ['13']:
-            if df_resultado['Dias de Mora 33/'] <=30:
+            if df_resultado['Dias de Mora 33/'] <= 30:
                 return '0'
-            elif df_resultado['Dias de Mora 33/'] <=60:
+            elif df_resultado['Dias de Mora 33/'] <= 60:
                 return '1'
-            elif df_resultado['Dias de Mora 33/'] <=120:
+            elif df_resultado['Dias de Mora 33/'] <= 120:
                 return '2'
-            elif df_resultado['Dias de Mora 33/'] <=365:
+            elif df_resultado['Dias de Mora 33/'] <= 365:
                 return '3'
-            elif df_resultado['Dias de Mora 33/'] >365:
+            elif df_resultado['Dias de Mora 33/'] > 365:
                 return '4'
     elif ('REFINANCIADO' in df_resultado['Refinanciado TXT'] or 'Refinanciado' in df_resultado['Refinanciado TXT']):
         return df_resultado['Clasificación del Deudor 14/'].astype(int).astype(str)

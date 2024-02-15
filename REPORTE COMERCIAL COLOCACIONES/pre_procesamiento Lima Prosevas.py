@@ -11,18 +11,18 @@ import os
 import pandas as pd
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\2023 diciembre\\colocaciones ahora sí')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\2024 enero\\datos')
 
-lima       = 'CIERRE_DRIVELIMA_DICIEMBRE.xlsx'
-lima_sheet = 'DICIEMBRE23'
+lima       = 'CIERRE DRIVE LIMA_ENERO.xlsx'
+lima_sheet = 'ENERO24'
 
-proseva       = 'CIERRE_DRIVEPROSEVA_DICIEMBRE.xlsx'
-proseva_sheet = 'DICIEMBRE23'
+proseva       = 'CIERRE DRIVE PROSEVA_ENERO.xlsx'
+proseva_sheet = 'ENERO24'
 
 # fincore       = 'CIERRE_FINCORE.xlsx'
 # fincore_sheet = 'Rpt_ResumenPrestamosXFuncionari'
 
-fecha_corte = '2023-12-31'
+fecha_corte = '2024-01-31'
 
 #%%
 lima_df = pd.read_excel(io = lima,
