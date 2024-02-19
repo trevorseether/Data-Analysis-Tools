@@ -879,7 +879,11 @@ df_resultado['Tipo de Producto 43/'] = df_resultado.apply(producto_43, axis=1)
 # Prestamo'''] == 'POND']
 #print(x) #no recuerdo pero imagino que debe salir vacío xd
 #'''
-#%% PRODUCTO 43
+
+#%% PRODUCTO 43 (41)
+
+df_resultado['Partida Registral 8/'] = df_resultado['Partida Registral 8/'].fillna('')
+
 def producto_43(row): #aparentemente este sí funciona, seguir investigando
     if (row['Partida Registral 8/'] != '') & \
     (row['Fecha de Desembolso 21/'] <= pd.to_datetime('2019-12-31')) | \
