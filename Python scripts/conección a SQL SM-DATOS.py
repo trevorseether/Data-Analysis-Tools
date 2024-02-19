@@ -17,7 +17,7 @@ import pyodbc
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
-base = pd.read_sql_query('''
+query = '''
 SELECT
 	FechaCorte1,
 	Nro_Fincore, 
@@ -46,7 +46,8 @@ FROM
 WHERE 
 	FechaCorte1 = '20230831'
 
-''', conn)
+'''
+base = pd.read_sql_query(query, conn)
 
 del conn
 
