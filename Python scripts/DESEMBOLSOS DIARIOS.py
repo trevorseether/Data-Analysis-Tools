@@ -12,8 +12,18 @@ import pandas as pd
 from datetime import datetime #, timedelta
 import pyodbc
 import os
+#%%
 corte_actual = '20240131'
 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
+
+tabla = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_01]'
+
+CARGA_SQL_SERVER = True #True o False
+
+crear_excel = False #True o False
+
+#%%
 # Crear una lista de fechas para el año 2024
 fechas_2024 = pd.date_range(start='2024-01-01', end='2024-12-31')
 
@@ -22,8 +32,6 @@ df = pd.DataFrame({'Fecha': fechas_2024})
 
 # Agregar una columna que indique el día de la semana
 df['Dia de la semana'] = df['Fecha'].dt.day_name()
-
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
 #%%
 # Lista de feriados
@@ -91,7 +99,7 @@ feriados_2023 = ['01-01-2023',
                  '01-11-2023',
                  '08-12-2023',
                  '09-12-2023',
-                 '25-12-2023']
+                 '25-12-2023' ]
 
 # Convertir fechas de feriados a formato datetime
 feriados_2023 = [datetime.strptime(fecha, '%d-%m-%Y') for fecha in feriados_2023]
@@ -283,6 +291,7 @@ SELECT
 	p.fechaventacartera, 
 	tc.Descripcion as 'TipoCredito', 
 	FI.CODIGO AS 'COD_FINALIDAD',
+    
 	CASE
 		WHEN FI.CODIGO IN (34,35,36,37,38,39) THEN 'DXP'
         WHEN FI.CODIGO IN (32) THEN 'MULTIOFICIOS'
@@ -294,7 +303,8 @@ SELECT
 		WHEN FI.CODIGO IN (41,45) THEN 'HIPOTECARIO'
 	ELSE 'INVESTIGAR CASO'
 	END AS 'PRODUCTO43',
-	FI.DESCRIPCION AS 'FINALIDAD'
+	
+    FI.DESCRIPCION AS 'FINALIDAD'
 FROM prestamo as p
 
 INNER JOIN socio as s on s.codsocio = p.codsocio
@@ -334,7 +344,7 @@ df_fincore['fechadesembolso'] = pd.to_datetime(df_fincore['fechadesembolso'])
 
 #%% MERGE CON EL NRO DE DÍA LABORAL
 
-union = df_fincore.merge(dias_laborales[dias_laborales['Numero de dia laboral'] != 0], #union solo con los días laborales
+union = df_fincore.merge(dias_laborales[dias_laborales['Numero de dia laboral'] != 0], # union solo con los días laborales
                          left_on  = 'fechadesembolso',
                          right_on = 'Fecha',
                          how      = 'left')
@@ -346,72 +356,117 @@ if union[pd.isna(union['Numero de dia laboral'])].shape[0] > 0:
     print('Si no sale cero, es porque se ha desembolsado en una fecha que no es laboral')
 
 #%% EXCEL
+union = union[['codigosocio', 
+               'Socio', 
+               'Doc_Identidad', 
+               'pagare_fincore', 
+               'moneda',
+               'fechadesembolso', 
+               #'Día del mes', 
+               #'dia_semana', 
+               #'dia_numero',
+               'MES COMPARACIÓN', 
+               'Otorgado', 
+               'TEM', 
+               #'NroPlazos', 
+               #'Estado',
+               #'fechaCancelacion', 
+               'tipo_pre', 
+               #'flagrefinanciado', 
+               'Funcionario',
+               'ZONAS mype', 
+               #'distrito', 
+               #'provincia', 
+               #'departamento', 
+               #'tipo_soc',
+               #'Situacion', 
+               #'fechaventacartera', 
+               #'TipoCredito', 
+               'COD_FINALIDAD',
+               #'PRODUCTO43',
+               #'FINALIDAD', 
+               #'Dia de la semana', 
+               #'dia no laboral', 
+               #'Año',
+               #'Mes', 
+               'Numero de dia laboral']]
+union.columns
 union.to_excel('Desembolsos diarios.xlsx',
                index = False)
 
+
 #%% INSERTAR DATOS EN SQL [por alguna razón no funciona (┬┬﹏┬┬)]
-# df  = union.copy()
-# # Convertir la columna 'fechadesembolso' a tipo datetime
-# df['fechadesembolso'] = pd.to_datetime(df['fechadesembolso'])
+df  = union.copy()
+df.to_excel('df.xlsx',
+            index = False)
 
-# # Extraer solo la parte de la fecha
-# df['fechadesembolso'] = df['fechadesembolso'].dt.date
+#%%
+if CARGA_SQL_SERVER == True:
+    
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    df = union.copy()
+    
+    for index, row in df.iterrows():
+        cursor.execute(f"""
+            INSERT INTO {tabla}
+            ( [codigosocio],       
+              [Funcionario],
+              [Socio],             
+              [ZONAS mype],
+              [Doc_Identidad],      
+              [pagare_fincore],     
+              [moneda],
+              [fechadesembolso],
+              [MES COMPARACIÓN],
+              [COD_FINALIDAD],
+              [Otorgado],           
+              [TEM],                
+              [tipo_pre],           
+              [Numero de dia laboral])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        row['codigosocio'],
+        row['Funcionario'],
+        row['Socio'],
+        row['ZONAS mype'],
+        row['Doc_Identidad'],
+        row['pagare_fincore'],
+        row['moneda'],
+        row['fechadesembolso'],
+        row['MES COMPARACIÓN'],
+        row['COD_FINALIDAD'],
+        row['Otorgado'],
+        row['TEM'],
+        row['tipo_pre'],
+        row['Numero de dia laboral'],
+        )
 
-# df['TEM'] = (df['TEM']*10000).astype(int)
+    cnxn.commit()
+    cursor.close()
+    
+    print(f'Se cargaron los datos a SQL SERVER {tabla}')
+    
+else:
+    print('No se ha cargado a SQL SERVER')
 
-# cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
-# cursor = cnxn.cursor()
-# # Inserta el DataFrame en SQL Server
-# # PARA QUE EL CÓDIGO FUNCIONES, PRIMERO DEBES CREAR UNA TABLA EN EL SQL SERVER CON:
+#%% DATOS ACUMULADOS
+# ¿CREAR DATAFRAME ULTRA MASIVO? 🤔
+acum = union.head(0)
+acum['dia acumulado'] = 0
 
-# # CREATE TABLE [HumanResources].[DepartmentTest](
-# # [DepartmentID] INT            NOT NULL,
-# # [Name]         VARCHAR(255)   NOT NULL,
-# # [ALTURA]    FLOAT          NOT NULL
-# # )
+for i in range(0,(union['Numero de dia laboral'].unique().max())):
+    para_filtrar = union.copy()
+    para_filtrar = para_filtrar[para_filtrar['Numero de dia laboral'] <= i+1]
+    para_filtrar['dia acumulado'] = i+1
+    acum = pd.concat([acum,para_filtrar], ignore_index = True)
 
-# for index, row in df.iterrows():
-#     cursor.execute("""
-#         INSERT INTO [DESEMBOLSOS_DIARIOS].[dbo].[2024_01] 
-#         ([codigosocio],       [Funcionario],
-#          [Socio],             [ZONAS mype],
-#          [Doc_Identidad],     [distrito],
-#          [pagare_fincore],    [provincia],
-#          [moneda],            [departamento],
-#          [fechadesembolso],   [tipo_soc],
-#          [Día del mes],       [Situacion],
-#          [dia_semana],        [fechaventacartera],
-#          [dia_numero],        [TipoCredito],
-#          [MES COMPARACIÓN],   [COD_FINALIDAD],
-#          [Otorgado],          [FINALIDAD],
-#          [TEM],               [Dia de la semana],
-#          [NroPlazos],         [dia no laboral],
-#          [Estado],            [Año],
-#          [fechaCancelacion],  [Mes],
-#          [tipo_pre],          [Numero de dia laboral],
-#          [flagrefinanciado])
-#         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-#     """,
-#     row['codigosocio'],        row['Funcionario'],
-#     row['Socio'],              row['ZONAS mype'],
-#     row['Doc_Identidad'],      row['distrito'], 
-#     row['pagare_fincore'],     row['provincia'],
-#     row['moneda'],             row['departamento'],
-#     row['fechadesembolso'],    row['tipo_soc'],
-#     row['Día del mes'],        row['Situacion'],
-#     row['dia_semana'],         row['fechaventacartera'],
-#     row['dia_numero'],         row['TipoCredito'],
-#     row['MES COMPARACIÓN'],    row['COD_FINALIDAD'],
-#     row['Otorgado'],           row['FINALIDAD'],
-#     row['TEM'],                row['Dia de la semana'],
-#     row['NroPlazos'],          row['dia no laboral'],
-#     row['Estado'],             row['Año'],
-#     row['fechaCancelacion'],   row['Mes'],
-#     row['tipo_pre'],           row['Numero de dia laboral'],
-#     row['flagrefinanciado']
-#     )
+#%% a excel
 
-# cnxn.commit()
-# cursor.close()
+if crear_excel ==  True:
+    acum.to_excel('acumulado.xlsx',
+                  index = False)
+else:
+    pass
 
 
