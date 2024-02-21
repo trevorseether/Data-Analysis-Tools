@@ -166,11 +166,6 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
-
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
 query = f'''
 -- p.codcategoria = 351 -> nuevo
 -- p.codcategoria = 352 -> ampliacion
@@ -326,16 +321,17 @@ INNER JOIN usuario as u on p.CodUsuario = u.CodUsuario
 INNER JOIN TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
-where 
-(EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))    = @FECHA_MES
-OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fechaAnterior
-OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fecha12MESES)
+WHERE
+ 
+    (EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))    = @FECHA_MES
+    OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fechaAnterior
+    OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fecha12MESES)
 
-and s.codigosocio>0  --and p.codestado = 342
--- AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
--- AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
--- WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
-order by p.fechadesembolso desc, Socio ASC'''
+AND s.codigosocio>0
+
+ORDER BY p.fechadesembolso desc, Socio ASC
+
+'''
 
 df_fincore = pd.read_sql_query(query, conn)
 
@@ -388,17 +384,17 @@ union = union[['codigosocio',
                #'Dia de la semana', 
                #'dia no laboral', 
                #'Año',
-               #'Mes', 
+               #'Mes',
                'Numero de dia laboral']]
-union.columns
-union.to_excel('Desembolsos diarios.xlsx',
-               index = False)
 
+union['FechaCorte'] = pd.to_datetime(corte_actual, format='%Y%m%d')
 
-#%% INSERTAR DATOS EN SQL [por alguna razón no funciona (┬┬﹏┬┬)]
-df  = union.copy()
-df.to_excel('df.xlsx',
-            index = False)
+#%%
+if crear_excel == True:
+    union.to_excel('Desembolsos diarios.xlsx',
+    index = False)
+else:
+    pass
 
 #%%
 if CARGA_SQL_SERVER == True:
@@ -406,6 +402,9 @@ if CARGA_SQL_SERVER == True:
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
     df = union.copy()
+
+    # Limpiar la tabla antes de insertar nuevos datos
+    cursor.execute(f"DELETE FROM {tabla}")
     
     for index, row in df.iterrows():
         cursor.execute(f"""
@@ -423,7 +422,8 @@ if CARGA_SQL_SERVER == True:
               [Otorgado],           
               [TEM],                
               [tipo_pre],           
-              [Numero de dia laboral])
+              [Numero de dia laboral],
+              [FechaCorte])
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         row['codigosocio'],
@@ -440,6 +440,7 @@ if CARGA_SQL_SERVER == True:
         row['TEM'],
         row['tipo_pre'],
         row['Numero de dia laboral'],
+        row['FechaCorte']
         )
 
     cnxn.commit()
