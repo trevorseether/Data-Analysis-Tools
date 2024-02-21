@@ -7,8 +7,15 @@ Created on Fri Feb 16 19:17:42 2024
 
 import pandas as pd
 import pyodbc
+import os
+
+import warnings
+warnings.filterwarnings('ignore')
+
 #%%
 mes = '20231130'
+
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\clasificación de riesgo, fortaleza financiera')
 
 #%%
 
@@ -114,4 +121,7 @@ top_20 = top_20[['ApellidosyNombresRazonSocial2',
                  'Garantias No Preferidas',
                  'DiasdeMora33',
                  'Saldodecolocacionescreditosdirectos24']]
+
+#%%
+top_20.to_excel(f'top20 {mes}.xlsx')
 

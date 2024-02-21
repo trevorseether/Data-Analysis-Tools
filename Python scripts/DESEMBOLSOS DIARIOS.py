@@ -424,7 +424,7 @@ if CARGA_SQL_SERVER == True:
               [tipo_pre],           
               [Numero de dia laboral],
               [FechaCorte])
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         row['codigosocio'],
         row['Funcionario'],
@@ -470,4 +470,5 @@ if crear_excel ==  True:
 else:
     pass
 
+#%% 
 
