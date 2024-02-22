@@ -13,19 +13,20 @@ from datetime import datetime #, timedelta
 import pyodbc
 import os
 #%%
-corte_actual = '20240131'
+corte_actual      = '20240229'
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_01]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02_acum]'
 
-CARGA_SQL_SERVER = True #True o False
+CARGA_SQL_SERVER  = False #True o False
 
-crear_excel = False #True o False
+crear_excel       = False #True o False
 
 #%%
 # Crear una lista de fechas para el año 2024
-fechas_2024 = pd.date_range(start='2024-01-01', end='2024-12-31')
+fechas_2024 = pd.date_range(start='2024-01-01', end = '2024-12-31')
 
 # Crear un DataFrame con las fechas
 df = pd.DataFrame({'Fecha': fechas_2024})
@@ -76,7 +77,7 @@ df['dia no laboral'] = df['Fecha'].apply(dia_no_laboral)
 
 #%% Año 2023
 # Crear una lista de fechas para el año 2024
-fechas_2023 = pd.date_range(start='2023-01-01', end='2023-12-31')
+fechas_2023 = pd.date_range(start='2023-01-01', end = '2023-12-31')
 
 # Crear un DataFrame con las fechas
 df_anterior = pd.DataFrame({'Fecha': fechas_2023})
@@ -152,8 +153,12 @@ for year_month, group in df_anterior.groupby(['Año', 'Mes']):
 
 dias_laborales = pd.concat([df,df_anterior], ignore_index = True)
 
-#%% DESEMBOLSOS DIARIOS
+#%% 
+# =============================================================================
+#                             DESEMBOLSOS DIARIOS
+# =============================================================================
 
+#%% usuario SQL fincore
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
 #%%
@@ -396,7 +401,7 @@ if crear_excel == True:
 else:
     pass
 
-#%%
+#%% CARGA A SQL DE LOS DESEMBOLSOS DIARIOS
 if CARGA_SQL_SERVER == True:
     
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
@@ -470,5 +475,60 @@ if crear_excel ==  True:
 else:
     pass
 
-#%% 
+#%% CARGA A SQL DE LOS DESEMBOLSOS ACUMULADOS
+if CARGA_SQL_SERVER == True:
+    
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    df = acum.copy()
+
+    # Limpiar la tabla antes de insertar nuevos datos
+    cursor.execute(f"DELETE FROM {tabla_acumulada}")
+    
+    for index, row in df.iterrows():
+        cursor.execute(f"""
+            INSERT INTO {tabla}
+            ( [codigosocio],       
+              [Funcionario],
+              [Socio],             
+              [ZONAS mype],
+              [Doc_Identidad],      
+              [pagare_fincore],     
+              [moneda],
+              [fechadesembolso],
+              [MES COMPARACIÓN],
+              [COD_FINALIDAD],
+              [Otorgado],           
+              [TEM],                
+              [tipo_pre],           
+              [Numero de dia laboral],
+              [FechaCorte],
+              [dia acumulado])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        row['codigosocio'],
+        row['Funcionario'],
+        row['Socio'],
+        row['ZONAS mype'],
+        row['Doc_Identidad'],
+        row['pagare_fincore'],
+        row['moneda'],
+        row['fechadesembolso'],
+        row['MES COMPARACIÓN'],
+        row['COD_FINALIDAD'],
+        row['Otorgado'],
+        row['TEM'],
+        row['tipo_pre'],
+        row['Numero de dia laboral'],
+        row['FechaCorte'],
+        row['dia acumulado']
+        )
+
+    cnxn.commit()
+    cursor.close()
+    
+    print(f'Se cargaron los datos a SQL SERVER {tabla_acumulada}')
+    
+else:
+    print('No se ha cargado a SQL SERVER')
 
