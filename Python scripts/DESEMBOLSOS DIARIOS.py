@@ -13,14 +13,14 @@ from datetime import datetime #, timedelta
 import pyodbc
 import os
 #%%
-corte_actual      = '20240229'
+corte_actual      = '20240229' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
 tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02]'
 tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02_acum]'
 
-CARGA_SQL_SERVER  = False #True o False
+CARGA_SQL_SERVER  = True #True o False
 
 crear_excel       = False #True o False
 
@@ -478,7 +478,7 @@ else:
 #%% CARGA A SQL DE LOS DESEMBOLSOS ACUMULADOS
 if CARGA_SQL_SERVER == True:
     
-    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;') 
     cursor = cnxn.cursor()
     df = acum.copy()
 
@@ -487,7 +487,7 @@ if CARGA_SQL_SERVER == True:
     
     for index, row in df.iterrows():
         cursor.execute(f"""
-            INSERT INTO {tabla}
+            INSERT INTO {tabla_acumulada}
             ( [codigosocio],       
               [Funcionario],
               [Socio],             
@@ -532,3 +532,44 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
+#%% AÑADIENDO 
+if CARGA_SQL_SERVER == True:
+    
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    df = union.copy()
+
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f" if OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla} ")    
+    cursor.execute(f" SELECT * INTO {tabla} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01] ")    
+    cursor.execute(f" DELETE FROM {tabla}")   
+
+    cursor.execute(f" DELETE FROM [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS] WHERE FechaCorte = '{corte_actual}'")    
+    cursor.execute(f" INSERT INTO [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS] SELECT * FROM {tabla}")   
+
+
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f" if OBJECT_ID('{tabla_acumulada}') IS NOT NULL DROP TABLE {tabla_acumulada} ")    
+    cursor.execute(f" SELECT * INTO {tabla_acumulada} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01_acum] ")    
+    cursor.execute(f" DELETE FROM {tabla_acumulada}")   
+
+    cursor.execute(f" DELETE FROM [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS_acum] WHERE FechaCorte = '{corte_actual}'")    
+    cursor.execute(f" INSERT INTO [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS_acum] SELECT * FROM {tabla_acumulada}")   
+
+    cnxn.commit()
+    cursor.close()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
