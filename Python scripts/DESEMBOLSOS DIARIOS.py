@@ -302,24 +302,24 @@ SELECT
     FI.DESCRIPCION AS 'FINALIDAD'
 FROM prestamo as p
 
-INNER JOIN socio as s on s.codsocio = p.codsocio
-LEFT JOIN sociocontacto as sc on sc.codsocio = s.codsocio
-LEFT JOIN planilla as pla on p.codplanilla = pla.codplanilla
-INNER JOIN grupocab as pro on pro.codgrupocab = p.codgrupocab
-INNER JOIN distrito as d on d.coddistrito = sc.coddistrito
-INNER JOIN provincia as pv on pv.codprovincia = d.codprovincia
-INNER JOIN departamento as dp on dp.coddepartamento = pv.coddepartamento
-INNER JOIN tablaMaestraDet as tm on tm.codtabladet = p.CodEstado
-LEFT JOIN grupocab as gpo on gpo.codgrupocab = pla.codgrupocab
-LEFT JOIN tablaMaestraDet as tm2 on tm2.codtabladet = s.codestadocivil
-LEFT JOIN tablaMaestraDet as tm3 on tm3.codtabladet = p.CodSituacion
---INNER JOIN tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
+INNER JOIN socio             AS s    on s.codsocio = p.codsocio
+LEFT JOIN sociocontacto      AS sc   on sc.codsocio = s.codsocio
+LEFT JOIN planilla           AS pla  on p.codplanilla = pla.codplanilla
+INNER JOIN grupocab          AS pro  on pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito          AS d    on d.coddistrito = sc.coddistrito
+INNER JOIN provincia         AS pv   on pv.codprovincia = d.codprovincia
+INNER JOIN departamento      AS dp   on dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet   AS tm   on tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab           AS gpo  on gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet    AS tm2  on tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet    AS tm3  on tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet AS tm3  On tm3.codtabladet = s.codcategoria
 INNER JOIN pais on pais.codpais = s.codpais
-LEFT JOIN FINALIDAD AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-LEFT JOIN TipoCredito as TC on tc.CodTipoCredito = p.CodTipoCredito
-INNER JOIN usuario as u on p.CodUsuario = u.CodUsuario
-INNER JOIN TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
---LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+LEFT JOIN FINALIDAD          AS FI   ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito        AS TC   on tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario           AS u    on p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet   AS tm4  on s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota    AS pcu  on p.CodPrestamo = pcu.CodPrestamo
 
 WHERE
  
