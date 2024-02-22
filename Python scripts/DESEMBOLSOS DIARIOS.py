@@ -559,17 +559,3 @@ if CARGA_SQL_SERVER == True:
     cnxn.commit()
     cursor.close()
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
