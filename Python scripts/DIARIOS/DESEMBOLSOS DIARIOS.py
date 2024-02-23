@@ -408,8 +408,10 @@ if CARGA_SQL_SERVER == True:
     cursor = cnxn.cursor()
     df = union.copy()
 
-    # Limpiar la tabla antes de insertar nuevos datos
-    cursor.execute(f"DELETE FROM {tabla}")
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f" IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla} ")    
+    cursor.execute(f" SELECT top 100 * INTO {tabla} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01] ")    
+    cursor.execute(f" DELETE FROM {tabla}")
     
     for index, row in df.iterrows():
         cursor.execute(f"""
@@ -482,8 +484,10 @@ if CARGA_SQL_SERVER == True:
     cursor = cnxn.cursor()
     df = acum.copy()
 
-    # Limpiar la tabla antes de insertar nuevos datos
-    cursor.execute(f"DELETE FROM {tabla_acumulada}")
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f" if OBJECT_ID('{tabla_acumulada}') IS NOT NULL DROP TABLE {tabla_acumulada} ")    
+    cursor.execute(f" SELECT top 100 * INTO {tabla_acumulada} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01_acum] ")    
+    cursor.execute(f" DELETE FROM {tabla_acumulada}")   
     
     for index, row in df.iterrows():
         cursor.execute(f"""
@@ -539,27 +543,19 @@ if CARGA_SQL_SERVER == True:
     cursor = cnxn.cursor()
     df = union.copy()
 
-    # Limpiar/eliminar la tabla antes de insertar nuevos datos
-    cursor.execute(f" if OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla} ")    
-    cursor.execute(f" SELECT * INTO {tabla} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01] ")    
-    cursor.execute(f" DELETE FROM {tabla}")   
 
     cursor.execute(f" DELETE FROM [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS] WHERE FechaCorte = '{corte_actual}'")    
     cursor.execute(f" INSERT INTO [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS] SELECT * FROM {tabla}")   
 
 
-    # Limpiar/eliminar la tabla antes de insertar nuevos datos
-    cursor.execute(f" if OBJECT_ID('{tabla_acumulada}') IS NOT NULL DROP TABLE {tabla_acumulada} ")    
-    cursor.execute(f" SELECT * INTO {tabla_acumulada} FROM DESEMBOLSOS_DIARIOS.DBO.[2024_01_acum] ")    
-    cursor.execute(f" DELETE FROM {tabla_acumulada}")   
 
     cursor.execute(f" DELETE FROM [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS_acum] WHERE FechaCorte = '{corte_actual}'")    
     cursor.execute(f" INSERT INTO [DESEMBOLSOS_DIARIOS].[dbo].[DESEMBOLSOS_acum] SELECT * FROM {tabla_acumulada}")   
 
     cnxn.commit()
     cursor.close()
-    
-    print('Se insertaron los datos en la tabla principal:')
+
+    print('Se insertaron los datos en las tablas principales:')
 else:
     print('No se ha cargado a SQL SERVER')
-    
+
