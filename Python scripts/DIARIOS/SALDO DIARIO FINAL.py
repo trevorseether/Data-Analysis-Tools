@@ -22,7 +22,7 @@ fecha_corte_anx06 = '20240131'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240201'                          #
-fecha_hoy    = '20240215'                          ## se pone la fecha de hoy ##
+fecha_hoy    = '20240219'                          ## se pone la fecha de hoy ##
 ####################################################
 
 'Directorio de trabajo'#############################

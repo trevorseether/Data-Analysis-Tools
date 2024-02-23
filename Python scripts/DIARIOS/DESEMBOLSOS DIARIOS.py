@@ -9,7 +9,7 @@ Created on Tue Feb 20 09:04:46 2024
 # =============================================================================
 
 import pandas as pd
-from datetime import datetime #, timedelta
+from   datetime import datetime #, timedelta
 import pyodbc
 import os
 #%%
@@ -558,4 +558,8 @@ if CARGA_SQL_SERVER == True:
 
     cnxn.commit()
     cursor.close()
+    
+    print('Se insertaron los datos en la tabla principal:')
+else:
+    print('No se ha cargado a SQL SERVER')
     
