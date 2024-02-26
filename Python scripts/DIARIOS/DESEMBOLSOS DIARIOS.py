@@ -12,6 +12,10 @@ import pandas as pd
 from   datetime import datetime #, timedelta
 import pyodbc
 import os
+
+import warnings
+warnings.filterwarnings('ignore')
+
 #%%
 corte_actual      = '20240229' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 

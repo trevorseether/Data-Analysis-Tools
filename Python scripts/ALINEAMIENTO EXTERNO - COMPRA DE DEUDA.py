@@ -18,11 +18,17 @@ warnings.filterwarnings('ignore')
 #%%
 # COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL = '20231231'
+CORTE_SQL         = '20240131'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2023 diciembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 enero')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2312024172621_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2622024101850_1.csv'
+
+CARGA_SQL_SERVER  = True
+
+tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_01]'
+
+excel_para_sql    = False
 
 #%%
 
@@ -260,9 +266,14 @@ para_sql = UNION[['Nro_Fincore',
 
 nombre = f'AL. EXTERNO {CORTE_SQL} SQL.xlsx'
 
-para_sql.to_excel(nombre,
-                  index = False,
-                  sheet_name = 'AL. EXTERNO SQL')
+if excel_para_sql == True:
+    para_sql.to_excel(nombre,
+                      index = False,
+                      sheet_name = 'AL. EXTERNO SQL')
+    print('generado excel para SQL')
+else:
+    pass
+
 del nombre
 
 #LO SUBES A SQL Y USAS EL SIGUIENTE CÓDIGO:
@@ -378,17 +389,10 @@ FROM
 
 #%% CARGA A SQL SERVER
 
-df  = para_sql.copy()
-
-# df['NUMERO DE ENTIDADES SBS REPORTADAS'] = df['NUMERO DE ENTIDADES SBS REPORTADAS'].fillna(0)
-# df['DEUDA TOTAL EN NO REGULADAS']        = df['DEUDA TOTAL EN NO REGULADAS'].fillna(0)
-
-cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
-cursor = cnxn.cursor()
 # Inserta el DataFrame en SQL Server
 # PARA QUE EL CÓDIGO FUNCIONES, PRIMERO DEBES CREAR UNA TABLA EN EL SQL SERVER CON:
 
-# CREATE TABLE [ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2023_12]
+# CREATE TABLE [ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_01]
 # (
 # Nro_Fincore                          NVARCHAR(255) NULL,
 # NumerodeDocumento10                  NVARCHAR(255) NULL,
@@ -401,33 +405,86 @@ cursor = cnxn.cursor()
 # FechaCorte1                          DATETIME NULL
 # )
 
-###############################################################################
-for index, row in df.iterrows():
-    cursor.execute("""
-        INSERT INTO [ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2023_12]
-        ( [Nro_Fincore], 
-          [NumerodeDocumento10], 
-          [NUMERO DE ENTIDADES SBS REPORTADAS], 
-          [DEUDA TOTAL EN NO REGULADAS], 
-          [ALINEAMIENTO EXTERNO], 
-          [MAX CALIFICACION], 
-          [TASA PROV# CON AL# EXTERNO], 
-          [Provisiones Requeridas A#EXTERNO],
-          [FechaCorte1] )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-    row['Nro_Fincore'],
-    row['NumerodeDocumento10'],
-    np.float64(row['NUMERO DE ENTIDADES SBS REPORTADAS']) if pd.notnull(row['NUMERO DE ENTIDADES SBS REPORTADAS']) else None,
-    np.float64(row['DEUDA TOTAL EN NO REGULADAS'])        if pd.notnull(row['DEUDA TOTAL EN NO REGULADAS'])        else None,
-    row['ALINEAMIENTO EXTERNO'],
-    row['MAX CALIFICACION'],
-    np.float64(row['TASA PROV. CON AL. EXTERNO'])         if pd.notnull(row['TASA PROV. CON AL. EXTERNO'])         else None,
-    row['Provisiones Requeridas A.EXTERNO'],
-    row['FechaCorte1']
-    )
+if CARGA_SQL_SERVER == True:
+    
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    df  = para_sql.copy()
+    df['NUMERO DE ENTIDADES SBS REPORTADAS'] = df['NUMERO DE ENTIDADES SBS REPORTADAS'].fillna(0)
+    df['DEUDA TOTAL EN NO REGULADAS']        = df['DEUDA TOTAL EN NO REGULADAS'].fillna(0)
 
-cnxn.commit()
-cursor.close()
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f" IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla} ")    
+    cursor.execute(f''' 
+                   CREATE TABLE {tabla}
+                   (
+                       Nro_Fincore                          NVARCHAR(255) NULL,
+                       NumerodeDocumento10                  NVARCHAR(255) NULL,
+                       [NUMERO DE ENTIDADES SBS REPORTADAS] FLOAT NULL,
+                       [DEUDA TOTAL EN NO REGULADAS]        FLOAT NULL,
+                       [ALINEAMIENTO EXTERNO]			    FLOAT NULL,
+                       [MAX CALIFICACION]		   		    FLOAT NULL,
+                       [TASA PROV# CON AL# EXTERNO]         FLOAT NULL,
+                       [Provisiones Requeridas A#EXTERNO]   FLOAT NULL,
+                       FechaCorte1                          DATETIME NULL
+                   )
+''')    
+###############################################################################
+    for index, row in df.iterrows():
+        cursor.execute(f"""
+            INSERT INTO {tabla}
+            ( [Nro_Fincore], 
+              [NumerodeDocumento10], 
+              [NUMERO DE ENTIDADES SBS REPORTADAS], 
+              [DEUDA TOTAL EN NO REGULADAS], 
+              [ALINEAMIENTO EXTERNO], 
+              [MAX CALIFICACION], 
+              [TASA PROV# CON AL# EXTERNO], 
+              [Provisiones Requeridas A#EXTERNO],
+              [FechaCorte1] )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        row['Nro_Fincore'],
+        row['NumerodeDocumento10'],
+        np.float64(row['NUMERO DE ENTIDADES SBS REPORTADAS']) if pd.notnull(row['NUMERO DE ENTIDADES SBS REPORTADAS']) else None,
+        np.float64(row['DEUDA TOTAL EN NO REGULADAS'])        if pd.notnull(row['DEUDA TOTAL EN NO REGULADAS'])        else None,
+        row['ALINEAMIENTO EXTERNO'],
+        row['MAX CALIFICACION'],
+        np.float64(row['TASA PROV. CON AL. EXTERNO'])         if pd.notnull(row['TASA PROV. CON AL. EXTERNO'])         else None,
+        row['Provisiones Requeridas A.EXTERNO'],
+        row['FechaCorte1']
+        )
+    
+    print(f'Cargado a {tabla}')
+    
+    cursor.execute(f"""
+                   DELETE FROM [ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[AL_EXTERNO]
+                   WHERE FECHA_CORTE = '{CORTE_SQL}' """)  
+                   
+    cursor.execute(f''' 
+            INSERT INTO anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AL_EXTERNO] 
+            --(columna1, columna2, columna3, ...)
+            SELECT 
+            	NRO_fincore, 
+            	NumerodeDocumento10,
+            	[NUMERO DE ENTIDADES SBS REPORTADAS],
+            	[ALINEAMIENTO EXTERNO],
+            	[MAX CALIFICACION],
+            	[TASA PROV# CON AL# EXTERNO],
+            	[Provisiones Requeridas A#EXTERNO],
+            	NULL AS 'ENTID FINANC CON PEOR CALIF',
+            	NULL AS 'DEUDA TOTAL EN LA ENTIDAD',
+            	NULL AS 'CATEGORIA DE RIESGO EN LA ENTIDAD',
+            	NULL AS 'PROV REQUERID EXTERNO AGRUPADO',
+            	[FechaCorte1]
+            FROM 
+            	{tabla}
+    ''')
+    cnxn.commit()
+    cursor.close()
+
+    print('Datos cargados a tabla principal:')
+    print('[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[AL_EXTERNO]')
+            
 ###############################################################################
 

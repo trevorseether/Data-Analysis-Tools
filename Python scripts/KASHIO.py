@@ -24,12 +24,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\22 feb')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\23 feb')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240222.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240223.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
@@ -37,7 +37,7 @@ crear_archivo = False #True o False
 ######################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
-mensajeria_preventiva = False #True o False
+mensajeria_preventiva = True #True o False
 ######################################################################
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
@@ -101,6 +101,17 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMA.IL.COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL..COM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL'         , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HMAIL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMIL.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMEIL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@OUTOOK.ES'     , '@OUTLOOK.ES')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.C'     , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAILCOM'    , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAI.COM'    , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.CO'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM' , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM.PE'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')    
  
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
