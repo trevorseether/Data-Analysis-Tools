@@ -55,7 +55,6 @@ SELECT
 CASE 
 	WHEN B.FDN_DRIVE IS NULL THEN c.originador ELSE B.FDN_DRIVE END AS 'originador',
 	
-	
 	administrador,
 	LTRIM(RTRIM(P.NUEVA_PLANILLA_creada)) AS 'Planilla',
 	TipodeProducto43,
