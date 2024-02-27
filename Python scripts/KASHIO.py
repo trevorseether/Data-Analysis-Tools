@@ -9,10 +9,6 @@ Created on Mon Aug  7 15:00:55 2023
 #              PROCESAMIENTO DEL REPORTE DIARIO DE KASHIO                       #
 #                                                                               #
 # ============================================================================= #
- 
-###############################################################################
-###        PEGAR ESTO EN L2 =DERECHA(E2;(LARGO(E2)-ENCONTRAR("@";E2)))      ###
-###############################################################################
 
 #%% MÓDULOS
 import pandas as pd
@@ -24,12 +20,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\26 feb')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\27 feb')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240226.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240227.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
@@ -163,14 +159,23 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
                                 )
 
 kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
-#%%
+
+#%% FILTRACIÓN DE PYMES
 try:
     kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
-
+    if kashio_ampliado['Unnamed: 10'].unique() == ['PYME']:
+        print('Correctamente Filtrado')
+    else:
+        print('Mal filtado')
+        
 except KeyError:
     columna_filtro = kashio_ampliado.columns[10]
     kashio_ampliado = kashio_ampliado[kashio_ampliado[columna_filtro] == 'PYME'] ##########   
-    
+    if kashio_ampliado[columna_filtro].unique() == ['PYME']:
+        print('Correctamente Filtrado')
+    else:
+        print('Mal filtado')
+
 except KeyError as e:
     print("Error:", e)
 
