@@ -24,12 +24,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\23 feb')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 02\\26 feb')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240223.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240226.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
@@ -37,7 +37,7 @@ crear_archivo = False #True o False
 ######################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
-mensajeria_preventiva = True #True o False
+mensajeria_preventiva = False #True o False
 ######################################################################
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
@@ -163,9 +163,18 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
                                 )
 
 kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
+#%%
+try:
+    kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
 
-kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
+except KeyError:
+    columna_filtro = kashio_ampliado.columns[10]
+    kashio_ampliado = kashio_ampliado[kashio_ampliado[columna_filtro] == 'PYME'] ##########   
+    
+except KeyError as e:
+    print("Error:", e)
 
+#%% 
 valor1 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 

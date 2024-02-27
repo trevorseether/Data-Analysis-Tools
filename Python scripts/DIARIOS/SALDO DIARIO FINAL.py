@@ -22,7 +22,7 @@ fecha_corte_anx06 = '20240131'                     #
 
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240201'                          #
-fecha_hoy    = '20240219'                          ## se pone la fecha de hoy ##
+fecha_hoy    = '20240223'                          ## se pone 4 días antes del día de hoy
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -30,7 +30,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\saldos diarios')
 ####################################################
 
 'Incremento de días mora'###########################
-incremento = int(fecha_hoy[-2:])
+incremento = int(fecha_hoy[-2:])                   #
 ####################################################
 
 #%%
