@@ -50,7 +50,7 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = True #booleano True o False
+generar_excels = False #booleano True o False
 
 #%% ARCHIVOS
 
@@ -358,7 +358,11 @@ columna_in_suspendo,
 'Fecha Expediente TXT',
 'Vendido TXT',
 'Fecha Castigo TXT',
-'Saldo Capital Real'
+'Saldo Capital Real',
+'Interes Capital Real',
+'Fecha Termino \nPeriodo Gracia',
+'Flag Termino Periodo Gracia',
+'Monto Desembolso\nSoles Fijo'
 ]]
 
 #%% SALDO DE GARANTÍA DEL MES PASADO
@@ -438,9 +442,7 @@ ordenado['Apellidos y Nombres / Razón Social 2/'] = ordenado['Apellidos y Nombr
 
 fecha_corte_inicial_int = int(fecha_corte_inicial[0:4] + fecha_corte_inicial[5:7] + fecha_corte_inicial[8:10])
 
-#cambiar la fecha###################################################################################################
-filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= fecha_corte_inicial_int] #aquí cambiar la fecha
-#cambiar la fechaAAAAAAAAAAAAAAAAAAAAAAAA ##########################################################################
+filtrado_certificados = ordenado[ordenado['Fecha de Desembolso 21/'].astype(int) >= fecha_corte_inicial_int]
 
 para_enviar = filtrado_certificados[filtrado_certificados['Monto de Desembolso 22/'] >= 90000]
 para_enviar = para_enviar[['Apellidos y Nombres / Razón Social 2/',
@@ -461,18 +463,20 @@ if generar_excels == True:
         pass
 
     para_enviar.to_excel(ruta,
-                         index=False)
+                         index = False)
 
-#%% INDICACIONES
+#%% INDICACIONES sobre los créditos con garantía
 # =============================================================================
-# # el código que envíe va en partida registral
-# # EL MONTO QUE ENVÍEN IRÁ EN 'Saldo de Garantías Autoliquidables 35/'
-# # puede que esté en dólares, hay que pasarlo a soles
-# # esto se añade después de generar este archivo, para generar el anexo06 final, no en el preliminar
-# #%% AJUSTE SALDO SIN CAPITALIZAR
+# # ===========================================================================
+# # # el código que envíe va en partida registral
+# # # EL MONTO QUE ENVÍEN IRÁ EN 'Saldo de Garantías Autoliquidables 35/'
+# # # puede que esté en dólares, hay que pasarlo a soles
+# # # esto se añade después de generar este archivo, para generar el anexo06 final, no en el preliminar
+# # ===========================================================================
 # =============================================================================
 
-#%%HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
+#%% AJUSTE SALDO SIN CAPITALIZAR
+# HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'].round(2)
@@ -1563,12 +1567,14 @@ print('si sale menos, es porque hubo duplicados')
 
 #%% ORDENAMIENTO DE LAS COLUMNAS LAS ÚLTIMAS 5 AÑADIDAS PARA CONTABILIDAD
 '#############################################################################'
-columnas = anx06_ordenado.columns
+columnas  = anx06_ordenado.columns
+largo_fin = len(columnas) - 5
+
 columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
                                              'fecha término de gracia por desembolso ["v" + dias gracia (av)]',
                                              'periodo de gracia por Reprog inicio',
                                              'periodo de gracia por Reprog Término',
-                                             'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:136])
+                                             'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:largo_fin])
     
 anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
@@ -1683,7 +1689,7 @@ else:
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados procesado 01.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados procesado 012.xlsx'
 if generar_excels == True:
     
     try:

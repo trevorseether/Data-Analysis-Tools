@@ -42,21 +42,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - ENERO 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 0124.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 01 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 29 02 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Febrero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -65,11 +65,11 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-01-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Enero 2024'
+fecha_corte     = '2024-02-29' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Febrero 2024'
 ########################################################
 
-# Códigos de los productos
+#%% Códigos de los productos
 prod43_mype = [15,16,17,18,19,             '15','16','17','18','19',
                21,22,23,24,25,26,27,28,29, '21','22','23','24','25','26','27','28','29',
                95,96,97,98,99,             '95','96','97','98','99']
@@ -1016,6 +1016,8 @@ df_resultado_2 = df_resultado_2.merge(tabla_resumen[['socio mype','tipo mype']],
 
 df_resultado_2['tipo mype'] = df_resultado_2['tipo mype'].fillna('no es mype')
 
+x = df_resultado_2.columns
+
 #%%% asignación mype
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].astype(float)
 
@@ -1487,8 +1489,10 @@ def modificacion_dias_suspenso(row):
 df_resultado_2['dias int suspenso 2'] = df_resultado_2.apply(modificacion_dias_suspenso, 
                                                              axis = 1)
 df_resultado_2['dias int suspenso'] = df_resultado_2['dias int suspenso 2']
-df_resultado_2.drop(['dias int suspenso 2'], axis = 1, inplace = True)
-    
+df_resultado_2.drop(['dias int suspenso 2'], 
+                    axis    = 1,
+                    inplace = True)
+
 #%% INTERESES EN SUSPENSO
 'intereses en suspenso'
 def int_suspenso(df_resultado_2):
@@ -1497,21 +1501,29 @@ def int_suspenso(df_resultado_2):
 
 df_resultado_2['intereses en suspenso'] = df_resultado_2.apply(int_suspenso, axis=1)
 
-df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Interes \nSuspenso Total']
+df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Interes Suspenso Nuevo']
 
 df_resultado_2['''Intereses en Suspenso 41/'''].sum()
 
+x = df_resultado_2.columns
 #%% REASIGNAMOS DEVENGADOS Y SUSPENSO DEL FINCORE AL ANEXO 06
-df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Interes\nDevengado Total'].round(2)
 
-df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Intereses en Suspenso 41/'].round(2)
+col_devengado = 'Interes Devengado Nuevo'
+col_suspenso  = 'Interes Suspenso Nuevo'
+
+# 'Interes\nDevengado Total'
+# 'Interes \nSuspenso Total'
+
+df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2[col_devengado].round(2)
+
+df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2[col_suspenso].round(2)
 
 #%% antes de asignar devengados, vamos a revisar unos casitos
 fecha_corte_datetime = pd.Timestamp(fecha_corte[0:8] + '01')
 
 df_resultado_2['Fecha de Desembolso 21/'] = pd.to_datetime(df_resultado_2['Fecha de Desembolso 21/'])
 
-inv = df_resultado_2[(df_resultado_2['Interes\nDevengado Total']          == 0) &
+inv = df_resultado_2[(df_resultado_2['Rendimiento\nDevengado 40/']        == 0) &
                      (df_resultado_2['Intereses en Suspenso 41/']         == 0) &
                      (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) &
                      (df_resultado_2['Número de Cuotas Pagadas 45/']      == 0) &
@@ -1529,12 +1541,12 @@ def dev_0_vigente(df_resultado_2):
         return df_resultado_2['Capital Vigente 26/']* (\
         (((1+(df_resultado_2['Tasa Diaria']/100))**float(max((fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days, 0))))-1)
     else:
-        return df_resultado_2['Interes\nDevengado Total']
+        return df_resultado_2[col_devengado]
     
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_vigente, axis = 1)
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
 
-print(df_resultado_2['Interes\nDevengado Total'].sum())
+print(df_resultado_2[col_devengado].sum())
 print(df_resultado_2['Rendimiento\nDevengado 40/'].sum())
 
 def dev_0_ref(df_resultado_2):
@@ -1547,14 +1559,14 @@ def dev_0_ref(df_resultado_2):
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_ref, axis= 1)
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
 
-print(df_resultado_2['Interes\nDevengado Total'].sum())
+print(df_resultado_2[col_devengado].sum())
 print(df_resultado_2['Rendimiento\nDevengado 40/'].sum())
 
-print(df_resultado_2[df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0])
+print(df_resultado_2[df_resultado_2[col_devengado] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0])
 print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
 print('si sale el mismo número todo okey')
 
-if (df_resultado_2[(df_resultado_2['Interes\nDevengado Total'] != df_resultado_2['Rendimiento\nDevengado 40/']) & \
+if (df_resultado_2[(df_resultado_2[col_devengado] != df_resultado_2['Rendimiento\nDevengado 40/']) & \
                 (df_resultado_2['Fecha de Desembolso 21/'] != pd.Timestamp(fecha_corte))].shape[0]) != inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0]:
     print(Back.RED + 'investigar, son casos en los que no se han aplicado devengados (los desembolsados )')
     
@@ -1562,9 +1574,8 @@ if (df_resultado_2[(df_resultado_2['Interes\nDevengado Total'] != df_resultado_2
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
 #necesario para poder calcular la cartera neta = 
 #Saldo de colocaciones (créditos directos) 24/ - Ingresos Diferidos 42/
-'algoritmo que nos tiene que explicar Jenny'
 
-'de momento no se va a poder programar, no tenemos info, Jenny lo va a realizar, y tendremos que volver a procesar el archivo'
+'de momento no se va a poder programar, no tenemos info, el contador general lo va a realizar, y tendremos que volver a procesar el archivo'
 #%% CARTERA NETA
 'AHORA QUE YA TENEMOS LOS INGRESOS DIFERIDOS'
 #calculamos la cartera neta
@@ -1926,10 +1937,8 @@ Fincore''',
 'Ingresos Diferidos 1',#PINTAR DE ROJO
 'Días de Diferido 2',  #PINTAR DE ROJO
 'Ingresos Diferidos 2',#PINTAR DE ROJO
-'''Interes
-Devengado Total''', #PINTAR DE COLOR VERDE
-'''Interes 
-Suspenso Total''', #PINTAR DE COLOR VERDE
+col_devengado, #PINTAR DE COLOR VERDE
+col_suspenso, #PINTAR DE COLOR VERDE
 'Nombre Negocio',
 'Domicilio Negocio',
 'Distrito Negocio',
@@ -1938,6 +1947,11 @@ Suspenso Total''', #PINTAR DE COLOR VERDE
 'Funcionario Origuinador',
 'Funcionario Actual',
 'Fecha Desembolso TXT',
+'Saldo Capital Real',
+'Interes Capital Real',
+'Fecha Termino \nPeriodo Gracia',
+'Flag Termino Periodo Gracia',
+'Monto Desembolso\nSoles Fijo',
 '9/MDREPRP/ Modalidad de reprogramación']
 
 anexo06_casi = df_resultado_2[columnas_casi_final]
@@ -1986,7 +2000,7 @@ ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 MAYO'
 nro_creditos = pd.read_excel(ubicacion + '\\' + 'dashboard de experian.xlsx', 
                              dtype=({'NUMERO DOCUMENTO': str})) #leemos el archivo
 
-nro_creditos['ENTIDADES ACREEDORAS REGULADAS'] = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'].fillna(0)
+nro_creditos['ENTIDADES ACREEDORAS REGULADAS']    = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'].fillna(0)
 nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'] = nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'].fillna(0)
 
 nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'] + \
@@ -2012,7 +2026,7 @@ nro_creditos['TIPO DOC TXT'] = nro_creditos.apply(tipo_documento_para_merge, axi
 print('nro filas por investigar: ', str((nro_creditos[nro_creditos['TIPO DOC TXT'] == 'investigar']).shape[0]))
 
 #cambiando el nombre
-nro_creditos = nro_creditos.rename(columns={"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
+nro_creditos = nro_creditos.rename(columns = {"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
 
 #%%% MERGE
 #MERGE CON EL ANEXO06
@@ -2037,9 +2051,9 @@ anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].str.
 
 #MERGE
 ya_casi = anexo06_casi.merge(merge_nro_creditos, 
-                             left_on=['documento rellenado anx06', 'Tipo de Documento 9/'], 
-                             right_on=['documento rellenado', 'TIPO DOC TXT']
-                             ,how='left')
+                             left_on  = ['documento rellenado anx06', 'Tipo de Documento 9/'], 
+                             right_on = ['documento rellenado',       'TIPO DOC TXT']
+                             ,how     = 'left')
 
 anexo06_casi[['documento rellenado anx06',
               'Tipo de Documento 9/']]
@@ -2282,10 +2296,8 @@ Fincore''',
 # '''Ingresos Diferidos 1''',
 # '''Días de Diferido 2''',
 # '''Ingresos Diferidos 2''',
-'''Interes
-Devengado Total''',
-'''Interes 
-Suspenso Total''',
+col_devengado,
+col_suspenso,
 '''Nombre Negocio''',
 '''Domicilio Negocio''',
 '''Distrito Negocio''',
@@ -2294,6 +2306,11 @@ Suspenso Total''',
 '''Funcionario Origuinador''',
 '''Funcionario Actual''',
 '''Fecha Desembolso TXT''',
+'Saldo Capital Real',
+'Interes Capital Real',
+'Fecha Termino \nPeriodo Gracia',
+'Flag Termino Periodo Gracia',
+'Monto Desembolso\nSoles Fijo',
 '''9/MDREPRP/ Modalidad de reprogramación''',
 '''TIPO DE PRODUCTO TXT'''
 ]
@@ -2352,7 +2369,7 @@ anexo06_casi[columna_funcionario] = anexo06_casi.apply(admin_reasignacion, axis 
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
-nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v04.xlsx"
+nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v02.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -2622,13 +2639,7 @@ print('diferencia:  '+ str(round(diferencia_cons,2)))
 calculo_que_pidio_enrique = suma_constituidas / (df_diferidos['Capital Vencido 29/'].sum() + df_diferidos['Capital en Cobranza Judicial 30/'].sum())
 print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 
-#%% por si acaso volvemos a asignar los devengados, diferidos, en suspenso, provisiones y los redondeamos
-
-df_diferidos['Interes\nDevengado Total'] = df_diferidos['Interes\nDevengado Total'].round(2)
-
-df_diferidos['Interes \nSuspenso Total'] = df_diferidos['Interes \nSuspenso Total'].round(2)
-
-df_diferidos['Intereses en Suspenso 41/'] = df_diferidos['Interes \nSuspenso Total']
+#%% redondeamos provisiones consitutidas y provisiones requeridas
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
