@@ -55,11 +55,11 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\diferencias nuevo saldo cartera'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Feb24 - comparar saldos y devengados.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
@@ -72,8 +72,8 @@ ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRA
 nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - ENERO 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
-# filas a omitir del anexo anterior ########################################################
-skip_rows_actual   = 1
+# filas a omitir del anexo actual ##########################################################
+skip_rows_actual   = 0
 ############################################################################################
 
 # filas a omitir del anexo anterior ########################################################
@@ -130,6 +130,14 @@ menos_bruto = menos_bruto.drop_duplicates(subset = 'Nro Prestamo \nFincore') #po
 print(menos_bruto.shape[0])
 print('si sale menos en el segundo es porque hubo duplicados')
 
+#%% asignación del saldo castigado con capitalización de intereses en el saldo capital castigado
+    
+if menos_bruto['Saldos de Créditos Castigados 38/'].sum() < menos_bruto['Saldo Credito Castigado Con Capitalizacion'].sum():
+    menos_bruto['Saldos de Créditos Castigados 38/'] = menos_bruto['Saldo Credito Castigado Con Capitalizacion']
+    print('se reasignó el saldo de créditos castigados')
+else:
+    print('investigar')
+    
 #%% AJUSTE DE PRODUCTO
 # hay dos nuevos productos, el 26 y el 27
 # el 26 es emprendimiento mujer (microempresa)
@@ -822,7 +830,7 @@ def cuenta_contable_castigados(ordenado):
 ordenado['Cuenta Contable Crédito Castigado 39/'] = ordenado.apply(cuenta_contable_castigados, axis=1)
 
 print(ordenado['Cuenta Contable Crédito Castigado 39/'].unique())
-print('si sale 8113020000 entonces todo bien')
+print('''si sale ['8113020000' None] entonces todo bien''')
 print(ordenado[ordenado['Cuenta Contable Crédito Castigado 39/'] == '8113020000'].shape[0])
 print(ordenado[ordenado['Saldos de Créditos Castigados 38/'] > 0].shape[0])
 print('debe salir el mismo número, sino hay que investigar, porque habrían castigados sin cuenta contable o viceversa')
@@ -1034,16 +1042,16 @@ print(round(suma_saldo_cartera,2)  == round(suma_otros,2))
 
 #%% las 6 columnas azules de las reprogramaciones
 #NUEVA PARTE IMPORTANTE DE ESTE REPORTE, AÑADIREMOS UNAS 6 COLUMNAS IMPORTANTES
-ordenado['FEC_ULT_REPROG']= ''
-ordenado['PLAZO_REPR']= ''
-ordenado['TIPO_REPRO']= ''
-ordenado['PLAZO REPRO ACUMULADO']= ''
-ordenado['NRO CUOTAS REPROG CANCELADAS']= ''
-ordenado['NRO REPROG']= ''
+ordenado['FEC_ULT_REPROG'] = ''
+ordenado['PLAZO_REPR']     = ''
+ordenado['TIPO_REPRO']     = ''
+ordenado['PLAZO REPRO ACUMULADO']        = ''
+ordenado['NRO CUOTAS REPROG CANCELADAS'] = ''
+ordenado['NRO REPROG']     = ''
 
 # CUIDADO AL AÑADIR COLUMNAS
 columnas = list(ordenado.columns)
-largo    = len(columnas) - 6
+largo_6  = len(columnas) - 6
 
 anx06_ordenado = ordenado[columnas[0:57]+['FEC_ULT_REPROG',
                                           'PLAZO_REPR',
@@ -1051,7 +1059,7 @@ anx06_ordenado = ordenado[columnas[0:57]+['FEC_ULT_REPROG',
                                           'PLAZO REPRO ACUMULADO',
                                           'NRO CUOTAS REPROG CANCELADAS',
                                           'NRO REPROG'] + \
-                          columnas[57:largo]]
+                          columnas[57:largo_6]]
     
 #%% ahora a sacar datos del mes pasado
 #los 3 primeros
@@ -1749,9 +1757,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240131' #mes actual
-fecha_corte_menos_1 = '20231231' #mes anterior
-fecha_corte_menos_2 = '20231130' #mes anterior del anterior
+fecha_corte_actual  = '20240229' #mes actual
+fecha_corte_menos_1 = '20240131' #mes anterior
+fecha_corte_menos_2 = '20231231' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1807,6 +1815,7 @@ para_reporte = no_aparecen[['Registro 1/', 'Apellidos y Nombres / Razón Social 
                             'Nro Prestamo \nFincore', 'Saldo de colocaciones (créditos directos) 24/']]
 
 print(para_reporte)
+print('este dataframe debe salir vacío, sino hay que reportarlo a Cesar, son créditos que han aparecido')
 
 #%%
 # =========================================================================== #
@@ -1829,13 +1838,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados DICIEMBRE 2023 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2023 diciembre\\prod'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados ENERO 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024 enero\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Ene-24'
-mes_anterior_txt = 'Dic-23'
+mes_actual_txt   = 'Feb-24'
+mes_anterior_txt = 'Ene-24'
 # =============================================================================
 #%% LECTURA
 

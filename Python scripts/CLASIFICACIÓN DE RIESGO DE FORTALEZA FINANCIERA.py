@@ -12,6 +12,10 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
+# =============================================================================
+#                           20 MAYORES DEUDORES
+# =============================================================================
+
 #%%
 mes = '20230228'
 
@@ -234,4 +238,113 @@ df_saldo_repros = df_saldo_repros.fillna(0)
 
 print(repro['Saldo de colocaciones (créditos directos) 24/'].sum())
 
+
+#%%
+# =============================================================================
+#                 CASTIGOS DEL MES
+# =============================================================================
+import pandas as pd
+
+# actual
+cast_archivo = 'ANEXO Nº 6 Septiembre 2022.xlsx'
+cast_ubi     = 'R:\\REPORTES SUCAVE SBS\\SEPTIEMBRE 2022'
+
+CORTE        = 20210131
+
+filas_skip   = 4
+
+col_castigado = 'Saldos de Créditos Castigados 38/ '
+
+# anterior
+
+anterior      = 'ANEXO Nº 6  Agosto 2022.xlsx'
+ubi_anterior  = 'R:\\REPORTES SUCAVE SBS\\AGOSTO 2022'
+skip_anterior = 4
+
+col_indentificador_cred = 'Nro Prestamo Fincore' #'Nro Prestamo \nFincore' 'Numero de Crédito 18/'
+
+#%% CASTIGADOS
+castigados = pd.read_excel(cast_ubi + '\\' + cast_archivo,
+                           skiprows = filas_skip,
+                           dtype =  {'Código Socio 7/'        : str,
+                                     'Nro Prestamo \nFincore' : str,
+                                     col_indentificador_cred  : str,
+                                     'Tipo de Crédito 19/'    : str}
+                           )
+
+castigados[col_indentificador_cred] = castigados[col_indentificador_cred].str.strip()
+castigados = castigados[castigados[col_indentificador_cred] != '']
+print(castigados[castigados[col_indentificador_cred] == ''][col_castigado].sum())
+print('debe ser cero')
+castigados[col_indentificador_cred] = castigados[col_indentificador_cred].str.strip()
+    
+#%% ANTERIOR
+anterior = pd.read_excel(ubi_anterior + '\\' + anterior,
+                         skiprows = skip_anterior,
+                         dtype =  {'Código Socio 7/'        : str,
+                                   'Nro Prestamo \nFincore' : str,
+                                   col_indentificador_cred  : str,
+                                   'Tipo de Crédito 19/'    : str},
+                         sheet_name = 'Rpt_DeudoresSBS'
+                         )
+
+anterior[col_indentificador_cred] = anterior[col_indentificador_cred].str.strip()
+
+#%%
+print(castigados[col_indentificador_cred])
+print(anterior[col_indentificador_cred])
+
+#%%
+def tipo_cred_txt(df):
+    if df['Tipo de Crédito 19/'] == '06':
+        return 'Crédito Corporativo'
+    if df['Tipo de Crédito 19/'] == '07':
+        return 'Grande Empresa'
+    if df['Tipo de Crédito 19/'] == '08':
+        return 'Mediana Empresa'
+    if df['Tipo de Crédito 19/'] == '09':
+        return 'Pequeña Empresa'
+    if df['Tipo de Crédito 19/'] == '10':
+        return 'Micro Empresa'
+    if df['Tipo de Crédito 19/'] == '11':
+        return 'Consumo Revolvente'
+    if df['Tipo de Crédito 19/'] == '12':
+        return 'Consumo No Revolvente'
+    if df['Tipo de Crédito 19/'] == '13':
+        return 'Hipotecario'
+    # if df['Tipo de Crédito 19/'] == '20':
+    #     return 'COOPAC'
+    else:
+        return ''
+castigados['TipoCredTXT'] = castigados.apply(tipo_cred_txt, axis = 1)
+
+#%% FILTRADO, CASTIGADOS DEL MES
+cred_castigados_anteriores = anterior[anterior['Saldos de Créditos Castigados 38/ '] > 0]
+castigados_actuales = castigados[~castigados[col_indentificador_cred].isin(cred_castigados_anteriores[col_indentificador_cred])]
+castigados_actuales = castigados_actuales[castigados_actuales['Saldos de Créditos Castigados 38/ '] > 0]
+
+castigados = castigados_actuales.copy()
+
+#%% pivots
+pivot_castigado = castigados.pivot_table(values  = col_castigado,
+                                         columns = 'TipoCredTXT',
+                                         aggfunc = 'sum')
+pivot_castigado['fecha_corte'] = CORTE
+
+#%%
+cols = [
+        'corporativo', 
+        'grande empresa',
+        'Mediana Empresa', 
+        'Pequeña Empresa',
+        'Micro Empresa',
+        'Consumo No Revolvente',
+        'Hipotecario',
+        'fecha_corte'
+        ]
+
+df_vacio = pd.DataFrame(columns = cols)
+
+pivot_cas = pd.concat([df_vacio, pivot_castigado], ignore_index = True)
+pivot_cas = pivot_cas.fillna(0)
 

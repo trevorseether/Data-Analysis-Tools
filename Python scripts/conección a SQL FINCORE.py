@@ -11,30 +11,14 @@ import pandas as pd
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
-#%%
-
 server      = datos['DATOS'][0]
 username    = datos['DATOS'][2]
 password    = datos['DATOS'][3]
 
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
-
 conn = pyodbc.connect(conn_str)
 
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
-
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
 query = '''
-
--- p.codcategoria = 351 -> nuevo
--- p.codcategoria = 352 -> ampliacion
--- p.codestado = 563 -> anulado
--- p.codestado = 341 -> pendiente
--- p.codestado = 342 -> cancelado
--- tc.CODTIPOCREDITO -> ( 3=Cons.Ordinario / 1=Med.Empresa / 2=MicroEmp. / 9=Peq.Empresa)
-
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
@@ -113,7 +97,8 @@ SELECT
 		END AS 'ZONAS',
 	pla.descripcion as 'Planilla', 
 	gpo.descripcion as 'func_pla',
-	CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as 'direcc_socio', 
+	CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as 'direcc_socio',
+	sc.ReferenciaDomicilio,
 	d.nombre as 'distrito', 
 	pv.nombre as 'provincia', 
 	dp.nombre as 'departamento', 
@@ -136,7 +121,8 @@ SELECT
 	s.FechaNacimiento, 
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
-	tm4.descripcion as 'EstadoSocio'
+	tm4.descripcion as 'EstadoSocio',
+	p.FechaCastigo
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo as p
 
@@ -160,14 +146,19 @@ inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
 where 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20190101' AND '20231201' 
-and s.codigosocio>0  and p.codestado = 341
---AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
+
+	p.FechaCastigo is not null
+
+
 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
 order by socio asc, p.fechadesembolso desc
-
 '''
 
 df_fincore = pd.read_sql_query(query, conn)
 del conn
+
+#%%
+df_fincore.to_excel('castigados.xlsx',
+                    index = False)
+

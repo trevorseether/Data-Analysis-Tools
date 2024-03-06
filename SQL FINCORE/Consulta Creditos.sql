@@ -87,7 +87,8 @@ SELECT
 	sc.ReferenciaDomicilio,
 	d.nombre as 'distrito', 
 	pv.nombre as 'provincia', 
-	dp.nombre as 'departamento', 
+	dp.nombre as 'departamento',
+	sc.ReferenciaDomicilio,
 	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
 	tm2.descripcion as 'est_civil', 
 	pais.descripcion as 'pais', 
@@ -130,13 +131,10 @@ inner join usuario as u on p.CodUsuario = u.CodUsuario
 inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
 --left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
-where 
+WHERE
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20230501' AND '20230731' 
-and s.codigosocio>0  and p.codestado = 342
+AND s.codigosocio>0  and p.codestado = 342
 AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
-order by socio asc, p.fechadesembolso desc
-
-
-
+ORDER BY socio ASC, p.fechadesembolso DESC

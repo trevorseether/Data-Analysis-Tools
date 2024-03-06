@@ -17,12 +17,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240229' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20240331' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_02_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_03]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_03_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -540,7 +540,7 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
-#%% AÑADIENDO 
+#%% AÑADIENDO A LAS TABLAS DE DATOS CONCATENADOS
 if CARGA_SQL_SERVER == True:
     
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
