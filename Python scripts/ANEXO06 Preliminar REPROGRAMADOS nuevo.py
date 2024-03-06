@@ -463,14 +463,16 @@ if generar_excels == True:
     para_enviar.to_excel(ruta,
                          index=False)
 
-#%% indicaciones
-# el código que envíe va en partida registral
-# EL MONTO QUE ENVÍEN IRÁ EN GARANTÍA AUTOLIQUIDABLE
-# puede que esté en dólares, hay que pasarlo a soles
-# esto se añade después de generar este archivo, para generar el anexo06 final, no este
+#%% INDICACIONES
+# =============================================================================
+# # el código que envíe va en partida registral
+# # EL MONTO QUE ENVÍEN IRÁ EN 'Saldo de Garantías Autoliquidables 35/'
+# # puede que esté en dólares, hay que pasarlo a soles
+# # esto se añade después de generar este archivo, para generar el anexo06 final, no en el preliminar
+# #%% AJUSTE SALDO SIN CAPITALIZAR
+# =============================================================================
 
-#%% AJUSTE SALDO SIN CAPITALIZAR
-#HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
+#%%HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'].round(2)
