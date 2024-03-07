@@ -8,7 +8,9 @@
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
-	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	IIF(S.CodSexo = 4, 'FEMENINO',
+		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
@@ -109,6 +111,7 @@ SELECT
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio'
+
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo as p
 
