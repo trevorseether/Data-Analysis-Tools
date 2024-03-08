@@ -50,7 +50,7 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = False #booleano True o False
+generar_excels = True #booleano True o False
 
 #%% ARCHIVOS
 
@@ -137,7 +137,32 @@ if menos_bruto['Saldos de Créditos Castigados 38/'].sum() < menos_bruto['Saldo 
     print('se reasignó el saldo de créditos castigados')
 else:
     print('investigar')
-    
+
+#%% cartera vendida
+menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
+
+eliminar = ['00000681',
+            '00025314',
+            '00051147',
+            '00021245',
+            '00019565',
+            '00019911',
+            '00059920',
+            '00052890',
+            '00020153',
+            '00055472',
+            '00061987',
+            '00010827',
+            '00021016',
+            '00023215',
+            '00014819',
+            '00058140',
+            '00057592',
+            '00060249',
+            '00016572'
+            ]
+menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
+
 #%% AJUSTE DE PRODUCTO
 # hay dos nuevos productos, el 26 y el 27
 # el 26 es emprendimiento mujer (microempresa)
@@ -1689,7 +1714,7 @@ else:
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
 
-nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados procesado 012.xlsx'
+nombre = f'Rpt_DeudoresSBS Anexo06 - {fecha_mes} - campos ampliados procesado 01.xlsx'
 if generar_excels == True:
     
     try:
@@ -1841,8 +1866,8 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS ACTUALES (si ya no tenemos abierto el dataframe reprogramados)=
-# repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados OCTUBRE 2023 no incluye castigados.xlsx'
-# ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS\\2023 OCTUBRE'
+# repro_actual   = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados NUEVO.xlsx'
+# ubi_actual     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\producto verdadero'
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
@@ -1967,7 +1992,7 @@ actual_tipo_credito = actual.pivot_table(#columns = ,
 actual_tipo_credito = actual_tipo_credito[[NUEVO_NOMBRE_SALDO,
                                            NUEVO_NOMBRE_FINCORE]]
 
-actual_tipo_credito = actual_tipo_credito.loc[credito_lista]
+actual_tipo_credito = actual_tipo_credito.reindex(credito_lista).loc[credito_lista].fillna(0)
 # =============================================================================
 actual_plazo = actual.pivot_table(#columns = ,
                                   values  = [NUEVO_NOMBRE_SALDO,
@@ -1981,7 +2006,7 @@ actual_plazo = actual.pivot_table(#columns = ,
 actual_plazo = actual_plazo[[NUEVO_NOMBRE_SALDO,
                              NUEVO_NOMBRE_FINCORE]]
 
-actual_plazo = actual_plazo.loc[plazo_lista]
+actual_plazo = actual_plazo.reindex(plazo_lista).loc[plazo_lista].fillna(0)
 # =============================================================================
 actual_tipo_repro = actual.pivot_table(#columns = ,
                                        values  = [NUEVO_NOMBRE_SALDO,
@@ -1995,7 +2020,8 @@ actual_tipo_repro = actual.pivot_table(#columns = ,
 actual_tipo_repro = actual_tipo_repro[[NUEVO_NOMBRE_SALDO,
                                        NUEVO_NOMBRE_FINCORE]]
 
-actual_tipo_repro = actual_tipo_repro.loc[repro_lista]
+actual_tipo_repro = actual_tipo_repro.reindex(repro_lista).loc[repro_lista].fillna(0)
+
 #%% PIVOT TABLES TABLAS ANTERIORES
 anterior_tipo_credito = anterior.pivot_table(#columns = ,
                                              values  = [NUEVO_NOMBRE_SALDO,
@@ -2008,7 +2034,7 @@ anterior_tipo_credito = anterior.pivot_table(#columns = ,
                                              )
 anterior_tipo_credito = anterior_tipo_credito[[NUEVO_NOMBRE_SALDO,
                                                NUEVO_NOMBRE_FINCORE]]
-anterior_tipo_credito = anterior_tipo_credito.loc[credito_lista]
+anterior_tipo_credito = anterior_tipo_credito.reindex(credito_lista).loc[credito_lista].fillna(0)
 # =============================================================================
 anterior_plazo = anterior.pivot_table(#columns = ,
                                       values  = [NUEVO_NOMBRE_SALDO,
@@ -2021,7 +2047,7 @@ anterior_plazo = anterior.pivot_table(#columns = ,
                                       )
 anterior_plazo = anterior_plazo[[NUEVO_NOMBRE_SALDO,
                                  NUEVO_NOMBRE_FINCORE]]
-anterior_plazo = anterior_plazo.loc[plazo_lista]
+anterior_plazo = anterior_plazo.reindex(plazo_lista).loc[plazo_lista].fillna(0)
 # =============================================================================
 anterior_tipo_repro = anterior.pivot_table(#columns = ,
                                            values  = [NUEVO_NOMBRE_SALDO,
@@ -2034,7 +2060,7 @@ anterior_tipo_repro = anterior.pivot_table(#columns = ,
                                            )
 anterior_tipo_repro = anterior_tipo_repro[[NUEVO_NOMBRE_SALDO,
                                            NUEVO_NOMBRE_FINCORE]]
-anterior_tipo_repro = anterior_tipo_repro.loc[repro_lista]
+anterior_tipo_repro = anterior_tipo_repro.reindex(repro_lista).loc[repro_lista].fillna(0)
 
 #%% resta de la variación en los 
 # =============================================================================
@@ -2133,9 +2159,12 @@ dif_repro.to_excel(writer,
                    startcol   = 8, 
                    index      = True)
 
-
 writer.save()
 writer.close()
 
+#%%
+ubicacion_actual = os.getcwd()
 
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
 

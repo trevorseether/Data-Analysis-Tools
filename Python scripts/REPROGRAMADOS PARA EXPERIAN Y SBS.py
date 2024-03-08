@@ -15,11 +15,11 @@ import os
 
 #%% INSUMOS
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados ni vendidos.xlsx'
 ###############################################################################
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\prod'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024 febrero'
 ###############################################################################
 
 # mes y año ###################################################################
@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024 enero'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024 febrero'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados ENERO 2024 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados ni vendidos.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202400152_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
+calificacion = '20523941047_70369063_PE202400306_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'enero'
+mes = 'febrero'
 año = 2024
 ###############################################################################
 
@@ -257,3 +257,8 @@ df.to_excel(nombre,
             startcol = 0,
             sheet_name=str(mesesito.upper() + " " + str(añito)))
 
+#%% ubicación actual
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)

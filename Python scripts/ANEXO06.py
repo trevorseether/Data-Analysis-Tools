@@ -42,11 +42,11 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO\\FINAL AHORA SÍ')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 0124.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 055.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
@@ -2404,22 +2404,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Enero 2024'  #se pone el corte actual
+fecha_corte = 'Febrero 2024'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20231231" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20240131" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados v05.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v02.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO\\enviado por contabilidad'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO\\FINAL AHORA SÍ'
 ##################################################################
 
 lista_100_provisionales = ['00094227', '00098454', '00092291', '00098725', '00082582', '00089822', '00092751', 
@@ -2453,7 +2453,10 @@ lista_100_provisionales = ['00094227', '00098454', '00092291', '00098725', '0008
 #%% importación de módulos
 import os
 import pandas as pd
+#%%
 
+# ubicados = df_diferidos[df_diferidos['Nro Prestamo \nFincore'].isin(lista_100_provisionales)]
+# ubicados = ubicados[ubicados['Saldo de colocaciones (créditos directos) 24/'] > 0]
 #%% IMPORTACIÓN DE ARCHIVOS
 #leyendo el excel que nos envía CONTABILIDAD
 os.chdir(directorio_final)
@@ -2489,6 +2492,7 @@ df_diferidos.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/',
 # df_diferidos['Ingresos Diferidos 42/']  = df_diferidos['Ingresos Diferidos 2']
 df_diferidos['Ingresos Diferidos 42/'] = df_diferidos['Ingresos Diferidos 42/'].round(2)
 print('no debe salir cero: ' + str(df_diferidos['Ingresos Diferidos 42/'].sum()))
+
 
 #%% CARTERA NETA FINAL
 
@@ -2563,13 +2567,15 @@ provisiones_mes_pasado = pd.read_sql_query(query, conn)
 
 mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 
+df_diferidos['Provisiones Requeridas 36/'].sum()
+
 #%%
 # =============================================================================
 # CÁLCULO DE PROVISIONES CONSTITUIDAS
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.5283 #0.607 #0.5615 #0.60155
+tasa_provision = 0.575 #0.607 #0.5615 #0.60155
 # ===========================
 
 # cálculo de las provisiones constituidas 37/
@@ -2598,6 +2604,13 @@ print(df_diferidos['Provisiones Constituidas 37/'].sum().round(2))
 print('')
 print('Diferencia respecto al mes pasado:')
 print(round((df_diferidos['Provisiones Constituidas 37/'].sum().round(2) - mes_pasado),2))
+
+#%%
+print('Morosidad:')
+cartera  = df_diferidos['Saldo de colocaciones (créditos directos) 24/'].sum()
+vencido  = df_diferidos['Capital Vencido 29/'].sum()
+judicial = df_diferidos['Capital en Cobranza Judicial 30/'].sum()
+print((vencido + judicial )/cartera)
 
 #%%% VERIFICACIÓN DE RESULTADOS 1
 'VERIFICACIÓN'
@@ -2687,18 +2700,16 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'ENERO 2024'
+fecha = 'FEBRERO 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20231231' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20240131' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
 import pyodbc
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
-
-
 
 query = f'''
 declare @fechacorte as datetime
@@ -2720,6 +2731,7 @@ SELECT
 	Rendimiento_Devengado40               AS 'INTERESES DEVENGADOS',
 	InteresesenSuspenso41                 AS 'INTERESES EN SUSPENSO',
 	IngresosDiferidos42                   AS 'INTERESES DIFERIDOS',
+    Reprogramados52                       AS 'SALDO REPROGRAMADO',
 	CASE
 		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
 		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
@@ -2749,7 +2761,8 @@ pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                                  'PROVISIONES REQUERIDAS',
                                                  'INTERESES DEVENGADOS',
                                                  'INTERESES EN SUSPENSO',
-                                                 'INTERESES DIFERIDOS'], 
+                                                 'INTERESES DIFERIDOS',
+                                                 'SALDO REPROGRAMADO'], 
                                        margins      = True, 
                                        margins_name ='Total', #para sacar las sumatorias totales                                      
                                        aggfunc      = 'sum'
@@ -2766,7 +2779,8 @@ ordenamiento_columnas = ['SALDO CARTERA',
                          'PROVISIONES REQUERIDAS',
                          'INTERESES DEVENGADOS',
                          'INTERESES EN SUSPENSO',
-                         'INTERESES DIFERIDOS']
+                         'INTERESES DIFERIDOS',
+                         'SALDO REPROGRAMADO']
 
 #%% filtración de columnas
 pivot_mes_pasado = pivot_mes_pasado[ordenamiento_columnas]
@@ -2783,7 +2797,8 @@ datos_actuales = df_diferidos[['Saldo de colocaciones (créditos directos) 24/',
                                'Provisiones Requeridas 36/',
                                'Rendimiento\nDevengado 40/', 
                                'Intereses en Suspenso 41/', 
-                               'Ingresos Diferidos 42/']]
+                               'Ingresos Diferidos 42/',
+                               'Saldo Capital de Créditos Reprogramados 52/']]
 
 pivot_mes_actual = datos_actuales.pivot_table(index=[COLUMNA_COMPARACION],
                                        #columns=,
@@ -2795,7 +2810,8 @@ pivot_mes_actual = datos_actuales.pivot_table(index=[COLUMNA_COMPARACION],
                                                'Provisiones Requeridas 36/',
                                                'Rendimiento\nDevengado 40/', 
                                                'Intereses en Suspenso 41/', 
-                                               'Ingresos Diferidos 42/'], 
+                                               'Ingresos Diferidos 42/',
+                                               'Saldo Capital de Créditos Reprogramados 52/'], 
                                        margins      = True, 
                                        margins_name = 'Total', #para sacar las sumatorias totales                                      
                                        aggfunc      = 'sum'
@@ -2814,7 +2830,8 @@ pivot_mes_actual = pivot_mes_actual.rename(columns={#'Tipo de Crédito 19/'     
                                         'Provisiones Requeridas 36/'                    : 'PROVISIONES REQUERIDAS',
                                         'Rendimiento\nDevengado 40/'                    : 'INTERESES DEVENGADOS', 
                                         'Intereses en Suspenso 41/'                     : 'INTERESES EN SUSPENSO',
-                                        'Ingresos Diferidos 42/'                        : 'INTERESES DIFERIDOS'})
+                                        'Ingresos Diferidos 42/'                        : 'INTERESES DIFERIDOS',
+                                        'Saldo Capital de Créditos Reprogramados 52/'   : 'SALDO REPROGRAMADO'})
 
 pivot_mes_actual = pivot_mes_actual[ordenamiento_columnas]
 

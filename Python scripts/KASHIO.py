@@ -20,16 +20,16 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\06 03')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\07 03')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240306.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240307.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
-crear_archivo = False #True o False
+crear_archivo = True #True o False
 ######################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
@@ -107,8 +107,11 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAI.COM'    , '@HOTMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.CO'  , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM' , '@HOTMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM.PE'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMJM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMOM'   , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')    
- 
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')    
+
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
 def correccion(row):
@@ -160,6 +163,11 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
 
 kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
 
+#%%
+# kashio_sin_pyme = kashio_ampliado[kashio_ampliado['Unnamed: 10'] != 'PYME']
+# kashio_sin_pyme.to_excel('RECIBOS COOP SAN MIGUEL ' + str(ARCHIVO_HOY[29:37]) + ' no incluye PYME.xlsx',
+#                          index = False)
+
 #%% FILTRACIÓN DE PYMES
 try:
     kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
@@ -178,6 +186,7 @@ except KeyError:
 
 except KeyError as e:
     print("Error:", e)
+    
 
 #%% 
 valor1 = kashio_ampliado.shape[0]
