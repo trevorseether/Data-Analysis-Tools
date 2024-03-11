@@ -152,7 +152,7 @@ lima_df.to_excel(f'carpeta para sql\\DXP_LD_{lima_sheet}.xlsx', index = False)
 proseva_df.to_excel(f'carpeta para sql\\prosevas_{lima_sheet}.xlsx', index = False)
 
 #%% CARGA A SQL
-
+# CARGA DE DATOS DE LIMA
 if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
@@ -207,22 +207,23 @@ else:
     print('No se ha cargado a SQL SERVER')
 
 ###############################################################################
-
+# CARGA DE DATOS DE PROSEVAS
 if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
     df = proseva_df.copy()
+    tabla = tabla_PROSEVA
     df['FECHA DESEMBOLSO']  = df['FECHA DESEMBOLSO'].fillna(pd.Timestamp(fecha_corte))
     df['FECHA DE REVISION'] = df['FECHA DE REVISION'].fillna(pd.Timestamp(fecha_corte))
     df['MONTO PRESTAMO']    = df['MONTO PRESTAMO'].fillna(0)
     df = df.fillna('')
 
     # Limpiar/eliminar la tabla antes de insertar nuevos datos
-    cursor.execute(f"IF OBJECT_ID('{tabla_PROSEVA}') IS NOT NULL DROP TABLE {tabla_PROSEVA}")    
+    cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    
 
     # Generar la sentencia CREATE TABLE dinámicamente
-    create_table_query = f"CREATE TABLE {tabla_PROSEVA} ("
+    create_table_query = f"CREATE TABLE {tabla} ("
     for column_name, dtype in df.dtypes.items():
         sql_type = ''
         if dtype == 'int64':
@@ -246,7 +247,7 @@ if CARGA_SQL_SERVER == True:
     # Crear la lista de placeholders para los valores
     value_placeholders = ', '.join(['?' for _ in df.columns])
     # Crear la consulta de inserción con los nombres de columna y placeholders de valores
-    insert_query = f"INSERT INTO {tabla_PROSEVA} ({', '.join(column_names)}) VALUES ({value_placeholders})"
+    insert_query = f"INSERT INTO {tabla} ({', '.join(column_names)}) VALUES ({value_placeholders})"
 
     # Iterar sobre las filas del DataFrame e insertar en la base de datos
     for _, row in df.iterrows():
@@ -256,7 +257,7 @@ if CARGA_SQL_SERVER == True:
     cnxn.commit()
     cursor.close()
 
-    print(f'Se cargaron los datos a SQL SERVER {tabla_PROSEVA}')
+    print(f'Se cargaron los datos a SQL SERVER {tabla}')
 
 else:
     print('No se ha cargado a SQL SERVER')
@@ -275,14 +276,13 @@ fincore_df = pd.read_excel(io         = fincore,
 fincore_df['Fecha\nPréstamo'] = fincore_df['Fecha\nPréstamo'].apply(parse_dates)
 
 #%% CARGA DEL ARCHIVO DE FINCORE, DESTINADO A SER MYPE
-
 if CARGA_SQL_SERVER == True:
     
     cnxn   = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;') 
     cursor = cnxn.cursor()
     df     = fincore_df.copy()
     tabla  = tabla_fincore
-    df     = df.fillna(0)
+    df     = df.fillna(0) #por alguna razón, no permite subir el archivo cuando hay filas vacías
     df     = df.rename(columns = {'Fecha\nPréstamo': "Fecha_Préstamo"})
     
     # Limpiar/eliminar la tabla antes de insertar nuevos datos
@@ -328,5 +328,5 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
-#%%
+
 
