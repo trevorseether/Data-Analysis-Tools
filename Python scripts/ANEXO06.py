@@ -2415,11 +2415,11 @@ fechacorte_mes_pasado = "20240131" #  aqui cambiamos la fecha, se pone la del co
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v02.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v05.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO\\FINAL AHORA SÍ'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
 ##################################################################
 
 lista_100_provisionales = ['00094227', '00098454', '00092291', '00098725', '00082582', '00089822', '00092751', 
@@ -2575,7 +2575,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.60 #0.575 #0.607 #0.5615 #0.60155
 # ===========================
 
 # cálculo de las provisiones constituidas 37/

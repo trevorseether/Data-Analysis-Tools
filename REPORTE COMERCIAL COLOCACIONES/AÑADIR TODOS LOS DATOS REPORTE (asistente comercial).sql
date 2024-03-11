@@ -14,7 +14,7 @@ ADD [FECHA_CORTE] DATETIME NULL
 -----------------------------------------------------------
 
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20240131'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20240229'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
@@ -63,7 +63,7 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from reportes_diana..DXP_LD_24_01 as A
+from reportes_diana..DXP_LD_24_02 as A
 --where [ESTADO FINAL] = 'APROBADO'
 
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ from reportes_diana..DXP_LD_24_01 as A
 ----------------------------------------------------------------------------------------------------------------------------------
 
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20240131'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20240229'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 INSERT INTO reportes_diana..DIANA_REPORTE (
 [FECHA_DESEMBOLSO],----check
@@ -123,14 +123,14 @@ a.[FECHA DESEMBOLSO]-----correcto
 ,A.[PRODUCTO]
 ,@FECHACORTE
 
-from [reportes_diana].[PROSEVAS].[2024_01] as A
+from [reportes_diana].[PROSEVAS].[2024_02] as A
 --where [estado final] = 'APROBADO'
 
 --------------------------------------------------------------------
 --- CODIGO PARA AÑADIR LOS MYPE
 --- esto genera una ramificación de los reportes a partir de mayo del 2023
 DECLARE @FECHACORTE AS DATETIME
-SET @FECHACORTE = '20240131'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
+SET @FECHACORTE = '20240229'-------------------------------------------------------NO OLVIDAR PONER LA FECHA DEL MES
 
 INSERT INTO reportes_diana..DIANA_MYPE (
 	[FECHA_DESEMBOLSO],----check
@@ -179,8 +179,9 @@ SELECT
 	,@FECHACORTE
 
 from 
-	reportes_diana.MYPE.[2024_01] as A
+	reportes_diana.MYPE.[2024_02] as A
 WHERE 
 	Prooducto LIKE '%MULTIPRODUCTO%'
 	AND ([Tipo ] LIKE '%MICRO%'
 	OR [Tipo ] LIKE '%PEQUEÑA%')
+

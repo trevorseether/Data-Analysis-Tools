@@ -16,11 +16,11 @@ import pyodbc
 # import numpy as np
 
 #%%
-FECHA_SQL = '20231231'
+FECHA_SQL = '20240131' #se pone la del mes pasado
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024 enero\\productos')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ')
 
-anx06_final = 'Rpt_DeudoresSBS Anexo06 - ENERO 2024 - campos ampliados procesado 01.xlsx'
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v05.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
@@ -77,7 +77,7 @@ df = pd.read_excel(anx06_final,
                         'Cuenta Contable 25/'       : object,
                         'Tipo de Producto 43/'      : object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                        'Fecha de Vencimiento Actual del Crédito 49/': object,
+                        'Fecha de Vencimiento Actual del Crédito 49/'   : object,
                         'Nro Prestamo \nFincore'    : object},
                      skiprows = 2
                      )
@@ -123,9 +123,9 @@ df_filtrado = anx[anx['fincore'].isin(df_mes_pasado['Nro_Fincore'])]
 #%% UNIÓN ENTRE AMBAS TABLAS
 
 union = df_filtrado.merge(df_mes_pasado, 
-                          how='left', 
-                          left_on=['fincore'], 
-                          right_on=['Nro_Fincore'])
+                          how      = 'left', 
+                          left_on  = ['fincore'], 
+                          right_on = ['Nro_Fincore'])
 
 #%%% verificamos nombres diferentes de un mes a otro
 
@@ -191,4 +191,11 @@ dif_clasificacion = dif_clasificacion[['fincore',
 
 x = union[['Nro_Fincore','Clasificación del Deudor con Alineamiento 15/', 
            'Clasificación Alineamiento mes pasado', 'dif clasificacion']]
+
+#%%%
+print(nombres_diferentes)
+print(documento_diferente)
+print(nacimiento_diferente)
+print(dias_mora) #este sí es importante
+print(dif_clasificacion)
 

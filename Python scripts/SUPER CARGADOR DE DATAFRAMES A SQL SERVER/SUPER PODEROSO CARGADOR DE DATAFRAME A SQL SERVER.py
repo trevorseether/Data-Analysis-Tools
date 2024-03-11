@@ -21,8 +21,11 @@ data = {
     'Enero'   : [10, 20],
     'Febrero' : [15, 25],
     'Marzo'   : [12, 18],
-    'Otro'    : [5, 8]
+    'Otro'    : [5, 8],
+    'FECHA'   : ['1990-05-15', '1985-10-20']
        }
+data['FECHA'] = pd.to_datetime(data['FECHA'])
+
 df = pd.DataFrame(data)
 
 #%%
@@ -44,7 +47,11 @@ if CARGA_SQL_SERVER == True:
             sql_type = 'FLOAT'
         elif dtype == 'object':
             sql_type = 'NVARCHAR(255)'  # Ajusta el tamaño según tus necesidades
-        create_table_query += f"{column_name} {sql_type}, "
+        elif dtype == '<M8[ns]':
+            sql_type = 'DATETIME'  # Ajusta el tamaño según tus necesidades
+
+        create_table_query += f"[{column_name}] {sql_type}, "
+        
     create_table_query = create_table_query.rstrip(', ') + ")"  # Elimina la última coma y espacio
 
     # Ejecutar la sentencia CREATE TABLE
