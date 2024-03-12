@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla = 'Northwind..[EJEMPLO]'
+tabla_nombre = 'Northwind..[EJEMPLO]'
 CARGA_SQL_SERVER = True
 
 #%% DATAFRAME DE EJEMPLO
@@ -33,7 +33,14 @@ if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
+    
+    # nombre de la tabla en SQL
+    tabla = tabla_nombre
+    
     df = df.copy()
+    # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
+    # EJEMPLO df = df.fillna(0)
+    
     # Limpiar/eliminar la tabla antes de insertar nuevos datos
     cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    
 
@@ -56,9 +63,14 @@ if CARGA_SQL_SERVER == True:
 
     # Ejecutar la sentencia CREATE TABLE
     cursor.execute(create_table_query)
-
-    # Preparar la consulta de inserción
-    insert_query = f"INSERT INTO {tabla} ({', '.join(df.columns)}) VALUES ({', '.join(['?' for _ in df.columns])})"
+    
+    # CREACIÓN DE LA QUERY DE INSERT INTO
+    # Crear la lista de nombres de columnas con corchetes
+    column_names = [f"[{col}]" for col in df.columns]
+    # Crear la lista de placeholders para los valores
+    value_placeholders = ', '.join(['?' for _ in df.columns])
+    # Crear la consulta de inserción con los nombres de columna y placeholders de valores
+    insert_query = f"INSERT INTO {tabla} ({', '.join(column_names)}) VALUES ({value_placeholders})"
 
     # Iterar sobre las filas del DataFrame e insertar en la base de datos
     for _, row in df.iterrows():
