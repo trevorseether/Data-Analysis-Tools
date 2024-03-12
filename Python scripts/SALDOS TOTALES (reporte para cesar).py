@@ -195,7 +195,7 @@ def finalidad_producto(df_resultado):
             return '30'
         elif (('COMPRA DE PRODUCTO-BAZAR' in df_resultado['Finalidad TXT']) and \
               ('CONSUMO NO REVOLVENTE' in df_resultado['TipoCreditoTXT'])):
-            return '36'    
+            return '36'
         elif ('GARANTIA HIPOTECARIA' in df_resultado['Finalidad TXT']):
             return '41'
         elif (('ACTIVO FIJO' in df_resultado['Finalidad TXT']) and \
