@@ -17,15 +17,15 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'ENERO-24' #servirá para el nombre del archivo
+FECHA = 'FEBRERO-24' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024 enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 febrero')
 
-INSUMO           =    'CarteraTotalSM Ene24 - 05022024.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - DICIEMBRE-23_INC_CVV_DETALLADO.xlsx'
-COBRANZA         =    'Ingresos por Cobranza Enero-24 - General.xlsx'
+INSUMO           =    'carteratotal04032024.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - ENERO-24_INC_CVV_DETALLADO.xlsx'
+COBRANZA         =    'Ingresos por Cobranza Febrero-24 - General.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 y 2022 - JGM para añadir a Saldos e Ingresos.xlsx'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
@@ -542,10 +542,19 @@ def asignacion_auxiliar(df_finalizado):
         return 'investigar caso'
 
 df_finalizado['auxiliar1'] = df_finalizado.apply(asignacion_auxiliar, 
-                                                 axis=1)
+                                                 axis = 1)
 
 #%% REEMPLAZANDO NULOS EN VALOR GARANTIA
 df_finalizado['VALOR GARANTIA'] = df_finalizado['VALOR GARANTIA'].fillna(0)
+
+#%%
+dff2.rename(columns = {'SaldoCapital' : "SALDO CAPITAL DEL MES ANTERIOR"}, 
+            inplace = True)
+
+df_finalizado = df_finalizado.merge(dff2[['NroPrestamoFC',
+                                          'SALDO CAPITAL DEL MES ANTERIOR']],
+                                    on  = 'NroPrestamoFC',
+                                    how = 'left')
 
 #%% VERIFICACIÓN DE DUPLICADOS
 

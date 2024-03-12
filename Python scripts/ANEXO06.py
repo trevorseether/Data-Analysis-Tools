@@ -2415,7 +2415,7 @@ fechacorte_mes_pasado = "20240131" #  aqui cambiamos la fecha, se pone la del co
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v05.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v07.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
