@@ -18,15 +18,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Enero 2024'
+FECHA_CORTE = 'Febrero 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024 enero"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 febrero"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_0124 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ENERO-24 - INSUMO.xlsx"
+insumo_principal = "SM_0224 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - FEBRERO-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -36,19 +36,19 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240131'
+f_corte_sql = '20240229'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO'
+ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
 
 ''' #lo eliminaremos si todos los meses simplemente extraemos datos desde el sql server
-ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO'
-nombre          = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados v03.xlsx'
+ubi             = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
+nombre          = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v07.xlsx'
 filas_para_skip = 2
 '''
 
@@ -95,6 +95,7 @@ df_fincore['Nro_Fincore'] = df_fincore['Nro_Fincore'].str.strip()
 
 del ubi
 del nombre
+
 '''
 ###############################################################################
 #en reemplazo del código anterior, extraemos datos desde sql server:
