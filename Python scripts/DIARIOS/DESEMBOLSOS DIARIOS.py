@@ -30,7 +30,7 @@ crear_excel       = False #True o False
 
 #%%
 # Crear una lista de fechas para el año 2024
-fechas_2024 = pd.date_range(start='2024-01-01', end = '2024-12-31')
+fechas_2024 = pd.date_range(start = '2024-01-01', end = '2024-12-31')
 
 # Crear un DataFrame con las fechas
 df = pd.DataFrame({'Fecha': fechas_2024})
@@ -81,7 +81,7 @@ df['dia no laboral'] = df['Fecha'].apply(dia_no_laboral)
 
 #%% Año 2023
 # Crear una lista de fechas para el año 2024
-fechas_2023 = pd.date_range(start='2023-01-01', end = '2023-12-31')
+fechas_2023 = pd.date_range(start = '2023-01-01', end = '2023-12-31')
 
 # Crear un DataFrame con las fechas
 df_anterior = pd.DataFrame({'Fecha': fechas_2023})

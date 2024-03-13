@@ -42,7 +42,7 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 FEBRERO\\FINAL AHORA SÍ')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
@@ -1993,83 +1993,85 @@ anexo06_casi = anexo06_casi[ordenamiento_final]
 
 # esta vaina la voy a eliminar y reemplazar en el futuro por el alineamiento externo (●'◡'●)
 
-import pandas as pd
-import os
+# import pandas as pd
+# import os
 
-ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 MAYO'
+# ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 MAYO'
 
-nro_creditos = pd.read_excel(ubicacion + '\\' + 'dashboard de experian.xlsx', 
-                             dtype=({'NUMERO DOCUMENTO': str})) #leemos el archivo
+# nro_creditos = pd.read_excel(ubicacion + '\\' + 'dashboard de experian.xlsx', 
+#                              dtype=({'NUMERO DOCUMENTO': str})) #leemos el archivo
 
-nro_creditos['ENTIDADES ACREEDORAS REGULADAS']    = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'].fillna(0)
-nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'] = nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'].fillna(0)
+# nro_creditos['ENTIDADES ACREEDORAS REGULADAS']    = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'].fillna(0)
+# nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'] = nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'].fillna(0)
 
-nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'] + \
-                                                          nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS']
+# nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'] + \
+#                                                           nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS']
 
-nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'].astype(int)
-nro_creditos['total en sistema(incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'] + 1
+# nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'].astype(int)
+# nro_creditos['total en sistema(incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'] + 1
 
 #print(nro_creditos['TIPO DOCUMENTO'].unique().tolist())
-def tipo_documento_para_merge(nro_creditos):
-    if nro_creditos['TIPO DOCUMENTO'] == 'C/E':
-        return '2'
-    elif nro_creditos['TIPO DOCUMENTO'] == 'DNI':
-        return '1'
-    elif nro_creditos['TIPO DOCUMENTO'] == 'RUC':
-        return '6'
-    else:
-        return 'investigar'
+# def tipo_documento_para_merge(nro_creditos):
+#     if nro_creditos['TIPO DOCUMENTO'] == 'C/E':
+#         return '2'
+#     elif nro_creditos['TIPO DOCUMENTO'] == 'DNI':
+#         return '1'
+#     elif nro_creditos['TIPO DOCUMENTO'] == 'RUC':
+#         return '6'
+#     else:
+#         return 'investigar'
 
-nro_creditos['TIPO DOC TXT'] = nro_creditos.apply(tipo_documento_para_merge, axis=1)
+# nro_creditos['TIPO DOC TXT'] = nro_creditos.apply(tipo_documento_para_merge, axis=1)
 
-# para revisar si ha salido un caso para investigar, (sería otro tipo de documento por codificar)
-print('nro filas por investigar: ', str((nro_creditos[nro_creditos['TIPO DOC TXT'] == 'investigar']).shape[0]))
+# # para revisar si ha salido un caso para investigar, (sería otro tipo de documento por codificar)
+# print('nro filas por investigar: ', str((nro_creditos[nro_creditos['TIPO DOC TXT'] == 'investigar']).shape[0]))
 
-#cambiando el nombre
-nro_creditos = nro_creditos.rename(columns = {"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
+# #cambiando el nombre
+# nro_creditos = nro_creditos.rename(columns = {"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
 
-#%%% MERGE
-#MERGE CON EL ANEXO06
-merge_nro_creditos = nro_creditos[["NUMERO DOCUMENTO de experian", 
-                                   'TIPO DOC TXT', 
-                                   'total en sistema(no incluye San Miguel)',
-                                   'total en sistema(incluye San Miguel)'
-                                   ]]
+# #%%% MERGE
+# #MERGE CON EL ANEXO06
+# merge_nro_creditos = nro_creditos[["NUMERO DOCUMENTO de experian", 
+#                                    'TIPO DOC TXT', 
+#                                    'total en sistema(no incluye San Miguel)',
+#                                    'total en sistema(incluye San Miguel)'
+#                                    ]]
 
-#agregamos 14 ceros a la derecha al archivo del merge y al del anx06
-def agregar_ceros(valor, longitud):
-    return str(valor).zfill(longitud)
-merge_nro_creditos['documento rellenado'] = merge_nro_creditos["NUMERO DOCUMENTO de experian"].apply(agregar_ceros, 
-                                                                                                     longitud=14)
+# #agregamos 14 ceros a la derecha al archivo del merge y al del anx06
+# def agregar_ceros(valor, longitud):
+#     return str(valor).zfill(longitud)
+# merge_nro_creditos['documento rellenado'] = merge_nro_creditos["NUMERO DOCUMENTO de experian"].apply(agregar_ceros, 
+#                                                                                                      longitud=14)
 
-anexo06_casi['documento rellenado anx06'] = anexo06_casi['Número de Documento 10/']
+# anexo06_casi['documento rellenado anx06'] = anexo06_casi['Número de Documento 10/']
 
-anexo06_casi['documento rellenado anx06'] = anexo06_casi['documento rellenado anx06'].astype(str).str.strip().str.zfill(14)
+# anexo06_casi['documento rellenado anx06'] = anexo06_casi['documento rellenado anx06'].astype(str).str.strip().str.zfill(14)
 
-anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].astype(str)
-anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].str.strip()
+# anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].astype(str)
+# anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].str.strip()
 
-#MERGE
-ya_casi = anexo06_casi.merge(merge_nro_creditos, 
-                             left_on  = ['documento rellenado anx06', 'Tipo de Documento 9/'], 
-                             right_on = ['documento rellenado',       'TIPO DOC TXT']
-                             ,how     = 'left')
+# #MERGE
+# ya_casi = anexo06_casi.merge(merge_nro_creditos, 
+#                              left_on  = ['documento rellenado anx06', 'Tipo de Documento 9/'], 
+#                              right_on = ['documento rellenado',       'TIPO DOC TXT']
+#                              ,how     = 'left')
 
-anexo06_casi[['documento rellenado anx06',
-              'Tipo de Documento 9/']]
+# anexo06_casi[['documento rellenado anx06',
+#               'Tipo de Documento 9/']]
 
-merge_nro_creditos[['documento rellenado', 
-                    'TIPO DOC TXT']]
+# merge_nro_creditos[['documento rellenado', 
+#                     'TIPO DOC TXT']]
 
 #%%% sin datos
 #le ponemos sin datos en donde no ha matcheado
 
-ya_casi['total en sistema(no incluye San Miguel)'] = ya_casi['total en sistema(no incluye San Miguel)'].fillna('sin datos')
-ya_casi['total en sistema(incluye San Miguel)'] = ya_casi['total en sistema(incluye San Miguel)'].fillna('sin datos')
+# ya_casi['total en sistema(no incluye San Miguel)'] = ya_casi['total en sistema(no incluye San Miguel)'].fillna('sin datos')
+# ya_casi['total en sistema(incluye San Miguel)'] = ya_casi['total en sistema(incluye San Miguel)'].fillna('sin datos')
 
 #%% CAMBIANDO DE TIPO DE DATO
 #arreglamos la columna del Tipo de Documento 9/
+
+ya_casi = anexo06_casi.copy()
 
 ya_casi['Tipo de Documento 9/'] = ya_casi['Tipo de Documento 9/'].astype(float).astype(int)
 
@@ -2367,6 +2369,43 @@ def admin_reasignacion(anexo06_casi):
         return anexo06_casi[columna_funcionario]
 
 anexo06_casi[columna_funcionario] = anexo06_casi.apply(admin_reasignacion, axis = 1)
+
+#%% PARSEO DE LA FECHA DE LA COLUMNA 'Fecha Castigo TXT'
+
+anexo06_casi['Fecha Castigo TXT'] = anexo06_casi['Fecha Castigo TXT'].str.strip()
+#formatos en los cuales se tratará de convertir a DateTime
+formatos = ['%d/%m/%Y %H:%M:%S',
+            '%d/%m/%Y',
+            '%Y%m%d', '%Y-%m-%d', 
+            '%Y-%m-%d %H:%M:%S', 
+            '%Y/%m/%d %H:%M:%S',
+            '%Y-%m-%d %H:%M:%S PM',
+            '%Y-%m-%d %H:%M:%S AM',
+            '%Y/%m/%d %H:%M:%S PM',
+            '%Y/%m/%d %H:%M:%S AM']
+
+# Función de análisis de fechas
+def parse_dates(date_str):
+    '''
+    Parameters
+    ----------
+    date_str : Es el formato que va a analizar dentro de la columna del DataFrame.
+
+    Returns
+    -------
+    Si el date_str tiene una estructura compatible con los formatos preestablecidos
+    para su iteración, la convertirá en un DateTime
+
+    '''
+    for formato in formatos:
+        try:
+            return pd.to_datetime(date_str, format=formato)
+        except ValueError:
+            pass
+    return pd.NaT
+
+anexo06_casi['Fecha Castigo TXT'] = anexo06_casi['Fecha Castigo TXT'].apply(parse_dates)
+
 
 #%% CREACIÓN DEL EXCEL
 

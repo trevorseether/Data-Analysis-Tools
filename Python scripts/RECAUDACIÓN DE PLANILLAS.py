@@ -22,25 +22,25 @@ CARGA_SQL_SERVER = False #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20231231'
+fecha_corte = '20240131'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2023 diciembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\01 2024')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '12 - DICIEMBRE 2023 (CIERRE).xlsx'
+nombre = '01 - ENERO 2024 (CIERRE).xlsx'
 # =============================================================================
 
-# # UBICACIÓN DEL ANEXO 06=======================================================
+# # UBICACIÓN DEL ANEXO 06=====================================================
 # En caso de usar el anexo06 debemos reemplazar la conección a sql server (línea 150)
 # ubi_anx = 'C:\\Users\\sanmiguel38\\Desktop'
-# # =============================================================================
+# # ===========================================================================
 
-# # NOMBRE DEL ANEXO 06 =========================================================
+# # NOMBRE DEL ANEXO 06 =======================================================
 # anexo_06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2023 - campos ampliados v04.xlsx'
-# # =============================================================================
+# # ===========================================================================
 
 # AQUÍ AÑADIMOS O QUITAMOS LAS PESTAÑAS DEL EXCEL, en el primero va el nombre de la columna
 datos = {'cs': ['Masivo - CS'],
@@ -132,6 +132,8 @@ df_concatenado.loc[df_concatenado['PLANILLA'] == 'AUTORIDAD PARA LA RECONSTRUCCI
 
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MERCADOTECNIA DIR.Y CONTACT CENTER PERU SAC - ADMIMISTRATIVOS','PLANILLA'] = 'MERCADOTECNIA DIRECTA Y CONTACT CENTER PERU SAC - ADMINISTRATIVOS'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'MERCADOTECNIA DIR.Y CONTACT CENTER PERU SAC - OPERATIVOS','PLANILLA'] = 'MERCADOTECNIA DIRECTA Y CONTACT CENTER PERU SAC - OPERATIVOS'
+
+df_concatenado.loc[df_concatenado['PLANILLA'] == 'MUNICIPALIDAD DISTRITAL DE SUNAMPE - CONTRATADOS','PLANILLA'] = 'MUNICIPALIDAD DISTRITAL DE SUNAMPE - CONTRATADO'
 
 #%% Eliminación de filas vacías
 df_concatenado = df_concatenado[~pd.isna(df_concatenado['PLANILLA'])]
@@ -272,10 +274,12 @@ del conn
 
 #%%
 
+df_resultado['MONTO DEL MES']      = pd.to_numeric(df_resultado['MONTO DEL MES'],errors = 'coerce')
 df_resultado['MONTO DEL MES']      = df_resultado['MONTO DEL MES'].astype(float)
 df_resultado['RECIBIDO MASIVO']    = pd.to_numeric(df_resultado['RECIBIDO MASIVO'], errors = 'coerce')
 df_resultado['RECIBIDO MASIVO']    = df_resultado['RECIBIDO MASIVO'].fillna(0)
 #df_resultado['PAGO INDEPENDIENTE'] = df_resultado['PAGO INDEPENDIENTE'].astype(float)
+df_resultado['REINTEGROS']         = pd.to_numeric(df_resultado['REINTEGROS'],errors = 'coerce')
 df_resultado['REINTEGROS']         = df_resultado['REINTEGROS'].astype(float)
 df_resultado['REINTEGROS']         = pd.to_numeric(df_resultado['REINTEGROS'], errors = 'coerce')
 
@@ -344,9 +348,11 @@ if CARGA_SQL_SERVER == True:
     cursor = cnxn.cursor()
     df = base_final3.copy()
     
+    cursor.execute(f"DELETE FROM [RECAUDACION]..[Cabecera_Pagos] WHERE [FechaCorte] = '{fecha_corte}' ")
+    
     for index, row in df.iterrows():
         cursor.execute("""
-            INSERT INTO RECAUDACION..Cabecera_Pagos 
+            INSERT INTO [RECAUDACION]..[Cabecera_Pagos]
             ([FechaCorte], 
              [CodSocio], 
              [CodCredito], 

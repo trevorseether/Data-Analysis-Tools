@@ -17,12 +17,13 @@ warnings.filterwarnings('ignore')
 
 #%%
 'Fecha de corte para el anexo06'####################
-fecha_corte_anx06 = '20240131'                     #
+fecha_corte_anx06 = '20240229'                     #
 ####################################################
 
+tabla_actual = 'saldos_diarios.dbo.[SALDOS_DIARIOS_2024_03]'
 'Fechas para la cobranza y nuevos desembolsos'######
-fecha_inicio = '20240201'                          #
-fecha_hoy    = '20240229'                          ## se pone 4 días antes del día de hoy
+fecha_inicio = '20240301'                          #
+fecha_hoy    = '20240309'                          ## se pone 4 días antes del día de hoy
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -559,8 +560,8 @@ cursor = cnxn.cursor()
 # # PARA QUE EL CÓDIGO FUNCIONE, debe existir la tabla, sino usar CREATE TABLE
 
 for index, row in df.iterrows():
-    cursor.execute("""
-        INSERT INTO saldos_diarios.dbo.[SALDOS_DIARIOS_2024_02] 
+    cursor.execute(f"""
+        INSERT INTO {tabla_actual} 
         ( [Nro_Fincore], 
           [Saldodecolocacionescreditosdirectos24],
           [MontodeDesembolso22],

@@ -10,9 +10,11 @@ import pandas as pd
 import os
 
 #%% PARÁMETROS INICIALES:
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Enero 2024 - campos ampliados v05.xlsx'
-ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024 ENERO\\enviado por contabilidad'
+
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
+ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS'
 filas_skip = 2
+
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
 formatos = [ '%Y%m%d' ]  # Lista de formatos a analizar
@@ -36,7 +38,7 @@ df =pd.read_excel(anexo_del_mes,
                         'Código Socio 7/'               : object,
                         'Tipo de Documento 9/'          : object,
                         'Número de Documento 10/'       : object,
-                        'Relación Laboral con la Cooperativa 13/'   : object, 
+                        'Relación Laboral con la Cooperativa 13/'       : object, 
                         'Código de Agencia 16/'         : object,
                         'Moneda del crédito 17/'        : object, 
                         'Numero de Crédito 18/'         : object,
@@ -44,10 +46,10 @@ df =pd.read_excel(anexo_del_mes,
                         'Sub Tipo de Crédito 20/'       : object,
                         'Fecha de Desembolso 21/'       : object,
                         'Cuenta Contable 25/'           : object,
-                        'Cuenta Contable Crédito Castigado 39/'     : object,
+                        'Cuenta Contable Crédito Castigado 39/'         : object,
                         'Tipo de Producto 43/'          : object,
                         'Fecha de Vencimiento Origuinal del Credito 48/': object,
-                        'Fecha de Vencimiento Actual del Crédito 49/': object,
+                        'Fecha de Vencimiento Actual del Crédito 49/'   : object,
                         'Nro Prestamo \nFincore'        : object,
                         'Refinanciado TXT'              : object
                         },
@@ -71,6 +73,17 @@ df['Fecha de Vencimiento Origuinal del Credito 48/'] = df['Fecha de Vencimiento 
 
 df['Fecha de Vencimiento Actual del Crédito 49/'] = df['Fecha de Vencimiento Actual del Crédito 49/'].apply(parse_date)
 
+#%%
+# creación de carpeta
+nombre_carpeta = 'carpeta para sql'
+
+if not os.path.exists(nombre_carpeta):
+    os.makedirs(nombre_carpeta)
+else:
+    print('la carpeta ya existe')
+
+os.chdir(nombre_carpeta)
+
 #%% creamos el excel
 try:
     ruta = 'Anx06 ' + str(anexo_del_mes[26:40]) + ' para SQL.xlsx'
@@ -80,5 +93,4 @@ except FileNotFoundError:
 
 df.to_excel(ruta,
             index = False)
-
 
