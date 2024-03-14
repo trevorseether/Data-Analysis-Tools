@@ -103,8 +103,9 @@ pivot_A_A.fillna(0, inplace = True)
 # que raro (ಠ_ಠ)
 ###################  'Saldo de colocaciones (créditos directos) 24/'    #######
 'TABLA A'
+
 pivot_A = anexo06.pivot_table(columns = 'Clasificación del Deudor con Alineamiento 15/',
-                                      values  = ['24 - 42'], 
+                                      values  = ['24 - 42'], #'24 - 42'
                                       index   = ['Tipo de Crédito 19/'],
                                       margins = True, margins_name = 'Total', #para sacar las sumatorias totales                                      
                                       aggfunc = 'sum'
