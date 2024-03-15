@@ -19,10 +19,19 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 conn = pyodbc.connect(conn_str)
 
 query = '''
+-- p.codcategoria = 351 -> nuevo
+-- p.codcategoria = 352 -> ampliacion
+-- p.codestado = 563 -> anulado
+-- p.codestado = 341 -> pendiente
+-- p.codestado = 342 -> cancelado
+-- tc.CODTIPOCREDITO -> ( 3=Cons.Ordinario / 1=Med.Empresa / 2=MicroEmp. / 9=Peq.Empresa)
+
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
-	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	IIF(S.CodSexo = 4, 'FEMENINO',
+		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
@@ -101,7 +110,8 @@ SELECT
 	sc.ReferenciaDomicilio,
 	d.nombre as 'distrito', 
 	pv.nombre as 'provincia', 
-	dp.nombre as 'departamento', 
+	dp.nombre as 'departamento',
+	sc.ReferenciaDomicilio,
 	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
 	tm2.descripcion as 'est_civil', 
 	pais.descripcion as 'pais', 
@@ -122,37 +132,41 @@ SELECT
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio',
-	p.FechaCastigo
+	USUARIO.IdUsuario AS 'USUARIO APROBADOR'
+
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
-FROM prestamo as p
+FROM prestamo AS p
 
-inner join socio as s on s.codsocio = p.codsocio
-LEFT join sociocontacto as sc on sc.codsocio = s.codsocio
-left join planilla as pla on p.codplanilla = pla.codplanilla
-inner join grupocab as pro on pro.codgrupocab = p.codgrupocab
-inner join distrito as d on d.coddistrito = sc.coddistrito
-inner join provincia as pv on pv.codprovincia = d.codprovincia
-inner join departamento as dp on dp.coddepartamento = pv.coddepartamento
-inner join tablaMaestraDet as tm on tm.codtabladet = p.CodEstado
-left join grupocab as gpo on gpo.codgrupocab = pla.codgrupocab
-left join tablaMaestraDet as tm2 on tm2.codtabladet = s.codestadocivil
-left join tablaMaestraDet as tm3 on tm3.codtabladet = p.CodSituacion
---inner join tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
-inner join pais on pais.codpais = s.codpais
-LEFT JOIN FINALIDAD AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-left join TipoCredito as TC on tc.CodTipoCredito = p.CodTipoCredito
-inner join usuario as u on p.CodUsuario = u.CodUsuario
-inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
---left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+INNER JOIN socio AS s             ON s.codsocio = p.codsocio
+LEFT JOIN sociocontacto AS sc     ON sc.codsocio = s.codsocio
+LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+INNER JOIN grupocab AS pro        ON pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito AS d          ON d.coddistrito = sc.coddistrito
+INNER JOIN provincia AS pv        ON pv.codprovincia = d.codprovincia
+INNER JOIN departamento AS dp     ON dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet AS tm  ON tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab AS gpo         ON gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet AS tm2  ON tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet AS tm3  ON tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
+INNER JOIN pais                   ON pais.codpais = s.codpais
+LEFT JOIN FINALIDAD AS FI         ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito AS TC       ON tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
 
-where 
+LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
+LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
 
-	p.FechaCastigo is not null
+WHERE
+CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+AND s.codigosocio>0  --and p.codestado = 342
+--AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 
-
--- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
---where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
-order by socio asc, p.fechadesembolso desc
+--AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
+--WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
+ORDER BY socio ASC, p.fechadesembolso DESC
 '''
 
 df_fincore = pd.read_sql_query(query, conn)
