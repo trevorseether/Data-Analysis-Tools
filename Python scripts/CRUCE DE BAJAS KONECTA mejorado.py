@@ -22,15 +22,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '11-03-2024'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '18-03-2024'  # FORMATO DÍA-MES-AÑO
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\marzo\\11 03'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\marzo\\18 03'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '2DO INFORME 03_24 GRUPO KONECTA.xlsx'
+nombre_archivo = '3ER INFORME 03_24 GRUPO KONECTA.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -140,31 +140,35 @@ SELECT
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo as p
 
-inner join socio as s on s.codsocio = p.codsocio
-LEFT join sociocontacto as sc on sc.codsocio = s.codsocio
-left join planilla as pla on p.codplanilla = pla.codplanilla
-inner join grupocab as pro on pro.codgrupocab = p.codgrupocab
-inner join distrito as d on d.coddistrito = sc.coddistrito
-inner join provincia as pv on pv.codprovincia = d.codprovincia
-inner join departamento as dp on dp.coddepartamento = pv.coddepartamento
-inner join tablaMaestraDet as tm on tm.codtabladet = p.CodEstado
-left join grupocab as gpo on gpo.codgrupocab = pla.codgrupocab
-left join tablaMaestraDet as tm2 on tm2.codtabladet = s.codestadocivil
-left join tablaMaestraDet as tm3 on tm3.codtabladet = p.CodSituacion
---inner join tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
-inner join pais on pais.codpais = s.codpais
-LEFT JOIN FINALIDAD AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-left join TipoCredito as TC on tc.CodTipoCredito = p.CodTipoCredito
-inner join usuario as u on p.CodUsuario = u.CodUsuario
-inner join TablaMaestraDet as tm4 on s.codestado = tm4.CodTablaDet
---left join PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+INNER JOIN socio as s               ON s.codsocio = p.codsocio
+LEFT JOIN sociocontacto as sc       ON sc.codsocio = s.codsocio
+LEFT JOIN planilla as pla           ON p.codplanilla = pla.codplanilla
+INNER JOIN grupocab as pro          ON pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito as d            ON d.coddistrito = sc.coddistrito
+INNER JOIN provincia as pv          ON pv.codprovincia = d.codprovincia
+INNER JOIN departamento as dp       ON dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet as tm    ON tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab as gpo           ON gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet as tm2    ON tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet as tm3    ON tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet as tm3 ON tm3.codtabladet = s.codcategoria
+INNER JOIN pais                     ON pais.codpais = s.codpais
+LEFT JOIN FINALIDAD AS FI           ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito as TC         ON tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario as u             ON p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet as tm4   ON s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
-where CONVERT(VARCHAR(10),p.fechadesembolso,112) 
-BETWEEN '20110101' AND '{fecha_hoy}' and s.codigosocio>0  and p.codestado = 341 -- and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
---where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) 
+BETWEEN '20110101' AND '{fecha_hoy}' 
+AND s.codigosocio>0  
+
+AND p.codestado = 341 --SIGNFICA QUE EL CRÉDITO SE ENCUENTRE EN SITUACIÓN VIGENTE
+
 order by socio asc, p.fechadesembolso desc
 
 '''
+
 vigentes = pd.read_sql_query(query, 
                              conn, 
                              dtype = {'Doc_Identidad'  : object,
@@ -187,18 +191,18 @@ formatos = ['%d/%m/%Y %H:%M:%S',
 def parse_dates(date_str):
     for formato in formatos:
         try:
-            return pd.to_datetime(date_str, format=formato)
+            return pd.to_datetime(date_str, format = formato)
         except ValueError:
             pass
     return pd.NaT
 
-vigentes['fechadesembolso'] = vigentes['fechadesembolso'].apply(parse_dates)
+vigentes['fechadesembolso'] = vigentes['fechadesembolso'].apply( parse_dates )
 
 #%% FILTRAMOS ESTADO = PENDIENTE
 'por si acaso, nos quedamos solo con los que tienen estado = pendiente'
 
-vigentes["Estado"] = vigentes["Estado"].str.strip() #quitamos espacios
-vigentes["Estado"] = vigentes["Estado"].str.upper() #mayúsculas
+vigentes["Estado"] = vigentes["Estado"].str.strip() # quitamos espacios
+vigentes["Estado"] = vigentes["Estado"].str.upper() # mayúsculas
 
 vigentes = vigentes[vigentes["Estado"] == 'PENDIENTE']
 
