@@ -28,7 +28,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # =============================================================================
-# validar que se hayan retirado del anexo06 los créditos vendidos en febrero **********
+# validar que se hayan retirado del anexo06 los créditos vendidos en el mes respectivo **********
+# si es que se han vendido créditos claro
 # =============================================================================
 
 #%% ADVERTENCIA
@@ -2524,7 +2525,9 @@ df_diferidos.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/',
                               'Fecha de Nacimiento 3/',
                               'Número de Documento 10/',
                               'Domicilio 12/',
-                              'Numero de Crédito 18/'], inplace = True, how = 'all')
+                              'Numero de Crédito 18/'], 
+                    inplace = True, 
+                    how = 'all')
 
 #%% #asignamos los diferidos
 # df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
