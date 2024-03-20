@@ -10,6 +10,7 @@ Created on Tue Feb 20 09:04:46 2024
 
 import pandas as pd
 from   datetime import datetime #, timedelta
+from   datetime import date
 import pyodbc
 import os
 
@@ -156,6 +157,11 @@ for year_month, group in df_anterior.groupby(['Año', 'Mes']):
 #%% Numeración concatenada
 
 dias_laborales = pd.concat([df,df_anterior], ignore_index = True)
+
+#%% Fecha de hoy
+
+fecha_hoy_sql = str(date.today())
+fecha_hoy_sql = fecha_hoy_sql[0:4] + fecha_hoy_sql[5:7] + fecha_hoy_sql[8:10]
 
 #%% 
 # =============================================================================
@@ -335,6 +341,8 @@ WHERE
     (EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))    = @FECHA_MES
     OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fechaAnterior
     OR EOMONTH(CONVERT(VARCHAR(10),p.fechadesembolso,112))  = @fecha12MESES)
+    
+    AND CONVERT(VARCHAR(10),p.fechadesembolso,112) < {fecha_hoy_sql}
 
 AND s.codigosocio>0
 
