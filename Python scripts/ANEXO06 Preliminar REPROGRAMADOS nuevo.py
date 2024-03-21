@@ -138,7 +138,7 @@ if menos_bruto['Saldos de Créditos Castigados 38/'].sum() < menos_bruto['Saldo 
 else:
     print('investigar')
 
-#%% cartera vendida
+#%% cartera vendida EN FEBRERO 2024
 menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
 
 eliminar = ['00000681',

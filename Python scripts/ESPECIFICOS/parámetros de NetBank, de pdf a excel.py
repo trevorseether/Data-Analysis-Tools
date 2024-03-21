@@ -11,6 +11,7 @@ import pandas as pd
 import os
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\parámetros netbank')
 
+#%%
 # Función para extraer texto de un PDF
 def extraer_texto(pdf_path):
     with open(pdf_path, 'rb') as archivo_pdf:
@@ -52,7 +53,7 @@ def arreglando_1_null(df):
     else:
         return df[1]
     
-x[1] = x.apply(arreglando_1_null, axis=1)
+x[1] = x.apply(arreglando_1_null, axis = 1)
 
 ###### reemplazando unas celdas completas por 'Tipo:'
 def asd(row):
@@ -60,17 +61,17 @@ def asd(row):
         return 'Tipo:'
     else:
         return row[0]
-x[0] = x.apply(asd, axis=1)   
+x[0] = x.apply(asd, axis = 1)   
 #####
 
-df[1] = df[1].str.replace('Tipo: ', '') #reemplazo dentro de cadena string
+df[1] = df[1].str.replace('Tipo: ', '') # reemplazo dentro de cadena string
 
-df = x[x[0].str.contains(r'\d|Tipo:')] #filtramos filas
-df = df[~df[0].str.match(r'\d{2}:\d{2}:\d{2}')] #eliminamos las que tienen fechas
+df = x[x[0].str.contains(r'\d|Tipo:')] # filtramos filas
+df = df[~df[0].str.match(r'\d{2}:\d{2}:\d{2}')] # eliminamos las que tienen fechas
 
-df['Tipo'] = df[1].where(df[0] == 'Tipo:').ffill() #forward fill para autompletar los valores hacia abajo
+df['Tipo'] = df[1].where(df[0] == 'Tipo:').ffill() # forward fill para autompletar los valores hacia abajo
 
-df['Tipo'] =df['Tipo'].str.replace('Tipo: ', '') #reemplazo dentro de cadena string
+df['Tipo'] = df['Tipo'].str.replace('Tipo: ', '') # reemplazo dentro de cadena string
 
 #%%
 nuevo_df = df[['Tipo', 0 , 1]] # nuevo df con las columnas necesarias
@@ -80,15 +81,15 @@ nuevo_df[1] = nuevo_df[1].str.strip()
 
 nuevo_df[['Numero', 'Texto']] = nuevo_df['Tipo'].str.split(' ', 1, expand=True) #separación del texto
 
-nuevo_nuevo = nuevo_df[['Numero', 'Texto', 0 , 1]]  #columnas necesarias
+nuevo_nuevo = nuevo_df[['Numero', 'Texto', 0 , 1]] # columnas necesarias
 
-nuevo_nuevo = nuevo_nuevo[nuevo_nuevo[0] != 'Tipo:'] #eliminamos filas que ya no necesitamos
+nuevo_nuevo = nuevo_nuevo[nuevo_nuevo[0] != 'Tipo:'] # eliminamos filas que ya no necesitamos
 
 # nuevo_nuevo['Numero'] = nuevo_nuevo['Numero'].astype(int) #conversión a int
 
 # nuevo_nuevo[0] = nuevo_nuevo[0].astype(int) #conversión a int
 
-#%% creación del excel
+#%% CREACIÓN DEL EXCEL
 
 nuevo_nuevo.to_excel('parámetros estructurados.xlsx',
                      index = False)

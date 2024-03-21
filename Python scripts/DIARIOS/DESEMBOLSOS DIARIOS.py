@@ -29,6 +29,8 @@ CARGA_SQL_SERVER  = True #True o False
 
 crear_excel       = False #True o False
 
+incluir_hoy       = False #True o False
+
 #%%
 # Crear una lista de fechas para el año 2024
 fechas_2024 = pd.date_range(start = '2024-01-01', end = '2024-12-31')
@@ -158,10 +160,13 @@ for year_month, group in df_anterior.groupby(['Año', 'Mes']):
 
 dias_laborales = pd.concat([df,df_anterior], ignore_index = True)
 
-#%% Fecha de hoy
+#%% Fecha de hoy para incluir o no el día de hoy
 
-fecha_hoy_sql = str(date.today())
-fecha_hoy_sql = fecha_hoy_sql[0:4] + fecha_hoy_sql[5:7] + fecha_hoy_sql[8:10]
+if incluir_hoy == True:
+    fecha_hoy_sql = '20401231'
+else:
+    fecha_hoy_sql = str(date.today())
+    fecha_hoy_sql = fecha_hoy_sql[0:4] + fecha_hoy_sql[5:7] + fecha_hoy_sql[8:10]
 
 #%% 
 # =============================================================================
