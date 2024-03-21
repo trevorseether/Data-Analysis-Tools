@@ -21,7 +21,7 @@ def extraer_texto(pdf_path):
         return texto
 
 # Ruta al archivo PDF
-ruta_pdf = "C:\\Users\\sanmiguel38\\Desktop\\parámetros netbank\\parametros maestro netbank.pdf"
+ruta_pdf = "parametros maestro netbank.pdf"
 
 # Extraer texto del PDF
 texto_pdf = extraer_texto(ruta_pdf)
@@ -29,6 +29,7 @@ texto_pdf = extraer_texto(ruta_pdf)
 # Convertir texto a un DataFrame (ejemplo simple)
 # Aquí puedes procesar el texto extraído según la estructura de tu PDF
 # Por ejemplo, puedes dividir el texto en líneas y luego en columnas, etc.
+
 lineas = texto_pdf.split('\n')
 data = [linea.split(',') for linea in lineas]
 
@@ -61,32 +62,33 @@ def asd(row):
 x[0] = x.apply(asd, axis=1)   
 #####
 
-df[1] = df[1].str.replace('Tipo: ', '')
+df[1] = df[1].str.replace('Tipo: ', '') #reemplazo dentro de cadena string
 
 df = x[x[0].str.contains(r'\d|Tipo:')] #filtramos filas
 df = df[~df[0].str.match(r'\d{2}:\d{2}:\d{2}')] #eliminamos las que tienen fechas
 
-    
-df['Tipo'] = df[1].where(df[0] == 'Tipo:').ffill()
+df['Tipo'] = df[1].where(df[0] == 'Tipo:').ffill() #forward fill para autompletar los valores hacia abajo
 
-df['Tipo'] =df['Tipo'].str.replace('Tipo: ', '')
+df['Tipo'] =df['Tipo'].str.replace('Tipo: ', '') #reemplazo dentro de cadena string
 
 #%%
-nuevo_df = df[['Tipo', 0 , 1]]
+nuevo_df = df[['Tipo', 0 , 1]] # nuevo df con las columnas necesarias
 
-nuevo_df['Tipo'] = nuevo_df['Tipo'].str.strip()
+nuevo_df['Tipo'] = nuevo_df['Tipo'].str.strip() 
 nuevo_df[1] = nuevo_df[1].str.strip()
 
-nuevo_df[['Numero', 'Texto']] = nuevo_df['Tipo'].str.split(' ', 1, expand=True)
+nuevo_df[['Numero', 'Texto']] = nuevo_df['Tipo'].str.split(' ', 1, expand=True) #separación del texto
 
-# nuevo_df[['uwu', 'owo']] = nuevo_df['Tipo'].str.split(r'\d ', expand=True)
+nuevo_nuevo = nuevo_df[['Numero', 'Texto', 0 , 1]]  #columnas necesarias
 
-nuevo_nuevo = nuevo_df[['Numero', 'Texto', 0 , 1]]
+nuevo_nuevo = nuevo_nuevo[nuevo_nuevo[0] != 'Tipo:'] #eliminamos filas que ya no necesitamos
 
-nuevo_nuevo = nuevo_nuevo[nuevo_nuevo[0] != 'Tipo:']
+# nuevo_nuevo['Numero'] = nuevo_nuevo['Numero'].astype(int) #conversión a int
 
-nuevo_nuevo['Numero'] = nuevo_nuevo['Numero'].astype(int)
-nuevo_nuevo[0] = nuevo_nuevo[0].astype(int)
+# nuevo_nuevo[0] = nuevo_nuevo[0].astype(int) #conversión a int
 
-nuevo_nuevo.to_excel('final.xlsx')
+#%% creación del excel
+
+nuevo_nuevo.to_excel('parámetros estructurados.xlsx',
+                     index = False)
 
