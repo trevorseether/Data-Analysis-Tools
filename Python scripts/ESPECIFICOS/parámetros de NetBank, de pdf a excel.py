@@ -44,7 +44,7 @@ df['concatenado'] = df['concatenado'].str.strip()
 
 x = df['concatenado'].str.split('  ', expand=True) #separado cuando hay 2 espacios
 
-# x.to_excel('datos separados.xlsx')
+###### arreglando unas columnas que no tenían datos
 x[1] = x[1].fillna('')
 def arreglando_1_null(df):
     if df[1] == '':
@@ -53,7 +53,8 @@ def arreglando_1_null(df):
         return df[1]
     
 x[1] = x.apply(arreglando_1_null, axis=1)
-######
+
+###### reemplazando unas celdas completas por 'Tipo:'
 def asd(row):
     if 'Tipo:' in row[0]:
         return 'Tipo:'
