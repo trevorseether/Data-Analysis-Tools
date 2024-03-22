@@ -50,6 +50,8 @@ if CARGA_SQL_SERVER == True:
         sql_type = ''
         if dtype == 'int64':
             sql_type = 'INT'
+        elif dtype == 'int32':
+            sql_type = 'INT'
         elif dtype == 'float64':
             sql_type = 'FLOAT'
         elif dtype == 'object':

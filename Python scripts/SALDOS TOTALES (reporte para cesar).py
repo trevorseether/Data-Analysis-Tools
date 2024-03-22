@@ -129,7 +129,6 @@ df3_cobranza = pd.read_excel(COBRANZA,
                              dtype = {'codigosocio'  : object, 
                                       'doc_ident'    : object,
                                       'PagareFincore': object} )
-
 #aquí NO hay que eliminar duplicados
 
 #eliminamos columnas vacías
@@ -184,7 +183,7 @@ def finalidad_producto(df_resultado):
     if pd.isnull(df_resultado['CodFinalidad']):
         if ('INDEPENDIENTES - MULTI OFICIOS' in df_resultado['Finalidad TXT']):
             return '32'
-        if (('POND' in df_resultado['OrigenPrestamo']) and \
+        elif (('POND' in df_resultado['OrigenPrestamo']) and \
               ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'] or ('PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']))):
             return '41'
         elif (('LIBRE DISPONIBILIDAD' in df_resultado['Finalidad TXT']) and \
