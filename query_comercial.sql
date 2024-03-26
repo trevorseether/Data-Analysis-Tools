@@ -580,11 +580,17 @@ where NUEVA_PLANILLA IS NULL
 AND TipodeProducto43 IN (95,96,97,98,99)
 
 ----------------------------------------------------------------------------------
-update anexos_riesgos2..Anx06_preliminar
-set EMPRESA = NUEVA_PLANILLA
-where EMPRESA is null
-and FechaCorte1 = '20240229'
-and TipodeProducto43 in (34,35,36,37,38,39)
+----------------------------------------------------------------------------------
+update A ---------QUE ESTA PARTE ESTÉ EN PRUEBAS
+set A.EMPRESA = B.EMPRESA
+FROM anexos_riesgos2..Anx06_preliminar AS A
+LEFT JOIN anexos_riesgos2..cabecera AS B
+ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)
+WHERE A.EMPRESA IS NULL
+AND A.FechaCorte1 = '20240229'
+AND B.FechaCorte1 = '20240229'
+AND A.TipodeProducto43 IN (34,35,36,37,38,39)
+----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
 --libres disponibilidad
 update anexos_riesgos2..Anx06_preliminar
