@@ -112,7 +112,9 @@ SELECT
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio',
-	USUARIO.IdUsuario AS 'USUARIO APROBADOR'
+	USUARIO.IdUsuario AS 'USUARIO APROBADOR',
+	DESCUENTO.valor as 'retención',
+	p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
 
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo AS p
@@ -139,19 +141,28 @@ INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
 LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
 
-WHERE
-CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
-AND s.codigosocio>0  --and p.codestado = 342
+LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
+
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
+
+AND s.codigosocio>0
+
+--and p.codestado = 342
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 
---AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
---WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
+-- AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
+-- WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 
+-- AND pro.Descripcion like '%WILLIAMS TRAUCO%' 
+-- AND p.codcategoria=351
 ORDER BY socio ASC, p.fechadesembolso DESC
 
 /*
+
 SELECT a.CodUsuarioPriAprob, a.CodUsuarioSegAprob, b.IdUsuario FROM SolicitudCredito as a
 	LEFT JOIN Usuario as b
 	on a.CodUsuarioSegAprob = b.CodUsuario
 
 select CodSolicitudCredito,* from prestamo
+
 */

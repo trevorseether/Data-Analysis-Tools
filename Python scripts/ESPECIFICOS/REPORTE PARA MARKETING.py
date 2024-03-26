@@ -67,7 +67,7 @@ columnas = ['Apellidos y Nombres / Razón Social 2/',
 #%%
 data = anexo_06[columnas]
 data = data[data['Dias de Mora 33/'] < 90]
-data = data.rename(columns={'Monto Desembolso\nSoles Fijo': "Monto Otorgado"})
+data = data.rename(columns = {'Monto Desembolso\nSoles Fijo' : "Monto Otorgado"})
 
 #%% CONECCIÓN A SQL SERVER FINCORE
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -92,10 +92,10 @@ LEFT JOIN PLANILLASOCIO AS C
 ON A.CODSOCIO = C.CODSOCIO
 '''
 
-df_fincore = pd.read_sql_query(query, conn)
+df_ingreso_instruccion = pd.read_sql_query(query, conn)
 
 #%% MERGE
-data = data.merge(df_fincore,
+data = data.merge(df_ingreso_instruccion,
                   left_on  = 'Código Socio 7/',
                   right_on = 'CodigoSocio',
                   how      = 'left')

@@ -19,7 +19,7 @@ fecha_inicio = '2024-04-01'
 fecha_final  = '2024-04-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\22 03')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\25 03')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -29,7 +29,7 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte .xlsx'
 #%%
 # reporte de pagos sacado de la plataforma de Kashio ##########################
 # Reportes / Pagos / Fecha : TODOS / Exportar #################################
-pagos_rep_kashio = 'reporte_de_pagos_cus_V67tWEUeUPQhmWTDBSKbGX.xlsx'
+pagos_rep_kashio = 'dQgNsh5eyKmhbPXmYJ3Uak.xlsx'
 ###############################################################################
 
 #%%
@@ -73,7 +73,7 @@ kashio_filtrado = kashio_ordenado[(kashio_ordenado['VENCIMIENTO'] >= pd.Timestam
                                   (kashio_ordenado['VENCIMIENTO'] <= pd.Timestamp(fecha_final))]
 
 kashio_filtrado = kashio_filtrado.rename(columns={'NOMBRE'      : "Nombre Cliente",
-                                                  'ID ORDEN DE PAGO'    : 'CODIGO DE PAGO',
+                                                  'ID ORDEN DE PAGO' : 'CODIGO DE PAGO',
                                                   'MONTO'       : 'VALOR PAGO',
                                                   'ID CLIENTE'  : 'codsoc',
                                                   'REFERENCIA'  : 'num pagare',

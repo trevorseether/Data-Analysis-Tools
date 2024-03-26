@@ -319,7 +319,13 @@ SELECT
 	ELSE 'INVESTIGAR CASO'
 	END AS 'PRODUCTO43',
 	
-    FI.DESCRIPCION AS 'FINALIDAD'
+    FI.DESCRIPCION AS 'FINALIDAD',
+
+	CASE
+		WHEN (p.flagrefinanciado = 1 or P.CodSolicitudCredito = 0) THEN 'REFINANCIADO'
+		ELSE 'NO REFINANCIADO'
+		END AS 'ETIQUETA REFINANCIADO'
+
 FROM prestamo as p
 
 INNER JOIN  socio              AS s    ON s.codsocio      = p.codsocio
@@ -350,6 +356,7 @@ WHERE
     AND CONVERT(VARCHAR(10),p.fechadesembolso,112) < {fecha_hoy_sql}
 
 AND s.codigosocio>0
+AND p.codestado <> 563
 
 ORDER BY p.fechadesembolso desc, Socio ASC
 
@@ -359,6 +366,8 @@ df_fincore = pd.read_sql_query(query, conn)
 
 df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.date
 df_fincore['fechadesembolso'] = pd.to_datetime(df_fincore['fechadesembolso'])
+
+# df_fincore = df_fincore[df_fincore['ETIQUETA REFINANCIADO'] == 'NO REFINANCIADO']
 
 #%% MERGE CON EL NRO DE DÍA LABORAL
 
@@ -407,7 +416,8 @@ union = union[['codigosocio',
                #'dia no laboral', 
                #'Año',
                #'Mes',
-               'Numero de dia laboral']]
+               'Numero de dia laboral',
+               'ETIQUETA REFINANCIADO']]
 
 union['FechaCorte'] = pd.to_datetime(corte_actual, format='%Y%m%d')
 
@@ -447,8 +457,9 @@ if CARGA_SQL_SERVER == True:
               [TEM],                
               [tipo_pre],           
               [Numero de dia laboral],
-              [FechaCorte])
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              [FechaCorte],
+              [ETIQUETA REFINANCIADO])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         row['codigosocio'],
         row['Funcionario'],
@@ -464,7 +475,8 @@ if CARGA_SQL_SERVER == True:
         row['TEM'],
         row['tipo_pre'],
         row['Numero de dia laboral'],
-        row['FechaCorte']
+        row['FechaCorte'],
+        row['ETIQUETA REFINANCIADO']
         )
 
     cnxn.commit()
@@ -524,8 +536,9 @@ if CARGA_SQL_SERVER == True:
               [tipo_pre],           
               [Numero de dia laboral],
               [FechaCorte],
-              [dia acumulado])
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              [dia acumulado],
+              [ETIQUETA REFINANCIADO])
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         row['codigosocio'],
         row['Funcionario'],
@@ -542,7 +555,8 @@ if CARGA_SQL_SERVER == True:
         row['tipo_pre'],
         row['Numero de dia laboral'],
         row['FechaCorte'],
-        row['dia acumulado']
+        row['dia acumulado'],
+        row['ETIQUETA REFINANCIADO']
         )
 
     cnxn.commit()
@@ -572,7 +586,140 @@ if CARGA_SQL_SERVER == True:
     cnxn.commit()
     cursor.close()
 
-    print('Se insertaron los datos en las tablas principales:')
+    print('Se insertaron los datos en las tablas principales')
 else:
     print('No se ha cargado a SQL SERVER')
+
+#%% CONECCIÓN A SQL PARA MONTO NETO
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
+server    =  datos['DATOS'][0]
+username  =  datos['DATOS'][2]
+password  =  datos['DATOS'][3]
+
+conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+conn = pyodbc.connect(conn_str)
+
+query = '''
+SELECT
+	s.codigosocio,
+	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
+	p.fechadesembolso,
+	p.montosolicitado as 'Otorgado',
+	DESCUENTO.valor as 'retención',
+	p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
+
+FROM prestamo AS p
+
+INNER JOIN socio AS s             ON s.codsocio = p.codsocio
+LEFT JOIN sociocontacto AS sc     ON sc.codsocio = s.codsocio
+LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+INNER JOIN grupocab AS pro        ON pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito AS d          ON d.coddistrito = sc.coddistrito
+INNER JOIN provincia AS pv        ON pv.codprovincia = d.codprovincia
+INNER JOIN departamento AS dp     ON dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet AS tm  ON tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab AS gpo         ON gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet AS tm2  ON tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet AS tm3  ON tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
+INNER JOIN pais                   ON pais.codpais = s.codpais
+LEFT JOIN FINALIDAD AS FI         ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito AS TC       ON tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+
+LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
+LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
+
+LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
+
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
+
+AND s.codigosocio>0
+
+ORDER BY RIGHT(CONCAT('0000000',p.numero),8)
+
+'''
+
+df_monto_neto = pd.read_sql_query(query, conn)
+df_monto_neto.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+
+#%%
+if CARGA_SQL_SERVER == True:
+    tabla =  '[DESEMBOLSOS_DIARIOS].[dbo].[MONTO_NETO]'
+    # Establecer la conexión con SQL Server
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    
+    df = df_monto_neto[['Socio', 'pagare_fincore', 'MONTO NETO']].copy()
+    df = df.fillna(0)
+    
+    # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
+    # EJEMPLO df = df.fillna(0)
+    
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    
+
+    # Generar la sentencia CREATE TABLE dinámicamente
+    create_table_query = f"CREATE TABLE {tabla} ("
+    for column_name, dtype in df.dtypes.items():
+        sql_type = ''
+        if dtype == 'int64':
+            sql_type = 'INT'
+        elif dtype == 'int32':
+            sql_type = 'INT'
+        elif dtype == 'float64':
+            sql_type = 'FLOAT'
+        elif dtype == 'object':
+            sql_type = 'NVARCHAR(255)'  # Ajusta el tamaño según tus necesidades
+        elif dtype == '<M8[ns]':
+            sql_type = 'DATETIME'  # Ajusta el tamaño según tus necesidades
+
+        create_table_query += f"[{column_name}] {sql_type}, "
+        
+    create_table_query = create_table_query.rstrip(', ') + ")"  # Elimina la última coma y espacio
+
+    # Ejecutar la sentencia CREATE TABLE
+    cursor.execute(create_table_query)
+    
+    # CREACIÓN DE LA QUERY DE INSERT INTO
+    # Crear la lista de nombres de columnas con corchetes
+    column_names = [f"[{col}]" for col in df.columns]
+    # Crear la lista de placeholders para los valores
+    value_placeholders = ', '.join(['?' for _ in df.columns])
+    # Crear la consulta de inserción con los nombres de columna y placeholders de valores
+    insert_query = f"INSERT INTO {tabla} ({', '.join(column_names)}) VALUES ({value_placeholders})"
+
+    # Iterar sobre las filas del DataFrame e insertar en la base de datos
+    for _, row in df.iterrows():
+        cursor.execute(insert_query, tuple(row))
+
+    # Confirmar los cambios y cerrar la conexión
+    cnxn.commit()
+    cursor.close()
+
+    print(f'Se cargaron los datos a SQL SERVER {tabla}')
+
+else:
+    print('No se ha cargado a SQL SERVER')
+
+#%% ALERTA PARA CESAR
+inicio_mes = pd.Timestamp(corte_actual[0:6] + '01')
+
+alerta = union.merge(df_monto_neto[['Socio', 'pagare_fincore', 'MONTO NETO']],
+                     on  = 'pagare_fincore',
+                     how = 'left')
+
+alerta = alerta[alerta['fechadesembolso'] >= inicio_mes]
+alerta = alerta[alerta['MONTO NETO'] < 1]
+
+if alerta[['MONTO NETO', 'pagare_fincore']].shape[0] > 0:
+    print('MONTO NETO NEGATIVO, investigar')
+else:
+    print('ok')
 
