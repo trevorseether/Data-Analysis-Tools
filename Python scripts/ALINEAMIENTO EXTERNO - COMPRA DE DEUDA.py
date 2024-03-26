@@ -18,15 +18,15 @@ warnings.filterwarnings('ignore')
 #%%
 # COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL         = '20240131'
+CORTE_SQL         = '20240229'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 febrero')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2622024101850_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2632024112859_1.csv'
 
 CARGA_SQL_SERVER  = True
 
-tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_01]'
+tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_02]'
 
 excel_para_sql    = False
 
@@ -458,7 +458,7 @@ if CARGA_SQL_SERVER == True:
     
     cursor.execute(f"""
                    DELETE FROM [ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[AL_EXTERNO]
-                   WHERE FECHA_CORTE = '{CORTE_SQL}' """)  
+                   WHERE FECHA_CORTE = '{CORTE_SQL}' """)
                    
     cursor.execute(f''' 
             INSERT INTO anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AL_EXTERNO] 
@@ -486,4 +486,9 @@ if CARGA_SQL_SERVER == True:
     print('[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[AL_EXTERNO]')
             
 ###############################################################################
+
+#%% REPORTES DONDE SE HA INTEGRADO LOS DATOS DEL ALINEAMIENTO EXTERNO:
+
+
+
 
