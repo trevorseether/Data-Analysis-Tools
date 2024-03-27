@@ -61,13 +61,17 @@ columnas = ['Apellidos y Nombres / Razón Social 2/',
             'Profesion',
             'Ocupacion',
             'Actividad Economica',
-            'Departamento', 'Provincia', 'Distrito',
-            
+            'Departamento', 'Provincia', 'Distrito'            
             ]
 #%%
 data = anexo_06[columnas]
 data = data[data['Dias de Mora 33/'] < 90]
 data = data.rename(columns = {'Monto Desembolso\nSoles Fijo' : "Monto Otorgado"})
+
+data['PLANILLA CONSOLIDADA'] = data['PLANILLA CONSOLIDADA'].str.strip()
+data['Profesion'] = data['Profesion'].str.strip()
+data['Ocupacion'] = data['Ocupacion'].str.strip()
+data['Actividad Economica'] = data['Actividad Economica'].str.strip()
 
 #%% CONECCIÓN A SQL SERVER FINCORE
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -93,7 +97,11 @@ ON A.CODSOCIO = C.CODSOCIO
 '''
 
 df_ingreso_instruccion = pd.read_sql_query(query, conn)
+df_ingreso_instruccion = df_ingreso_instruccion.sort_values(by='INGRESOBRUTO', ascending=False)
+df_ingreso_instruccion.drop_duplicates(subset='CodigoSocio', inplace = True)
 
+
+df_ingreso_instruccion.columns
 #%% MERGE
 data = data.merge(df_ingreso_instruccion,
                   left_on  = 'Código Socio 7/',
