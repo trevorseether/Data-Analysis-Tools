@@ -85,24 +85,6 @@ df1.dropna(subset=['CodigoSocio',
                    'NroPrestamoFC',
                    'TipoCredito'], inplace=True, how='all')
 
-# vendidos = ['00001346',
-#             '00050796',
-#             '00000633',
-#             '00000942',
-#             '00020154',
-#             '00054955',
-#             '00001147',
-#             '00001287']
-
-# def fecha_venta_cartera1(df1):
-#     if df1['NroPrestamoFC'] in vendidos:
-#         return '2023-08-29' #año-mes-día
-#     else:
-#         return df1['JFechaVentaCartera']
-
-# df1['JFechaVentaCartera'] = df1.apply(fecha_venta_cartera1, axis=1)
-# df1['JFechaVentaCartera'] = df1['JFechaVentaCartera'].apply(parse_dates)
-
 ############################################################
 ##        2 aqui va el reporte del mes pasado           ####
 ############################################################
@@ -354,8 +336,8 @@ mascara = df5['IMPTE CASTIGADO (Asignado x PGB)'] != 0
 
 df6.loc[mascara, 'Capital Amortizado'] = df6.loc[mascara, 'Capital Amortizado'] + df6.loc[mascara, 'Capital']
 df6.loc[mascara, 'Int y Otros'] = df6.loc[mascara, 'Int y Otros'] + df6.loc[mascara, 'Int y Otros mes actual']
-# hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado
-# , y filtrado según saldo castigado
+# hasta aqui ya está sumado el capital amortizado y el 'interés' de este mes con el mes pasado,
+# y filtrado según saldo castigado
 
 #%% SALDO DEUDOR PGB
 
@@ -375,7 +357,7 @@ def asignar_saldo_deudor(df6):
 
 df6['SALDO DEUDOR REALISTA (SOLO PARA PGB)'] = df6.apply(asignar_saldo_deudor, axis=1)
 
-#ya está llenado hasta esta columna SALDO DEUDOR REALISTA (SOLO PARA PGB)
+# ya está llenado hasta esta columna SALDO DEUDOR REALISTA (SOLO PARA PGB)
 
 #%% ASIGNACIÓN DE DATOS DEL MES PASADO
 
