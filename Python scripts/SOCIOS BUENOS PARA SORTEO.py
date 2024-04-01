@@ -13,9 +13,9 @@ import pyodbc
 import os
 
 #%%
-fecha_corte = '20240131'
+fecha_corte = '20240229'
 
-fecha_hoy = '20240215'
+fecha_hoy = '20240331'
 
 'Directorio de trabajo'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo')
@@ -45,6 +45,8 @@ anx06 = pd.read_sql_query(query, conn)
 #%% filtramos los créditos buenos del anexo06
 buenos_y_malos = anx06.pivot_table(values = 'deteriorado',
                                     index = 'NumerodeDocumento10').reset_index()
+
+# SOCIOS SIN MOROSIDAD
 buenos = buenos_y_malos[buenos_y_malos['deteriorado'] == 0]
 
 anx06 = anx06[anx06['NumerodeDocumento10'].isin(buenos['NumerodeDocumento10'])]
