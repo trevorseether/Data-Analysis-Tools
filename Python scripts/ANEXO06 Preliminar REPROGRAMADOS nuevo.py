@@ -393,6 +393,30 @@ columna_in_suspendo,
 'Monto Desembolso\nSoles Fijo'
 ]]
 
+#%% REASIGNANDO FUNCIONARIO ADMINISTRADOR:
+columna_funcionario = 'Funcionario Actual'
+# modificación del funcionario administrador JOSÉ SANCHEZ
+fincore = ['00113801', '00104004', '00117340', '00095947', '00116920', '00110128', '00105401', '00111826', '00113403', '00108586', '00109499', '00112633', '00103151', '00104750', '00110157', '00114475', '00111036', '00114489', '00114089', '00102018', '00101618', '00112232', '00114833', '00113081', '00103685', '00114880', '00100061', '00116058', '00112347', '00116108', '00111174', '00112916', '00115669', '00115075', '00097157', '00102188', '00114241', '00109368', '00106285', '00111039', '00111652', '00106899', '00098991']
+administrador = ['ENRIQUE IVAN DELFINO BAYLON'] * 43
+
+data = {"fincore": fincore, "administrador": administrador}
+delfin = pd.DataFrame(data)
+#############################################
+fincore = ['00085200', '00082052', '00082532', '00082493', '00087920', '00083856', '00100779', '00093786', '00080124', '00078609', '00079639', '00105716', '00080950', '00099281', '00081650', '00086835', '00086955', '00081102', '00084561', '00087435', '00105779', '00082874', '00106349', '00079613', '00087113', '00107949', '00090798']
+administrador = ['ADMINISTRADOR TRUJILLO'] * 27
+data = {"fincore": fincore, "administrador": administrador}
+trujillo = pd.DataFrame(data)
+
+def admin_reasignacion(DF):
+    if DF['Nro Prestamo \nFincore'] in list(delfin['fincore']):
+        return 'ENRIQUE IVAN DELFINO BAYLON'
+    elif DF['Nro Prestamo \nFincore'] in list(trujillo['fincore']):
+        return 'ADMINISTRADOR TRUJILLO'
+    else:
+        return DF[columna_funcionario]
+
+ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
+
 #%% SALDO DE GARANTÍA DEL MES PASADO
 # PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
 # estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final 
@@ -1710,6 +1734,7 @@ alertaaa = anx06_ordenado[(anx06_ordenado['Tipo de Crédito 19/'] == '12') & \
 if alertaaa.shape[0] > 0:
     print(Back.RED + 'ALERTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 🚨🚨🚨🚨')
     print('Un Tipo 12 NO puede tener garantía preferida')
+    # no hay espacio en el Anexo 05 para que un tipo 12 ponga el monto de la garantía preferida, haciendo imposible subir el anexo 05
 else:
     print(Back.GREEN + 'todo bien q(≧▽≦q)')
 

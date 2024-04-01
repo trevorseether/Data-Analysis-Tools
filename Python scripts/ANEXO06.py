@@ -2346,33 +2346,7 @@ anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00019911', 'Sub Tipo
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00020153', 'Sub Tipo de Crédito 20/'] = '99'
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00053525', 'Sub Tipo de Crédito 20/'] = '99'
 
-#%%
-# modificación del funcionario administrador JOSÉ SANCHEZ
-
-columna_funcionario = 'Funcionario Actual'
-
-delfin = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
-                       sheet_name = 'delfino',
-                       dtype = {'fincore':str})
-delfin['fincore'] = delfin['fincore'].str.strip()
-
-trujillo = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\JOSE SANCHEZ TRUJILLO reasignación.xlsx',
-                         sheet_name = 'trujillo',
-                         dtype = {'fincore':str})
-trujillo['fincore'] = trujillo['fincore'].str.strip()
-
-def admin_reasignacion(anexo06_casi):
-    if anexo06_casi['Nro Prestamo \nFincore'] in list(delfin['fincore']):
-        return 'ENRIQUE IVAN DELFINO BAYLON'
-    elif anexo06_casi['Nro Prestamo \nFincore'] in list(trujillo['fincore']):
-        return 'ADMINISTRADOR TRUJILLO'
-    else:
-        return anexo06_casi[columna_funcionario]
-
-anexo06_casi[columna_funcionario] = anexo06_casi.apply(admin_reasignacion, axis = 1)
-
 #%% PARSEO DE LA FECHA DE LA COLUMNA 'Fecha Castigo TXT'
-
 anexo06_casi['Fecha Castigo TXT'] = anexo06_casi['Fecha Castigo TXT'].str.strip()
 #formatos en los cuales se tratará de convertir a DateTime
 formatos = ['%d/%m/%Y %H:%M:%S',
