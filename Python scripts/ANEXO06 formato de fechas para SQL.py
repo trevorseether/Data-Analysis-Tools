@@ -12,8 +12,10 @@ import os
 #%% PARÁMETROS INICIALES:
 
 anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
-ubicación = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS'
-filas_skip = 2
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS'
+filas_skip    = 2
+
+crear_excel   = True #True o False
 
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
@@ -73,24 +75,29 @@ df['Fecha de Vencimiento Origuinal del Credito 48/'] = df['Fecha de Vencimiento 
 
 df['Fecha de Vencimiento Actual del Crédito 49/'] = df['Fecha de Vencimiento Actual del Crédito 49/'].apply(parse_date)
 
-#%%
-# creación de carpeta
-nombre_carpeta = 'carpeta para sql'
-
-if not os.path.exists(nombre_carpeta):
-    os.makedirs(nombre_carpeta)
+#%% CREAR EXCEL
+if crear_excel == True:
+    # creación de carpeta
+    nombre_carpeta = 'carpeta para sql'
+    
+    if not os.path.exists(nombre_carpeta):
+        os.makedirs(nombre_carpeta)
+    else:
+        print('la carpeta ya existe')
+    
+    os.chdir(nombre_carpeta)
+    
+    # creamos el excel
+    try:
+        ruta = 'Anx06 ' + str(anexo_del_mes[26:40]) + ' para SQL.xlsx'
+        os.remove(ruta)
+    except FileNotFoundError:
+        pass
+    
+    df.to_excel(ruta,
+                index = False)
+    print('excel creado')
+    
 else:
-    print('la carpeta ya existe')
-
-os.chdir(nombre_carpeta)
-
-#%% creamos el excel
-try:
-    ruta = 'Anx06 ' + str(anexo_del_mes[26:40]) + ' para SQL.xlsx'
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
-
-df.to_excel(ruta,
-            index = False)
+    None
 

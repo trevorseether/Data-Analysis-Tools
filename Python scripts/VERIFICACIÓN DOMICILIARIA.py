@@ -12,10 +12,10 @@ import pandas as pd
 import os
 import pyodbc
 #%%
-ubi         = 'C:\\Users\\sanmiguel38\\Desktop\\VERIFICACIÓN DOMICILIARIA'
-nombre      = 'RELACIÓN DE SOCIOS MYPE - VISITAS DOMICILIO MAR 24 - FINAL.xlsx'
-skip_filas  = 2
-fecha_corte = '20240229'
+ubi         = 'C:\\Users\\sanmiguel38\\Desktop\\VERIFICACIÓN DOMICILIARIA\\02 04'
+nombre      = 'RELACIÓN MYPE - ABRIL 2024.xlsx'
+skip_filas  = 1
+fecha_corte = '20240331'
 menor_a     = 10000
 
 #%%
