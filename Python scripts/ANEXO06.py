@@ -659,7 +659,7 @@ df_resultado['Tasa de Provisión'] = df_resultado.apply(provision, axis=1)
 df_resultado['Tasa de Interés Anual 23/'].dtype
 
 def int_diario(df_resultado):
-    return (((1 + float(df_resultado['Tasa de Interés Anual 23/']))**(1/360))-1) *100
+    return (((1 + float(df_resultado['Tasa de Interés Anual 23/']))**(1/360))-1) * 100
 
 df_resultado['Tasa Diaria'] = df_resultado.apply(int_diario, axis=1)
 
@@ -1502,9 +1502,9 @@ def int_suspenso(df_resultado_2):
 
 df_resultado_2['intereses en suspenso'] = df_resultado_2.apply(int_suspenso, axis=1)
 
-df_resultado_2['''Intereses en Suspenso 41/'''] = df_resultado_2['Interes Suspenso Nuevo']
+df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Interes Suspenso Nuevo']
 
-df_resultado_2['''Intereses en Suspenso 41/'''].sum()
+df_resultado_2['Intereses en Suspenso 41/'].sum()
 
 x = df_resultado_2.columns
 #%% REASIGNAMOS DEVENGADOS Y SUSPENSO DEL FINCORE AL ANEXO 06
@@ -1512,12 +1512,12 @@ x = df_resultado_2.columns
 col_devengado = 'Interes Devengado Nuevo'
 col_suspenso  = 'Interes Suspenso Nuevo'
 
-# 'Interes\nDevengado Total'
-# 'Interes \nSuspenso Total'
+# # 'Interes\nDevengado Total'
+# # 'Interes \nSuspenso Total'
 
-df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2[col_devengado].round(2)
+# df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2[col_devengado].round(2)
 
-df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2[col_suspenso].round(2)
+# df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2[col_suspenso].round(2)
 
 #%% antes de asignar devengados, vamos a revisar unos casitos
 fecha_corte_datetime = pd.Timestamp(fecha_corte[0:8] + '01')

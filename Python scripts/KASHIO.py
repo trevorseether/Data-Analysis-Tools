@@ -20,12 +20,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\27 03')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\01 04')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240327.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240401.xlsx'
 ######################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
@@ -108,7 +108,7 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAILCOM'    , '@HOTMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAI.COM'    , '@HOTMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.CO'  , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM' , '@HOTMAIL.COM')    
-kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM.PE'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIL.COMOM.PE' , '@HOTMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMJM'   , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMOM'   , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')    

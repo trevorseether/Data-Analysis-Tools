@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240331' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20240430' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_03]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_03_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -95,8 +95,10 @@ df_anterior['Dia de la semana'] = df_anterior['Fecha'].dt.day_name()
 #%%
 # Lista de feriados
 feriados_2023 = ['01-01-2023',
+                 '01-04-2023',
                  '06-04-2023',
                  '07-04-2023',
+                 '08-04-2023',
                  '01-05-2023',
                  '29-06-2023',
                  '28-07-2023',

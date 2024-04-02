@@ -65,7 +65,7 @@ anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados- Insum
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024 enero\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 enero\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
@@ -1608,10 +1608,41 @@ print('')
 print('la suma total de (1) y (2) debe ser la misma')
                       
 #%% ASIGNACIÓN DE LOS DEVENGADOS A LAS COLUMNAS QUE SÍ IRÁN EN EL ANEXO 06 PARA LA SBS
-
+# con esto hemos modificado el rendimiento devengado (cero) y hemos colocado todo el interés en el int suspenso
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado[columna_devengados].round(2)
 
 anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado[columna_in_suspendo].round(2)
+
+#%% cálculo extra de DEVENGADO 40/
+# por solicitud de contabilidad
+def ajuste_devengados(anx06_ordenado):
+    saldo_cartera  = anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
+    tasa_diaria    = (((1 + anx06_ordenado['Tasa de Interés Anual 23/'])**(1/360))-1)
+    dias_devengado = (mes_final - anx06_ordenado['Fecha Termino \nPeriodo Gracia']).days
+    
+    if (anx06_ordenado['Número de Cuotas Pagadas 45/'] == 0) and \
+       (anx06_ordenado['Fecha de Desembolso 21/'] >= 20230101) and \
+       (anx06_ordenado['Flag Termino Periodo Gracia'] == 'SI'):
+           
+        return round(((saldo_cartera * ((1 + tasa_diaria)**dias_devengado)) - saldo_cartera), 2)
+    else:
+        return anx06_ordenado['Rendimiento\nDevengado 40/']
+            
+anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
+
+def flag_devengado_recalculado(anx06_ordenado):
+    # saldo_cartera  = anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
+    # tasa_diaria    = (((1 + anx06_ordenado['Tasa de Interés Anual 23/'])**(1/360))-1)
+    # dias_devengado = (mes_final - anx06_ordenado['Fecha Termino \nPeriodo Gracia']).days
+    
+    if (anx06_ordenado['Número de Cuotas Pagadas 45/'] == 0) and \
+       (anx06_ordenado['Fecha de Desembolso 21/'] >= 20230101) and \
+       (anx06_ordenado['Flag Termino Periodo Gracia'] == 'SI'):
+           
+        return 'si'
+    else:
+        return ''
+anx06_ordenado['Flag Devengado Recalculado'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])
