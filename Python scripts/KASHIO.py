@@ -20,21 +20,21 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\02 04')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\03 abr')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
-'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240402.xlsx'
-######################################################################
+'NOMBRE DEL ARCHIVO DE HOY' ###################################################
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240403.xlsx'
+###############################################################################
 
-#%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS #########################
+#%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
 crear_archivo = False #True o False
-######################################################################
+###############################################################################
 
-'REPORTE DE MENSAJERÍA PREVENTIVA'####################################
+'REPORTE DE MENSAJERÍA PREVENTIVA'#############################################
 mensajeria_preventiva = False #True o False
-######################################################################
+###############################################################################
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #%%% lectura del archivo
