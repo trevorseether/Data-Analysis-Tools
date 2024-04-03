@@ -17,30 +17,115 @@ fecha_corte = '20240229'
 
 fecha_hoy = '20240331'
 
-'Directorio de trabajo'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo\\anexo 06 febrero 2024')
+
+# Cargar el último Anexo06 en el formato que se envía a los demás
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
+
+filas_skip   = 2
+
+usar_sql     = False # True o False, si le das False, es obligatorio definir un excel de anexo06
+
 #%%
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+if usar_sql == True:
+    conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
-query = f'''
-DECLARE @FECHACORTE AS DATETIME = '{fecha_corte}'
+    query = f'''
+    DECLARE @FECHACORTE AS DATETIME = '{fecha_corte}'
+    
+    SELECT 
+    	ApellidosyNombresRazonSocial2,
+    	NumerodeDocumento10,
+    	TipodeDocumento9,
+    	Nro_Fincore,
+    	FechadeDesembolso21,
+    	MontodeDesembolso22,
+    	TipodeProducto43,
+        CapitalVencido29 + CapitalenCobranzaJudicial30 + SaldosdeCreditosCastigados38 + CapitalRefinanciado28 + Reprogramados52 AS 'deteriorado'
 
-SELECT 
-	ApellidosyNombresRazonSocial2,
-	NumerodeDocumento10,
-	TipodeDocumento9,
-	Nro_Fincore,
-	FechadeDesembolso21,
-	MontodeDesembolso22,
-	TipodeProducto43,
-    CapitalVencido29 + CapitalenCobranzaJudicial30 + SaldosdeCreditosCastigados38 + CapitalRefinanciado28 + Reprogramados52 AS 'deteriorado'
+    FROM anexos_riesgos3..ANX06
+    WHERE FechaCorte1 = @FECHACORTE
+    AND TipodePersona11 = 1
+    '''
 
-FROM anexos_riesgos3..ANX06
-WHERE FechaCorte1 = @FECHACORTE
-AND TipodePersona11 = 1
-'''
+    anx06 = pd.read_sql_query(query, conn)
 
-anx06 = pd.read_sql_query(query, conn)
+else:
+    anx06 = pd.read_excel(io       = nombre_anx06,
+                          skiprows = filas_skip,
+                          dtype    = {'Nro Prestamo \nFincore'  : str,
+                                      'Fecha de Desembolso 21/' : str})
+    
+    anx06.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/', 
+                           'Fecha de Nacimiento 3/',
+                           'Número de Documento 10/',
+                           'Domicilio 12/',
+                           'Numero de Crédito 18/'], inplace = True, how = 'all')
+
+    
+    anx06 = anx06[['Apellidos y Nombres / Razón Social 2/',
+                   'Número de Documento 10/',
+                   'Tipo de Documento 9/',
+                   'Nro Prestamo \nFincore',
+                   'Fecha de Desembolso 21/',
+                   'Monto de Desembolso 22/',
+                   'Tipo de Producto 43/',
+                   
+                   'Capital Vencido 29/',
+                   'Capital en Cobranza Judicial 30/',
+                   'Saldos de Créditos Castigados 38/',
+                   'Capital Refinanciado 28/']]
+    anx06['deteriorado'] = anx06['Capital Vencido 29/'] + anx06['Capital en Cobranza Judicial 30/'] + anx06['Saldos de Créditos Castigados 38/'] + anx06['Capital Refinanciado 28/']
+    del anx06['Capital Vencido 29/']
+    del anx06['Capital en Cobranza Judicial 30/']
+    del anx06['Saldos de Créditos Castigados 38/']
+    del anx06['Capital Refinanciado 28/']
+    anx06.rename(columns = {'Apellidos y Nombres / Razón Social 2/' : 'ApellidosyNombresRazonSocial2',
+                            'Número de Documento 10/'               : 'NumerodeDocumento10',
+                            'Tipo de Documento 9/'                  : 'TipodeDocumento9',
+                            'Nro Prestamo \nFincore'                : 'Nro_Fincore',
+                            'Fecha de Desembolso 21/'               : 'FechadeDesembolso21',
+                            'Monto de Desembolso 22/'               : 'MontodeDesembolso22',
+                            'Tipo de Producto 43/'                  : 'TipodeProducto43'}, 
+                 inplace = True)
+    
+    anx06['FechadeDesembolso21'] = anx06['FechadeDesembolso21'].astype(int)
+    anx06['FechadeDesembolso21'] = anx06['FechadeDesembolso21'].astype(str)
+    
+    # from datetime import datetime
+    
+    # este parseador es perfecto y una de mis mejores creaciones de todos los tiempos
+    formatos = ['%d/%m/%Y %H:%M:%S',
+                '%d/%m/%Y',
+                '%Y%m%d', 
+                '%Y-%m-%d', 
+                '%Y-%m-%d %H:%M:%S', 
+                '%Y/%m/%d %H:%M:%S',
+                '%Y-%m-%d %H:%M:%S PM',
+                '%Y-%m-%d %H:%M:%S AM',
+                '%Y/%m/%d %H:%M:%S PM',
+                '%Y/%m/%d %H:%M:%S AM']  # Lista de formatos a analizar
+    
+    def parse_dates(date_str):
+        '''
+        Parameters
+        ----------
+        date_str : Es el formato que va a analizar dentro de la columna del DataFrame.
+    
+        Returns
+        -------
+        Si el date_str tiene una estructura compatible con los formatos preestablecidos
+        para su iteración, la convertirá en un DateTime
+    
+        '''
+        for formato in formatos:
+            try:
+                return pd.to_datetime(date_str, format=formato)
+            except ValueError:
+                pass
+        return pd.NaT
+    
+    anx06['FechadeDesembolso21'] = anx06['FechadeDesembolso21'].apply(parse_dates)
 
 #%% filtramos los créditos buenos del anexo06
 buenos_y_malos = anx06.pivot_table(values = 'deteriorado',
@@ -136,12 +221,20 @@ base = anx06.rename(columns = {'ApellidosyNombresRazonSocial2' : 'Socio',
                                'FechadeDesembolso21'           : 'fechadesembolso',
                                'MontodeDesembolso22'           : 'Otorgado'})
 
-base = base[['Socio','Doc_Identidad', 'Nro_Fincore', 'fechadesembolso', 'Otorgado']]
-base = base.sort_values(by=['Socio'])
+base = base[['Socio',
+             'Doc_Identidad',
+             'Nro_Fincore',
+             'fechadesembolso',
+             'Otorgado']]
+base = base.sort_values(by = ['Socio'])
 
 df_desembolsados = df_desembolsados.rename(columns = {'pagare_fincore' : 'Nro_Fincore'})
-df_desembolsados = df_desembolsados[['Socio','Doc_Identidad', 'Nro_Fincore', 'fechadesembolso', 'Otorgado']]
-df_desembolsados = df_desembolsados.sort_values(by=['Socio'])
+df_desembolsados = df_desembolsados[['Socio',
+                                     'Doc_Identidad', 
+                                     'Nro_Fincore', 
+                                     'fechadesembolso', 
+                                     'Otorgado']]
+df_desembolsados = df_desembolsados.sort_values(by = ['Socio'])
 
 base = pd.concat([base, df_desembolsados], ignore_index = True)
 
