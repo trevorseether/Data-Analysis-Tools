@@ -38,9 +38,9 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Marzo 2024'
-fecha_corte             = '2024-03-31'
-fecha_corte_inicial     = '2024-03-01'
+fecha_mes               = 'Marzo 2024' # Mes Año
+fecha_corte             = '2024-03-31' # año-mes-día
+fecha_corte_inicial     = '2024-03-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
