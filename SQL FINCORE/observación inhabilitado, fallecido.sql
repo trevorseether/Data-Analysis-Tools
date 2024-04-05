@@ -1,7 +1,8 @@
 SELECT 	
 iif(A.CodTipoPersona =1, A.nroDocIdentidad, A.nroruc) AS 'Doc_Identidad',
-B.FechaObservacion,
-*
+--B.FechaObservacion,
+A.FechaInscripcion,
+A.FechaNacimiento
 FROM 
 	Socio AS A
 LEFT JOIN 
