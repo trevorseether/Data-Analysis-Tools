@@ -38,9 +38,9 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Febrero 2024'
-fecha_corte             = '2024-02-29'
-fecha_corte_inicial     = '2024-02-01'
+fecha_mes               = 'Marzo 2024'
+fecha_corte             = '2024-03-31'
+fecha_corte_inicial     = '2024-03-01'
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -55,29 +55,29 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 enero\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\producto verdadero'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - ENERO 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 055.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
-skip_rows_actual   = 0
+skip_rows_actual   = 4
 ############################################################################################
 
 # filas a omitir del anexo anterior ########################################################
-skip_rows_anterior = 2
+skip_rows_anterior = 0
 ############################################################################################
 
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
@@ -533,7 +533,7 @@ if generar_excels == True:
 # HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
-ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'].round(2)
+ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'].astype(float).round(2)
 
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Capital Real']
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo de colocaciones (créditos directos) 24/'].round(2)
@@ -1851,9 +1851,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240229' #mes actual
-fecha_corte_menos_1 = '20240131' #mes anterior
-fecha_corte_menos_2 = '20231231' #mes anterior del anterior
+fecha_corte_actual  = '20240331' #mes actual
+fecha_corte_menos_1 = '20240229' #mes anterior
+fecha_corte_menos_2 = '20240131' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1932,13 +1932,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados ENERO 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024 enero\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados ni vendidos.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\producto verdadero'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Feb-24'
-mes_anterior_txt = 'Ene-24'
+mes_actual_txt   = 'Mar-24'
+mes_anterior_txt = 'Feb-24'
 # =============================================================================
 #%% LECTURA
 
