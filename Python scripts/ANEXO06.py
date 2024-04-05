@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 055.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 29 02 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 03 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Febrero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Marzo' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-02-29' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Febrero 2024'
+fecha_corte     = '2024-03-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Marzo 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -241,18 +241,19 @@ del tipo_cero
 
 #ahora vamos a leer el archivo donde Enrique manualmente elabora la clasificación de los refinanciados
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
+nombre_col_fincore = 'Pagare Actual'
 
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows = 3,
                           dtype = {'Nº de Crédito FINCORE' : object,
-                                   'PAGARE ACTUAL'         : str})
+                                   nombre_col_fincore         : str})
 
-calif_ref['PAGARE ACTUAL'] = calif_ref['PAGARE ACTUAL'].str.strip() #si aquí salta un error, es porque le han cambiado el nombre a la columna
+calif_ref[nombre_col_fincore] = calif_ref[nombre_col_fincore].str.strip() #si aquí salta un error, es porque le han cambiado el nombre a la columna
 
 calif_ref[mes_calif] = calif_ref[mes_calif].astype(float)
 
 calif_ref = calif_ref.rename(columns = {mes_calif        : 'calificacion especial'})
-calif_ref = calif_ref.rename(columns = {'PAGARE ACTUAL'  : 'fincore ref'}) #aquí antes la columna se llamaba Nº de Crédito FINCORE
+calif_ref = calif_ref.rename(columns = {nombre_col_fincore  : 'fincore ref'}) #aquí antes la columna se llamaba Nº de Crédito FINCORE
 
 calif_ref = calif_ref[['fincore ref','calificacion especial']]
 
@@ -1163,8 +1164,15 @@ print(result)
 not_in = prod43_mype + [41, 45, '41', '45']
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
 mayores_para_investigar = mayores_para_investigar[mayores_para_investigar['Saldo de colocaciones (créditos directos) 24/'] > 50000]
-print(mayores_para_investigar[['Nro Prestamo \nFincore', 'Fecha de Desembolso 21/']])
+print(mayores_para_investigar[['Nro Prestamo \nFincore', 
+                               'Fecha de Desembolso 21/', 
+                               'Tipo de Producto 43/']])
 
+if mayores_para_investigar.shape[0]:
+    mayores_para_investigar[['Apellidos y Nombres / Razón Social 2/',
+                             'Nro Prestamo \nFincore', 
+                             'Fecha de Desembolso 21/', 
+                             'Tipo de Producto 43/']].to_excel('créditos medio raros.xlsx')
 #%% conclusión
 #########################################################################################
 #### HASTA AQUÍ YA TERMINAMOS EL TIPO DE PRODUCTO 43/, LO QUE SIGUE SON OTRAS COSAS  #####
@@ -1529,7 +1537,16 @@ inv = df_resultado_2[(df_resultado_2['Rendimiento\nDevengado 40/']        == 0) 
                      (df_resultado_2['Saldos de Créditos Castigados 38/'] == 0) &
                      (df_resultado_2['Número de Cuotas Pagadas 45/']      == 0) &
                      (df_resultado_2['Fecha de Desembolso 21/'] >= fecha_corte_datetime) &
-                     (df_resultado_2['Fecha de Desembolso 21/'] < pd.Timestamp(fecha_corte))]
+                     (df_resultado_2['Fecha de Desembolso 21/'] < pd.Timestamp(fecha_corte)) &
+                     
+                     ~( # ojo que es una negación de las siguientes características:
+                     (df_resultado_2['Flag Termino Periodo Gracia'] == 'SI') &
+                     (df_resultado_2['Número de Cuotas Pagadas 45/'] == 0) &
+                     (df_resultado_2['Fecha de Desembolso 21/'] >= pd.Timestamp('2023-01-01'))
+                     ) & 
+                     # esto ya no es negación xd
+                     (df_resultado_2['Refinanciado TXT'] != 'REFINANCIADO')
+                     ]
 
 print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
 print('si sale más de cero, es porque hay unos casos a los cuales aplicarles cálculo de devengados')
@@ -1542,7 +1559,7 @@ def dev_0_vigente(df_resultado_2):
         return df_resultado_2['Capital Vigente 26/']* (\
         (((1+(df_resultado_2['Tasa Diaria']/100))**float(max((fecha_fija - df_resultado_2['Fecha de Desembolso 21/']).days, 0))))-1)
     else:
-        return df_resultado_2[col_devengado]
+        return df_resultado_2['Rendimiento\nDevengado 40/']
     
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_vigente, axis = 1)
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
@@ -1560,17 +1577,12 @@ def dev_0_ref(df_resultado_2):
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2.apply(dev_0_ref, axis= 1)
 df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['Rendimiento\nDevengado 40/'].round(2)
 
-print(df_resultado_2[col_devengado].sum())
-print(df_resultado_2['Rendimiento\nDevengado 40/'].sum())
+# Filtrado para verificar
+condicion1 = df_resultado_2['Nro Prestamo \nFincore'].isin(list(inv['Nro Prestamo \nFincore']))
+condicion2 = (df_resultado_2['Rendimiento\nDevengado 40/'] == 0)
 
-print(df_resultado_2[df_resultado_2[col_devengado] != df_resultado_2['Rendimiento\nDevengado 40/']].shape[0])
-print(inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0])
-print('si sale el mismo número todo okey')
+print(df_resultado_2[condicion1 & condicion2].shape[0])
 
-if (df_resultado_2[(df_resultado_2[col_devengado] != df_resultado_2['Rendimiento\nDevengado 40/']) & \
-                (df_resultado_2['Fecha de Desembolso 21/'] != pd.Timestamp(fecha_corte))].shape[0]) != inv[['Fecha de Desembolso 21/', 'Nro Prestamo \nFincore']].shape[0]:
-    print(Back.RED + 'investigar, son casos en los que no se han aplicado devengados (los desembolsados )')
-    
 #%% procedimiento eliminado
 'AHORA CALCULAR LOS INTERESES DIFERIDOS'
 #necesario para poder calcular la cartera neta = 
@@ -2385,7 +2397,7 @@ anexo06_casi['Fecha Castigo TXT'] = anexo06_casi['Fecha Castigo TXT'].apply(pars
 #%% CREACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
-nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados v02.xlsx"
+nombre = "Rpt_DeudoresSBS Anexo06 - " + fech_corte_txt + " - campos ampliados 02.xlsx"
 try:
     ruta = nombre
     os.remove(ruta)
@@ -2501,7 +2513,7 @@ df_diferidos.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/',
                               'Domicilio 12/',
                               'Numero de Crédito 18/'], 
                     inplace = True, 
-                    how = 'all')
+                    how     = 'all')
 
 #%% #asignamos los diferidos
 # df_diferidos['Ingresos Diferidos 2']    = df_diferidos['Ingresos Diferidos 2'].round(2)
