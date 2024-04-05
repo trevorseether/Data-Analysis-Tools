@@ -10,78 +10,78 @@ Created on Thu Sep  7 09:07:46 2023
 
 #%% PRIMER REPORTE PARA EXPERIAN
 #%% importación de módulos
-import pandas as pd
-import os
+# import pandas as pd
+# import os
 
-#%% INSUMOS
-# Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados ni vendidos.xlsx'
-###############################################################################
+# #%% INSUMOS
+# # Anexo 06 de reprogramados ###################################################
+# anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Marzo 2024 no incluye castigados.xlsx'
+# ###############################################################################
 
-# Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024 febrero'
-###############################################################################
+# # Directorio de trabajo #######################################################
+# directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo\\productos'
+# ###############################################################################
 
-# mes y año ###################################################################
-mes = 'febrero'
-año = 2024
-###############################################################################
-#%% IMPORTACIÓN DE ARCHIVOS
+# # mes y año ###################################################################
+# mes = 'marzo'
+# año = 2024
+# ###############################################################################
+# #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir(directorio)
-tabla1 = pd.read_excel(anx06_repro,
-                       skiprows = 2,
-                       dtype = {'Número de Documento 10/' : str,
-                                'Código Socio 7/'         : str})
+# os.chdir(directorio)
+# tabla1 = pd.read_excel(anx06_repro,
+#                        skiprows = 2,
+#                        dtype = {'Número de Documento 10/' : str,
+#                                 'Código Socio 7/'         : str})
 
-#eliminación de filas vacías si es que las hay
-tabla1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
-                        'Fecha de Nacimiento 3/',
-                        'Número de Documento 10/',
-                        'Domicilio 12/',
-                        'Numero de Crédito 18/'], inplace = True, how = 'all')
+# #eliminación de filas vacías si es que las hay
+# tabla1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
+#                         'Fecha de Nacimiento 3/',
+#                         'Número de Documento 10/',
+#                         'Domicilio 12/',
+#                         'Numero de Crédito 18/'], inplace = True, how = 'all')
 
-df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
+# df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
 
-df['CODIGO SOCIO']      = tabla1['Código Socio 7/']
-df['TIPO DOCUMENTO']    = tabla1['Tipo de Documento 9/']
-df['NUMERO DOCUMENTO']  = tabla1["Número de Documento 10/"]
-df['TIPO DE CREDITO']   = tabla1["Tipo de Crédito 19/"]
-df['DEUDA DIRECTA']     = tabla1["Saldo de colocaciones (créditos directos) 24/"]
-df['TIPO DE REPROGRAMACION']  = tabla1["TIPO_REPRO"]
-df['DEUDA REPROGRAMADA']      = tabla1["Saldo de colocaciones (créditos directos) 24/"]
+# df['CODIGO SOCIO']      = tabla1['Código Socio 7/']
+# df['TIPO DOCUMENTO']    = tabla1['Tipo de Documento 9/']
+# df['NUMERO DOCUMENTO']  = tabla1["Número de Documento 10/"]
+# df['TIPO DE CREDITO']   = tabla1["Tipo de Crédito 19/"]
+# df['DEUDA DIRECTA']     = tabla1["Saldo de colocaciones (créditos directos) 24/"]
+# df['TIPO DE REPROGRAMACION']  = tabla1["TIPO_REPRO"]
+# df['DEUDA REPROGRAMADA']      = tabla1["Saldo de colocaciones (créditos directos) 24/"]
 
-df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].astype(int)
-df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
-                                                   8  : '08',
-                                                   10 : '10',
-                                                   11 : '11',
-                                                   12 : '12',
-                                                   13 : '13'},
-                                                 na_action = None) #EN CASO DE NULO NO HACER NADA
+# df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].astype(int)
+# df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+#                                                    8  : '08',
+#                                                    10 : '10',
+#                                                    11 : '11',
+#                                                    12 : '12',
+#                                                    13 : '13'},
+#                                                  na_action = None) #EN CASO DE NULO NO HACER NADA
 
-df['CODIGO SOCIO']      = df['CODIGO SOCIO'].str.strip()
-df['NUMERO DOCUMENTO']  = df['NUMERO DOCUMENTO'].str.strip()
+# df['CODIGO SOCIO']      = df['CODIGO SOCIO'].str.strip()
+# df['NUMERO DOCUMENTO']  = df['NUMERO DOCUMENTO'].str.strip()
 
-#%% NOMBRE
-X = mes
-Y = año
-resultado = (str(X.lower().capitalize()) + " " + "Reprogramados - " +str(Y)) #métodos string para crear el nombre del archivo
-nombre = str(resultado)+".xlsx"
+# #%% NOMBRE
+# X = mes
+# Y = año
+# resultado = (str(X.lower().capitalize()) + " " + "Reprogramados - " +str(Y)) #métodos string para crear el nombre del archivo
+# nombre = str(resultado)+".xlsx"
 
-#%% EXCEL
+# #%% EXCEL
 
-try:
-    ruta = nombre
-    os.remove(ruta)
-except FileNotFoundError:
-    pass
+# try:
+#     ruta = nombre
+#     os.remove(ruta)
+# except FileNotFoundError:
+#     pass
 
-df.to_excel(nombre, 
-            index = False,
-            startrow = 1,
-            startcol = 1,
-            sheet_name=str(X.lower().capitalize() + "-"+str(Y)))
+# df.to_excel(nombre, 
+#             index = False,
+#             startrow = 1,
+#             startcol = 1,
+#             sheet_name=str(X.lower().capitalize() + "-"+str(Y)))
 
 
 #%% REPROGRAMADOS PARA LA SBS

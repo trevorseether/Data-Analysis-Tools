@@ -1627,7 +1627,6 @@ def ajuste_devengados(anx06_ordenado):
         return round(((saldo_cartera * ((1 + tasa_diaria)**dias_devengado)) - saldo_cartera), 2)
     else:
         return anx06_ordenado['Rendimiento\nDevengado 40/']
-            
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
 
 def flag_devengado_recalculado(anx06_ordenado):
@@ -2228,4 +2227,58 @@ ubicacion_actual = os.getcwd()
 
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
+
+#%% REPROGRAMADOS PARA EXPERIAN
+
+tabla1 = reprogramados.copy()
+
+#eliminación de filas vacías si es que las hay
+tabla1.dropna(subset = ['Apellidos y Nombres / Razón Social 2/',
+                        'Fecha de Nacimiento 3/',
+                        'Número de Documento 10/',
+                        'Domicilio 12/',
+                        'Numero de Crédito 18/'], inplace = True, how = 'all')
+
+df = pd.DataFrame()  #CREANDO INSTANCIA DATA FRAME
+
+df['CODIGO SOCIO']      = tabla1['Código Socio 7/']
+df['TIPO DOCUMENTO']    = tabla1['Tipo de Documento 9/']
+df['NUMERO DOCUMENTO']  = tabla1["Número de Documento 10/"]
+df['TIPO DE CREDITO']   = tabla1["Tipo de Crédito 19/"]
+df['DEUDA DIRECTA']     = tabla1["Saldo de colocaciones (créditos directos) 24/"]
+df['TIPO DE REPROGRAMACION']  = tabla1["TIPO_REPRO"]
+df['DEUDA REPROGRAMADA']      = tabla1["Saldo de colocaciones (créditos directos) 24/"]
+
+df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].astype(int)
+df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+                                                   8  : '08',
+                                                   10 : '10',
+                                                   11 : '11',
+                                                   12 : '12',
+                                                   13 : '13'},
+                                                 na_action = None) #EN CASO DE NULO NO HACER NADA
+
+df['CODIGO SOCIO']      = df['CODIGO SOCIO'].str.strip()
+df['NUMERO DOCUMENTO']  = df['NUMERO DOCUMENTO'].str.strip()
+
+#%% NOMBRE
+
+lista_fecha = fecha_mes.split()
+X = lista_fecha[0]
+Y = lista_fecha[1]
+resultado = (str(X.lower().capitalize()) + " " + "Reprogramados - " +str(Y)) #métodos string para crear el nombre del archivo
+nombre = str(resultado)+".xlsx"
+
+#%% EXCEL
+try:
+    ruta = nombre
+    os.remove(ruta)
+except FileNotFoundError:
+    pass
+
+df.to_excel(nombre, 
+            index = False,
+            startrow = 1,
+            startcol = 1,
+            sheet_name=str(X.lower().capitalize() + "-"+str(Y)))
 
