@@ -2430,22 +2430,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Febrero 2024'  #se pone el corte actual
+fecha_corte = 'Marzo 2024'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240131" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20240229" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v07.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 03.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO\\para sbs'
 ##################################################################
 
 lista_100_provisionales = ['00094227', '00098454', '00092291', '00098725', '00082582', '00089822', '00092751', 
@@ -2541,6 +2541,7 @@ df_diferidos['Cartera Neta'].sum()
 df_diferidos['Provisiones Requeridas 36/ SA'] = df_diferidos['Cartera Neta'] * \
                                                 df_diferidos['Tasa de Provisión SA']
 
+df_diferidos['Provisiones Requeridas 36/ SA'] = df_diferidos['Provisiones Requeridas 36/ SA'].round(2)
 df_diferidos['Provisiones Requeridas 36/ SA'].sum()
                                                 
 #%% PROVISIONES REQUERIDAS
@@ -2603,7 +2604,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.58 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # ===========================
 
 # cálculo de las provisiones constituidas 37/
@@ -2650,7 +2651,6 @@ suma_constituidas = df_diferidos['Provisiones Constituidas 37/'].sum()
 
 div = suma_constituidas/suma_requeridas
 print('EL PORCENTAJE de constituidas / requeridas es: ',"{:.2f}%".format(div*100))
-'''EL PORCENTAJE de constituidas / requeridas NO PUEDE BAJAR DE:  67.72% (EL PRÓXIMO MES)'''
 
 suma_atrasada = df_diferidos['Cartera Atrasada'].sum()
 div2 = suma_constituidas/suma_atrasada
@@ -2698,6 +2698,78 @@ df_diferidos_columnas = df_diferidos[['Nro Prestamo \nFincore',
                                       'Provisiones Constituidas 37/',
                                       'Saldo de Créditos que no cuentan con cobertura 51/']]
 
+#%% INTEGRANDO MONTO DE DESEMBOLSO NETO
+#%% CONECCIÓN A SQL PARA MONTO NETO
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
+server    =  datos['DATOS'][0]
+username  =  datos['DATOS'][2]
+password  =  datos['DATOS'][3]
+
+conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+conn = pyodbc.connect(conn_str)
+
+query = '''
+SELECT
+	s.codigosocio,
+	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
+	p.fechadesembolso,
+	p.montosolicitado as 'Otorgado',
+	DESCUENTO.valor as 'retención',
+	p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
+
+FROM prestamo AS p
+
+INNER JOIN socio AS s             ON s.codsocio = p.codsocio
+LEFT JOIN sociocontacto AS sc     ON sc.codsocio = s.codsocio
+LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+INNER JOIN grupocab AS pro        ON pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito AS d          ON d.coddistrito = sc.coddistrito
+INNER JOIN provincia AS pv        ON pv.codprovincia = d.codprovincia
+INNER JOIN departamento AS dp     ON dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet AS tm  ON tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab AS gpo         ON gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet AS tm2  ON tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet AS tm3  ON tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
+INNER JOIN pais                   ON pais.codpais = s.codpais
+LEFT JOIN FINALIDAD AS FI         ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito AS TC       ON tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+
+LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
+LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
+
+LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
+
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
+
+AND s.codigosocio>0
+
+ORDER BY RIGHT(CONCAT('0000000',p.numero),8)
+
+'''
+
+# SEGUIR CHEQUEANDO
+df_monto_neto = pd.read_sql_query(query, conn)
+df_monto_neto.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+
+df_monto_neto['Otorgado'] = df_monto_neto['Otorgado'].fillna(0)
+df_monto_neto['retención'] = df_monto_neto['retención'].fillna(0)
+
+df_monto_neto['Monto Neto'] = df_monto_neto['Otorgado'] - df_monto_neto['retención']
+
+df_diferidos_columnas = df_diferidos_columnas.merge(df_monto_neto[['pagare_fincore', 'Monto Neto']],
+                                                    left_on  = 'Nro Prestamo \nFincore',
+                                                    right_on = 'pagare_fincore',
+                                                    how      = 'left')
+
+del df_diferidos_columnas['pagare_fincore']
 #%% GENERACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
@@ -2728,11 +2800,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'FEBRERO 2024'
+fecha = 'Marzo 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20240131' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20240229' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%

@@ -13,14 +13,14 @@ import pyodbc
 import os
 
 #%%
-fecha_corte = '20240229'
+fecha_corte = '20240331'
 
-fecha_hoy = '20240331'
+fecha_hoy = '20240331' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo\\anexo 06 febrero 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO')
 
 # Cargar el último Anexo06 en el formato que se envía a los demás
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 02.xlsx'
 
 filas_skip   = 2
 
@@ -54,6 +54,7 @@ else:
     anx06 = pd.read_excel(io       = nombre_anx06,
                           skiprows = filas_skip,
                           dtype    = {'Nro Prestamo \nFincore'  : str,
+                                      'Número de Documento 10/' : str,
                                       'Fecha de Desembolso 21/' : str})
     
     anx06.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/', 
