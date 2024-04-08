@@ -50,7 +50,7 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = True #booleano True o False
+generar_excels = False #booleano True o False
 
 #%% ARCHIVOS
 
@@ -529,23 +529,60 @@ if generar_excels == True:
 # # ===========================================================================
 # =============================================================================
 
-#%% AJUSTE SALDO SIN CAPITALIZAR
+#%% AJUSTE SALDO SIN CAPITALIZAR (actualmente saldo real)
 # HAY CASOS EN LOS QUE EL SALDO SIN CAPITALIZACIÓN ES MAYOR AL CAPITALIZADO, VAMOS A VER QUÉ HACER AL RESPECTO
 
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo de colocaciones (créditos directos) 24/']
 ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'] = ordenado['Saldo Colocacion Con Capitalizacion de Intereses TXT'].astype(float).round(2)
+ordenado['Saldo Capital Real'] = ordenado['Saldo Capital Real'].astype(float)
+ordenado['Monto de Desembolso 22/'] = ordenado['Monto de Desembolso 22/'].astype(float)
+
+# ajuste del saldo real para que no tenga 1 céntimo de más de ciertos casitos
+def parse_dates(date_str):
+    formatos = ['%Y%m%d']
+    for formato in formatos:
+        try:
+            return pd.to_datetime(date_str, format=formato)
+        except ValueError:
+            pass
+    return pd.NaT
+ordenado['f desembolso auxiliar'] = ordenado['Fecha de Desembolso 21/'].apply(parse_dates)
+
+def obtener_fecha_anterior_tres_meses(fecha):
+    # Convertir la fecha de cadena a un objeto pd.Timestamp
+    fecha_actual = pd.Timestamp(fecha)    
+    # Obtener la fecha tres meses antes
+    fecha_anterior_tres_meses = fecha_actual - pd.DateOffset(months=2)
+    # Obtener el primer día del mes
+    primer_dia_mes_anterior = fecha_anterior_tres_meses.replace(day=1)
+    return primer_dia_mes_anterior
+hace_3_meses = obtener_fecha_anterior_tres_meses(fecha_corte)
+
+def ajuste_real(ordenado):
+    # ajuste de créditos que tienen unos cuántos céntimos de diferencia de más
+    if (ordenado['Flag Termino Periodo Gracia'] == 'NO') & \
+       (ordenado['Número de Cuotas Pagadas 45/'] == 0) & \
+       (ordenado['f desembolso auxiliar'] >= hace_3_meses):
+        return ordenado['Monto de Desembolso 22/']
+    else:
+        return ordenado['Saldo Capital Real']
+ordenado['Saldo Capital Real'] = ordenado.apply(ajuste_real, axis = 1)
 
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo Capital Real']
 ordenado['Saldo de colocaciones (créditos directos) 24/'] = ordenado['Saldo de colocaciones (créditos directos) 24/'].round(2)
 
 print('Debe salir cero')
 print(ordenado[ordenado['Saldo de colocaciones (créditos directos) 24/'] < 0].shape[0])
-print('')
-print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
-print(ordenado['Capital Vigente 26/'].sum())
-print(ordenado['Capital Vencido 29/'].sum())
-print(ordenado['Capital en Cobranza Judicial 30/'].sum())
-print(ordenado['Saldos de Créditos Castigados 38/'].sum())
+if (ordenado[ordenado['Saldo de colocaciones (créditos directos) 24/'] < 0].shape[0]) > 0:
+    print('investigar, significa que hay un saldo de cartera negativo')
+
+# print(ordenado['Saldo de colocaciones (créditos directos) 24/'].sum())
+# print(ordenado['Capital Vigente 26/'].sum())
+# print(ordenado['Capital Vencido 29/'].sum())
+# print(ordenado['Capital en Cobranza Judicial 30/'].sum())
+# print(ordenado['Saldos de Créditos Castigados 38/'].sum())
+
+del ordenado['f desembolso auxiliar']
 
 #%% diferencia negativa
 def negativos_saldo_cartera(ordenado):
