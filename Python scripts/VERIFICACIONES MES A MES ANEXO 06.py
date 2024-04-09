@@ -16,11 +16,11 @@ import pyodbc
 # import numpy as np
 
 #%%
-FECHA_SQL = '20240131' #se pone la del mes pasado
+FECHA_SQL = '20240229' #se pone la del mes pasado
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO\\para sbs')
 
-anx06_final = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v05.xlsx'
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 03.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
@@ -36,7 +36,8 @@ select
     FechadeNacimiento3,
     NumerodeDocumento10, 
     DiasdeMora33, 
-    ClasificaciondelDeudorconAlineamiento15
+    ClasificaciondelDeudorconAlineamiento15,
+    NumerodeCredito18
 from 
     anexos_riesgos2..Anx06_preliminar
 where 
@@ -53,12 +54,14 @@ del conn
 
 df_mes_pasado['ApellidosyNombresRazonSocial2'] = df_mes_pasado['ApellidosyNombresRazonSocial2'].str.strip()
 df_mes_pasado['NumerodeDocumento10'] = df_mes_pasado['NumerodeDocumento10'].str.strip()
+df_mes_pasado['NumerodeCredito18'] = df_mes_pasado['NumerodeCredito18'].str.strip()
 
 df_mes_pasado = df_mes_pasado.rename(columns={'ApellidosyNombresRazonSocial2': 'nombres y apellidos mes pasado'})
-df_mes_pasado = df_mes_pasado.rename(columns={'FechadeNacimiento3': 'FechaNacimiento mes pasado'})
-df_mes_pasado = df_mes_pasado.rename(columns={'NumerodeDocumento10': 'Documento mes pasado'})
-df_mes_pasado = df_mes_pasado.rename(columns={'DiasdeMora33': 'DíasMora mes pasado'})
+df_mes_pasado = df_mes_pasado.rename(columns={'FechadeNacimiento3'           : 'FechaNacimiento mes pasado'})
+df_mes_pasado = df_mes_pasado.rename(columns={'NumerodeDocumento10'          : 'Documento mes pasado'})
+df_mes_pasado = df_mes_pasado.rename(columns={'DiasdeMora33'                 : 'DíasMora mes pasado'})
 df_mes_pasado = df_mes_pasado.rename(columns={'ClasificaciondelDeudorconAlineamiento15': 'Clasificación Alineamiento mes pasado'})
+df_mes_pasado = df_mes_pasado.rename(columns={'NumerodeCredito18'            : 'Crédito 18 mes pasado'})
 
 #%% ANEXO AMPLIADO MES ACTUAL
 #leemos el anexo ampliado de este mes
@@ -90,6 +93,7 @@ df.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                   'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 #limpieza de datos
+df['Numero de Crédito 18/'] = df['Numero de Crédito 18/'].str.strip()
 df['Apellidos y Nombres / Razón Social 2/'] = df['Apellidos y Nombres / Razón Social 2/'].str.strip()
 df['Número de Documento 10/'] = df['Número de Documento 10/'].str.strip()
 
@@ -106,7 +110,8 @@ anx = df[['nombres y apellidos mes actual',
           'Número de Documento 10/',
           'Dias de Mora 33/',
           'Clasificación del Deudor con Alineamiento 15/',
-          'Nro Prestamo \nFincore'
+          'Nro Prestamo \nFincore',
+          'Numero de Crédito 18/'
           ]]
 
 anx = anx.rename(columns={'Nro Prestamo \nFincore': "fincore"})
@@ -187,6 +192,18 @@ dif_clasificacion = dif_clasificacion[['fincore',
                                        'Clasificación del Deudor con Alineamiento 15/',
                                        'Clasificación Alineamiento mes pasado']]
 
+#%% verificamos cred 18 y nro fincore
+def cred18_dif(union):
+    if union['Numero de Crédito 18/'] != union['Crédito 18 mes pasado']:
+        return 'dif'
+    else:
+        return ''
+union['dif cred 18'] = union.apply(cred18_dif, axis = 1)
+
+dif_cred_18 = union[union['dif cred 18'] == 'dif'][['fincore',
+                                                    'Numero de Crédito 18/',
+                                                    'Crédito 18 mes pasado']]
+
 #%% concatenamos
 
 x = union[['Nro_Fincore','Clasificación del Deudor con Alineamiento 15/', 
@@ -198,4 +215,5 @@ print(documento_diferente)
 print(nacimiento_diferente)
 print(dias_mora) #este sí es importante
 print(dif_clasificacion)
+print(dif_cred_18) #este sí es importante
 

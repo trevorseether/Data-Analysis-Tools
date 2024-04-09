@@ -110,7 +110,7 @@ menos_bruto.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                            'Fecha de Nacimiento 3/',
                            'Número de Documento 10/',
                            'Domicilio 12/',
-                           'Numero de Crédito 18/'], inplace=True, how='all') #eliminando las filas vacías
+                           'Numero de Crédito 18/'], inplace = True, how = 'all') #eliminando las filas vacías
 
 menos_bruto['Código Socio 7/'] = menos_bruto['Código Socio 7/'].str.strip()
 menos_bruto['Apellidos y Nombres / Razón Social 2/'] = menos_bruto['Apellidos y Nombres / Razón Social 2/'].str.strip()
@@ -118,6 +118,7 @@ menos_bruto['Profesion'] = menos_bruto['Profesion'].str.strip()
 menos_bruto['Ocupacion'] = menos_bruto['Ocupacion'].str.strip()
 menos_bruto['Actividad Economica'] = menos_bruto['Actividad Economica'].str.strip()
 menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
+menos_bruto['Numero de Crédito 18/'] = menos_bruto['Numero de Crédito 18/'].str.strip()
 
 #conteo de duplicados
 mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)
@@ -206,6 +207,27 @@ print('')
 print(menos_bruto.shape[0])
 
 df_mes_actual_copia = menos_bruto.copy()
+
+#%% validación de los 'Nro Prestamo \nFincore' y 'Numero de Crédito 18/'
+# si tienen 8 digitos deben ser iguales
+def flag_investigar(row):
+    prestamo_str_len = len(row['Nro Prestamo \nFincore'])
+    credito_str_len = len(row['Numero de Crédito 18/'])
+    
+    if prestamo_str_len == credito_str_len and (row['Nro Prestamo \nFincore'] != row['Numero de Crédito 18/']):
+        return 'diferentes, investigar'
+    else:
+        return ''
+
+# Aplicar la función a cada fila del DataFrame
+menos_bruto['incorrespondencia'] = menos_bruto.apply(flag_investigar, axis=1)
+
+investigar_con_cesar = menos_bruto[menos_bruto['incorrespondencia'] == 'diferentes, investigar']
+if investigar_con_cesar.shape[0] > 0:
+    print('Investigar el nro fincore')
+    print(investigar_con_cesar[['Apellidos y Nombres / Razón Social 2/',
+                                'Numero de Crédito 18/',
+                                'Nro Prestamo \nFincore']])
 
 #%% ANEXO PRELIMINAR DEL MES PASADO
 
