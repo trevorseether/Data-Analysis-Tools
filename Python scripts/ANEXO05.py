@@ -34,6 +34,7 @@ anx_06 = "Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 04.xlsx"
 # filas ignoradas ###########
 filas_skip = 2              #  
 #############################
+
 #%% LECTURA DEL ANEXO 06
 
 df1 = pd.read_excel(anx_06,
