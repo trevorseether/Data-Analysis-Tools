@@ -2604,8 +2604,8 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.58 #0.60 #0.575 #0.607 #0.5615 #0.60155
-# ===========================
+tasa_provision = 0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+# =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
@@ -2768,8 +2768,8 @@ df_diferidos_columnas = df_diferidos_columnas.merge(df_monto_neto[['pagare_finco
                                                     left_on  = 'Nro Prestamo \nFincore',
                                                     right_on = 'pagare_fincore',
                                                     how      = 'left')
-
 del df_diferidos_columnas['pagare_fincore']
+
 #%% GENERACIÓN DEL EXCEL
 
 'CREACIÓN DEL EXCEL'
