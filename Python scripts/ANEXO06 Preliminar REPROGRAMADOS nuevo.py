@@ -80,6 +80,7 @@ skip_rows_actual   = 4
 skip_rows_anterior = 0
 ############################################################################################
 
+#%%
 #%% IMPORTACIÓN DE INSUMO PRINCIPAL, ANEXO06 PRIMIGENIO
 
 os.chdir(directorio)
@@ -142,30 +143,33 @@ if menos_bruto['Saldos de Créditos Castigados 38/'].sum() < menos_bruto['Saldo 
 else:
     print('investigar')
 
-#%% cartera vendida EN FEBRERO 2024
-menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
+#%% CÓDIGO ELIMINADOR DE CRÉDITOS SI ES QUE HACE FALTA ELIMINARLOS:
 
-eliminar = ['00000681',
-            '00025314',
-            '00051147',
-            '00021245',
-            '00019565',
-            '00019911',
-            '00059920',
-            '00052890',
-            '00020153',
-            '00055472',
-            '00061987',
-            '00010827',
-            '00021016',
-            '00023215',
-            '00014819',
-            '00058140',
-            '00057592',
-            '00060249',
-            '00016572'
-            ]
-menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
+# cartera vendida EN FEBRERO 2024
+# menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
+# print(menos_bruto.shape[0])
+# eliminar = ['00000681',
+#             '00025314',
+#             '00051147',
+#             '00021245',
+#             '00019565',
+#             '00019911',
+#             '00059920',
+#             '00052890',
+#             '00020153',
+#             '00055472',
+#             '00061987',
+#             '00010827',
+#             '00021016',
+#             '00023215',
+#             '00014819',
+#             '00058140',
+#             '00057592',
+#             '00060249',
+#             '00016572'
+#             ]
+# menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
+# print(menos_bruto.shape[0])
 
 #%% AJUSTE DE PRODUCTO
 # hay dos nuevos productos, el 26 y el 27
