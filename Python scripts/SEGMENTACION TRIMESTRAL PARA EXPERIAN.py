@@ -19,9 +19,9 @@ import os
 
 #%% FECHA DE CORTE, DIRECTORIO DE TRABAJO
 
-mes = 'DICIEMBRE 2023'
+mes = 'MARZO 2024'
 # ubicación
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\diciembre 2023') 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 MARZO') 
 #en esta ubicación debemos poner el archivo de reprogramados que se manda a principio del mes
 
 ## donde dice @fechacorte se debe poner el mes ################################
@@ -30,8 +30,12 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\diciembre 2023')
 #este reporte es trimestral pero solo van los datos del último mes
 
 ## REPORTE DE REPROGRAMADOS QUE SE MANDA A EXPERIAN ###########################
-repo_reprogramados = 'Diciembre Reprogramados - 2023.xlsx'
+repo_reprogramados = 'Marzo Reprogramados - 2024.xlsx'
 ###############################################################################
+
+#%% IMPORTACIÓN DEL ANEXO06
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO\\para sbs'
+nom = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 04.xlsx'
 
 #%% IMPORTACIÓN DEL ANEXO06 DEL SQL
 
@@ -64,12 +68,9 @@ repo_reprogramados = 'Diciembre Reprogramados - 2023.xlsx'
 # df = df[df['SaldosdeCreditosCastigados38'] == 0]
 # del df['SaldosdeCreditosCastigados38']
 
-#%% IMPORTACIÓN DEL ANEXO06 DEL EXCEL
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 DICIEMBRE\\V FINAL'
-nom = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2023 - campos ampliados version final.xlsx'
-
+#%%
 df = pd.read_excel(io = ubi + '\\' + nom, 
-                   sheet_name = 'Diciembre 2023',
+                   #sheet_name = 'Diciembre 2023',
                    dtype = {'Código Socio 7/'         : str,
                             'Tipo de Documento 9/'    : str,
                             'Número de Documento 10/' : str,
@@ -141,6 +142,7 @@ reprogramados = pd.read_excel(repo_reprogramados,
 para_merge = reprogramados[['CODIGO SOCIO','TIPO DE REPROGRAMACION']]
 para_merge = para_merge.rename(columns = {'CODIGO SOCIO': 'cod para merge'})
 para_merge = para_merge.rename(columns = {'TIPO DE REPROGRAMACION': 'tipo para merge'})
+para_merge.drop_duplicates(subset='cod para merge', inplace = True)
 
 df_resultado = df.merge(para_merge, 
                          left_on  = ['CODIGO SOCIO'], 

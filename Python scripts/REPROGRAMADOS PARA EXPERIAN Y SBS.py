@@ -141,7 +141,7 @@ tabla1.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                       'Numero de Crédito 18/'], inplace = True, 
                                                 how = 'all')
 
-
+suma_saldo_reprogramado = tabla1["Saldo de colocaciones (créditos directos) 24/"].sum()
 #lectura del segundo archivo
 tabla2 = pd.read_excel(calificacion,
                         sheet_name = "A. SALIDA BATCH",
@@ -185,10 +185,19 @@ df['9/MDREPRP/ Modalidad de reprogramación'] = df['9/MDREPRP/ Modalidad de repr
                                                   na_action=None) #EN CASO DE NULO NO HACER NADA
 '''
 
-df = df.merge(tabla2[['NUMERO DOCUMENTO','NIVEL DE RIESGO']],
-                         left_on  = ["4/NID/Número de Documento"],
-                         right_on = ['NUMERO DOCUMENTO'],
+df = df.merge(tabla2[['NUMERO DOCUMENTO','NIVEL DE RIESGO', 'DEUDA DIRECTA']],
+                         left_on  = ["4/NID/Número de Documento", '7/SKCR/Saldo capital de la deuda'],
+                         right_on = ['NUMERO DOCUMENTO', 'DEUDA DIRECTA'],
                          how      = 'left')
+del df['DEUDA DIRECTA']
+
+###############################################################################
+if df['7/SKCR/Saldo capital de la deuda'].sum() == suma_saldo_reprogramado:
+    print('todo bien')
+else:
+    print('se ha duplicado un crédito')
+###############################################################################
+
 df.drop(['NUMERO DOCUMENTO'], 
         axis = 1, 
         inplace = True)
