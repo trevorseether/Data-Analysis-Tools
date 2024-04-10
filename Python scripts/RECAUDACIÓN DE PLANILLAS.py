@@ -22,15 +22,15 @@ CARGA_SQL_SERVER = False #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20240131'
+fecha_corte = '20240229'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\01 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\02 2024')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '01 - ENERO 2024 (CIERRE).xlsx'
+nombre = '02 - FEBRERO 2024 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
@@ -228,12 +228,15 @@ no_match[['PLANILLA COBRANZAS',
           'SALDO',
           '% COBRANZA']].to_excel('NO HACEN MATCH.xlsx', 
                                   index = False)
-                                  
+
+print("revisar la tabla 'no_match'")
+
 #%% buscador del nombre de las planillas para corregirlas
 
 busqueda = 'poder judicial'
 planillas_masomenos_ese_nombre = base_sin_duplicados[base_sin_duplicados['PLANILLA BIEN'].str.contains(busqueda)]['PLANILLA BIEN']
 'revisar las planillas que masomenos contienen ese nombre'
+
 #%% BUSCADOR DE NOMBRE DE LAS PLANILLAS
 texto = 'tli alma'
 aver = no_match[no_match['PLANILLA COBRANZAS'].str.contains(texto.upper(), 

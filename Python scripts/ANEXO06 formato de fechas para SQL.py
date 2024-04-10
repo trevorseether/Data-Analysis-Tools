@@ -11,17 +11,19 @@ import os
 
 #%% PARÁMETROS INICIALES:
 
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
-ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ\\EXPEIMENTOS'
-filas_skip    = 2
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados para procesar en python.xlsx'
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO\\para sbs\\para reportes'
+filas_skip    = 0
 
 crear_excel   = True #True o False
 
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
-formatos = [ '%Y%m%d' ]  # Lista de formatos a analizar
 
 def parse_date(date_str):
+    
+    formatos = [ '%Y%m%d' ]  # Lista de formatos a analizar
+
     for formato in formatos:
         try:
             return pd.to_datetime(arg = date_str, 
