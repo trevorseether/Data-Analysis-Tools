@@ -157,7 +157,6 @@ df_100=pd.read_excel(anexo_del_mes,
                     
 anexo06 = df1.columns  ; socios_menor_100 = df_100.columns
 del anexo_del_mes
-x = df1.columns
 
 # %% hay dos nuevos productos, el 26 y el 27
 # el 26 es emprendimiento mujer (microempresa)
@@ -172,6 +171,7 @@ df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
 
 print(df1[df1['Tipo de Producto 43/'] == '27'].shape[0])
 print('debe salir cero')
+
 #%% CRÉDITOS EN LA COOPAC
 #POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
@@ -1514,7 +1514,6 @@ df_resultado_2['Intereses en Suspenso 41/'] = df_resultado_2['Interes Suspenso N
 
 df_resultado_2['Intereses en Suspenso 41/'].sum()
 
-x = df_resultado_2.columns
 #%% REASIGNAMOS DEVENGADOS Y SUSPENSO DEL FINCORE AL ANEXO 06
 
 col_devengado = 'Interes Devengado Nuevo'
@@ -2864,7 +2863,7 @@ pivot_mes_pasado = anx06_mes_pasado.pivot_table(index = [COLUMNA_COMPARACION],
                                                  'INTERESES DIFERIDOS',
                                                  'SALDO REPROGRAMADO'], 
                                        margins      = True, 
-                                       margins_name ='Total', #para sacar las sumatorias totales                                      
+                                       margins_name = 'Total', #para sacar las sumatorias totales                                      
                                        aggfunc      = 'sum'
                                        )
 #pivot_mes_pasado = pivot_mes_pasado.reset_index()

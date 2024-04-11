@@ -328,9 +328,10 @@ df1=pd.read_excel(ruta,
 
 #%% AVALES SEPARADOS
 ##############################################
-#      AVALES: COLUMNAS SEPARADAS
+#        AVALES: COLUMNAS SEPARADAS
 ##############################################
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
 server      = datos['DATOS'][0]
 username    = datos['DATOS'][2]
 password    = datos['DATOS'][3]
@@ -1003,10 +1004,10 @@ df_sentinel['Telefono'] = df_sentinel['Telefono'].astype(np.int64)
 df_sentinel['Fecha del\nPeriodo\n(*)'] = str(f_corte_sql[0:4]) + '/' + str(f_corte_sql[4:6])
 
 #%% VALIDACIÓN DE SUMA TOTAL
-saldo_cartera_sentinel = df_sentinel['MN Deuda Directa Vigente (*)'] + \
-                         df_sentinel['MN Deuda Directa Refinanciada (*)'] + \
+saldo_cartera_sentinel = df_sentinel['MN Deuda Directa Vigente (*)']        + \
+                         df_sentinel['MN Deuda Directa Refinanciada (*)']   + \
                          df_sentinel['MN Deuda Directa Venvida < = 30 (*)'] + \
-                         df_sentinel['MN Deuda Directa Vencida > 30 (*)'] + \
+                         df_sentinel['MN Deuda Directa Vencida > 30 (*)']   + \
                          df_sentinel['MN Deuda Directa Cobranza Judicial (*)']
 
 saldo_cartera_sentinel = saldo_cartera_sentinel.sum().round(2)
@@ -1015,6 +1016,7 @@ if suma_saldo_cartera == saldo_cartera_sentinel:
     print('saldos correctos')
 else:
     print('algo no cuadra en los saldos o(￣┰￣*)ゞ')
+    print('podría ser que hay créditos duplicados')
 
 #%% especificaciones finales
 
