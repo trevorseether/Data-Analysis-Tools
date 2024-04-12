@@ -25,7 +25,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados di
 tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04]'
 tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04_acum]'
 
-CARGA_SQL_SERVER  = True #True o False
+CARGA_SQL_SERVER  = False #True o False
 
 crear_excel       = False #True o False
 
@@ -611,7 +611,8 @@ SELECT
 	p.fechadesembolso,
 	p.montosolicitado as 'Otorgado',
 	DESCUENTO.valor as 'retención',
-	p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
+	--p.montosolicitado - DESCUENTO.valor as 'MONTO NETO',
+    DESCUENTO.retencion as 'tipo reten'
 
 FROM prestamo AS p
 
@@ -640,25 +641,67 @@ LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARI
 LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
 
 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
-AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
-
-AND s.codigosocio>0
-
+--AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
+--AND s.codigosocio>0
 ORDER BY RIGHT(CONCAT('0000000',p.numero),8)
 
 '''
 
 df_monto_neto = pd.read_sql_query(query, conn)
-df_monto_neto.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+# df_monto_neto.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+
+df_monto_neto['retención'] = df_monto_neto['retención'].fillna(0)
+
+lista_fincore = list(df_monto_neto['pagare_fincore'])
+
+#%%
+fincores = df_monto_neto[['codigosocio',
+                          'Socio',
+                          'Doc_Identidad',
+                          'pagare_fincore',
+                          'fechadesembolso',
+                          'Otorgado',
+                          ]]
+
+fincores.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+
+# codigo que no sirve de nada pero lo reuso de otro script y lo adapto xd
+estan = fincores[fincores['pagare_fincore'].isin(lista_fincore)]
+
+#%% PARA COMPARAR:
+# filtrando la retención total
+df_retencion_total = df_monto_neto[df_monto_neto['tipo reten'] == 'TOTAL RETENCIÓN']
+df_retencion_total = df_retencion_total.rename(columns = {'retención' : 'retención por total'})
+
+# por agrupamiento
+df_reten_agrup = df_monto_neto[df_monto_neto['tipo reten'] != 'TOTAL RETENCIÓN']
+reten = df_reten_agrup.pivot_table(values  = 'retención',
+                                   index   = 'pagare_fincore',
+                                   aggfunc = 'sum').reset_index()
+reten = reten.rename(columns = {'retención' : 'retención por agrupamiento'})
+
+#%% MERGE
+union_2 = estan.merge(df_retencion_total[['pagare_fincore', 'retención por total']],
+                    on  = 'pagare_fincore',
+                    how = 'left')
+union_2 = union.merge(reten,
+                    on  = 'pagare_fincore',
+                    how = 'left')#%%
+
+union_2 = union_2.fillna(0)
+union_2['MONTO NETO'] = union_2['Otorgado'] - union_2['retención por total']
+union_2['MONTO NETO'] = union_2['MONTO NETO'].round(2)
+union_2.drop_duplicates(subset = 'pagare_fincore', inplace = True)
 
 #%%
 if CARGA_SQL_SERVER == True:
-    tabla =  '[DESEMBOLSOS_DIARIOS].[dbo].[MONTO_NETO]'
+    # Esta es la tabla que estará en SQL SERVER
+    tabla =  '[DESEMBOLSOS_DIARIOS].[dbo].[MONTO_NETO_2]'
     # Establecer la conexión con SQL Server
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
     
-    df = df_monto_neto[['Socio', 'pagare_fincore', 'MONTO NETO']].copy()
+    df = union_2[['Socio', 'pagare_fincore', 'MONTO NETO']].copy()
     df = df.fillna(0)
     
     # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS

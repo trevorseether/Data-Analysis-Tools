@@ -963,7 +963,8 @@ AND C.FechaCorte1=EOMONTH(FechadeDesembolso21)
 
 ---GENERO
 
-select a.Genero4,count(1) from (select CodigoSocio7,c.Genero4,count(1)nro from ANEXOS_RIESGOS2..ANX06_PRELIMINAR c
+SELECT a.Genero4,count(1) 
+FROM (select CodigoSocio7,c.Genero4,count(1)nro from ANEXOS_RIESGOS2..ANX06_PRELIMINAR c
 WHERE 
 c.FechaCorte1='20240331' and 
 c.Saldodecolocacionescreditosdirectos24>0  AND TipodeProducto43 IN (30,31,32,33)
@@ -1732,6 +1733,6 @@ drop table Comercial..Anx06
 
 select * 
 into Comercial..Anx06
-from anexos_riesgos2..Anx06_preliminar
+from anexos_riesgos3..Anx06
 */
 
