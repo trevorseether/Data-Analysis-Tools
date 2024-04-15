@@ -17,13 +17,13 @@ warnings.filterwarnings('ignore')
 
 #%%
 'Fecha de corte para el anexo06'####################
-fecha_corte_anx06 = '20240229'                     #
+fecha_corte_anx06 = '20240331'                     #
 ####################################################
 
-tabla_actual = 'saldos_diarios.dbo.[SALDOS_DIARIOS_2024_03]'
+tabla_actual = 'saldos_diarios.dbo.[SALDOS_DIARIOS_2024_04]'
 'Fechas para la cobranza y nuevos desembolsos'######
-fecha_inicio = '20240301'                          #
-fecha_hoy    = '20240331'                          ## se pone 4 días antes del día de hoy
+fecha_inicio = '20240401'                          #
+fecha_hoy    = '20240430'                          ## se pone 4 días antes del día de hoy
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -609,202 +609,200 @@ print('fecha cargada: ' + fecha_hoy)
 
 #%% para unificar los nombres en el reporte de saldos diarios:
 '''
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'MIGUEL TITO'
 where administrador like '%MIGUEL%TITO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'ALICIA OVIEDO'
 where administrador like '%ALICIA OVIEDO%VELAS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'ANDREA BILBAO'
 where administrador like '%ANDREA BILBAO BRICEÑO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'GIOVANNA HERRERA'
 where administrador like '%GIOVANNA HERRERA MATH%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'MARGIORY ELIAS'
 where administrador like '%MARGIORY ELIAS BENAVIDES%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'DAVID BORJA'
 where administrador like '%DAVID BORJA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'JULY OLGA'
 where administrador like '%JULY GARCIA ALCANTARA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'FIGARI VEGA'
 where administrador like '%FIGARI VEGA AYQUIPA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'KATHERIN RAMOS'
 where administrador like '%KATHERIN RAMOS CCAMA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'ROSA MALDONADO'
 where administrador like '%ROSA MALDONADO FIGUREOA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'ROXANA QUISPE'
 where administrador like '%ROXANA QUISPE CHAVEZ%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'JOSE SANCHEZ'
 where administrador like '%JOSE SANCHEZ F%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'MIGUEL TITO'
 where originador like '%MIGUEL%TITO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'VICTOR VARGAS'
 where administrador like '%VICTOR%VARGAS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'VICTOR VARGAS'
 where originador like '%VICTOR%VARGAS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'SUSAN ROJAS'
 where administrador like '%SUSAN%ROJAS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'GUSTAVO PALLETE'
 where administrador like '%GUSTAVO%PALLETE%ALFERANO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'GUSTAVO PALLETE'
 where originador like '%GUSTAVO%PALLETE%ALFERANO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'AZUCENA OCHOA'
 where administrador like '%AZUCENA OCHOA TERRY%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'AZUCENA OCHOA'
 where originador like '%AZUCENA OCHOA TERRY%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'SUSAN ROJAS'
 where originador like '%SUSAN%ROJAS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'ELBER ALVARADO'
 where administrador like '%ELBER%ALVARADO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'ELBER ALVARADO'
 where originador like '%ELBER%ALVARADO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'DAVID BORJA'
 where originador like '%DAVID%BORJA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'ALICIA OVIEDO'
 where originador like '%ALICIA OVIEDO VELASQUEZ%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'ANDREA BILBAO'
 where originador like '%ANDREA BILBAO BRICEÑO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'EVELYN LOJA'
 where originador like '%EVELYN LOJA PINEDO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'FIGARI VEGA'
 where originador like '%FIGARI VEGA AYQUIPA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'GIOVANNA HERRERA'
 where originador like '%GIOVANNA HERRERA MATHEWS%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'GUSTAVO PALLETE'
 where originador like '%GUSTAVO PALLETE ALFERANO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JERSON ALVA'
 where originador like '%JERSON ALVA FARFAN%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JIMN MENDOZA'
 where originador like '%JIMN MENDOZA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JONATHAN ESTRADA'
 where originador like '%JONATHAN ESTRADA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JOSE SANCHEZ'
 where originador like '%JOSE SANCHEZ FLORES%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'KATHERIN RAMOS'
 where originador like '%KATHERIN RAMOS CCAMA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'LUIS BUSTAMANTE'
 where originador like '%LUIS ALBERTO BUSTAMANTE GONZALES%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'MARGIORY ELIAS'
 where originador like '%MARGIORY ELIAS BENAVIDES%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'MILTON JUAREZ'
 where originador like '%MILTON MERLYN JUAREZ HORNA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'ROSA MALDONADO'
 where originador like '%ROSA MALDONADO FIGUREOA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'ROXANA QUISPE'
 where originador like '%ROXANA QUISPE CHAVEZ%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JULY OLGA'
 where originador like '%JULY GARCIA ALCANTARA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JULY OLGA'
 where originador like '%JULY GARCIA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'PROSEVA CAÑETE'
 where originador like '%CAÑETE%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'MARIBEL PUCHO'
 where originador like '%MARIBEL PUCHO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'MARIBEL PUCHO'
 where administrador like '%MARIBEL PUCHO%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'JHONY SALDAÑA'
 where originador like '%JONY SALDAÑA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'JHONY SALDAÑA'
 where administrador like '%JONY SALDAÑA%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set originador = 'MARIA CRISTINA MARTINEZ'
 where originador like '%MARIA CRISTINA MARTINEZ%'
 
-update saldos_diarios..SALDOS_DIARIOS_2024_02
+update saldos_diarios..SALDOS_DIARIOS_2024_04
 set administrador = 'MARIA CRISTINA MARTINEZ'
 where administrador like '%MARIA CRISTINA MARTINEZ%'
 '''    
     
-    
-

@@ -25,7 +25,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados di
 tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04]'
 tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04_acum]'
 
-CARGA_SQL_SERVER  = False #True o False
+CARGA_SQL_SERVER  = True #True o False
 
 crear_excel       = False #True o False
 
@@ -684,7 +684,7 @@ reten = reten.rename(columns = {'retención' : 'retención por agrupamiento'})
 union_2 = estan.merge(df_retencion_total[['pagare_fincore', 'retención por total']],
                     on  = 'pagare_fincore',
                     how = 'left')
-union_2 = union.merge(reten,
+union_2 = union_2.merge(reten,
                     on  = 'pagare_fincore',
                     how = 'left')#%%
 
@@ -756,7 +756,7 @@ else:
 #%% ALERTA PARA CESAR
 inicio_mes = pd.Timestamp(corte_actual[0:6] + '01')
 
-alerta = union.merge(df_monto_neto[['Socio', 'pagare_fincore', 'MONTO NETO']],
+alerta = union.merge(union_2[['Socio', 'pagare_fincore', 'MONTO NETO']],
                      on  = 'pagare_fincore',
                      how = 'left')
 
