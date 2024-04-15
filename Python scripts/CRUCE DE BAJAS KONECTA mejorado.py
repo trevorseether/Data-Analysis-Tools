@@ -259,7 +259,7 @@ final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
 
 #%% 
 # =============================================================================
-#  PARTE 2 VERIFICACIÓN SI EL SOCIO TIENE UN CRÉDITO PENDIENTE
+#  PARTE 2 VERIFICACIÓN SI EL SOCIO TIENE UN CRÉDITO SOLICITADO
 # =============================================================================
 conn = pyodbc.connect(conn_str)
 
