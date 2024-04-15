@@ -205,7 +205,7 @@ menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] = menos_bruto.apply(eliminar, axis=
 print(menos_bruto.shape[0])
 
 menos_bruto = menos_bruto[menos_bruto['CRÉDITOS VENDIDOS (ELIMINAR)'] != 'eliminar']
-menos_bruto = menos_bruto.drop('CRÉDITOS VENDIDOS (ELIMINAR)', axis = 1)
+menos_bruto = menos_bruto.drop('CRÉDITOS VENDIDOS (ELIMINAR)', axis = 1) # eliminación de columnas innecesaria
 
 print('')
 print(menos_bruto.shape[0])
@@ -216,7 +216,7 @@ df_mes_actual_copia = menos_bruto.copy()
 # si tienen 8 digitos deben ser iguales
 def flag_investigar(row):
     prestamo_str_len = len(row['Nro Prestamo \nFincore'])
-    credito_str_len = len(row['Numero de Crédito 18/'])
+    credito_str_len  = len(row['Numero de Crédito 18/'])
     
     if prestamo_str_len == credito_str_len and (row['Nro Prestamo \nFincore'] != row['Numero de Crédito 18/']):
         return 'diferentes, investigar'
@@ -229,9 +229,9 @@ menos_bruto['incorrespondencia'] = menos_bruto.apply(flag_investigar, axis=1)
 investigar_con_cesar = menos_bruto[menos_bruto['incorrespondencia'] == 'diferentes, investigar']
 if investigar_con_cesar.shape[0] > 0:
     print('Investigar el nro fincore')
-    print(investigar_con_cesar[['Apellidos y Nombres / Razón Social 2/',
-                                'Numero de Crédito 18/',
-                                'Nro Prestamo \nFincore']])
+    print(investigar_con_cesar[[ 'Apellidos y Nombres / Razón Social 2/',
+                                 'Numero de Crédito 18/',
+                                 'Nro Prestamo \nFincore' ]])
 
 #%% ANEXO PRELIMINAR DEL MES PASADO
 

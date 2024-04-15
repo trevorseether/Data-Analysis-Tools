@@ -26,11 +26,11 @@ FECHATXT = '15-04-2024'  # FORMATO DÍA-MES-AÑO
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\ABRIL\\15 04'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\2024 enero\\03 01 (2)'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '3ER INFORME 04_24 GRUPO KONECTA (F).xlsx'
+nombre_archivo = 'VALIDACION 2do INFORME 01_24 GRUPO KONECTA (B).xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -257,17 +257,71 @@ final = final.rename(columns = {'Documento original' : 'Documento'})
 # POR SI ACASO, ELIMINAMOS DUPLICADOS
 final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
 
+#%% 
+# =============================================================================
+#  PARTE 2 VERIFICACIÓN SI EL SOCIO TIENE UN CRÉDITO PENDIENTE
+# =============================================================================
+conn = pyodbc.connect(conn_str)
+
+query = '''
+SELECT
+iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+S.CodigoSocio,
+B.MontoSolicitado,
+B.CuotaFija
+--,* 
+FROM SOCIO AS S
+
+LEFT JOIN SolicitudCredito as b 
+ON S.CodSocio = b.CodSocio
+
+WHERE b.CodEstado in (48,280,330,331,336)
+
+'''
+
+pendientes = pd.read_sql_query(query, 
+                               conn, 
+                               dtype = {'Doc_Identidad'  : object,
+                                        'CodigoSocio'    : object
+                                        })
+
+#%% 14 ceros para merge
+'agregamos 14 ceros al reporte EXTRAIDO CON SQL'
+pendientes["Doc_Identidad"]       = pendientes["Doc_Identidad"].astype(str)
+pendientes["DOC_IDENTIDAD_ceros"] = pendientes["Doc_Identidad"].str.zfill(14)
+
+# Cruzamos con bajas2
+nos_quieren_estafar = pendientes[pendientes["DOC_IDENTIDAD_ceros"].isin(list(bajas2['Documento']))]
+del nos_quieren_estafar["DOC_IDENTIDAD_ceros"]
+del nos_quieren_estafar['CodigoSocio']
+
+nos_quieren_estafar['Estado'] = 'Crédito Solicitado'
+
 #%% CREACIÓN DE EXCEL
 
-NOMBRE = 'BAJAS '+ FECHATXT + '.xlsx'
+NOMBRE = 'BAJAS ' + FECHATXT + '.xlsx'
 
+# Eliminar el archivo si ya existe
 try:
     os.remove(NOMBRE)
 except FileNotFoundError:
     pass
 
-final.to_excel(NOMBRE, 
-               index = False,
-               sheet_name = FECHATXT)
+# Crear un objeto ExcelWriter para manejar la escritura de DataFrames en el archivo
+with pd.ExcelWriter(NOMBRE, engine='xlsxwriter') as writer:
+    # Escribir el primer DataFrame en el archivo
+    final.to_excel(writer,
+                   index=False,
+                   sheet_name=FECHATXT)
 
+    # Verificar si hay datos que podrían indicar intento de estafa y escribirlos debajo del primer DataFrame
+    if nos_quieren_estafar.shape[0] > 0:
+        nos_quieren_estafar.to_excel(writer,
+                                     sheet_name=FECHATXT,
+                                     startrow=final.shape[0] + 2,  # Offset para no sobrescribir el primer DataFrame
+                                     startcol=0,
+                                     index=False)  # Aquí puedes elegir si quieres o no los índices
+
+    # No es necesario llamar a writer.save() o writer.close() ya que el bloque 'with' maneja eso automáticamente
 
