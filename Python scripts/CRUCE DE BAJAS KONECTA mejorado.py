@@ -26,11 +26,11 @@ FECHATXT = '15-04-2024'  # FORMATO DÍA-MES-AÑO
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\2024 enero\\03 01 (2)'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\ABRIL\\15 04'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = 'VALIDACION 2do INFORME 01_24 GRUPO KONECTA (B).xlsx'
+nombre_archivo = '3ER INFORME 04_24 GRUPO KONECTA (F).xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -159,8 +159,7 @@ INNER JOIN usuario as u             ON p.CodUsuario = u.CodUsuario
 INNER JOIN TablaMaestraDet as tm4   ON s.codestado = tm4.CodTablaDet
 --LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) 
-BETWEEN '20110101' AND '{fecha_hoy}' 
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112)  >= '20110101' 
 AND s.codigosocio>0  
 
 AND p.codestado = 341 --SIGNFICA QUE EL CRÉDITO SE ENCUENTRE EN SITUACIÓN VIGENTE
@@ -265,12 +264,15 @@ conn = pyodbc.connect(conn_str)
 
 query = '''
 SELECT
-iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
-iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
-S.CodigoSocio,
-B.MontoSolicitado,
-B.CuotaFija
---,* 
+    
+    iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+    iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+    S.CodigoSocio,
+    B.MontoSolicitado,
+    B.CuotaFija,
+    B.FechaSolicitud
+    --,*
+
 FROM SOCIO AS S
 
 LEFT JOIN SolicitudCredito as b 
@@ -278,12 +280,22 @@ ON S.CodSocio = b.CodSocio
 
 WHERE b.CodEstado in (48,280,330,331,336)
 
+-- 48  TRANSITO
+
+-- 280 APROBADO
+
+-- 330 EVALUACION
+
+-- 331 DEVUELTO ANALISTA
+
+-- 336 DEVUELTO SUPERVISOR
+
 '''
 
 pendientes = pd.read_sql_query(query, 
                                conn, 
-                               dtype = {'Doc_Identidad'  : object,
-                                        'CodigoSocio'    : object
+                               dtype = {'Doc_Identidad' : object,
+                                        'CodigoSocio'   : object
                                         })
 
 #%% 14 ceros para merge
@@ -316,6 +328,7 @@ with pd.ExcelWriter(NOMBRE, engine='xlsxwriter') as writer:
                    sheet_name=FECHATXT)
 
     # Verificar si hay datos que podrían indicar intento de estafa y escribirlos debajo del primer DataFrame
+    # si hay estos casos, incluir en el correo a Manuel Montoya y a Cesar Diaz
     if nos_quieren_estafar.shape[0] > 0:
         nos_quieren_estafar.to_excel(writer,
                                      sheet_name=FECHATXT,
