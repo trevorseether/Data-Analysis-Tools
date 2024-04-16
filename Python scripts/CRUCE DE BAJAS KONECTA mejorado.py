@@ -165,9 +165,7 @@ AND s.codigosocio>0
 AND p.codestado = 341 --SIGNFICA QUE EL CRÉDITO SE ENCUENTRE EN SITUACIÓN VIGENTE
 
 order by socio asc, p.fechadesembolso desc
-
 '''
-
 vigentes = pd.read_sql_query(query, 
                              conn, 
                              dtype = {'Doc_Identidad'  : object,
@@ -177,6 +175,7 @@ vigentes = pd.read_sql_query(query,
                                       })
 
 del conn
+
 #%% PARSEO DE FECHAS
 
 formatos = ['%d/%m/%Y %H:%M:%S',
@@ -238,7 +237,6 @@ df_resultado = vigentes2.merge(bajas2,
 
 #%% DATAFRAME FINAL
 '''creamos el archivo final'''
-
 #df_resultado['SALDO A DESCONTAR'] = np.nan
 #df_resultado['# CUOTAS'] = np.nan
 
@@ -247,9 +245,9 @@ final = df_resultado[['Documento original',
                       'FECHA_DESEMBOLSO', 
                       #'SALDO A DESCONTAR', 
                       #'# CUOTAS',
-                      "CUOTA MENSUAL",
+                      'CUOTA MENSUAL',
                       'PAGARE_FINCORE', 
-                      "EMPRESA/PLANILLA"]]
+                      'EMPRESA/PLANILLA']]
 
 final = final.rename(columns = {'Documento original' : 'Documento'})
 
@@ -263,6 +261,7 @@ final.drop_duplicates(subset = 'PAGARE_FINCORE', inplace = True)
 conn = pyodbc.connect(conn_str)
 
 query = '''
+
 SELECT
     
     iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 

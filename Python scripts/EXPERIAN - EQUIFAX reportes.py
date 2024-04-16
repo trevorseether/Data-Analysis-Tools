@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Tue Feb 21 12:37:47 2023
 
@@ -321,10 +320,10 @@ df_sentinel = df_sentinel.drop_duplicates(subset = 'Cod. Prestamo')
 # REPORTES / CREDITO /PRESTAMOS OTORGADOS / REGISTRO DE AVALES Y-O GARANTÍAS 
 ruta = avales
 df1=pd.read_excel(ruta,
-                  dtype={'Nro Docto\nAval': object,
-                         'Nro Docto\nSocio': object,
-                         'Numero':object},
-                         skiprows=8)
+                  dtype = {'Nro Docto\nAval'  : object,
+                           'Nro Docto\nSocio' : object,
+                           'Numero'           : object},
+                  skiprows = 8)
 
 #%% AVALES SEPARADOS
 ##############################################
@@ -665,8 +664,16 @@ df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'] = df_resultado['Dni - As
 df_resultado['Tipo Persona (*)'] = '3'
 
 df_resultado['Tipo\nDocumento\nIdentidad (*)'] = '1'
-#df_resultado = df_resultado.drop_duplicates(subset=['Cod. Prestamo', '''N° Documento
-#Identidad (*)  DNI o RUC'''], keep='first')
+
+#%% asignando 2 a los que son extranjeros (largo del documento = 9)
+def tipo_doc_2(df_resultado):
+    largo = len(df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'])
+    
+    if largo == 9:
+        return '2'
+    else:
+        return df_resultado['Tipo\nDocumento\nIdentidad (*)']
+df_resultado['Tipo\nDocumento\nIdentidad (*)'] = df_resultado.apply(tipo_doc_2, axis = 1)
 
 #%% MONTO DE LA DEUDA AVALADA
 #colocamos el monto de la deuda en la columna 'MN Deuda Avalada (*)'
@@ -811,7 +818,6 @@ reporte = pd.concat([df_sentinel_avales,df_avales_mergeado], ignore_index=True)
 #%% eliminación de columnas
 reporte.drop(["Cod. Prestamo_avales"], axis=1, inplace=True)
 reporte.drop(["MN Deuda Avalada (*)_avales"], axis=1, inplace=True)
-
 #%% PARSEO DE FECHAS
 #Arreglando la columna final de fechas de vencimiento:
 
