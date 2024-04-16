@@ -20,20 +20,24 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\15 abr')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\16 abr')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240415.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240416.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
-crear_archivo = False #True o False
+crear_archivo         = False #True o False
 ###############################################################################
 
-'REPORTE DE MENSAJERÍA PREVENTIVA'#############################################
+'REPORTE DE MENSAJERÍA PREVENTIVA' ############################################
 mensajeria_preventiva = False #True o False
+###############################################################################
+
+'filtrar solo mype' ###########################################################
+solo_pyme             = False #True o False
 ###############################################################################
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,30 +171,37 @@ kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY
 
 kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
 
+#%% AJUSTE DE TEXTO PARA DXP LIQUIDADOS
+mask_liquidados = kashio_ampliado['Unnamed: 10'] == 'LIQUIDADOS' #si en el fincore le cambian el nombre a esta columna, pues va a fallar esta línea
+
+kashio_ampliado.loc[mask_liquidados, 'DESCRIPCION'] = kashio_ampliado.loc[mask_liquidados, 'DESCRIPCION'].str.replace('PRESTAMO DESCUENTO POR PLANILLA', 
+                                                                                                                      'PRESTAMO DXP LIQUIDADOS')
 #%%
 # kashio_sin_pyme = kashio_ampliado[kashio_ampliado['Unnamed: 10'] != 'PYME']
 # kashio_sin_pyme.to_excel('RECIBOS COOP SAN MIGUEL ' + str(ARCHIVO_HOY[29:37]) + ' no incluye PYME.xlsx',
 #                          index = False)
 
 #%% FILTRACIÓN DE PYMES
-try:
-    kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
-    if kashio_ampliado['Unnamed: 10'].unique() == ['PYME']:
-        print('Correctamente Filtrado')
-    else:
-        print('Mal filtado')
-        
-except KeyError:
-    columna_filtro = kashio_ampliado.columns[10]
-    kashio_ampliado = kashio_ampliado[kashio_ampliado[columna_filtro] == 'PYME'] ##########   
-    if kashio_ampliado[columna_filtro].unique() == ['PYME']:
-        print('Correctamente Filtrado')
-    else:
-        print('Mal filtado')
-
-except KeyError as e:
-    print("Error:", e)
+if solo_pyme == True:
+    try:
+        kashio_ampliado = kashio_ampliado[kashio_ampliado['Unnamed: 10'] == 'PYME'] ##########
+        if kashio_ampliado['Unnamed: 10'].unique() == ['PYME']:
+            print('Correctamente Filtrado')
+        else:
+            print('Mal filtado')
+            
+    except KeyError:
+        columna_filtro = kashio_ampliado.columns[10]
+        kashio_ampliado = kashio_ampliado[kashio_ampliado[columna_filtro] == 'PYME'] ##########   
+        if kashio_ampliado[columna_filtro].unique() == ['PYME']:
+            print('Correctamente Filtrado')
+        else:
+            print('Mal filtado')
     
+    except KeyError as e:
+        print("Error:", e)
+else:
+    pass
 
 #%% 
 valor1 = kashio_ampliado.shape[0]
