@@ -668,7 +668,7 @@ df_resultado['Tipo\nDocumento\nIdentidad (*)'] = '1'
 #%% asignando 2 a los que son extranjeros (largo del documento = 9)
 def tipo_doc_2(df_resultado):
     largo = len(df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'])
-    
+
     if largo == 9:
         return '2'
     else:
