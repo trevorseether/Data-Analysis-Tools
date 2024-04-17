@@ -160,7 +160,7 @@ if crear_archivo == True:
 else:
     pass
 
-#%% ponemos los correos corregidos en el otro reporte (el más grande)
+#%% Ponemos los correos corregidos en el otro reporte (el más grande)
 
 # AUTOMATICAMENTE LEERÁ EL SEGUNDO ARCHIVO
 kashio_ampliado = pd.read_excel('DATA_RECIBOS_COOP.SANMIGUEL_' + str(ARCHIVO_HOY[29:37]) + '.xlsx',
