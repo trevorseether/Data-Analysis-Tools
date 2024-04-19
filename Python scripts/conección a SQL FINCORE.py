@@ -7,7 +7,9 @@ Created on Fri Aug  4 18:58:42 2023
 
 import pyodbc
 import pandas as pd
+import os
 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\mype no morosos')
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
@@ -18,121 +20,26 @@ password    = datos['DATOS'][3]
 conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 conn = pyodbc.connect(conn_str)
 
-query = '''
--- p.codcategoria = 351 -> nuevo
--- p.codcategoria = 352 -> ampliacion
--- p.codestado = 563 -> anulado
--- p.codestado = 341 -> pendiente
--- p.codestado = 342 -> cancelado
--- tc.CODTIPOCREDITO -> ( 3=Cons.Ordinario / 1=Med.Empresa / 2=MicroEmp. / 9=Peq.Empresa)
-
-SELECT
+query = '''SELECT
+/*
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
 	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
 	IIF(S.CodSexo = 4, 'FEMENINO',
 		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
-	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
-	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
-	p.fechadesembolso, 
-	p.montosolicitado as 'Otorgado', 
-	p.TEM, 
-	p.NroPlazos, 
-	p.CuotaFija,  
-	--p.codestado, 
-	tm.descripcion as 'Estado',
-	p.fechaCancelacion, 
-	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
-	p.flagrefinanciado, 
-	pro.descripcion as 'Funcionario',
-	CASE
-		WHEN pro.descripcion LIKE '%PROSEVA%' THEN pro.descripcion
-		WHEN 
-		(PRO.DESCRIPCION LIKE '%ADOLFO%HUAMAN%'
-		OR PRO.DESCRIPCION LIKE '%CESAR%MEDINA%'
-		OR PRO.DESCRIPCION LIKE '%DAYANA%CHIRA%'
-		OR PRO.DESCRIPCION LIKE '%ESTHER%RAMIR%'
-		OR PRO.DESCRIPCION LIKE '%JESSICA%SOLOR%'
-		OR PRO.DESCRIPCION LIKE '%JESICA%SOLOR%'
-		OR PRO.DESCRIPCION LIKE '%JORGE%ARAG%'
-		OR PRO.DESCRIPCION LIKE '%MARIBEL%PUCH%') THEN 'AREQUIPA'
-		WHEN
-		(PRO.DESCRIPCION LIKE '%ALEJANDRO%HUAMAN%'
-		OR PRO.DESCRIPCION LIKE '%ANA%GUERR%'
-		OR PRO.DESCRIPCION LIKE '%ANT%OSORIO%'
-		OR PRO.DESCRIPCION LIKE '%EDUAR%TITO%'
-		OR PRO.DESCRIPCION LIKE '%ELBER%ALVA%'
-		OR PRO.DESCRIPCION LIKE '%FIGARI%VEG%'
-		OR PRO.DESCRIPCION LIKE '%GINO%PALO%'
-		OR PRO.DESCRIPCION LIKE '%GRICERIO%NU%'
-		OR PRO.DESCRIPCION LIKE '%JEAN%BRAV%'
-		OR PRO.DESCRIPCION LIKE '%JIMN%MENDO%'
-		OR PRO.DESCRIPCION LIKE '%KELLY%HUAM%'
-		OR PRO.DESCRIPCION LIKE '%MAR%MARTINE%'
-		OR PRO.DESCRIPCION LIKE '%MARTIN%VILCA%'
-		OR PRO.DESCRIPCION LIKE '%PAMELA%GARC%'
-		OR PRO.DESCRIPCION LIKE '%SUSAN%ROJAS%'
-		OR PRO.DESCRIPCION LIKE '%VICTOR%FARFA%'
-		OR PRO.DESCRIPCION LIKE '%YESENIA%POTENC%'
-		--OR PRO.DESCRIPCION LIKE '%YULAISE%MOREANO%'
-		OR PRO.DESCRIPCION LIKE '%GERENCIA%'
-		OR PRO.DESCRIPCION LIKE '%LUIS%BUSTAMAN%'
-		OR PRO.DESCRIPCION LIKE '%JONAT%ESTRADA%'
-		OR PRO.DESCRIPCION LIKE '%GRUPO%'
-		OR PRO.DESCRIPCION LIKE '%DAVID%BORJ%'
-		OR PRO.DESCRIPCION LIKE '%VICTOR%VARGA%'
-		OR PRO.DESCRIPCION LIKE '%BORIS%CAMARGO%'
-		) THEN 'LIMA'
-				WHEN
-		(PRO.DESCRIPCION LIKE '%YULAISE%MOREANO%'
-		OR PRO.DESCRIPCION LIKE '%JESUS%CERVERA%'
-		OR PRO.DESCRIPCION LIKE '%EDISON%FLORES%'
-		) THEN 'SANTA ANITA'
-		WHEN 
-		(PRO.DESCRIPCION LIKE '%JESSICA%PISCOYA%'
-		OR PRO.DESCRIPCION LIKE '%JOSE%SANCHE%'
-		OR PRO.DESCRIPCION LIKE '%MILTON%JUARE%'
-		OR PRO.DESCRIPCION LIKE '%PAULO%SARE%'
-		OR PRO.DESCRIPCION LIKE '%ROY%NARVAE%'
-		) THEN 'TRUJILLO'
-				WHEN 
-		(PRO.DESCRIPCION LIKE '%CESAR%MERA%'
-		OR PRO.DESCRIPCION LIKE '%WILLIAMS%TRAUCO%'
-		) THEN 'TARAPOTO'
-				WHEN 
-		(PRO.DESCRIPCION LIKE '%JHONY%SALDA%'
-		) THEN 'RESTO DE CARTERA PROVINCIA'
-	ELSE 'REVISAR CASO'
-		END AS 'ZONAS',
-	pla.descripcion as 'Planilla', 
-	gpo.descripcion as 'func_pla',
-	CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as 'direcc_socio',
-	sc.ReferenciaDomicilio,
-	d.nombre as 'distrito', 
-	pv.nombre as 'provincia', 
-	dp.nombre as 'departamento',
-	sc.ReferenciaDomicilio,
-	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
-	tm2.descripcion as 'est_civil', 
+		*/
+        
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
+	s.fechaInscripcion,
+	p.fechadesembolso,
 	pais.descripcion as 'pais', 
-	s.fechanacimiento, 
-	s.profesion, 
 	sc.celular1, 
 	SC.TelefonoFijo1, 
-	sc.Email, 
-	p.CodSituacion, 
-	tm3.Descripcion as 'Situacion', 
-	p.fechaventacartera, 
-	iif(p.flagponderosa=1,'POND','SM') as 'origen', 
-	tc.CODTIPOCREDITO AS 'ClaseTipoCredito', 
-	tc.Descripcion as 'TipoCredito', 
-	FI.CODIGO AS 'COD_FINALIDAD', 
-	FI.DESCRIPCION AS 'FINALIDAD', 
-	s.FechaNacimiento, 
-	s.fechaInscripcion, 
-	u.IdUsuario as 'User_Desemb', 
-	tm4.descripcion as 'EstadoSocio',
-	USUARIO.IdUsuario AS 'USUARIO APROBADOR'
+	sc.Email
+	-- ,
+	-- DESCUENTO.valor as 'retención',
+	-- p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
 
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo AS p
@@ -159,20 +66,39 @@ INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
 LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
 
-WHERE
-CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
-AND s.codigosocio>0  --and p.codestado = 342
+--LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
+
+--LEFT JOIN PAIS AS PAIS ON S.CodPais = PAIS.CODPAIS
+
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+
+--AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
+
+--AND s.codigosocio>0
+
+--and p.codestado = 342
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 
---AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
---WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
-ORDER BY socio ASC, p.fechadesembolso DESC
+-- AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
+-- WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 
+-- AND pro.Descripcion like '%WILLIAMS TRAUCO%' 
+-- AND p.codcategoria=351
+ORDER BY iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) ASC, p.fechadesembolso DESC
+
 '''
 
 df_fincore = pd.read_sql_query(query, conn)
+
 del conn
 
 #%%
-df_fincore.to_excel('castigados.xlsx',
+df_fincore.to_excel('datos total.xlsx',
                     index = False)
+
+pivot_fincore = df_fincore.pivot_table(values = 'pagare_fincore',
+                                       index = 'Doc_Identidad',
+                                       aggfunc= 'count')
+
+
+pivot_fincore.to_excel('nro creditos.xlsx')
 

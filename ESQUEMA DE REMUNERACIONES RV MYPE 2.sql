@@ -47,7 +47,7 @@ ACTUAL AS (
         ANEXOS_RIESGOS3..ANX06
     WHERE 
 		FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
-		and TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
+		--and TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
 		and Saldodecolocacionescreditosdirectos24 > 0
     GROUP BY ADMINISTRADOR --ORDER BY originador
 ),
@@ -62,7 +62,7 @@ DEL_MES AS (
 	WHERE
 		FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
 		AND FechaCorte1 = EOMONTH(FechadeDesembolso21)
-		AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
+		--AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
 	GROUP BY originador
 ),
 ANTERIOR AS (   
@@ -81,7 +81,7 @@ ANTERIOR AS (
 
 				FROM ANEXOS_RIESGOS3..ANX06
 				WHERE FechaCorte1 = @fechaAnterior --------------------------------------------------------------FECHA CORTE ANTERIOR
-				AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
+				--AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
 				AND Saldodecolocacionescreditosdirectos24 > 0
 				GROUP BY ADMINISTRADOR
 				),
@@ -92,7 +92,7 @@ actual_distinct as (
 		count(distinct NumerodeDocumento10)  as NRO_SOCIOS_ACTUAL
 	from anexos_riesgos3..anx06	
 	where FechaCorte1 = @fechacorte -------------------------------------------------fecha actual
-	AND TipodeProducto43 IN (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
+	--AND TipodeProducto43 IN (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
 	Group by administrador
 	),
 anterior_distinct as (
@@ -101,7 +101,7 @@ anterior_distinct as (
 		count(distinct NumerodeDocumento10)  AS NRO_SOCIOS_ANTERIOR
 	from anexos_riesgos3..anx06	
 	where FechaCorte1 = @fechaAnterior --------------------------------------------------------------FECHA CORTE ANTERIOR
-	AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
+	--AND TipodeProducto43 in (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33)
 	group by ADMINISTRADOR
 	),
 
