@@ -154,7 +154,8 @@ INSERT INTO Anexos_Riesgos2..Anx06_preliminar (
 	  ,[Distrito Negocio]
 	  ,[Dpto Negocio] 
 	  ,[Provincia Negocio]
-	  ,[PLANILLA_CONSOLIDADA] )
+	  ,[PLANILLA_CONSOLIDADA]
+	  ,[Fecha_castigo])
 SELECT c.[FechaCorte1]
       ,c.[ApellidosyNombresRazonSocial2]
       ,c.[FechadeNacimiento3]
@@ -236,7 +237,8 @@ SELECT c.[FechaCorte1]
 	  ,c.[Distrito Negocio]
 	  ,c.[Dpto Negocio] 
 	  ,c.[Provincia Negocio]
-	  ,C.[PLANILLA_CONSOLIDADA] ----------------------experimental
+	  ,C.[PLANILLA_CONSOLIDADA]
+	  ,C.[Fecha_castigo] ---EXPERIMENTAL
 
   FROM [Anexos_Riesgos2]..[Cabecera] as c 
   LEFT JOIN Anexos_Riesgos2..Anx06_preliminar as a

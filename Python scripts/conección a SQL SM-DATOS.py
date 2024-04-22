@@ -13,6 +13,10 @@ Created on Tue Sep 26 14:21:23 2023
 #MÓDULOS NECESARIOS:
 import pandas as pd
 import pyodbc
+
+import warnings
+warnings.filterwarnings('ignore')
+
 #%%
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
