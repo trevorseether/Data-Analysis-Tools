@@ -37,22 +37,24 @@ nombre_archivo = '3ER INFORME 04_24 GRUPO KONECTA (F).xlsx'
 filas_skip = 0                        ##
 ########################################
 
+'COLUMNA DOCUMENTO IDENTIDAD' #############
+COL_DOC_IDENTIDAD = 'Documento'
 #%% IMPORTANDO EL INFORME DE BAJAS
 
 os.chdir(directorio)
 
 bajas = pd.read_excel(nombre_archivo,
                       skiprows = filas_skip,
-                      dtype    = ({'Documento': object}))
+                      dtype    = ({COL_DOC_IDENTIDAD: object}))
 
-bajas['Documento'] = bajas['Documento'].astype(str)
-bajas['Documento'] = bajas['Documento'].str.strip()
+bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].astype(str)
+bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].str.strip()
 
-doc_nulos = bajas[pd.isna(bajas['Documento'])]
+doc_nulos = bajas[pd.isna(bajas[COL_DOC_IDENTIDAD])]
 print('Documentos que se hayan convertido en Null:')
 print(doc_nulos.shape[0])
-bajas['Documento original'] = bajas['Documento']
-bajas['Documento'] = bajas['Documento'].str.zfill(14)
+bajas['Documento original'] = bajas[COL_DOC_IDENTIDAD]
+bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
 
 if doc_nulos.shape[0] > 0:

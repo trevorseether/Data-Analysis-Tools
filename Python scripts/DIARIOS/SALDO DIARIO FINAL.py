@@ -23,7 +23,7 @@ fecha_corte_anx06 = '20240331'                     #
 tabla_actual = 'saldos_diarios.dbo.[SALDOS_DIARIOS_2024_04]'
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240401'                          #
-fecha_hoy    = '20240412'                          ## se pone 4 días antes del día de hoy
+fecha_hoy    = '20240417'                          ## se pone 4 días antes del día de hoy
 ####################################################
 
 'Directorio de trabajo'#############################
@@ -295,8 +295,8 @@ def producto_txt(df):
 
 desem_format['PRODUCTO TXT'] = desem_format.apply(producto_txt, axis = 1)
 
+print('debe salir cero:')
 print(desem_format[pd.isna(desem_format['PRODUCTO TXT'])].shape[0])
-print('debe salir cero')
 
 #%%
 columnas = desem_format.columns
@@ -352,8 +352,10 @@ df_mergeado['CapitalVigente26'] = df_mergeado.apply(vigentes, axis=1)
 
 #%% cuadramiento de valores negativos
 cosas_que_no_cuadran = df_mergeado[df_mergeado['Saldodecolocacionescreditosdirectos24'] < 0]
-print(cosas_que_no_cuadran.shape[0])
+
 print('SON CRÉDITOS QUE HAN AMORTIZADO MÁS CAPITAL QUE EL QUE TENÍAN PENDIENTE (⊙_⊙)？')
+print(cosas_que_no_cuadran.shape[0])
+
 fincore_no_cuadran = cosas_que_no_cuadran['Nro_Fincore']
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'Saldodecolocacionescreditosdirectos24'] = 0
 df_mergeado.loc[df_mergeado['Nro_Fincore'].isin(list(fincore_no_cuadran)), 'CapitalVencido29'] = 0

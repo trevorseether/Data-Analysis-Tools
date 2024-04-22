@@ -22,24 +22,25 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '16-04-2024'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '22-04-2024'  # FORMATO DÍA-MES-AÑO
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\ABRIL\\16 04 excepcional'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\ABRIL\\22 04'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = 'DATA GRUPO KONECTA.xlsx'
+nombre_archivo = '4TO INFORME DE BAJAS GRUPO KONECTA (B).xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
 filas_skip = 0                        ##
 ########################################
 
-'COLUMNA DOCUMENTO IDENTIDAD' #############
-COL_DOC_IDENTIDAD = 'DNI / CE' # 'Documento'
-###########################################
+'COLUMNA DEL DOCUMENTO IDENTIDAD' #############
+COL_DOC_IDENTIDAD = 'Documento' # 'Documento'
+###############################################
+
 #%% IMPORTANDO EL INFORME DE BAJAS
 
 os.chdir(directorio)
@@ -96,6 +97,8 @@ fecha_formateada = convertir_fecha(FECHATXT)
 ###############################################################################
 fecha_hoy = fecha_formateada ######### AQUÍ VA LA FECHA DE HOY
 ###############################################################################
+
+# ACTUALMENTE LA QUERY TRAE TODOS LOS CRÉDITOS VIGENTES, SIN IMPORTAR LA FECHA
 query = f'''
 SELECT
 	s.codigosocio, 

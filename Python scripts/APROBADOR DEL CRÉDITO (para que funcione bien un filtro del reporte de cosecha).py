@@ -8,6 +8,9 @@ Created on Fri Aug  4 18:58:42 2023
 import pyodbc
 import pandas as pd
 
+import warnings
+warnings.filterwarnings('ignore')
+
 # =============================================================================
 # FUNCIONARIO APROBADOR DE LOS CRÉDITOS
 # =============================================================================
