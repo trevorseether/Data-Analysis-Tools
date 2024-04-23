@@ -18,15 +18,15 @@ warnings.filterwarnings('ignore')
 #%%
 # COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL         = '20240229'
+CORTE_SQL         = '20240331'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 febrero')
+tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_03]' # urgente siempre cambiar esta vaina
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2632024112859_1.csv'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 marzo')
+
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2342024101824_1.csv'
 
 CARGA_SQL_SERVER  = True
-
-tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_02]'
 
 excel_para_sql    = False
 
@@ -91,15 +91,19 @@ base['NumerodeDocumento10'] = base['NumerodeDocumento10'].str.strip()
 #%%
 
 al_externo = pd.read_csv(NOMBRE_AL_EXTERNO,
-                           dtype = {'NUMERO DE DOCUMENTO' : str},
+                           dtype    = {'NUMERO DE DOCUMENTO' : str},
                            skiprows = 1
                            )
+
+al_externo.drop_duplicates(subset = 'NUMERO DE DOCUMENTO', inplace = True)
+
 
 #%% SI LA ESTRUCTURA SE MANTIENE este debería ser una columna tipo 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023'
 COLUMNA_ALINEAMIENTO = al_externo.columns[31]
 print(COLUMNA_ALINEAMIENTO)
-print('''el nombre de la columna debe ser algo como 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' ''')
-
+print('')
+print('''el nombre de la columna debe ser algo como:''')
+print('ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023')
 #%%
 x = al_externo.columns
 
@@ -170,6 +174,7 @@ UNION = base.merge(a_e_filtrado,
                    left_on  = ['NumerodeDocumento10'],
                    right_on = ['NUMERO DOC CORREGIDO'],
                    how      = 'left')
+UNION.drop_duplicates(subset = 'Nro_Fincore', inplace = True)
 
 print(UNION[pd.isna(UNION['NUMERO DOC CORREGIDO'])]['ApellidosyNombresRazonSocial2'])
 print('sale null en aquellos registros que Experian no procesa')
@@ -262,6 +267,8 @@ para_sql = UNION[['Nro_Fincore',
                   #'CATEGORÍA DE RIESGO EN LA ENTIDAD FINANCIERA',
                   #'PROV. REQUERIDAS AL. EXTERNO AGRUPADO',
                   'FechaCorte1']]
+para_sql.drop_duplicates(subset = 'Nro_Fincore', inplace = True)
+
 
 nombre = f'AL. EXTERNO {CORTE_SQL} SQL.xlsx'
 
@@ -278,7 +285,7 @@ del nombre
 #LO SUBES A SQL Y USAS EL SIGUIENTE CÓDIGO:
 '''
     INSERT INTO anexos_riesgos3.[ALINEAMIENTO EXTERNO].[AL_EXTERNO] 
---(columna1, columna2, columna3, ...)
+    --(columna1, columna2, columna3, ...)
 SELECT 
 	NRO_fincore, 
 	NumerodeDocumento10,
@@ -300,7 +307,6 @@ FROM
 #filtrados_dxp = UNION[UNION['PRODUCTO TXT'] == 'DXP']
 UNION['ClasificaciondelDeudorconAlineamiento15'] = UNION['ClasificaciondelDeudorconAlineamiento15'].astype(int)
 UNION['ALINEAMIENTO EXTERNO'] = UNION['ALINEAMIENTO EXTERNO'].astype(int)
-
 
 # filtrados_COMPRA_DEUDA = UNION[(UNION['ClasificaciondelDeudorconAlineamiento15'] == 0) & \
 #                                (UNION['ALINEAMIENTO EXTERNO'] == 3)]
@@ -489,6 +495,7 @@ if CARGA_SQL_SERVER == True:
 
 #%% REPORTES DONDE SE HA INTEGRADO LOS DATOS DEL ALINEAMIENTO EXTERNO:
 
+# DATA PLANILLAS ALINEAMIENTO EXTERNO mes año
 
-
+# AVANCEMORA FINAL - mes año
 
