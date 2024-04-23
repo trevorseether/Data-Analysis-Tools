@@ -26,7 +26,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 marz
 
 NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2342024101824_1.csv'
 
-CARGA_SQL_SERVER  = True
+CARGA_SQL_SERVER  = False
 
 excel_para_sql    = False
 
