@@ -23,7 +23,7 @@ fecha_corte_anx06 = '20240331'                     #
 tabla_actual = 'saldos_diarios.dbo.[SALDOS_DIARIOS_2024_04]'
 'Fechas para la cobranza y nuevos desembolsos'######
 fecha_inicio = '20240401'                          #
-fecha_hoy    = '20240417'                          ## se pone 4 días antes del día de hoy
+fecha_hoy    = '20240420'                          ## se pone 4 días antes del día de hoy
 ####################################################
 
 'Directorio de trabajo'#############################
