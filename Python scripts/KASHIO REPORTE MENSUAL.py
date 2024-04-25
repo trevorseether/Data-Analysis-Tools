@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Abril 2024'
-fecha_inicio = '2024-04-01'
-fecha_final  = '2024-04-30'
+MES          = 'Mayo 2024'
+fecha_inicio = '2024-05-01'
+fecha_final  = '2024-05-31'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 03\\25 03')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\25 ABR')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -29,7 +29,7 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte .xlsx'
 #%%
 # reporte de pagos sacado de la plataforma de Kashio ##########################
 # Reportes / Pagos / Fecha : TODOS / Exportar #################################
-pagos_rep_kashio = 'dQgNsh5eyKmhbPXmYJ3Uak.xlsx'
+pagos_rep_kashio = 'reporte_de_pagos_cus_V67tWEUeUPQhmWTDBSKbGX.xlsx'
 ###############################################################################
 
 #%%
@@ -224,9 +224,9 @@ pagos_kashio = pagos_kashio[['REFERENCIA DE ORDEN', 'MÉTODO DE PAGO']]
 
 #MERGE CON LOS PAGOS DE KASHIO
 kashio_final = kashio_final.merge(pagos_kashio, 
-                                  left_on=['NUM PAGARE'], 
-                                  right_on=['REFERENCIA DE ORDEN'],
-                                  how = 'left')
+                                  left_on  = ['NUM PAGARE'], 
+                                  right_on = ['REFERENCIA DE ORDEN'],
+                                  how      = 'left')
 
 #ELIMINAMOS LA COLUMNA AUXILIAR DEL MERGE QUE YA NO NECESITAREMOS
 kashio_final = kashio_final.drop('REFERENCIA DE ORDEN', 
