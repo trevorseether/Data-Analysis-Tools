@@ -25,17 +25,6 @@ datos['fechas'] = datos['fechas'].astype(str)  # Convierte los valores en la col
 
 #%%
 
-#formatos en los cuales se tratará de convertir a DateTime
-formatos = ['%d/%m/%Y %H:%M:%S',
-            '%d/%m/%Y',
-            '%Y%m%d', '%Y-%m-%d', 
-            '%Y-%m-%d %H:%M:%S', 
-            '%Y/%m/%d %H:%M:%S',
-            '%Y-%m-%d %H:%M:%S PM',
-            '%Y-%m-%d %H:%M:%S AM',
-            '%Y/%m/%d %H:%M:%S PM',
-            '%Y/%m/%d %H:%M:%S AM']
-
 # Función de análisis de fechas
 def parse_dates(date_str):
     '''
@@ -49,6 +38,17 @@ def parse_dates(date_str):
     para su iteración, la convertirá en un DateTime
 
     '''
+    #formatos en los cuales se tratará de convertir a DateTime
+    formatos = ['%d/%m/%Y %H:%M:%S',
+                '%d/%m/%Y',
+                '%Y%m%d', '%Y-%m-%d', 
+                '%Y-%m-%d %H:%M:%S', 
+                '%Y/%m/%d %H:%M:%S',
+                '%Y-%m-%d %H:%M:%S PM',
+                '%Y-%m-%d %H:%M:%S AM',
+                '%Y/%m/%d %H:%M:%S PM',
+                '%Y/%m/%d %H:%M:%S AM']
+
     for formato in formatos:
         try:
             return pd.to_datetime(date_str, format=formato)
@@ -57,4 +57,8 @@ def parse_dates(date_str):
     return pd.NaT
 
 datos['fechas'] = datos['fechas'].apply(parse_dates)
+
+#%%
+nulos = datos[pd.isna(datos['fechas'])]
+
 

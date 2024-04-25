@@ -15,8 +15,10 @@ import pandas as pd
 import os
 import pyodbc
 from datetime import datetime
+
 import warnings
 warnings.filterwarnings('ignore')
+
 from colorama import Back # , Style, init, Fore
 
 #%% DIRECTORIO DE TRABAJO, fecha actual
@@ -51,10 +53,12 @@ bajas = pd.read_excel(nombre_archivo,
 
 bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].astype(str)
 bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].str.strip()
+formato_para_lista_negra = bajas.copy() 
 
 doc_nulos = bajas[pd.isna(bajas[COL_DOC_IDENTIDAD])]
 print('Documentos que se hayan convertido en Null:')
 print(doc_nulos.shape[0])
+
 bajas['Documento original'] = bajas[COL_DOC_IDENTIDAD]
 bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].str.zfill(14)
 print('Documentos que se hayan convertido en Null:')
@@ -329,17 +333,111 @@ except FileNotFoundError:
 with pd.ExcelWriter(NOMBRE, engine='xlsxwriter') as writer:
     # Escribir el primer DataFrame en el archivo
     final.to_excel(writer,
-                   index=False,
-                   sheet_name=FECHATXT)
+                   index = False,
+                   sheet_name = FECHATXT)
 
     # Verificar si hay datos que podrían indicar intento de estafa y escribirlos debajo del primer DataFrame
     # si hay estos casos, incluir en el correo a Manuel Montoya y a Cesar Diaz
     if nos_quieren_estafar.shape[0] > 0:
         nos_quieren_estafar.to_excel(writer,
-                                     sheet_name=FECHATXT,
-                                     startrow=final.shape[0] + 2,  # Offset para no sobrescribir el primer DataFrame
-                                     startcol=0,
-                                     index=False)  # Aquí puedes elegir si quieres o no los índices
+                                     sheet_name = FECHATXT,
+                                     startrow = final.shape[0] + 2,  # Offset para no sobrescribir el primer DataFrame
+                                     startcol = 0,
+                                     index = False)  # Aquí puedes elegir si quieres o no los índices
 
     # No es necesario llamar a writer.save() o writer.close() ya que el bloque 'with' maneja eso automáticamente
+
+#%% FORMATO PARA LISTA NEGRA DEL FINCORE
+df = formato_para_lista_negra.copy()
+
+def tipo_doc(df):
+    if len(df[COL_DOC_IDENTIDAD]) == 8:
+        return 'DNI'
+    if len(df[COL_DOC_IDENTIDAD]) == 9:
+        return 'CARNET EXT.'
+    else:
+        return 'otros'
+
+df['tipo doc'] = df.apply(tipo_doc, axis = 1)
+
+if df[df['tipo doc'] == 'otros'].shape[0] > 0:
+    print('documento de identidad investigar')
+    
+#%%
+def parse_dates(date_str):
+    '''
+    Parameters
+    ----------
+    date_str : Es el formato que va a analizar dentro de la columna del DataFrame.
+
+    Returns
+    -------
+    Si el date_str tiene una estructura compatible con los formatos preestablecidos
+    para su iteración, la convertirá en un DateTime
+
+    '''
+    #formatos en los cuales se tratará de convertir a DateTime
+    formatos = ['%d/%m/%Y %H:%M:%S',
+                '%d/%m/%Y',
+                '%Y%m%d', '%Y-%m-%d', 
+                '%Y-%m-%d %H:%M:%S', 
+                '%Y/%m/%d %H:%M:%S',
+                '%Y-%m-%d %H:%M:%S PM',
+                '%Y-%m-%d %H:%M:%S AM',
+                '%Y/%m/%d %H:%M:%S PM',
+                '%Y/%m/%d %H:%M:%S AM']
+
+    for formato in formatos:
+        try:
+            return pd.to_datetime(date_str, format=formato)
+        except ValueError:
+            pass
+    return pd.NaT
+
+df['fechas'] = df['BAJA SAP'].apply(parse_dates)
+if df[pd.isna(df['fechas'])].shape[0] > 0:
+    print('investigar fechas sin formato')
+    
+#%%
+df['Sociedad'].fillna('', inplace = True)
+df['fecha'] = df['fechas'].dt.strftime('%Y-%m-%d')
+
+fecha_datetime = datetime.strptime(FECHATXT, '%d-%m-%Y')
+fecha_nuevo_formato = fecha_datetime.strftime('%Y-%m-%d')
+def observacion(df):
+    
+    if df['Sociedad'] != '':
+        observacion_txt = f'POR CESE DE PLANILLA SEGÚN BASE KONECTA, REMITIDA EL {fecha_nuevo_formato}. TRABAJADOR PERTENECIA A ' \
+        + str(df['Sociedad']) +\
+        ' CON FECHA DE BAJA ' + str(df['fecha'])
+        return observacion_txt
+    
+    elif df['Sociedad'] == '':
+        observacion_txt2 = f'POR CESE DE PLANILLA SEGÚN BASE KONECTA, REMITIDA EL {fecha_nuevo_formato}.' +\
+        ' CON FECHA DE BAJA ' + str(df['fecha'])
+        return observacion_txt2
+    
+df['observacion'] = df.apply(observacion, axis = 1)
+
+#%% DataFrame para Fincore
+df_para_carga = pd.DataFrame()
+
+df_para_carga['TipoLista']    = None
+df_para_carga['TipoDocto']    = df['tipo doc'].copy()
+df_para_carga['NroDocumento'] = df[COL_DOC_IDENTIDAD].copy()
+df_para_carga['Nombres']      = None
+df_para_carga['ApePaterno']   = df['Empleado'].copy()
+df_para_carga['ApeMaterno']   = None
+df_para_carga['Cargo']        = None
+df_para_carga['Entidad']      = None
+df_para_carga['FechaInicio']  = df['fecha'].copy()
+df_para_carga['FechaFin']     = None
+df_para_carga['TipoNoticia']  = None
+df_para_carga['Observacion']  = df['observacion'].copy()
+
+df_para_carga['FechaInicio'] = df_para_carga['FechaInicio'].apply(parse_dates)
+
+#%% EXCEL
+df_para_carga.to_excel(f'Bajas Konecta, para lista negra {fecha_nuevo_formato}.xlsx',
+                       index = False)
 
