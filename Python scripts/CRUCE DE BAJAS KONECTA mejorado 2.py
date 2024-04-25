@@ -435,7 +435,7 @@ df_para_carga['FechaFin']     = None
 df_para_carga['TipoNoticia']  = None
 df_para_carga['Observacion']  = df['observacion'].copy()
 
-df_para_carga['FechaInicio'] = df_para_carga['FechaInicio'].apply(parse_dates)
+df_para_carga['FechaInicio']  = df_para_carga['FechaInicio'].apply(parse_dates)
 
 #%% EXCEL
 df_para_carga.to_excel(f'Bajas Konecta, para lista negra {fecha_nuevo_formato}.xlsx',
