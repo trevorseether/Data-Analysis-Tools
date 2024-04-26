@@ -43,6 +43,10 @@ filas_skip = 0                        ##
 COL_DOC_IDENTIDAD = 'Documento' # 'Documento'
 ###############################################
 
+'Creación de excels'###########################
+crear_excel = False # True o False
+###############################################
+
 #%% IMPORTANDO EL INFORME DE BAJAS
 
 os.chdir(directorio)
@@ -103,7 +107,7 @@ fecha_hoy = fecha_formateada ######### AQUÍ VA LA FECHA DE HOY
 ###############################################################################
 
 # ACTUALMENTE LA QUERY TRAE TODOS LOS CRÉDITOS VIGENTES, SIN IMPORTAR LA FECHA
-query = f'''
+query = '''
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
@@ -320,32 +324,34 @@ del nos_quieren_estafar['CodigoSocio']
 nos_quieren_estafar['Estado'] = 'Crédito Solicitado'
 
 #%% CREACIÓN DE EXCEL
-
-NOMBRE = 'BAJAS ' + FECHATXT + '.xlsx'
-
-# Eliminar el archivo si ya existe
-try:
-    os.remove(NOMBRE)
-except FileNotFoundError:
-    pass
-
-# Crear un objeto ExcelWriter para manejar la escritura de DataFrames en el archivo
-with pd.ExcelWriter(NOMBRE, engine='xlsxwriter') as writer:
-    # Escribir el primer DataFrame en el archivo
-    final.to_excel(writer,
-                   index = False,
-                   sheet_name = FECHATXT)
-
-    # Verificar si hay datos que podrían indicar intento de estafa y escribirlos debajo del primer DataFrame
-    # si hay estos casos, incluir en el correo a Manuel Montoya y a Cesar Diaz
-    if nos_quieren_estafar.shape[0] > 0:
-        nos_quieren_estafar.to_excel(writer,
-                                     sheet_name = FECHATXT,
-                                     startrow = final.shape[0] + 2,  # Offset para no sobrescribir el primer DataFrame
-                                     startcol = 0,
-                                     index = False)  # Aquí puedes elegir si quieres o no los índices
+if crear_excel == True:
+    NOMBRE = 'BAJAS ' + FECHATXT + '.xlsx'
+    
+    # Eliminar el archivo si ya existe
+    try:
+        os.remove(NOMBRE)
+    except FileNotFoundError:
+        pass
+    
+    # Crear un objeto ExcelWriter para manejar la escritura de DataFrames en el archivo
+    with pd.ExcelWriter(NOMBRE, engine='xlsxwriter') as writer:
+        # Escribir el primer DataFrame en el archivo
+        final.to_excel(writer,
+                       index = False,
+                       sheet_name = FECHATXT)
+    
+        # Verificar si hay datos que podrían indicar intento de estafa y escribirlos debajo del primer DataFrame
+        # si hay estos casos, incluir en el correo a Manuel Montoya y a Cesar Diaz
+        if nos_quieren_estafar.shape[0] > 0:
+            nos_quieren_estafar.to_excel(writer,
+                                         sheet_name = FECHATXT,
+                                         startrow = final.shape[0] + 2,  # Offset para no sobrescribir el primer DataFrame
+                                         startcol = 0,
+                                         index = False)  # Aquí puedes elegir si quieres o no los índices
 
     # No es necesario llamar a writer.save() o writer.close() ya que el bloque 'with' maneja eso automáticamente
+else:
+    pass
 
 #%% FORMATO PARA LISTA NEGRA DEL FINCORE
 df = formato_para_lista_negra.copy()
@@ -438,6 +444,8 @@ df_para_carga['Observacion']  = df['observacion'].copy()
 df_para_carga['FechaInicio']  = df_para_carga['FechaInicio'].apply(parse_dates)
 
 #%% EXCEL
-df_para_carga.to_excel(f'Bajas Konecta, para lista negra {fecha_nuevo_formato}.xlsx',
-                       index = False)
-
+if crear_excel == True:
+    df_para_carga.to_excel(f'Bajas Konecta, para lista negra {fecha_nuevo_formato}.xlsx',
+                           index = False)
+else:
+    pass
