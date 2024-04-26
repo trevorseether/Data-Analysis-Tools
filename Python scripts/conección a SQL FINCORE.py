@@ -89,15 +89,18 @@ ORDER BY iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) ASC, p.fechadesem
 
 df_fincore = pd.read_sql_query(query, conn)
 
+df_fincore.drop_duplicates(subset  = 'pagare_fincore', 
+                           inplace = True)
+
 del conn
 
 #%%
 df_fincore.to_excel('datos total.xlsx',
                     index = False)
 
-pivot_fincore = df_fincore.pivot_table(values = 'pagare_fincore',
-                                       index = 'Doc_Identidad',
-                                       aggfunc= 'count')
+pivot_fincore = df_fincore.pivot_table(values  = 'pagare_fincore',
+                                       index   = 'Doc_Identidad',
+                                       aggfunc = 'count')
 
 
 pivot_fincore.to_excel('nro creditos.xlsx')

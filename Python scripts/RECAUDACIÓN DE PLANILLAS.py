@@ -49,6 +49,7 @@ datos = {'cs': ['Masivo - CS'],
          'kt': ['Masivo - KT'],
          }
 # =============================================================================
+
 #%%
 # Convertimos el diccionario en dataframe
 datos = pd.DataFrame(datos)
