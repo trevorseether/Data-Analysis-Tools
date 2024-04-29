@@ -44,7 +44,8 @@ where
     FechaCorte1 = @fecha
 order by 
     ApellidosyNombresRazonSocial2
-                            '''
+
+'''
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
@@ -93,9 +94,9 @@ df.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
                   'Numero de Crédito 18/'], inplace = True, how = 'all')
 
 #limpieza de datos
-df['Numero de Crédito 18/'] = df['Numero de Crédito 18/'].str.strip()
+df['Numero de Crédito 18/']                 = df['Numero de Crédito 18/'].str.strip()
 df['Apellidos y Nombres / Razón Social 2/'] = df['Apellidos y Nombres / Razón Social 2/'].str.strip()
-df['Número de Documento 10/'] = df['Número de Documento 10/'].str.strip()
+df['Número de Documento 10/']               = df['Número de Documento 10/'].str.strip()
 
 print(df[pd.isna(df['Apellidos y Nombres / Razón Social 2/'])].shape[0])
 print(df[pd.isna(df['Número de Documento 10/'])].shape[0])

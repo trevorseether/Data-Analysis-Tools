@@ -20,12 +20,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\25 abr')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\29 abr')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240425.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240429.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -43,9 +43,9 @@ solo_pyme             = False #True o False
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
-                       dtype = {'ID CLIENTE'       : str,
-                                'TELEFONO'         : str,
-                                'NUMERO DOCUMENTO' : str }
+                       dtype = { 'ID CLIENTE'       : str,
+                                 'TELEFONO'         : str,
+                                 'NUMERO DOCUMENTO' : str }
                        )
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
@@ -119,6 +119,7 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')    
 kashio.loc[kashio['EMAIL'] == 'CARLOSCASTILLOFUENTES12@', 'EMAIL'] = 'CARLOSCASTILLOFUENTES12@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'DENIS_POBLETE@GHOTMAIL.COM', 'EMAIL'] = 'DENIS_POBLETE@HOTMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COM', 'EMAIL'] = 'RAQUELALINA@GMAIL.COM'
 
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
