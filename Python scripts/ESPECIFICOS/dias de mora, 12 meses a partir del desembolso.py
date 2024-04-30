@@ -88,9 +88,3 @@ owo.drop_duplicates(subset  = 'Nro_Fincore',
 owo.to_excel('dias de atraso.xlsx',
              index = False)
 
-
-
-
-
-
-
