@@ -15,13 +15,16 @@ import pyodbc
 import warnings
 warnings.filterwarnings('ignore')
 
-#%%
-datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
-
 #%% 
-# =============================================================================
-# leyendo creditos cancelados cuyo desembolso haya sido posterior al 2022
-# =============================================================================
+# FECHAS PARA LA RECAUDACIÓN:
+fecha_inicio = '20240401'
+fecha_final  = '20240430'
+
+# DIRECTORIO DE TRABAJO:
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\dataframes'
+
+#%% QUERY
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
 server    =  datos['DATOS'][0]
 username  =  datos['DATOS'][2]
@@ -31,12 +34,7 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-########################################################
-###                CAMBIAR LA FECHA               ######
-########################################################
-
-#extraemos una tabla con el NumerodeCredito18 y ponemos fecha de hace 2 meses (para que jale datos de 2 periodos)
-query = '''
+query = f'''
 
 SELECT 
 	soc.codsocio, 
@@ -105,7 +103,7 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
 -- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  
 -- 376 Anulado and cdet.flagponderosa is null
 
-Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20010101' AND '20240331' 
+Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_final}' 
 and cdet.CodEstado <> 376
 ORDER BY socio, ccab.fecha
 
@@ -255,7 +253,7 @@ FROM prestamo as p
 	--LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
 WHERE 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20000101' AND '20240331' 
+CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
 --AND s.codigosocio>0  and p.codestado = 342
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29) --ESTE ES EL PROD 43 EN LA EMPRESA
 --and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
@@ -292,7 +290,7 @@ dat = ing_fin_sin_retenciones.merge(datos_creditos,
 # CREACIÓN DE DATAFRAMES PARA CADA MES
 
 columnas_numericas = dat.select_dtypes(include = 'number').columns
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\dataframes')
+os.chdir(directorio)
 # Crear un diccionario para almacenar los DataFrames
 dataframes_dict = {}
 
