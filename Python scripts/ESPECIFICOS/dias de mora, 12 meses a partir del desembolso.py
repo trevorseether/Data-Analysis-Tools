@@ -53,19 +53,21 @@ del conn
 
 #%%
 corte_actual = base[base['FechaCorte1'] == pd.Timestamp(fecha_corte)]
-corte_actual.rename(columns={"DiasdeMora33": "Dias de mora actual"}, inplace = True)
+corte_actual.rename(columns = {"DiasdeMora33" : "Dias de mora actual"}, 
+                    inplace = True)
 
 owo = corte_actual.copy()
+
 #%% merges
 for i in range(1,13):
     owo = owo.merge(base[base['MESES DIFERENCIA'] == i][['Nro_Fincore', "DiasdeMora33"]],
                              on  = 'Nro_Fincore',
                              how = 'left')
 
-owo.columns = ['FechaCorte1', 'FechadeDesembolso21', 'ULT DÍA DESEMBOLSO',
-               'MESES DIFERENCIA', 'ApellidosyNombresRazonSocial2',
-               'NumerodeDocumento10', 'TipodeDocumento9', 'Nro_Fincore',
-               'Dias de mora actual', 'TipodeProducto43', 'PRODUCTO TXT',
+owo.columns = ['FechaCorte1',          'FechadeDesembolso21', 'ULT DÍA DESEMBOLSO',
+               'MESES DIFERENCIA',     'ApellidosyNombresRazonSocial2',
+               'NumerodeDocumento10',  'TipodeDocumento9',    'Nro_Fincore',
+               'Dias de mora actual',  'TipodeProducto43',    'PRODUCTO TXT',
                'Días de atraso 1er mes', 
                'Días de atraso 2do mes',
                'Días de atraso 3er mes',
@@ -77,8 +79,7 @@ owo.columns = ['FechaCorte1', 'FechadeDesembolso21', 'ULT DÍA DESEMBOLSO',
                'Días de atraso 9no mes',
                'Días de atraso 10mo mes',
                'Días de atraso 11vo mes',
-               'Días de atraso 12vo mes'
-               ]
+               'Días de atraso 12vo mes']
 
 owo.drop_duplicates(subset  = 'Nro_Fincore', 
                     inplace = True)
