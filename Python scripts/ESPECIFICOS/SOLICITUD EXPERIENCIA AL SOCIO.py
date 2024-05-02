@@ -28,8 +28,8 @@ query = '''
 
 SELECT
 	s.codigosocio, 
-	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
-	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	iif(s.CodTipoPersona = 1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+	iif(s.CodTipoPersona = 1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
 	IIF(S.CodSexo = 4, 'FEMENINO',
 		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
