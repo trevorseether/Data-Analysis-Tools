@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240430' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20240531' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_04_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_05]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_05_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -99,7 +99,7 @@ feriados_2023 = ['01-01-2023',
                  '06-04-2023',
                  '07-04-2023',
                  '08-04-2023',
-                 '01-05-2023',
+                 #'01-05-2023', # extrañamente, han colocado créditos en esta fecha a pesar de ser feriado
                  '29-06-2023',
                  '28-07-2023',
                  '29-07-2023',
@@ -494,11 +494,23 @@ else:
 acum = union.head(0)
 acum['dia acumulado'] = 0
 
-for i in range(0,(union['Numero de dia laboral'].unique().max())):
-    para_filtrar = union.copy()
-    para_filtrar = para_filtrar[para_filtrar['Numero de dia laboral'] <= i+1]
-    para_filtrar['dia acumulado'] = i+1
-    acum = pd.concat([acum,para_filtrar], ignore_index = True)
+# for i in range(0,(union['Numero de dia laboral'].unique().max())):
+#     para_filtrar = union.copy()
+#     para_filtrar = para_filtrar[para_filtrar['Numero de dia laboral'] <= i+1]
+#     para_filtrar['dia acumulado'] = i+1
+#     acum = pd.concat([acum,para_filtrar], ignore_index = True)
+
+try:
+    for i in range(0,(union['Numero de dia laboral'].unique().max())):
+        para_filtrar = union.copy()
+        para_filtrar = para_filtrar[para_filtrar['Numero de dia laboral'] <= i+1]
+        para_filtrar['dia acumulado'] = i+1
+        acum = pd.concat([acum,para_filtrar], ignore_index=True)
+
+except TypeError:
+    print('Posiblemente hay desembolso en fecha asignada como feriado')
+    print('investigar el siguiente dataframe: "df_investigar"')
+    df_investigar = union[pd.isna(union['Numero de dia laboral'])]
 
 #%% a excel
 
