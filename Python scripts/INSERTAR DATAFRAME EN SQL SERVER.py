@@ -26,7 +26,6 @@ cursor = cnxn.cursor()
 # [ALTURA]    FLOAT          NOT NULL
 # )
 
-
 for index, row in df.iterrows():
     cursor.execute("""
         INSERT INTO saldos_diarios.dbo.[2024_01] 
