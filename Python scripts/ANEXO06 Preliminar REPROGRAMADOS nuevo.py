@@ -38,9 +38,9 @@ from colorama import Back # , Style, init, Fore
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Marzo 2024' # Mes Año
-fecha_corte             = '2024-03-31' # año-mes-día
-fecha_corte_inicial     = '2024-03-01' # año-mes-día
+fecha_mes               = 'Abril 2024' # Mes Año
+fecha_corte             = '2024-04-30' # año-mes-día
+fecha_corte_inicial     = '2024-04-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -50,26 +50,26 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = False #booleano True o False
+generar_excels = True #booleano True o False
 
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\producto verdadero'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 055.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -77,7 +77,7 @@ skip_rows_actual   = 4
 ############################################################################################
 
 # filas a omitir del anexo anterior ########################################################
-skip_rows_anterior = 0
+skip_rows_anterior = 2
 ############################################################################################
 
 #%%
@@ -1913,9 +1913,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240331' #mes actual
-fecha_corte_menos_1 = '20240229' #mes anterior
-fecha_corte_menos_2 = '20240131' #mes anterior del anterior
+fecha_corte_actual  = '20240430' #mes actual
+fecha_corte_menos_1 = '20240331' #mes anterior
+fecha_corte_menos_2 = '20240229' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -1994,13 +1994,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Febrero 2024 no incluye castigados ni vendidos.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\producto verdadero'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Marzo 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Mar-24'
-mes_anterior_txt = 'Feb-24'
+mes_actual_txt   = 'Abr-24'
+mes_anterior_txt = 'Mar-24'
 # =============================================================================
 #%% LECTURA
 
