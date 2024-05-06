@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 #%% 
 # FECHAS PARA LA RECAUDACIÓN:
-fecha_inicio = '20240401'
+fecha_inicio = '20231101'
 fecha_final  = '20240430'
 
 # DIRECTORIO DE TRABAJO:
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\dataframes'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\dataframes\\MULTIOFICIOS, LIBRE DISPONIBILIDAD'
 
 #%% QUERY
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -106,7 +106,6 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
 Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_final}' 
 and cdet.CodEstado <> 376
 ORDER BY socio, ccab.fecha
-
 '''
 
 df_cobranza = pd.read_sql_query(query, conn)
@@ -222,14 +221,14 @@ SELECT
 	*/
 	tc.Descripcion as 'TipoCredito', 
 	FI.CODIGO AS 'COD_FINALIDAD',
-	fi.Descripcion as 'FINALIDAD',  
-	FI.DESCRIPCION AS 'TipoCredito'--,
+	FI.DESCRIPCION as 'FINALIDAD',
 	/*
 	s.FechaNacimiento, 
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
-	tm4.descripcion as 'EstadoSocio'
+	tm4.descripcion as 'EstadoSocio',
 	*/
+    '' AS 'NADA'
 -- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
 FROM prestamo as p
 
@@ -253,9 +252,11 @@ FROM prestamo as p
 	--LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
 WHERE 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
+CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101'
 --AND s.codigosocio>0  and p.codestado = 342
---AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29) --ESTE ES EL PROD 43 EN LA EMPRESA
+
+AND FI.CODIGO IN (26,32) --ESTE ES EL PROD 43 EN LA EMPRESA
+
 --and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351
 ORDER BY socio ASC, p.fechadesembolso DESC
@@ -284,7 +285,7 @@ datos_creditos = datos_creditos.drop_duplicates(subset  = 'pagare_fincore')
 dat = ing_fin_sin_retenciones.merge(datos_creditos,
                                     left_on  = 'PagareFincore', 
                                     right_on = 'pagare_fincore',
-                                    how      = 'left')
+                                    how      = 'inner')
 
 #%%
 # CREACIÓN DE DATAFRAMES PARA CADA MES
@@ -300,10 +301,10 @@ for columna in columnas_numericas:
     df_filtrado = dat[['PagareFincore', 
                        columna,
                        'Socio',
-                       #'Planilla',
-                       #'COD_FINALIDAD',
-                       #'FINALIDAD',
-                       #'TipoCredito'
+                       'Planilla',
+                       'COD_FINALIDAD',
+                       'FINALIDAD',
+                       'TipoCredito'
                        ]][dat[columna] > 0]
 
     # Si el DataFrame filtrado tiene filas, lo almacenamos en el diccionario con el nombre correspondiente

@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '03-05-2024'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '06-05-2024'  # FORMATO DÍA-MES-AÑO
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\mayo\\03 05'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\mayo\\06 05'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = 'unico trabajador.xlsx'
+nombre_archivo = '1ER INFORME 05_24 GRUPO KONECTA.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -43,8 +43,12 @@ filas_skip = 0                        ##
 COL_DOC_IDENTIDAD = 'Documento' # 'Documento'
 ###############################################
 
+'COLUMNA DE LA FECHA DE BAJA' #################
+COL_FECHA_BAJA = 'Fecha egreso' # 'Documento' #'BAJA SAP
+###############################################
+
 'Creación de excels'###########################
-crear_excel = False # True o False
+crear_excel = True # True o False
 ###############################################
 
 #%% IMPORTANDO EL INFORME DE BAJAS
@@ -400,11 +404,15 @@ def parse_dates(date_str):
             pass
     return pd.NaT
 
-df['fechas'] = df['BAJA SAP'].apply(parse_dates)
+df['fechas'] = df[COL_FECHA_BAJA].apply(parse_dates)
 if df[pd.isna(df['fechas'])].shape[0] > 0:
     print('investigar fechas sin formato')
     
 #%%
+if 'Sociedad' not in df.columns:
+    # Si no existe, crearla con valores vacíos
+    df['Sociedad'] = ''
+
 df['Sociedad'].fillna('', inplace = True)
 df['fecha'] = df['fechas'].dt.strftime('%Y-%m-%d')
 
