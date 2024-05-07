@@ -21,11 +21,15 @@ warnings.filterwarnings('ignore')
 'Directorio de trabajo:'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\dias de atraso, 12 meses a partir del desembolso')
 
+desde = '20220301'
+
+hasta = '20230331'
+
 #%%
 
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
-query = '''
+query = f'''
 SELECT  
 	FechaCorte1,
 	FechadeDesembolso21,
@@ -42,7 +46,7 @@ SELECT
 			WHEN TipodeProducto43 IN (15,16,17,18,19,20,21,22,23,24,25,26,27,28,29) THEN 'MYPE'
 			END AS 'PRODUCTO TXT'
 FROM anexos_riesgos3..ANX06
-WHERE FechadeDesembolso21 BETWEEN '20220301' AND '20230331'
+WHERE FechadeDesembolso21 BETWEEN '{desde}' AND '{hasta}'
 AND TipodeProducto43 in (34,35,36,37,38,39,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29)
 and DATEDIFF(MONTH, EOMONTH(FechadeDesembolso21), FechaCorte1) <= 12
 ORDER BY FechaCorte1, ApellidosyNombresRazonSocial2
