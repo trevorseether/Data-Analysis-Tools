@@ -15,12 +15,12 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 FEB\\prod')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL')
 
-anexo06 = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados procesado 01.xlsx'
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados procesado 01.xlsx'
 
 fecha_inicio = '20220101' #formato para sql
-fecha_corte  = '20240228' #formato para sql
+fecha_corte  = '20240430' #formato para sql
 
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 
@@ -217,9 +217,11 @@ del conn
 df_fincore = df_fincore[['pagare_fincore', 
                          'Socio', 
                          'fechadesembolso',
-                         'Otorgado']]
+                         'Otorgado',
+                         'Planilla']]
 
 #%%
 
-filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
+filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore']) & # no están en el anexo06
+                             (df_fincore['Planilla'] != 'PLANILLA FALLECIDOS')   ]                    # no sean PLANILLA FALLECIDOS
 
