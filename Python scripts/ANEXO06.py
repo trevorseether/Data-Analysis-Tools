@@ -2159,7 +2159,8 @@ ya_casi['Registro 1/'] = [f'{i+1:06}' for i in range(total_filas)]
 anexo06_casi = ya_casi.copy()
 
 #%% REORDENAMIENTO UNA VEZ MÁS:
-COL = ['''Socios al menos con un cred < 100 soles
+COL = [
+'''Socios al menos con un cred < 100 soles
 amarillo =  cred <100
 rosado =  cred >= 100
  PROV.REQUERIDA A SER EVALUADA.''',
@@ -2429,13 +2430,13 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Marzo 2024'  #se pone el corte actual
+fecha_corte = 'Abril 2024'  #se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240229" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20240331" #  aqui cambiamos la fecha, se pone la del corte anterior
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
@@ -2534,10 +2535,12 @@ lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
 #%% importación de módulos
 import os
 import pandas as pd
-#%%
+#%% Créditos de la lista de provisiones al 100% que no están castigados
 
 # ubicados = df_diferidos[df_diferidos['Nro Prestamo \nFincore'].isin(lista_100_provisionales)]
 # ubicados = ubicados[ubicados['Saldo de colocaciones (créditos directos) 24/'] > 0]
+# print(list(ubicados['Nro Prestamo \nFincore']))
+
 #%% IMPORTACIÓN DE ARCHIVOS
 #leyendo el excel que nos envía CONTABILIDAD
 os.chdir(directorio_final)
