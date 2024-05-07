@@ -43,7 +43,7 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
@@ -181,6 +181,18 @@ creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', 
 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos a ver las planillas
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas
+
+#%% corrección originador andrea bilbao
+cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
+                                   dtype = {'nro_fincore' : str})
+columna_funcionario = 'Funcionario Origuinador'
+def originador_reasignacion(df):
+    if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
+        return 'ANDREA BILBAO BRICEÑO'
+    else:
+        return df[columna_funcionario]
+
+df1[columna_funcionario] = df1.apply(originador_reasignacion, axis = 1)
 
 #%% CORRECCIÓN DEL TIPO DE DOCUMENTO
 

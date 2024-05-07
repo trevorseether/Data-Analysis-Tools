@@ -456,10 +456,10 @@ garantias = anx06_anterior[['Nro Prestamo \nFincore',
                             'Partida Registral 8/']]
 
 nuevos_nombres = {
-                'Nro Prestamo \nFincore'                 :   'fincore para merge',
-                'Saldos de Garantías Preferidas 34/'     :   'garantias pref mes pasado',
-                'Saldo de Garantías Autoliquidables 35/' :   'garantias autoli mes pasado',
-                'Partida Registral 8/'                   :   'part registral mes pasado'
+                'Nro Prestamo \nFincore'                 :  'fincore para merge',
+                'Saldos de Garantías Preferidas 34/'     :  'garantias pref mes pasado',
+                'Saldo de Garantías Autoliquidables 35/' :  'garantias autoli mes pasado',
+                'Partida Registral 8/'                   :  'part registral mes pasado'
                  }
 
 garantias = garantias.rename(columns = nuevos_nombres)
