@@ -20,12 +20,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\07 05')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\08 05')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240507.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240508.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -216,6 +216,7 @@ valor2 = kashio_ampliado.shape[0]
 print(kashio_ampliado.shape[0])
 if valor1 != valor2:
     print('Si sale diferente hay que investigar, posiblemente hay créditos duplicados')
+    print('')
 else:
     print('Todo bien, no hay créditos duplicados')
 

@@ -50,7 +50,7 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = True #booleano True o False
+generar_excels = False #booleano True o False
 
 #%% ARCHIVOS
 
