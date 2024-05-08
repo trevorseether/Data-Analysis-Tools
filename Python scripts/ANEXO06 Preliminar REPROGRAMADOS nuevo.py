@@ -445,6 +445,19 @@ def admin_reasignacion(df):
 
 ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
 
+###############################################################################
+cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
+                                   dtype = {'nro_fincore' : str})
+columna_funcionario = 'Funcionario Origuinador'
+def originador_reasignacion(df):
+    if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
+        return 'ANDREA BILBAO BRICEÑO'
+    else:
+        return df[columna_funcionario]
+
+ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1)
+
+
 #%% SALDO DE GARANTÍA DEL MES PASADO
 # PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
 # estos datos debemos sacar del preliminar del anexo06, porque en el anexo 06 final 

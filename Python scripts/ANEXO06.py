@@ -47,17 +47,17 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 03 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 04 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Marzo' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Abril' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-03-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Marzo 2024'
+fecha_corte     = '2024-04-30' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Abril 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -253,7 +253,7 @@ del tipo_cero
 
 #ahora vamos a leer el archivo donde Enrique manualmente elabora la clasificación de los refinanciados
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
-nombre_col_fincore = 'Pagare Actual'
+nombre_col_fincore = 'PAGARE ACTUAL'
 
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows = 3,
