@@ -225,3 +225,7 @@ df_fincore = df_fincore[['pagare_fincore',
 filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore']) & # no están en el anexo06
                              (df_fincore['Planilla'] != 'PLANILLA FALLECIDOS')   ]                    # no sean PLANILLA FALLECIDOS
 
+'incluyendo fallecidos:'
+incluye_fallecidos = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
+
+
