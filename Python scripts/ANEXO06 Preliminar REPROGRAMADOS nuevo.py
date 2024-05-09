@@ -15,6 +15,10 @@ import os
 import numpy as np
 from colorama import Back # , Style, init, Fore
 import pyodbc
+
+import warnings
+warnings.filterwarnings('ignore')
+
 #%% INDICACIONES PRELIMINARES
 'Revisar que estén bien las fechas:'
 # "Fecha Creacion Reprogramacion Nacimiento TXT"
