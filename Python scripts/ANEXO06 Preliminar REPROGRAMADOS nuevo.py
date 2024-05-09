@@ -14,7 +14,7 @@ import pandas as pd
 import os
 import numpy as np
 from colorama import Back # , Style, init, Fore
-
+import pyodbc
 #%% INDICACIONES PRELIMINARES
 'Revisar que estén bien las fechas:'
 # "Fecha Creacion Reprogramacion Nacimiento TXT"
@@ -171,6 +171,37 @@ else:
 # menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
 # print(menos_bruto.shape[0])
 
+#%% VERIFICAR SI HAY DUPLICADOS EN EL CÓDIGO DE SOCIO (de la base de datos)
+
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+server      = datos['DATOS'][0]
+username    = datos['DATOS'][2]
+password    = datos['DATOS'][3]
+conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+conn = pyodbc.connect(conn_str)
+
+query = '''
+SELECT 
+	CodigoSocio, COUNT(*) AS CODIGO_DUPLICADOS 
+FROM 
+	Socio
+WHERE 
+	CodigoSocio IS NOT NULL
+GROUP BY 
+	CodigoSocio
+HAVING COUNT(*) > 1
+
+'''
+
+cod_socio_duplicados = pd.read_sql_query(query, conn)
+cod_socio_duplicados['CodigoSocio'] = cod_socio_duplicados['CodigoSocio'].str.strip()
+cod_socio_duplicados = cod_socio_duplicados[cod_socio_duplicados['CodigoSocio'] != '']
+
+if cod_socio_duplicados.shape[0] > 0:
+    print(Back.RED + 'existen duplicados, notificar a Oscar y Cesar')
+    print(cod_socio_duplicados)
+    print(Back.RESET + '')
+    
 #%% AJUSTE DE PRODUCTO
 # hay dos nuevos productos, el 26 y el 27
 # el 26 es emprendimiento mujer (microempresa)

@@ -228,4 +228,6 @@ filas_filtradas = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Pr
 'incluyendo fallecidos:'
 incluye_fallecidos = df_fincore[~df_fincore['pagare_fincore'].isin(df_anx06['Nro Prestamo \nFincore'])]
 
+# incluye_fallecidos.to_excel('mueltos.xlsx',
+#                             index = False)
 
