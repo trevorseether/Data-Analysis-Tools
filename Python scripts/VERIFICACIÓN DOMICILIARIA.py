@@ -65,8 +65,8 @@ SELECT
 	d.nombre as 'distrito', 
 	pv.nombre as 'provincia', 
 	dp.nombre as 'departamento',
-	sc.ReferenciaDomicilio
-
+	sc.ReferenciaDomicilio,
+	TIPO_CASA.Descripcion
 
 FROM socio                 AS s
 LEFT JOIN prestamo         AS p   ON s.codsocio = p.codsocio
@@ -78,7 +78,13 @@ INNER JOIN provincia       AS pv  ON pv.codprovincia = d.codprovincia
 INNER JOIN departamento    AS dp  ON dp.coddepartamento = pv.coddepartamento
 INNER JOIN tablaMaestraDet AS tm  ON tm.codtabladet = p.CodEstado
 
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN @INICIO_MES AND @CORTE'''
+LEFT JOIN TablaMaestraDet AS TIPO_CASA  ON SC.CodTipoDomicilio = TIPO_CASA.CodTablaDet
+
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN @INICIO_MES AND @CORTE
+
+AND TIPO_CASA.CodTablaCab = 4
+
+'''
 
 df_fincore = pd.read_sql_query(query, conn)
 del conn

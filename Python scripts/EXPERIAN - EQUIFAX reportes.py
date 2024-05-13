@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Marzo 2024'
+FECHA_CORTE = 'Abril 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 marzo"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 abril"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SM_0324 - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - MARZO-24 - INSUMO.xlsx"
+insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ABRIL-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,12 +35,12 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240331'
+f_corte_sql = '20240430'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO'
+ubicacion_calificacion = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 abril"
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
@@ -670,10 +670,15 @@ def tipo_doc_2(df_resultado):
     largo = len(df_resultado['N° Documento\nIdentidad (*)  DNI o RUC'])
 
     if largo == 9:
-        return '2'
+        return '3'
     else:
         return df_resultado['Tipo\nDocumento\nIdentidad (*)']
 df_resultado['Tipo\nDocumento\nIdentidad (*)'] = df_resultado.apply(tipo_doc_2, axis = 1)
+
+# 1 = dni
+# 3 = carnet de extranjería
+# 4 = pasaporte
+# 6 = RUC
 
 #%% MONTO DE LA DEUDA AVALADA
 #colocamos el monto de la deuda en la columna 'MN Deuda Avalada (*)'
