@@ -60,7 +60,8 @@ select
 	TIPO, 
 	Nro_Fincore,
 	ADMINISTRADOR, 
-	TipodeProducto43
+	TipodeProducto43,
+	a.empresa
 INTO #T
 from Anexos_Riesgos2..Anx06_preliminar a 
 where a.FechaCorte1 = '20240331' -- aqui se pone el de hace 2 meses
@@ -585,6 +586,7 @@ AND TipodeProducto43 IN (95,96,97,98,99)
 ----------------------------------------------------------------------------------
 update A ---------QUE ESTA PARTE ESTÉ EN PRUEBAS
 set A.EMPRESA = B.EMPRESA
+--      SELECT A.EMPRESA,A.PLANILLA,A.NUEVA_PLANILLA,A.PLANILLA_CONSOLIDADA, *
 FROM anexos_riesgos2..Anx06_preliminar AS A
 LEFT JOIN anexos_riesgos2..cabecera AS B
 ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)

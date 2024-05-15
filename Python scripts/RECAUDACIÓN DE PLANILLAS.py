@@ -18,7 +18,7 @@ from colorama import Back # , Style, init, Fore
 
 #%%
 # PROCEDER CON CARGA A SQL SERVER? ============================================
-CARGA_SQL_SERVER = False #True o False
+CARGA_SQL_SERVER = True #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
@@ -26,11 +26,11 @@ fecha_corte = '20240331'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\03 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\03 2024\\bueno ahora sí')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '03 - MARZO 2024 (CIERRE).xlsx'
+nombre = '03 - MARZO 2024 (CIERRE) (1).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
