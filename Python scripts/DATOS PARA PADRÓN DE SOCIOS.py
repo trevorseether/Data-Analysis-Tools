@@ -15,13 +15,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS
-fecha_corte = '20240331' # formato para sql server
+fecha_corte = '20240430' # formato para sql server
 
 #%% LECTURA PADRÓN DE SOCIOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 MARZO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 ABRIL')
 
 #%%
-padron = pd.read_excel('PADRON DE SOCIOS.xlsx',
+padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado - incl inhabiles.xlsx',
                        skiprows = 1,
                        dtype = {'CodSoc'                  : str,
                                 'Celular1'                : str,
@@ -192,8 +192,17 @@ padron_final = padron3[['CodSoc',
                         'GradoInstrucción', 
                         ]]
 
-# padron_final.to_excel('datos_para_padron.xlsx',
-#                       index = False)
+padron_final.columns = ['CodSoc', 
+                        'ESTADO',
+                        'EDAD', 
+                        'ESTADO CIVIL',
+                        'INGRESO BRUTO', 
+                        'NÚMERO DE CRÉDITOS',
+                        'MONTO OTORGADO PROMEDIO',
+                        'GRADO DE INSTRUCCIÓN']
+
+padron_final.to_excel('datos_para_padron.xlsx',
+                       index = False)
 
 #%%
 # import matplotlib.pyplot as plt
@@ -213,8 +222,7 @@ archivo_original = padron3[['CodSoc', 'Apellidos y Nombres', 'Aporte Inicial', '
        'Direccion Completa', 'Distrito', 'Departamento', 'Provincia', 'Ubigeo',
        'Actividad Economica', 'Sexo', 'Nacionalidad TXT',
        'Fecha Primer Prestamo', 'Email', 'Celular1', 'Telefono Fijo1',
-       'Condicion', 'Fecha Ultimo Desembolso', 'Fecha Bloqueo', 'ESTADO FEB24',
-       'NO ENCONT EN RPT APORTE', 'AÑO INSCRIPCIÓN',
+       'Condicion', 'Fecha Ultimo Desembolso', 'Fecha Bloqueo', 
        
        'ESTADO','Edad','est_civil','INGRESOBRUTO','número de créditos','Promedio otorgado','GradoInstrucción'
 ]]

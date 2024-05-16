@@ -11,7 +11,14 @@ SELECT
 	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
 	IIF(S.CodSexo = 4, 'FEMENINO',
 		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
-	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
+		--------------------------------------------------------------
+	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
+	CASE 
+		WHEN p.CodPrestamoFox IS NOT NULL THEN
+		RIGHT(CONCAT('000000',p.CodPrestamoFox),6)
+	ELSE RIGHT(CONCAT('0000000',p.numero),8)
+		END as 'pagare_fox', 
+		--------------------------------------------------------------
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
 	p.montosolicitado as 'Otorgado', 
@@ -147,8 +154,8 @@ LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARI
 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
 --AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
 
-AND s.codigosocio>0
-
+AND s.codigosocio     > 0
+AND p.montosolicitado > 0
 --and p.codestado = 342
 --AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
 

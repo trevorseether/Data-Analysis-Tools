@@ -16,11 +16,11 @@ warnings.filterwarnings('ignore')
 
 #%% LECTURA ANEXO06
 
-ubi         = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
-anx06       = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
-fecha_corte = '2024-02-29'
+ubi              = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 FEBRERO\\FINAL AHORA SÍ'
+anx06            = 'Rpt_DeudoresSBS Anexo06 - Febrero 2024 - campos ampliados v08.xlsx'
+fecha_corte      = '2024-02-29'
 CARGA_SQL_SERVER = True
-tabla       = 'MARKETING..[MARKETING]'
+tabla            = 'MARKETING..[MARKETING]'
 
 #%%
 anexo_06 = pd.read_excel(ubi + '\\' + anx06,

@@ -594,6 +594,18 @@ WHERE A.EMPRESA IS NULL
 AND A.FechaCorte1 = '20240430'
 AND B.FechaCorte1 = '20240430'
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
+------------------------------------------------------------------------------
+update A ---------QUE ESTA PARTE ESTÉ EN PRUEBAS
+set A.EMPRESA = B.EMPRESA
+--      SELECT A.EMPRESA,A.PLANILLA,A.NUEVA_PLANILLA,A.PLANILLA_CONSOLIDADA, *
+FROM anexos_riesgos2..Anx06_preliminar AS A
+LEFT JOIN anexos_riesgos2..cabecera AS B
+ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)
+WHERE A.EMPRESA IS NULL
+AND A.FechaCorte1 = '20240430'
+AND B.FechaCorte1 = '20240430'
+AND A.TipodeProducto43 IN (34,35,36,37,38,39)
+
 ----------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
 --libres disponibilidad
