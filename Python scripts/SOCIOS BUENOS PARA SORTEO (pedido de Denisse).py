@@ -13,18 +13,18 @@ import pyodbc
 import os
 
 #%%
-fecha_corte = '20240331'
+fecha_corte = '20240430'
 
-fecha_hoy = '20240331' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_hoy = '20240515' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo\\15 mayo 2024')
 
 # Cargar el último Anexo06 en el formato que se envía a los demás
 nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 02.xlsx'
 
 filas_skip   = 2
 
-usar_sql     = False # True o False, si le das False, es obligatorio definir un excel de anexo06
+usar_sql     = True # True o False, si le das False, es obligatorio definir un excel de anexo06
 
 #%%
 if usar_sql == True:

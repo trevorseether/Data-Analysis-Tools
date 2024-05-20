@@ -14,7 +14,8 @@ import pandas as pd
 import pyodbc
 
 #%%
-fecha_corte = '20240331'
+fecha_corte = '20240430'
+fecha_hoy   = '20240515' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios con vigentes')
 
@@ -32,11 +33,15 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 conn = pyodbc.connect(conn_str)
 
 #%% QUERY, créditos vigentes
-query = '''
+
+fecha_inicio = fecha_hoy[0:6] + '01'
+
+
+query = f'''
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
-	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad', 
+	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'DOCUMENTO', 
 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore', 
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
@@ -98,7 +103,7 @@ INNER JOIN usuario as u             ON p.CodUsuario = u.CodUsuario
 INNER JOIN TablaMaestraDet as tm4   ON s.codestado = tm4.CodTablaDet
 --LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) <= '{fecha_hoy}'
 AND s.codigosocio>0  
 
 AND p.codestado = 341 --SIGNFICA QUE EL CRÉDITO SE ENCUENTRE EN SITUACIÓN VIGENTE
@@ -109,8 +114,8 @@ order by socio asc, p.fechadesembolso desc
 
 vigentes = pd.read_sql_query(query, 
                              conn, 
-                             dtype = {'Doc_Identidad'  : object,
-                                      'codigosocio'    : object,
+                             dtype = {'codigosocio'    : str,
+                                      'DOCUMENTO'      : object,
                                       'pagare_fincore' : object,
                                       'fechadesembolso': object,
                                       'Celular'        : str
@@ -120,8 +125,9 @@ vigentes.drop_duplicates(subset = 'pagare_fincore', inplace = True)
 vigentes['Celular'] = vigentes['Celular'].str.strip()
 
 #%%
-col_necesarias = vigentes[['Socio',
-                           'Doc_Identidad',
+col_necesarias = vigentes[['codigosocio',
+                           'Socio',
+                           'DOCUMENTO',
                            #'pagare_fincore',
                            #'fechadesembolso',
                            #'Otorgado',
@@ -129,7 +135,7 @@ col_necesarias = vigentes[['Socio',
                            'Celular',
                            'Email']]
 
-col_necesarias.drop_duplicates(subset = 'Doc_Identidad', inplace = True)
+col_necesarias.drop_duplicates(subset = 'DOCUMENTO', inplace = True)
 
 def cel_51(celular):
     if (celular[0] == '9') and (len(celular) == 9):
@@ -146,7 +152,8 @@ col_necesarias['Celular1'] = col_necesarias['Celular'].apply(cel_51)
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
 query = f'''
-SELECT 
+SELECT
+    CodigoSocio7 as 'codigosocio',
 	ApellidosyNombresRazonSocial2 AS 'APELLIDOS NOMBRES / RAZÓN SOCIAL',
     FechadeNacimiento3 as 'FECHA NAC',
 	NumerodeDocumento10 AS 'DOCUMENTO', 
@@ -173,11 +180,10 @@ ORDER BY ApellidosyNombresRazonSocial2
 anexo_06 = pd.read_sql_query(query, conn)
 
 #%%
-base_completada = anexo_06.merge(col_necesarias[['Doc_Identidad',
+base_completada = anexo_06.merge(col_necesarias[['DOCUMENTO',
                                                  'Celular1',
                                                  'Email']],
-                                 left_on  = 'DOCUMENTO',
-                                 right_on = 'Doc_Identidad',
+                                 on       = 'DOCUMENTO',
                                  how      = 'inner')
 
 #%% excel
