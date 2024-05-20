@@ -16,9 +16,10 @@ warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS
 fecha_corte = '20240430' # formato para sql server
+f_corte     = 'Abril-24'
 
 #%% LECTURA PADRÓN DE SOCIOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 ABRIL')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 ABRIL\\asd')
 
 #%%
 padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado - incl inhabiles.xlsx',
@@ -27,6 +28,10 @@ padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado - incl inhabiles.xlsx
                                 'Celular1'                : str,
                                 'NO ENCONT EN RPT APORTE' : str
                                 })
+
+columna_estado_mes_anterior = padron.columns[29]
+print(columna_estado_mes_anterior)
+print("Debe decir algo como 'ESTADO MAR.24'")
 
 #%% LECTURA ANEXO06 DEL SQL
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -192,14 +197,12 @@ padron_final = padron3[['CodSoc',
                         'GradoInstrucción', 
                         ]]
 
-padron_final.columns = ['CodSoc', 
-                        'ESTADO',
-                        'EDAD', 
-                        'ESTADO CIVIL',
-                        'INGRESO BRUTO', 
-                        'NÚMERO DE CRÉDITOS',
-                        'MONTO OTORGADO PROMEDIO',
-                        'GRADO DE INSTRUCCIÓN']
+padron_final = padron_final.rename(columns={'Edad'              : 'EDAD',
+                                            'est_civil'         : 'ESTADO CIVIL',
+                                            'INGRESOBRUTO'      : 'INGRESO BRUTO',
+                                            'número de créditos': 'NÚMERO DE CRÉDITOS',
+                                            'Promedio otorgado' : 'MONTO OTORGADO PROMEDIO',
+                                            'GradoInstrucción'  : 'GRADO DE INSTRUCCIÓN'})
 
 padron_final.to_excel('datos_para_padron.xlsx',
                        index = False)
@@ -224,14 +227,27 @@ archivo_original = padron3[['CodSoc', 'Apellidos y Nombres', 'Aporte Inicial', '
        'Fecha Primer Prestamo', 'Email', 'Celular1', 'Telefono Fijo1',
        'Condicion', 'Fecha Ultimo Desembolso', 'Fecha Bloqueo', 
        
+       columna_estado_mes_anterior,
+       
        'ESTADO','Edad','est_civil','INGRESOBRUTO','número de créditos','Promedio otorgado','GradoInstrucción'
-]]
+       ]]
 
+archivo_original = archivo_original.rename(columns = {'Edad'              : 'EDAD',
+                                                      'est_civil'         : 'ESTADO CIVIL',
+                                                      'INGRESOBRUTO'      : 'INGRESO BRUTO',
+                                                      'número de créditos': 'NÚMERO DE CRÉDITOS',
+                                                      'Promedio otorgado' : 'MONTO OTORGADO PROMEDIO',
+                                                      'GradoInstrucción'  : 'GRADO DE INSTRUCCIÓN'})
+
+archivo_original = archivo_original[archivo_original['Condicion'].isin(['HABIL', 
+                                                                        'HÁBIL',
+                                                                        'HABIL - REINGRESO',
+                                                                        'HÁBIL - REINGRESO'])]
 # merge con el crédito
 archivo_original = archivo_original.merge(total_creditos[['CodSoc', 'pagare_fincore', 'Otorgado', 'PRODUCTO_TXT']],
                                           on  = 'CodSoc',
                                           how = 'left')
 
-archivo_original.to_excel('padrón de créditos.xlsx',
+archivo_original.to_excel(f'Rpt_PadronSocios {f_corte} Ampliado créditos.xlsx',
                           index = False)
 
