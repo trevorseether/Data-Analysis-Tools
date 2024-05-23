@@ -18,6 +18,8 @@ warnings.filterwarnings('ignore')
 fecha_corte = '20240430' # formato para sql server
 f_corte     = 'Abril-24'
 
+filtrar_habiles = True
+
 #%% LECTURA PADRÓN DE SOCIOS
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 ABRIL\\asd')
 
@@ -31,7 +33,14 @@ padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado - incl inhabiles.xlsx
 
 columna_estado_mes_anterior = padron.columns[29]
 print(columna_estado_mes_anterior)
-print("Debe decir algo como 'ESTADO MAR.24'")
+print("Debe decir algo como 'ESTADO MAR.24' (mes anterior al actual)")
+
+#%%
+if filtrar_habiles == True:
+    padron = padron[padron['Condicion'].isin(['HABIL', 
+                                              'HÁBIL',
+                                              'HABIL - REINGRESO',
+                                              'HÁBIL - REINGRESO'])]
 
 #%% LECTURA ANEXO06 DEL SQL
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -125,7 +134,7 @@ padron2 = padron.merge(datos_para_padron[['CodSoc', 'Edad', 'est_civil', 'INGRES
                        how = 'left')
 
 #%% LECTURA DE CRÉDITOS OTORGADOS
-query = '''
+query = f'''
 SELECT
 	s.codigosocio as 'CodSoc', 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
@@ -137,13 +146,16 @@ SELECT
     FI.CODIGO AS 'COD_FINALIDAD',
 	CASE
 		WHEN FI.CODIGO IN (34,35,36,37,38,39)			THEN 'DXP'
-		WHEN FI.CODIGO IN (30,31,32,33)					THEN 'LIBRE DISPONIBILIDAD'
+		WHEN FI.CODIGO IN (30,31,33)					THEN 'LIBRE DISPONIBILIDAD'
+		WHEN FI.CODIGO IN (32)					        THEN 'MULTI OFICIOS'
 		WHEN FI.CODIGO IN (41,45)						THEN 'HIPOTECARIO'
 		WHEN FI.CODIGO IN (15,16,17,18,19)				THEN 'PEQUEÑA EMPRESA'
-		WHEN FI.CODIGO IN (21,22,23,24,25,26,27,28,29)  THEN 'MICRO EMPRESA'
+		WHEN FI.CODIGO IN (26)				            THEN 'EMPRENDE MUJER'
+		WHEN FI.CODIGO IN (21,22,23,24,25,27,28,29)     THEN 'MICRO EMPRESA'
 		WHEN FI.CODIGO IN (95,96,97,98,99)				THEN 'MEDIANA EMPRESA'
-		ELSE 'INVESTIGAR'
-		
+
+        ELSE 'INVESTIGAR'
+
 		END AS 'PRODUCTO_TXT',
 	FI.DESCRIPCION
 
@@ -151,10 +163,12 @@ FROM prestamo AS p
 
     INNER JOIN socio AS S ON s.codsocio = p.codsocio
     LEFT JOIN FINALIDAD AS FI ON FI.CODFINALIDAD = P.CODFINALIDAD
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) between '20010101' and '20240331'
+    
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '20000101' AND '{fecha_corte}'
 
 	AND s.codigosocio > 0
 	AND p.montosolicitado > 0
+    AND p.codestado <> 563
 
 ORDER BY socio ASC, p.fechadesembolso DESC
 
@@ -204,8 +218,77 @@ padron_final = padron_final.rename(columns={'Edad'              : 'EDAD',
                                             'Promedio otorgado' : 'MONTO OTORGADO PROMEDIO',
                                             'GradoInstrucción'  : 'GRADO DE INSTRUCCIÓN'})
 
+#%% CONTEO DE CRÉDITOS ALGUNA VEZ DESEMBOLSADOS PARA CADA SOCIO
+conteo_creditos = total_creditos.pivot_table(values  = 'pagare_fincore',
+                                             index   = 'CodSoc',
+                                             columns = 'PRODUCTO_TXT',
+                                             aggfunc = 'count').reset_index()
+conteo_creditos = conteo_creditos.fillna(0)
+conteo_creditos = conteo_creditos[['CodSoc', 
+                                   'DXP', 
+                                   'HIPOTECARIO', 
+                                   'LIBRE DISPONIBILIDAD',
+                                   'MULTI OFICIOS',
+                                   'MEDIANA EMPRESA', 
+                                   'MICRO EMPRESA',
+                                   'EMPRENDE MUJER',
+                                   'PEQUEÑA EMPRESA']] #ordenamiento de las columnas
+
+conteo_creditos.columns = ['CodSoc',
+                           'Nº CREDITOS DXP',
+                           'Nº CREDITOS HIPOTECARIO',
+                           'Nº CREDITOS LIBRE DISPONIBILIDAD',
+                           'Nº CREDITOS MULTI OFICIOS',
+                           'Nº CREDITOS MEDIANA EMPRESA',
+                           'Nº CREDITOS MICRO EMPRESA',
+                           'Nº CREDITOS EMPRENDE MUJER',
+                           'Nº CREDITOS PEQUEÑA EMPRESA']
+
+def binomial(columna):
+    if columna > 0:
+        return 1
+    else:
+        return 0
+    
+conteo_creditos['DXP']                  =  conteo_creditos['Nº CREDITOS DXP'].apply(binomial)
+conteo_creditos['HIPOTECARIO']          =  conteo_creditos['Nº CREDITOS HIPOTECARIO'].apply(binomial)
+conteo_creditos['LIBRE DISPONIBILIDAD'] =  conteo_creditos['Nº CREDITOS LIBRE DISPONIBILIDAD'].apply(binomial)
+conteo_creditos['MULTI OFICIOS']        =  conteo_creditos['Nº CREDITOS MULTI OFICIOS'].apply(binomial)
+conteo_creditos['MEDIANA EMPRESA']      =  conteo_creditos['Nº CREDITOS MEDIANA EMPRESA'].apply(binomial)
+conteo_creditos['MICRO EMPRESA']        =  conteo_creditos['Nº CREDITOS MICRO EMPRESA'].apply(binomial)
+conteo_creditos['EMPRENDE MUJER']       =  conteo_creditos['Nº CREDITOS EMPRENDE MUJER'].apply(binomial)
+conteo_creditos['PEQUEÑA EMPRESA']      =  conteo_creditos['Nº CREDITOS PEQUEÑA EMPRESA'].apply(binomial)
+
+#%% merge con el padrón
+padron_final = padron_final.merge(conteo_creditos,
+                                  on  = 'CodSoc',
+                                  how = 'left')
+columnas = ['Nº CREDITOS DXP',
+              'Nº CREDITOS HIPOTECARIO',
+              'Nº CREDITOS LIBRE DISPONIBILIDAD',
+              'Nº CREDITOS MULTI OFICIOS',
+              'Nº CREDITOS MEDIANA EMPRESA',
+              'Nº CREDITOS MICRO EMPRESA',
+              'Nº CREDITOS EMPRENDE MUJER',
+              'Nº CREDITOS PEQUEÑA EMPRESA',
+              'DXP',
+              'HIPOTECARIO',
+              'LIBRE DISPONIBILIDAD',
+              'MULTI OFICIOS',
+              'MEDIANA EMPRESA',
+              'MICRO EMPRESA',
+              'EMPRENDE MUJER',
+              'PEQUEÑA EMPRESA',
+              ]
+for i in columnas:
+    padron_final[i] = pd.to_numeric(padron_final[i])
+
+for i in columnas:
+    padron_final[i] = padron_final[i].fillna(0)
+
+#%% EXCEL
 padron_final.to_excel('datos_para_padron.xlsx',
-                       index = False)
+                      index = False)
 
 #%%
 # import matplotlib.pyplot as plt
@@ -218,36 +301,36 @@ padron_final.to_excel('datos_para_padron.xlsx',
 # plt.show()
 
 #%% 
-archivo_original = padron3[['CodSoc', 'Apellidos y Nombres', 'Aporte Inicial', 'Aporte\nCobranza',
-       'Aporte \nExtraOrd.', 'Reduccion', 'Aporte\nFinal', 'Ultima\nOperacion',
-       'Ultima\nOperacion Aportes', 'Fecha Inscripcion TSocio', 'Ocupacion',
-       'Tipo Persona TXT', 'Tipo Documento TXT', 'Nro Doc Identidad Unificado',
-       'Direccion Completa', 'Distrito', 'Departamento', 'Provincia', 'Ubigeo',
-       'Actividad Economica', 'Sexo', 'Nacionalidad TXT',
-       'Fecha Primer Prestamo', 'Email', 'Celular1', 'Telefono Fijo1',
-       'Condicion', 'Fecha Ultimo Desembolso', 'Fecha Bloqueo', 
+# archivo_original = padron3[['CodSoc', 'Apellidos y Nombres', 'Aporte Inicial', 'Aporte\nCobranza',
+#        'Aporte \nExtraOrd.', 'Reduccion', 'Aporte\nFinal', 'Ultima\nOperacion',
+#        'Ultima\nOperacion Aportes', 'Fecha Inscripcion TSocio', 'Ocupacion',
+#        'Tipo Persona TXT', 'Tipo Documento TXT', 'Nro Doc Identidad Unificado',
+#        'Direccion Completa', 'Distrito', 'Departamento', 'Provincia', 'Ubigeo',
+#        'Actividad Economica', 'Sexo', 'Nacionalidad TXT',
+#        'Fecha Primer Prestamo', 'Email', 'Celular1', 'Telefono Fijo1',
+#        'Condicion', 'Fecha Ultimo Desembolso', 'Fecha Bloqueo', 
        
-       columna_estado_mes_anterior,
+#        columna_estado_mes_anterior,
        
-       'ESTADO','Edad','est_civil','INGRESOBRUTO','número de créditos','Promedio otorgado','GradoInstrucción'
-       ]]
+#        'ESTADO','Edad','est_civil','INGRESOBRUTO','número de créditos','Promedio otorgado','GradoInstrucción'
+#        ]]
 
-archivo_original = archivo_original.rename(columns = {'Edad'              : 'EDAD',
-                                                      'est_civil'         : 'ESTADO CIVIL',
-                                                      'INGRESOBRUTO'      : 'INGRESO BRUTO',
-                                                      'número de créditos': 'NÚMERO DE CRÉDITOS',
-                                                      'Promedio otorgado' : 'MONTO OTORGADO PROMEDIO',
-                                                      'GradoInstrucción'  : 'GRADO DE INSTRUCCIÓN'})
+# archivo_original = archivo_original.rename(columns = {'Edad'              : 'EDAD',
+#                                                       'est_civil'         : 'ESTADO CIVIL',
+#                                                       'INGRESOBRUTO'      : 'INGRESO BRUTO',
+#                                                       'número de créditos': 'NÚMERO DE CRÉDITOS',
+#                                                       'Promedio otorgado' : 'MONTO OTORGADO PROMEDIO',
+#                                                       'GradoInstrucción'  : 'GRADO DE INSTRUCCIÓN'})
 
-archivo_original = archivo_original[archivo_original['Condicion'].isin(['HABIL', 
-                                                                        'HÁBIL',
-                                                                        'HABIL - REINGRESO',
-                                                                        'HÁBIL - REINGRESO'])]
-# merge con el crédito
-archivo_original = archivo_original.merge(total_creditos[['CodSoc', 'pagare_fincore', 'Otorgado', 'PRODUCTO_TXT']],
-                                          on  = 'CodSoc',
-                                          how = 'left')
+# archivo_original = archivo_original[archivo_original['Condicion'].isin(['HABIL', 
+#                                                                         'HÁBIL',
+#                                                                         'HABIL - REINGRESO',
+#                                                                         'HÁBIL - REINGRESO'])]
+# # merge con el crédito
+# archivo_original = archivo_original.merge(total_creditos[['CodSoc', 'pagare_fincore', 'Otorgado', 'PRODUCTO_TXT']],
+#                                           on  = 'CodSoc',
+#                                           how = 'left')
 
-archivo_original.to_excel(f'Rpt_PadronSocios {f_corte} Ampliado créditos.xlsx',
-                          index = False)
+# archivo_original.to_excel(f'Rpt_PadronSocios {f_corte} Ampliado créditos.xlsx',
+#                           index = False)
 
