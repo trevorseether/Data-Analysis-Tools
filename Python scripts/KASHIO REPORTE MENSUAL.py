@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Mayo 2024'
-fecha_inicio = '2024-05-01'
-fecha_final  = '2024-05-31'
+MES          = 'Junio 2024'
+fecha_inicio = '2024-06-01'
+fecha_final  = '2024-06-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 04\\25 ABR')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\23 05')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -253,13 +253,27 @@ query = '''
 -- 301			41			INHABIL
 -- 532			41			FALLECIDO
 
-select soc.CodSocio, codigosocio, NroDocIdentidad, ApellidoPaterno, ApellidoMaterno, nombres, tra.CodigoCCI, tra.CodigoBancario, tra.CodMoneda,
-iif(tra.codmoneda = 94,'SOLES','DOLARES') as Moneda_Cta, ent.descripcion as Banco, tra.InformacionAl, tra.PorDefecto
-from socio soc
-left join SocioTransferencia tra on soc.codsocio = tra.CodSocio
-left join EntidadFinanciera ent on tra.CodEntidadFinanciera = ent.CodEntidadFinanciera
+SELECT
+    
+    soc.CodSocio, 
+    codigosocio, 
+    NroDocIdentidad, 
+    ApellidoPaterno, 
+    ApellidoMaterno, 
+    nombres, 
+    tra.CodigoCCI, 
+    tra.CodigoBancario, 
+    tra.CodMoneda,
+    iif(tra.codmoneda = 94,'SOLES','DOLARES') as Moneda_Cta, 
+    ent.descripcion as Banco, 
+    tra.InformacionAl, 
+    tra.PorDefecto
+    
+FROM socio soc
+    LEFT join SocioTransferencia tra   on   soc.codsocio = tra.CodSocio
+    LEFT join EntidadFinanciera ent    on   tra.CodEntidadFinanciera = ent.CodEntidadFinanciera
 
-where  soc.codigosocio is not null 
+where soc.codigosocio is not null 
 and soc.CodigoSocio>0 
 --and tra.CodigoCCI is not null 
 and soc.CodEstado = 299 -- solo Hábiles
@@ -308,7 +322,9 @@ try:
 except FileNotFoundError:
     pass
 
-kashio_final.to_excel(nombre, index=False)
+kashio_final.to_excel(nombre, 
+                      sheet_name = MES,
+                      index=False)
 
 #%%
 'SE ENVÍA A COBRANZAS'

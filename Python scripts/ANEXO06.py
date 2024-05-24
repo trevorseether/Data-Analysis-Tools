@@ -418,9 +418,9 @@ calif_ref['fincore'] = calif_ref['fincore ref'].str.strip()
 
 #hacemos un merge
 df_resultado = df_resultado.merge(calif_ref, 
-                          how='left', 
-                          left_on=['Nro Prestamo \nFincore'], 
-                          right_on=['fincore ref'])
+                          how      = 'left', 
+                          left_on  = ['Nro Prestamo \nFincore'], 
+                          right_on = ['fincore ref'])
 
 fincores = df_resultado[['fincore ref', 'calificacion especial']].copy()                                   
 fincores = fincores.dropna()
@@ -446,9 +446,9 @@ saldo_total = saldo_total.rename(columns={"Saldo de colocaciones (créditos dire
 
 #merge
 df_resultado = df_resultado.merge(saldo_total, 
-                          how='left', 
-                          left_on=['Código Socio 7/'], 
-                          right_on=["codigo para merge"])
+                                  how      = 'left', 
+                                  left_on  = ['Código Socio 7/'], 
+                                  right_on = ["codigo para merge"])
 
 df_resultado.drop(["codigo para merge"], axis=1, inplace=True)
 

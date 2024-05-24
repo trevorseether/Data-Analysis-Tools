@@ -20,12 +20,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\22 05')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\24 05')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240522.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240524.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -120,6 +120,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')
 kashio.loc[kashio['EMAIL'] == 'CARLOSCASTILLOFUENTES12@', 'EMAIL'] = 'CARLOSCASTILLOFUENTES12@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'DENIS_POBLETE@GHOTMAIL.COM', 'EMAIL'] = 'DENIS_POBLETE@HOTMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COM', 'EMAIL'] = 'RAQUELALINA@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'RRENGIFOCORAL@HOTMAIL..COM', 'EMAIL'] = 'RRENGIFOCORAL@HOTMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'TATO.12.TLV@GMAOL.COM', 'EMAIL'] = 'TATO.12.TLV@GMAIL.COM'
 
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
