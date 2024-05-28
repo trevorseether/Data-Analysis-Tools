@@ -18,15 +18,15 @@ warnings.filterwarnings('ignore')
 #%%
 # COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL         = '20240331'
+CORTE_SQL         = '20240430'
 
-tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_03]' # urgente siempre cambiar esta vaina
+tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_04]' # urgente siempre cambiar esta vaina
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 marzo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 abril')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2342024101824_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_28520249470_1.csv'
 
-CARGA_SQL_SERVER  = False
+CARGA_SQL_SERVER  = True
 
 excel_para_sql    = False
 

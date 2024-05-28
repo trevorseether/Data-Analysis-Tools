@@ -61,6 +61,14 @@ def proveedor(df):
         return df['Aceptante']
 datos['Deudor'] = datos.apply(proveedor, axis = 1)
 
+def ruc_deudor(df):
+    if pd.isna(df['Ruc\nAceptante']):
+        return df['RUC\nCliente']
+    else:
+        return df['Ruc\nAceptante']
+datos['Ruc Deudor'] = datos.apply(ruc_deudor, axis = 1)
+
+
 # def cartera_vig_30(df):
 #     if df['Dias Vencidos'] <= 30:
 #         return df['Monto Financiado']
@@ -109,6 +117,11 @@ datos['Cliente']        = datos['Cliente'].fillna('')
 datos['Ruc\nAceptante'] = datos['Ruc\nAceptante'].fillna('')
 datos['Aceptante']      = datos['Aceptante'].fillna('')
 datos['Proveedor']      = datos['Proveedor'].fillna('')
+
+#%% RENAME DE COLUMNAS
+datos = datos.rename(columns={'RUC\nCliente'   : 'RUC Cliente',
+                              'Ruc\nAceptante' : 'RUC Aceptante'})
+
 
 #%% CARGA A SQL SERVER
 if CARGA_SQL_SERVER == True:

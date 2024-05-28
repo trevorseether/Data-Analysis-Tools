@@ -21,10 +21,10 @@ f_corte     = 'Abril-24'
 filtrar_habiles = True
 
 #%% LECTURA PADRÓN DE SOCIOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 ABRIL\\asd')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PADRÓN DE SOCIOS\\2024 diciembre')
 
 #%%
-padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado - incl inhabiles.xlsx',
+padron = pd.read_excel('Rpt_PadronSocios Diciembre-23 Ampliado.xlsx',
                        skiprows = 1,
                        dtype = {'CodSoc'                  : str,
                                 'Celular1'                : str,
