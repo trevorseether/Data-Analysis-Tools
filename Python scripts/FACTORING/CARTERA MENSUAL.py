@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 23 12:35:04 2024
+Created on Wed May 29 14:42:09 2024
 
 @author: sanmiguel38
 """
 
 # =============================================================================
-# REPORTE FACTORING
+# CARTERA FACTORING MENSUAL
 # =============================================================================
 
 import pandas as pd
@@ -17,20 +17,20 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EJEMPLO]'
+tabla_nombre     = 'FACTORING..[CARTERA_2024_04]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte = '2024-05-23' # AAAA-MM-DD
+fecha_corte      = '2024-04-30'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MAYO\\23 05 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES')
 
-excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptanteTRABAJO.xlsx'
+nombre           = 'Reporte al 30-04-2024.xlsx'
 
-tipo_de_cambio = 3.7390
+tipo_de_cambio   = 3.74
 
 #%%
-datos = pd.read_excel(io       = excel, 
+datos = pd.read_excel(io       = nombre, 
                       skiprows = 12,
                       dtype = {'RUC\nCliente'   : str,
                                'Nro Factura'    : str,
@@ -149,6 +149,28 @@ def solarizacion_VFN(datos):
         return datos['Valor Facial Neto']
 datos['Valor Facial Neto SOLES'] = datos.apply(solarizacion_VFN, axis = 1)
 
+#%% SEGMENTANDO MONTO FINANCIADO POR NRO DE DÍAS DE VENCIMIENTO
+def fi_0_30(datos):
+    if datos['Dias Vencidos'] <= 30:
+        return datos['Monto Financiado SOLES']
+    else:
+        return 0
+datos['Monto Financiado <= 30'] = datos.apply(fi_0_30, axis = 1)
+
+def fi_30_90(datos):
+    if (datos['Dias Vencidos'] > 30) and (datos['Dias Vencidos'] <= 90):
+        return datos['Monto Financiado SOLES']
+    else:
+        return 0
+datos['Monto Financiado entre 30 y 90'] = datos.apply(fi_30_90, axis = 1)
+
+def fi_90(datos):
+    if datos['Dias Vencidos'] > 90:
+        return datos['Monto Financiado SOLES']
+    else:
+        return 0
+datos['Monto Financiado >90'] = datos.apply(fi_90, axis = 1)
+
 #%% CARGA A SQL SERVER
 if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
@@ -162,9 +184,8 @@ if CARGA_SQL_SERVER == True:
     df = df.fillna(0)
     # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
     # EJEMPLO df = df.fillna(0)
-    
     # Limpiar/eliminar la tabla antes de insertar nuevos datos
-    cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    
+    cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")
 
     # Generar la sentencia CREATE TABLE dinámicamente
     create_table_query = f"CREATE TABLE {tabla} ("
@@ -200,6 +221,12 @@ if CARGA_SQL_SERVER == True:
     for _, row in df.iterrows():
         cursor.execute(insert_query, tuple(row))
 
+    ###########################################################################
+    fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+    cursor.execute(f"DELETE FROM FACTORING..[CARTERA] WHERE FECHACORTE = '{fecha_format_sql}'")
+    cursor.execute(f"INSERT INTO FACTORING..[CARTERA] SELECT * FROM {tabla}")
+    ###########################################################################
+    
     # Confirmar los cambios y cerrar la conexión
     cnxn.commit()
     cursor.close()
@@ -208,4 +235,5 @@ if CARGA_SQL_SERVER == True:
 
 else:
     print('No se ha cargado a SQL SERVER')
-
+    
+    
