@@ -8,6 +8,7 @@ Created on Thu May 23 12:35:04 2024
 # =============================================================================
 # REPORTE FACTORING
 # =============================================================================
+# falta automatizar la carga a FACTORING..[REPORTE_SEMANAL]
 
 import pandas as pd
 import os
@@ -17,17 +18,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EJEMPLO]'
+tabla_nombre = 'FACTORING..[FACTORING_SEMANAL_20240530]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte = '2024-05-23' # AAAA-MM-DD
+fecha_corte = '2024-05-30' # AAAA-MM-DD
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MAYO\\23 05 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MAYO\\30 05 2024')
 
-excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptanteTRABAJO.xlsx'
+excel = 'Reporte al 29-05-2024.xlsx'
 
-tipo_de_cambio = 3.7390
+tipo_de_cambio = 3.757
 
 #%%
 datos = pd.read_excel(io       = excel, 
