@@ -23,11 +23,11 @@ CARGA_SQL_SERVER = True
 
 fecha_corte      = '2024-05-31'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\MAYO 2024')
 
-nombre           = 'Reporte al 29-05-2024.xlsx'
+nombre           = 'Reporte al 31-05-2024.xlsx'
 
-tipo_de_cambio   = 3.757
+tipo_de_cambio   = 3.738
 
 #%%
 datos = pd.read_excel(io       = nombre, 

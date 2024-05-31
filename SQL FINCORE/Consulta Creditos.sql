@@ -29,7 +29,8 @@ SELECT
 	tm.descripcion as 'Estado',
 	p.fechaCancelacion, 
 	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
-	p.flagrefinanciado, 
+	p.flagrefinanciado,
+	pro.CodGrupoCab,
 	pro.descripcion as 'Funcionario',
 	CASE
 		WHEN pro.descripcion LIKE '%PROSEVA%' THEN pro.descripcion
