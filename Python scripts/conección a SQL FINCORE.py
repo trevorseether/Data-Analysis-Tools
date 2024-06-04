@@ -9,6 +9,9 @@ import pyodbc
 import pandas as pd
 import os
 
+import warnings
+warnings.filterwarnings('ignore')
+
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\mype no morosos')
 #%%
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')

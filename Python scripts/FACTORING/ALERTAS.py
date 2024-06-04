@@ -12,9 +12,9 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas')
-archivo = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_5545.txt'
-fecha_añadido = '2024-05-30'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\04 06 2024')
+archivo = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_3459.txt'
+fecha_añadido = '2024-06-03'
 carga_sql = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
@@ -24,6 +24,8 @@ df = pd.read_csv(archivo,
                  delimiter = ',')
 
 df = df.drop(index=0)
+
+df.drop_duplicates(inplace = True)
 
 #%%
 columnas = ['ITEM',

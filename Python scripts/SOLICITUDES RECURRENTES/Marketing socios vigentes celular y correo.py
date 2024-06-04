@@ -183,8 +183,8 @@ anexo_06 = pd.read_sql_query(query, conn)
 base_completada = anexo_06.merge(col_necesarias[['DOCUMENTO',
                                                  'Celular1',
                                                  'Email']],
-                                 on       = 'DOCUMENTO',
-                                 how      = 'inner')
+                                 on     = 'DOCUMENTO',
+                                 how    = 'inner')
 
 #%% excel
 base_completada.to_excel(f'base vigentes {fecha_corte}.xlsx',
