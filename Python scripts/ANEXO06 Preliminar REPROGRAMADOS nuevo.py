@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Abril 2024' # Mes Año
-fecha_corte             = '2024-04-30' # año-mes-día
-fecha_corte_inicial     = '2024-04-01' # año-mes-día
+fecha_mes               = 'Mayo 2024' # Mes Año
+fecha_corte             = '2024-05-31' # año-mes-día
+fecha_corte_inicial     = '2024-05-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -54,26 +54,26 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = False #booleano True o False
+generar_excels = True #booleano True o False
 
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -1611,7 +1611,7 @@ anx06_ordenado['''Fecha Venc de Ult Cuota Cancelada
 (NVO)'''].fillna('--')
 
 x = (anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog inicio'] != '--']['periodo de gracia por Reprog inicio'])
-print(x.shape[0])
+# print(x.shape[0])
 #hasta aquí todo bien
 
 #%%% col amarillas 3 y 4
@@ -1639,7 +1639,7 @@ anx06_ordenado['periodo de gracia por Reprog Término'] = anx06_ordenado.apply(c
 
 print(anx06_ordenado[anx06_ordenado['periodo de gracia por Reprog Término'] != '--'].shape[0])
 print('para que esté bien, debe salir un número ligeramente menor cada mes')
-
+print('Si sale igual, es porque no hubo reprogramaciones este mes, o faltó añadirlas (error en las fechas de inicio y fin establecidas)')
 #aparentemente todo bien
 
 #%%% 5ta columna amarilla
@@ -1952,7 +1952,12 @@ ubicacion_actual = os.getcwd()
 # Imprimir la ubicación actual
 print("La ubicación actual es: " + ubicacion_actual)
 
-#%% VERIFICACIONES ADICIONALES, CRÉDITOS QUE APARECIERON ESTE MES PERO NO EN ALGÚN MES ANTERIOR
+#%%
+# =============================================================================
+# 
+# #%% VERIFICACIONES ADICIONALES, CRÉDITOS QUE APARECIERON ESTE MES PERO NO EN ALGÚN MES ANTERIOR
+# 
+# =============================================================================
 ###############################################################################
 ######     verificamos si algún crédito no apareció el mes pasado        ######
 ###############################################################################
@@ -1964,9 +1969,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240430' #mes actual
-fecha_corte_menos_1 = '20240331' #mes anterior
-fecha_corte_menos_2 = '20240229' #mes anterior del anterior
+fecha_corte_actual  = '20240531' #mes actual
+fecha_corte_menos_1 = '20240430' #mes anterior
+fecha_corte_menos_2 = '20240331' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2045,13 +2050,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Marzo 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 marzo\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Abril 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Abr-24'
-mes_anterior_txt = 'Mar-24'
+mes_actual_txt   = 'May-24'
+mes_anterior_txt = 'Abr-24'
 # =============================================================================
 #%% LECTURA
 

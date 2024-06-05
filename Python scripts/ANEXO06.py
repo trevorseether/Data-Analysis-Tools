@@ -2011,6 +2011,87 @@ ordenamiento_final = lista_columnas[0:65] + ['Saldo Capital en Cuenta de Orden P
 
 anexo06_casi = anexo06_casi[ordenamiento_final]
 
+#%% CRÉDITOS EN EL RESTO DEL SISTEMA FINANCIERO
+# AÑADIENDO EL NRO DE CRÉDITOS QUE TIENE EL SOCIO EN EL RESTO DEL SECTOR FINANCIERO
+# NOS VAMOS AL SABIO DE EXPERIAN,
+
+# esta vaina la voy a eliminar y reemplazar en el futuro por el alineamiento externo (●'◡'●)
+
+# import pandas as pd
+# import os
+
+# ubicacion = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2023 MAYO'
+
+# nro_creditos = pd.read_excel(ubicacion + '\\' + 'dashboard de experian.xlsx', 
+#                              dtype=({'NUMERO DOCUMENTO': str})) #leemos el archivo
+
+# nro_creditos['ENTIDADES ACREEDORAS REGULADAS']    = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'].fillna(0)
+# nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'] = nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS'].fillna(0)
+
+# nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['ENTIDADES ACREEDORAS REGULADAS'] + \
+#                                                           nro_creditos['ENTIDADES ACREEDORAS NO REGULADAS']
+
+# nro_creditos['total en sistema(no incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'].astype(int)
+# nro_creditos['total en sistema(incluye San Miguel)'] = nro_creditos['total en sistema(no incluye San Miguel)'] + 1
+
+#print(nro_creditos['TIPO DOCUMENTO'].unique().tolist())
+# def tipo_documento_para_merge(nro_creditos):
+#     if nro_creditos['TIPO DOCUMENTO'] == 'C/E':
+#         return '2'
+#     elif nro_creditos['TIPO DOCUMENTO'] == 'DNI':
+#         return '1'
+#     elif nro_creditos['TIPO DOCUMENTO'] == 'RUC':
+#         return '6'
+#     else:
+#         return 'investigar'
+
+# nro_creditos['TIPO DOC TXT'] = nro_creditos.apply(tipo_documento_para_merge, axis=1)
+
+# # para revisar si ha salido un caso para investigar, (sería otro tipo de documento por codificar)
+# print('nro filas por investigar: ', str((nro_creditos[nro_creditos['TIPO DOC TXT'] == 'investigar']).shape[0]))
+
+# #cambiando el nombre
+# nro_creditos = nro_creditos.rename(columns = {"NUMERO DOCUMENTO": "NUMERO DOCUMENTO de experian"})
+
+# #%%% MERGE
+# #MERGE CON EL ANEXO06
+# merge_nro_creditos = nro_creditos[["NUMERO DOCUMENTO de experian", 
+#                                    'TIPO DOC TXT', 
+#                                    'total en sistema(no incluye San Miguel)',
+#                                    'total en sistema(incluye San Miguel)'
+#                                    ]]
+
+# #agregamos 14 ceros a la derecha al archivo del merge y al del anx06
+# def agregar_ceros(valor, longitud):
+#     return str(valor).zfill(longitud)
+# merge_nro_creditos['documento rellenado'] = merge_nro_creditos["NUMERO DOCUMENTO de experian"].apply(agregar_ceros, 
+#                                                                                                      longitud=14)
+
+# anexo06_casi['documento rellenado anx06'] = anexo06_casi['Número de Documento 10/']
+
+# anexo06_casi['documento rellenado anx06'] = anexo06_casi['documento rellenado anx06'].astype(str).str.strip().str.zfill(14)
+
+# anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].astype(str)
+# anexo06_casi['Tipo de Documento 9/'] = anexo06_casi['Tipo de Documento 9/'].str.strip()
+
+# #MERGE
+# ya_casi = anexo06_casi.merge(merge_nro_creditos, 
+#                              left_on  = ['documento rellenado anx06', 'Tipo de Documento 9/'], 
+#                              right_on = ['documento rellenado',       'TIPO DOC TXT']
+#                              ,how     = 'left')
+
+# anexo06_casi[['documento rellenado anx06',
+#               'Tipo de Documento 9/']]
+
+# merge_nro_creditos[['documento rellenado', 
+#                     'TIPO DOC TXT']]
+
+#%%% sin datos
+#le ponemos sin datos en donde no ha matcheado
+
+# ya_casi['total en sistema(no incluye San Miguel)'] = ya_casi['total en sistema(no incluye San Miguel)'].fillna('sin datos')
+# ya_casi['total en sistema(incluye San Miguel)'] = ya_casi['total en sistema(incluye San Miguel)'].fillna('sin datos')
+
 #%% CAMBIANDO DE TIPO DE DATO
 #arreglamos la columna del Tipo de Documento 9/
 
