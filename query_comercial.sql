@@ -24,8 +24,10 @@ ANEXOS_RIESGOS3..Anx06
 --este anexo debe estar como dbo.Anx06_20230930
 
 ---------------------------------Aquí creando una copia por si se malogra la tabla 'Cabecera'
+
+--drop table anexos_riesgos3..cabecera_copia_marzo2024
 select *
-into anexos_riesgos3..cabecera_copia_marzo2024 ---aqui hay una copia de la cabecera
+into anexos_riesgos3..cabecera_copia_abril2024 ---aqui hay una copia de la cabecera
 from anexos_riesgos2..cabecera order by FechaCorte1
 
 --drop table anexos_riesgos2..cabecera
@@ -45,8 +47,8 @@ from anexos_riesgos2..cabecera order by FechaCorte1
 */
 
 -- hay que modificar este procedimiento almacenado SIEMPRE
-exec [Anexos_Riesgos2].[dbo].[SP_Cabecera] '20240430'  ---- en el corte de setiembre ha funcionado, sino hay que abrir y meterlo desde adentro uwu
-exec [Anexos_Riesgos2].[dbo].[SP_HELPNRO_CABECERA] '20240430'
+exec [Anexos_Riesgos2].[dbo].[SP_Cabecera] '20240531'  ---- en el corte de setiembre ha funcionado, sino hay que abrir y meterlo desde adentro uwu
+exec [Anexos_Riesgos2].[dbo].[SP_HELPNRO_CABECERA] '20240531'
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
 if OBJECT_ID('TEMPDB..#T')IS NOT NULL 
@@ -64,11 +66,11 @@ select
 	a.empresa
 INTO #T
 from Anexos_Riesgos2..Anx06_preliminar a 
-where a.FechaCorte1 = '20240331' -- aqui se pone el de hace 2 meses
+where a.FechaCorte1 = '20240430' -- aqui se pone el de hace 2 meses
 
 --codigo para eliminar si es que hay mes actual y salió mal
 delete from Anexos_Riesgos2..Anx06_preliminar 
-where FechaCorte1 = '20240430'--AQUI SE PONE EL MES PASADO
+where FechaCorte1 = '20240531'--AQUI SE PONE EL MES PASADO
 
 INSERT INTO Anexos_Riesgos2..Anx06_preliminar (
 	   [FechaCorte1]
@@ -247,7 +249,7 @@ SELECT c.[FechaCorte1]
 		AND c.NumerodeCredito18 = a.NumerodeCredito18 
 		and c.Monedadelcredito17 = a.Monedadelcredito17 
 		and c.FechaCorte1 = a.FechaCorte1)
-where c.FechaCorte1 = '20240430' and a.NumerodeCredito18 IS NULL ------SE PONE MES PASADO
+where c.FechaCorte1 = '20240531' and a.NumerodeCredito18 IS NULL ------SE PONE MES PASADO
 
 ----------------- EJECUTAR ANTES DEL PROCEDURE DE COSECHA ------------------------------------
 
@@ -260,7 +262,7 @@ SELECT
 --TipodeCredito19,
 NUEVA_PLANILLA 
 INTO #BASE1
-FROM Anexos_Riesgos2..Anx06_preliminar WHERE FechaCorte1 = '20240331' --se pone el de hace 2 meses
+FROM Anexos_Riesgos2..Anx06_preliminar WHERE FechaCorte1 = '20240430' --se pone el de hace 2 meses
 
 /*
 este es el código al que más hay que echarle el ojo, porque copia y pega los 
@@ -280,7 +282,7 @@ FROM Anexos_Riesgos2..Anx06_preliminar A
 JOIN #BASE1 B ON (A.Nro_Fincore = B.Nro_Fincore 
 					AND A.NumerodeCredito18  =  B.NumerodeCredito18 
 					AND A.Monedadelcredito17 =  B.Monedadelcredito17)
-WHERE A.FechaCorte1 = '20240430' --- SE PONE EL MES PASADO
+WHERE A.FechaCorte1 = '20240531' --- SE PONE EL MES PASADO
 
 ---------------------------------------------------------------------------------
 
@@ -288,7 +290,7 @@ update a
 set a.NUEVA_PLANILLA='PEQUEÑA EMPRESA'
 --			SELECT NRO_FINCORE, PLANILLA, NUEVA_PLANILLA,*
 from Anexos_Riesgos2..Anx06_preliminar a
-where FechaCorte1 = '20240430'
+where FechaCorte1 = '20240531'
 and TipodeProducto43 in (15,16,17,18,19)
 and (PLANILLA not like '%pequeña%'
 or NUEVA_PLANILLA not like '%pequeña%'
@@ -298,7 +300,7 @@ or NUEVA_PLANILLA not like '%cooperativa%san%miguel%')
 UPDATE A SET
 A.NUEVO_PROMOTOR=A.PROMOTOR
 --			SELECT PLANILLA,PROMOTOR,NUEVO_PROMOTOR  
-FROM Anexos_Riesgos2..Anx06_preliminar A WHERE A.FechaCorte1='20240430' AND A.NUEVO_PROMOTOR is null
+FROM Anexos_Riesgos2..Anx06_preliminar A WHERE A.FechaCorte1='20240531' AND A.NUEVO_PROMOTOR is null
 AND A.TipodeProducto43 IN (34,35,36,37,38,39) AND PROMOTOR LIKE '%PROSEVA%'
 
 -------------------------------
@@ -309,7 +311,7 @@ A.NUEVO_PROMOTOR = f.funcionario_fox
 FROM Anexos_Riesgos2..Anx06_preliminar as A 
 JOIN [Anexos_Riesgos]..BASE_FUNCIONARIOS as F 
 ON (A.PROMOTOR=F.Funcionaria_fincore)
-WHERE A.FechaCorte1='20240430' AND A.NUEVO_PROMOTOR is null
+WHERE A.FechaCorte1='20240531' AND A.NUEVO_PROMOTOR is null
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 
 UPDATE A SET
@@ -318,7 +320,7 @@ A.NUEVO_PROMOTOR = f.CORRECION_FUNCIONARIOS
 FROM Anexos_Riesgos2..Anx06_preliminar A 
 JOIN [Anexos_Riesgos]..[Funcionarios_nombres_20220331] F 
 ON (A.PROMOTOR=F.FUNCIONARIO)
-WHERE A.FechaCorte1='20240430' AND A.NUEVO_PROMOTOR is null
+WHERE A.FechaCorte1='20240531' AND A.NUEVO_PROMOTOR is null
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 
 --select Nro_Fincore, ApellidosyNombresRazonSocial2, NUEVA_PLANILLA
@@ -332,7 +334,7 @@ A.administrador=f.CORRECION_FUNCIONARIOS
 --					SELECT a.PLANILLA,a.PROMOTOR,a.administrador,f.CORRECION_FUNCIONARIOS  
 FROM Anexos_Riesgos2..Anx06_preliminar A JOIN [Anexos_Riesgos]..[Funcionarios_nombres_20220331] F 
 ON (A.administrador=F.FUNCIONARIO)
-WHERE A.FechaCorte1='20240430' 
+WHERE A.FechaCorte1='20240531' 
 AND A.NUEVO_PROMOTOR is null
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 
@@ -340,7 +342,7 @@ UPDATE A SET
 A.NUEVO_PROMOTOR = A.PROMOTOR
 --					SELECT a.PLANILLA,a.PROMOTOR,a.NUEVO_PROMOTOR 
 FROM Anexos_Riesgos2..Anx06_preliminar A 
-WHERE A.FechaCorte1='20240430' 
+WHERE A.FechaCorte1='20240531' 
 AND A.NUEVO_PROMOTOR IS NULL
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 
@@ -348,7 +350,7 @@ update A
 set a.NUEVO_PROMOTOR =a.PROMOTOR
 --					select a.nro_fincore, a.ApellidosyNombresRazonSocial2,a.TipodeProducto43, a.PROMOTOR, a.NUEVO_PROMOTOR,a.planilla, a.nueva_planilla 
 from Anexos_Riesgos2..Anx06_preliminar a
-where a.FechaCorte1='20240430'
+where a.FechaCorte1='20240531'
 and a.NUEVO_PROMOTOR is null
 
 UPDATE A
@@ -357,7 +359,7 @@ SET A.NUEVO_PROMOTOR=f.CORRECION_FUNCIONARIOS
 FROM Anexos_Riesgos2..Anx06_preliminar A 
 JOIN [Anexos_Riesgos]..[Funcionarios_nombres_20220331] F 
 ON (A.NUEVO_PROMOTOR=F.FUNCIONARIO)
-WHERE A.FechaCorte1='20240430' 
+WHERE A.FechaCorte1='20240531' 
 
 update c set 
 c.NUEVA_PLANILLA=C.PLANILLA
@@ -365,13 +367,13 @@ c.NUEVA_PLANILLA=C.PLANILLA
 --			select C.FechadeDesembolso21,c.PROMOTOR,c.PLANILLA,C.NUEVO_PROMOTOR,t.NUEVA_PLANILLA,C.PLANILLA,C.Saldodecolocacionescreditosdirectos24
 from Anexos_Riesgos2..Anx06_preliminar c 
 join #T t on (c.nro_fincore=t.nro_fincore and   c.NumerodeCredito18=t.NumerodeCredito18 and c.Monedadelcredito17=t.Monedadelcredito17)
-where c.FechaCorte1='20240430' AND C.NUEVA_PLANILLA IS NULL AND C.TipodeProducto43 IN (34,35,36,37,38,39)
+where c.FechaCorte1='20240531' AND C.NUEVA_PLANILLA IS NULL AND C.TipodeProducto43 IN (34,35,36,37,38,39)
 
 update c set 
 c.NUEVA_PLANILLA=C.PLANILLA
 --				select C.FechadeDesembolso21, C.NRO_FINCORE, c.ApellidosyNombresRazonSocial2, c.PROMOTOR,c.TipodeProducto43,C.NUEVO_PROMOTOR,C.Saldodecolocacionescreditosdirectos24 , C.PLANILLA , c.NUEVA_PLANILLA
 from Anexos_Riesgos2..Anx06_preliminar c 
-where c.FechaCorte1='20240430' AND C.NUEVA_PLANILLA IS NULL
+where c.FechaCorte1='20240531' AND C.NUEVA_PLANILLA IS NULL
 
 update a
 set a.NUEVA_PLANILLA='PEQUEÑA EMPRESA',
@@ -379,7 +381,7 @@ a.EMPRESA='PEQUEÑA EMPRESA',
 a.PLANILLA='PEQUEÑA EMPRESA'
 --				select Nro_Fincore,ApellidosyNombresRazonSocial2, MontodeDesembolso22, FechadeDesembolso21, TipodeProducto43, EMPRESA, PLANILLA, NUEVA_PLANILLA
 from Anexos_Riesgos2..Anx06_preliminar a
-where FechaCorte1='20240430'
+where FechaCorte1='20240531'
 and PLANILLA is null
 and NUEVA_PLANILLA is null
 and TipodeProducto43 in (15,16,17,18,19)
@@ -389,7 +391,7 @@ and TipodeProducto43 in (15,16,17,18,19)
 update c set
 c.Situacion_Credito='VIGENTE'
 --		select c.NUEVO_PROMOTOR,c.PROMOTOR,c.FechadeDesembolso21,c.Situacion_Credito,* 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 --and c.TipodeProducto43 in (34,39) 
 and c.Saldodecolocacionescreditosdirectos24>0 
 
@@ -397,7 +399,7 @@ and c.Saldodecolocacionescreditosdirectos24>0
 update c set
 c.Situacion_Credito='VENCIDOS'
 --select c.NUEVO_PROMOTOR,c.PROMOTOR,c.FechadeDesembolso21,c.Situacion_Credito,* 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 --and c.TipodeProducto43 in (34,39) 
 and c.Saldodecolocacionescreditosdirectos24>0 
 AND isnull(c.CapitalVencido29,0)+isnull(c.CapitalenCobranzaJudicial30,0)>0
@@ -407,7 +409,7 @@ AND isnull(c.CapitalVencido29,0)+isnull(c.CapitalenCobranzaJudicial30,0)>0
 update c set
 c.Situacion_Credito='REFINANCIADO'
 --select c.NUEVO_PROMOTOR,c.PROMOTOR,c.FechadeDesembolso21,c.Situacion_Credito,* 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 --and c.TipodeProducto43 in (34,39)
  and c.Saldodecolocacionescreditosdirectos24>0 AND isnull(c.CapitalRefinanciado28,0) > 0--ISNULL(C.TIPO_afil,'XX') LIKE '%REF%'
 
@@ -415,7 +417,7 @@ from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430'
 update c set
 c.Situacion_Credito='JUDICIAL'
 --select c.NUEVO_PROMOTOR,c.PROMOTOR,c.FechadeDesembolso21,c.Situacion_Credito,* 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 --and c.TipodeProducto43 in (34,39)
  and c.Saldodecolocacionescreditosdirectos24>0 AND ISNULL(c.CapitalenCobranzaJudicial30,0) > 0--ISNULL(C.SITUAC,'XX') LIKE '%JU%'
 
@@ -423,7 +425,7 @@ from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430'
 update c set
 c.Situacion_Credito='CASTIGADO'
 --select c.NUEVO_PROMOTOR,c.PROMOTOR,c.FechadeDesembolso21,c.Situacion_Credito,* 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 --and c.TipodeProducto43 in (34,39)
 AND c.Situacion_Credito is null
 and c.SaldosdeCreditosCastigados38>0
@@ -436,7 +438,7 @@ set c.TIPO = CASE
 			WHEN c.TIPO_afil LIKE '%AMPLIACION%' THEN 'AMP' 
 			WHEN c.TIPO_afil LIKE '%REFINANCIAMIENTO%' THEN 'REF'
 			END 
-from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240430' 
+from Anexos_Riesgos2..Anx06_preliminar c where C.FechaCorte1='20240531' 
 
 /*ACTUALIZAR LA EMPRESA DE ANEXO06 DEL MES*/
 update c
@@ -445,14 +447,14 @@ set C.EMPRESA=B.Empresa
 from Anexos_Riesgos2..Anx06_preliminar C
 LEFT JOIN  Anexos_Riesgos..planilla2 B
 ON (C.NUEVA_PLANILLA=B.NUEVA_PLANILLA)
-where c.FechaCorte1='20240430'
+where c.FechaCorte1='20240531'
 and c.Empresa is null
 
 update a
 set a.administrador = a.PROMOTOR -----a.nuevo_promotor
 --		select *
 from Anexos_Riesgos2..Anx06_preliminar a
-where FechaCorte1 = '20240430'
+where FechaCorte1 = '20240531'
 and administrador is null
 
 
@@ -461,7 +463,7 @@ A.administrador=f.CORRECION_FUNCIONARIOS
 --			SELECT a.PLANILLA,a.PROMOTOR,a.administrador,f.CORRECION_FUNCIONARIOS  
 FROM Anexos_Riesgos2..Anx06_preliminar A JOIN [Anexos_Riesgos]..[Funcionarios_nombres_20220331] F 
 ON (A.administrador=F.FUNCIONARIO)
-WHERE A.FechaCorte1 ='20240430' 
+WHERE A.FechaCorte1 ='20240531' 
 AND A.NUEVO_PROMOTOR is null
 
 --SELECT * FROM [Anexos_Riesgos]..[Funcionarios_nombres_20220331]
@@ -481,7 +483,7 @@ update Anexos_Riesgos2..Anx06_preliminar set
 administrador = 'PROSEVA CAÑETE',
 nuevo_promotor = 'PROSEVA CAÑETE'
 FROM Anexos_Riesgos2..Anx06_preliminar
-WHERE FECHACORTE1 = '20240430'
+WHERE FECHACORTE1 = '20240531'
 AND ADMINISTRADOR LIKE '%CAÑETE%'
 
 ------------------------------------------------------------------------------------
@@ -490,7 +492,7 @@ UPDATE A
 SET A.administrador = 'PROSEVA CAÑETE',
 A.NUEVO_PROMOTOR = 'PROSEVA CAÑETE'
 FROM Anexos_Riesgos2..Anx06_preliminar AS  A -- AQUÍ VA LA TABLA
-WHERE FechaCorte1 = '20240430'
+WHERE FechaCorte1 = '20240531'
 AND ADMINISTRADOR LIKE '%CAÑETE%'
 
 --------------------------------------------------------------------------------------
@@ -498,7 +500,7 @@ AND ADMINISTRADOR LIKE '%CAÑETE%'
 --buscando columnas en las que el administrador está vacío por razones misteriosas
 select *,Nro_Fincore,TipodeProducto43,PROMOTOR,NUEVO_PROMOTOR,administrador 
 from Anexos_Riesgos2..Anx06_preliminar 
-where FechaCorte1 = '20240430'
+where FechaCorte1 = '20240531'
 and administrador is null
 
 ---------------------------------------------------------------------------------delete from Anexos_Riesgos2..Anx06_preliminar  where Nro_Fincore is null
@@ -507,7 +509,7 @@ UPDATE A
 SET a.administrador = a.promotor --a.nuevo_promotor
 from Anexos_Riesgos2..Anx06_preliminar a
 where a.administrador is null
-and FechaCorte1 = '20240430'
+and FechaCorte1 = '20240531'
 
 -----------------------------------------------------------------------------------
 --codigo para añadir más originadores en caso de null
@@ -519,7 +521,7 @@ DROP TABLE #TEMP_ORIGINADOR
 SELECT Nro_Fincore, Originador, min(a.FechaCorte1) as 'fecha corte' 
 FROM Anexos_Riesgos2..Anx06_preliminar as a
 WHERE originador is not null
-AND a.FechaCorte1 = '20240430' ----------------------AQUI SE PONE EL DE HACE 2 MESES
+AND a.FechaCorte1 = '20240531' ----------------------AQUI SE PONE EL DE HACE 2 MESES
 group by Nro_Fincore, originador
 
 UPDATE A
@@ -528,7 +530,7 @@ SET A.ORIGINADOR = B.ORIGINADOR,
 FROM  Anexos_Riesgos2..Anx06_preliminar AS A
 JOIN TEMPDB..#TEMP_ORIGINADOR AS B
 ON (A.NRO_FINCORE = B.NRO_FINCORE)
-WHERE A.FECHACORTE1  = '20240430'
+WHERE A.FECHACORTE1  = '20240531'
 */
 -----------------------------------------------------------------------------------
 
@@ -537,7 +539,7 @@ WHERE A.FECHACORTE1  = '20240430'
 select 
 	empresa, planilla, NUEVA_PLANILLA,TipodeProducto43,MontodeDesembolso22,* 
 from Anexos_Riesgos2..Anx06_preliminar
-where FechaCorte1 = '20240430'
+where FechaCorte1 = '20240531'
 and (planilla is null
 or NUEVA_PLANILLA is null
 or empresa is null)
@@ -591,8 +593,8 @@ FROM anexos_riesgos2..Anx06_preliminar AS A
 LEFT JOIN anexos_riesgos2..cabecera AS B
 ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)
 WHERE A.EMPRESA IS NULL
-AND A.FechaCorte1 = '20240430'
-AND B.FechaCorte1 = '20240430'
+AND A.FechaCorte1 = '20240531'
+AND B.FechaCorte1 = '20240531'
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 ------------------------------------------------------------------------------
 update A ---------QUE ESTA PARTE ESTÉ EN PRUEBAS
@@ -602,8 +604,8 @@ FROM anexos_riesgos2..Anx06_preliminar AS A
 LEFT JOIN anexos_riesgos2..cabecera AS B
 ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)
 WHERE A.EMPRESA IS NULL
-AND A.FechaCorte1 = '20240430'
-AND B.FechaCorte1 = '20240430'
+AND A.FechaCorte1 = '20240531'
+AND B.FechaCorte1 = '20240531'
 AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 
 ----------------------------------------------------------------------------------
@@ -612,19 +614,19 @@ AND A.TipodeProducto43 IN (34,35,36,37,38,39)
 update anexos_riesgos2..Anx06_preliminar
 set EMPRESA = 'LIBRE DISPONIBILIDAD'
 where EMPRESA is null
-and FechaCorte1 = '20240430'
+and FechaCorte1 = '20240531'
 and TipodeProducto43 in (30,31,32,33)
 
 update anexos_riesgos2..Anx06_preliminar
 set PLANILLA = 'LIBRE DISPONIBILIDAD'
 where PLANILLA is null
-and FechaCorte1 = '20240430'
+and FechaCorte1 = '20240531'
 and TipodeProducto43 in (30,31,32,33)
 
 update anexos_riesgos2..Anx06_preliminar
 set NUEVA_PLANILLA = 'LIBRE DISPONIBILIDAD'
 where NUEVA_PLANILLA is null
-and FechaCorte1 = '20240430'
+and FechaCorte1 = '20240531'
 and TipodeProducto43 in (30,31,32,33)
 ----------------------------------------------------------------------------------
 
@@ -636,25 +638,25 @@ SET A.administrador = B.[Funcionario Actual]
 FROM anexos_riesgos2..Anx06_preliminar AS A
 LEFT JOIN anexos_riesgos2..cabecera AS B
 ON (A.Nro_Fincore = B.Nro_Fincore AND A.FechaCorte1 = B.FechaCorte1)
-WHERE A.FechaCorte1 = '20240430'
-AND B.FechaCorte1 = '20240430' 
+WHERE A.FechaCorte1 = '20240531'
+AND B.FechaCorte1 = '20240531' 
 
 update A
 SET A.administrador = 'DAVID BORJA'
 FROM anexos_riesgos2..Anx06_preliminar AS A
-where a.FechaCorte1 >= '20240430'
+where a.FechaCorte1 >= '20240531'
 and a.Nro_Fincore in ('00069753', '00068425')
 
 update A
 SET A.administrador = 'KATHERIN RAMOS'
 FROM anexos_riesgos2..Anx06_preliminar AS A
-where a.FechaCorte1 >= '20240430'
+where a.FechaCorte1 >= '20240531'
 and a.Nro_Fincore in ('00070130', '00073904')
 
 update A
 SET A.administrador = 'EVELYN LOJA'
 FROM anexos_riesgos2..Anx06_preliminar AS A
-where a.FechaCorte1 >= '20240430'
+where a.FechaCorte1 >= '20240531'
 and a.administrador = 'ALEXANDRE SALDAÑA LOPEZ'
 */
 

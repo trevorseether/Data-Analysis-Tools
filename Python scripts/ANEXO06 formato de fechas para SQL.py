@@ -11,8 +11,8 @@ import os
 
 #%% PARÁMETROS INICIALES:
 
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados 03.xlsx'
-ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL\\enviado por contabilidad'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados 03.xlsx'
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 mayo\\fase 2'
 filas_skip    = 2
 
 crear_excel   = True #True o False

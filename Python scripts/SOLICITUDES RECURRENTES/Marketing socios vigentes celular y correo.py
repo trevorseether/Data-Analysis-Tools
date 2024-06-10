@@ -15,10 +15,14 @@ import pyodbc
 
 #%%
 fecha_corte = '20240430'
-fecha_hoy   = '20240515' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_hoy   = '20240605' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios con vigentes')
+usar_sql     = True #False implica usar el excel, True implica obtener datos del sql
+nombre_excel = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx'
 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo\\productos')
+
+#%%
 #%% LECTURA DE LAS CREDENCIALES
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
@@ -105,7 +109,7 @@ INNER JOIN TablaMaestraDet as tm4   ON s.codestado = tm4.CodTablaDet
 
 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) <= '{fecha_hoy}'
 AND s.codigosocio>0  
-
+and p.montosolicitado > 0
 AND p.codestado = 341 --SIGNFICA QUE EL CRÉDITO SE ENCUENTRE EN SITUACIÓN VIGENTE
 
 order by socio asc, p.fechadesembolso desc
@@ -124,18 +128,43 @@ del conn
 vigentes.drop_duplicates(subset = 'pagare_fincore', inplace = True)
 vigentes['Celular'] = vigentes['Celular'].str.strip()
 
+
+# este parseador es perfecto y una de mis mejores creaciones de todos los tiempos
+formatos = [ '%d/%m/%Y %H:%M:%S',
+             '%d/%m/%Y',
+             '%Y%m%d',
+             '%Y-%m-%d',
+             '%Y-%m-%d %H:%M:%S',
+             '%Y/%m/%d %H:%M:%S',
+             '%Y-%m-%d %H:%M:%S PM',
+             '%Y-%m-%d %H:%M:%S AM',
+             '%Y/%m/%d %H:%M:%S PM',
+             '%Y/%m/%d %H:%M:%S AM' ] # Lista de formatos a analizar
+
+def parse_date(date_str):
+    for formato in formatos:
+        try:
+            return pd.to_datetime(   arg = date_str, 
+                                  format = formato,)
+        except ValueError:
+            pass
+    return pd.NaT
+vigentes['fechanacimiento'] = vigentes['fechanacimiento'].apply(parse_date)
+
 #%%
 col_necesarias = vigentes[['codigosocio',
                            'Socio',
+                           'fechanacimiento',
                            'DOCUMENTO',
-                           #'pagare_fincore',
-                           #'fechadesembolso',
+                           'pagare_fincore',
+                           'fechadesembolso',
                            #'Otorgado',
                            #'moneda',
+                           'Funcionario',
                            'Celular',
                            'Email']]
 
-col_necesarias.drop_duplicates(subset = 'DOCUMENTO', inplace = True)
+# col_necesarias.drop_duplicates(subset = 'DOCUMENTO', inplace = True)
 
 def cel_51(celular):
     if (celular[0] == '9') and (len(celular) == 9):
@@ -147,42 +176,44 @@ def cel_51(celular):
 
 col_necesarias['Celular1'] = col_necesarias['Celular'].apply(cel_51)
 
-
+col_necesarias.to_excel('VIGENTES 05-06-2024.xlsx')
 #%% ANEXO 06
-conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+if usar_sql == True:
+    conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+    
+    query = f'''
+    SELECT
+        CodigoSocio7 as 'codigosocio',
+    	ApellidosyNombresRazonSocial2 AS 'APELLIDOS NOMBRES / RAZÓN SOCIAL',
+        FechadeNacimiento3 as 'FECHA NAC',
+    	NumerodeDocumento10 AS 'DOCUMENTO', 
+    	TipodeDocumento9 AS 'TIPO DOC',
+    	CASE
+    		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
+    		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LIBRE DISPONIBILIDAD'
+    		WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA EMPRESA'
+    		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,28,29) THEN 'MICRO EMPRESA'
+    		WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA EMPRESA'
+    		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIO'
+    			END AS 'PRODUCTO',
+    	DiasdeMora33 AS 'DÍAS DE MORA',
+    	CASE
+    		when Fecha_castigo is not null then 'CASTIGADO'
+    		WHEN Refinanciado IN ('REFINANCIADO') THEN 'REFINANCIADO'
+    		WHEN Reprogramados = 1 THEN 'REPROGRAMADO'
+    		 END AS 'ESTADO'
+    FROM anexos_riesgos3..ANX06
+    WHERE FechaCorte1 = '{fecha_corte}'
+    ORDER BY ApellidosyNombresRazonSocial2
 
-query = f'''
-SELECT
-    CodigoSocio7 as 'codigosocio',
-	ApellidosyNombresRazonSocial2 AS 'APELLIDOS NOMBRES / RAZÓN SOCIAL',
-    FechadeNacimiento3 as 'FECHA NAC',
-	NumerodeDocumento10 AS 'DOCUMENTO', 
-	TipodeDocumento9 AS 'TIPO DOC',
-	CASE
-		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
-		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LIBRE DISPONIBILIDAD'
-		WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA EMPRESA'
-		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,28,29) THEN 'MICRO EMPRESA'
-		WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA EMPRESA'
-		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIO'
-			END AS 'PRODUCTO',
-	DiasdeMora33 AS 'DÍAS DE MORA',
-	CASE
-		when Fecha_castigo is not null then 'CASTIGADO'
-		WHEN Refinanciado IN ('REFINANCIADO') THEN 'REFINANCIADO'
-		WHEN Reprogramados = 1 THEN 'REPROGRAMADO'
-		 END AS 'ESTADO'
-FROM anexos_riesgos3..ANX06
-WHERE FechaCorte1 = '{fecha_corte}'
-ORDER BY ApellidosyNombresRazonSocial2
-
-'''
-anexo_06 = pd.read_sql_query(query, conn)
-
+    '''
+    anexo_06 = pd.read_sql_query(query, conn)
+    
 #%%
 base_completada = anexo_06.merge(col_necesarias[['DOCUMENTO',
                                                  'Celular1',
                                                  'Email']],
+
                                  on     = 'DOCUMENTO',
                                  how    = 'inner')
 

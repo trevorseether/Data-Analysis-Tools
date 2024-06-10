@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 mayo')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 04 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 05 2024 nuevmente.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Abril' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Mayo' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-04-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Abril 2024'
+fecha_corte     = '2024-05-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Mayo 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -253,7 +253,7 @@ del tipo_cero
 
 #ahora vamos a leer el archivo donde Enrique manualmente elabora la clasificación de los refinanciados
 #para leer bien este reporte primero debemos eliminar los otros meses del excel (ya que se repiten)
-nombre_col_fincore = 'PAGARE ACTUAL'
+nombre_col_fincore = 'Pagaré Actual'
 
 calif_ref = pd.read_excel(archivo_refinanciados,
                           skiprows = 3,
@@ -1400,7 +1400,7 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(modificacion_dhvscs,
 ''' #esta vaina me ha fallado no sé porqué
 
 def modificacion_dhvscs(row):
-    fecha_fija = pd.Timestamp('2023-05-31')  # Reemplaza 'yyyy-mm-dd' con la fecha fija que deseas utilizar
+    fecha_fija = pd.Timestamp(fecha_corte) #'2023-05-31')  # Reemplaza 'yyyy-mm-dd'
     
     if ((row['Capital Vigente 26/'] > 0) and (row['Capital Vencido 29/'] > 0)) and \
             row['Fecha Venc de Ult Cuota Cancelada Contabilidad temporal'] == '--':
@@ -1553,7 +1553,7 @@ inv = df_resultado_2[(df_resultado_2['Rendimiento\nDevengado 40/']        == 0) 
                      ~( # ojo que es una negación de las siguientes características:
                      (df_resultado_2['Flag Termino Periodo Gracia'] == 'SI') &
                      (df_resultado_2['Número de Cuotas Pagadas 45/'] == 0) &
-                     (df_resultado_2['Fecha de Desembolso 21/'] >= pd.Timestamp('2023-01-01'))
+                     (df_resultado_2['Fecha de Desembolso 21/'] >= pd.Timestamp('2023-01-01')) #no cambiar esta fecha
                      ) & 
                      # esto ya no es negación xd
                      (df_resultado_2['Refinanciado TXT'] != 'REFINANCIADO')
@@ -1957,7 +1957,7 @@ Fincore''',
 '''Cartera Neta''',
 '''FEC_REPROG''',
 'TIPO DE PRODUCTO TXT',
-'Días de Diferido 1',  #PINTAR DE ROJO, ADAPTAR LAS FÓRMULAS DEL EXCEL
+'Días de Diferido 1',  #PINTAR DE ROJO
 'Ingresos Diferidos 1',#PINTAR DE ROJO
 'Días de Diferido 2',  #PINTAR DE ROJO
 'Ingresos Diferidos 2',#PINTAR DE ROJO
@@ -2442,22 +2442,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Abril 2024'  # se pone el corte actual
+fecha_corte = 'Mayo 2024'  # se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240331" #  aqui cambiamos la fecha, se pone la del corte anterior
+fechacorte_mes_pasado = "20240430" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados 02.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 ABRIL\\enviado por contabilidad'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 mayo\\fase 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2673,12 +2673,13 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.575 #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
 df_diferidos['Nro Prestamo \nFincore'] = df_diferidos['Nro Prestamo \nFincore'].str.strip() #quitando espacios por si acaso
 df_diferidos['Moneda del crédito 17/'] = df_diferidos['Moneda del crédito 17/'].str.strip()
+
 # cambio de tipo de dato
 df_diferidos['Tipo de Producto 43/'] = df_diferidos['Tipo de Producto 43/'].astype(int)
 
@@ -2732,6 +2733,15 @@ print('provisiones constituidas: ' + str(suma_constituidas))
 
 print('')
 print('tasa de provisión general: ' ,"{:.2f}%".format(tasa_provision*100)) 
+
+# %%
+# SELECT
+# 	SUM(ProvisionesRequeridas36)   AS 'REQUERIDAS',
+# 	SUM(ProvisionesConstituidas37) AS 'CONSTITUIDAS',
+# 	sum(ProvisionesConstituidas37) / sum(CapitalVencido29 + CapitalenCobranzaJudicial30),
+# 	sum(ProvisionesConstituidas37) / sum(ProvisionesRequeridas36)
+# FROM anexos_riesgos3..ANX06
+# WHERE FechaCorte1 = '20240430'
 
 #%%% VERIFICACIÓN DE RESULTADOS 2
 print('saldo de provisiones constituidas')
@@ -2869,11 +2879,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Abril 2024'
+fecha = 'Mayo 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20240331' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20240430' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%

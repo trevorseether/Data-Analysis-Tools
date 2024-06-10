@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '29-05-2024'  # FORMATO DÍA-MES-AÑO
+FECHATXT = '2024-06-05'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\mayo\\29 05'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\junio\\05 jun'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = 'bajas 29 05.xlsx'
+nombre_archivo = '1ER INFORME 06_24 GRUPO KONECT.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -44,7 +44,7 @@ COL_DOC_IDENTIDAD = 'Documento' # 'Documento'
 ###############################################
 
 'COLUMNA DE LA FECHA DE BAJA' #################
-COL_FECHA_BAJA = 'FECHA DE BAJA' #'BAJA SAP'  #'Fecha egreso' # 'Documento' #'BAJA SAP
+COL_FECHA_BAJA = 'BAJA SAP' #'BAJA SAP'  #'Fecha egreso' # 'Documento' #'BAJA SAP
 ###############################################
 
 'Creación de excels'###########################
@@ -416,7 +416,7 @@ if 'Sociedad' not in df.columns:
 df['Sociedad'].fillna('', inplace = True)
 df['fecha'] = df['fechas'].dt.strftime('%Y-%m-%d')
 
-fecha_datetime = datetime.strptime(FECHATXT, '%d-%m-%Y')
+fecha_datetime = datetime.strptime(FECHATXT, '%Y-%m-%d')
 fecha_nuevo_formato = fecha_datetime.strftime('%Y-%m-%d')
 def observacion(df):
     

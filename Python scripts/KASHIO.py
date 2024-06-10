@@ -13,19 +13,21 @@ Created on Mon Aug  7 15:00:55 2023
 #%% MÓDULOS
 import pandas as pd
 import os
+
 import warnings
 warnings.filterwarnings('ignore')
+
 import calendar
 import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 06\\04 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 06\\10 06')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240604.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240610.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
