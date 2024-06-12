@@ -82,8 +82,8 @@ df1.dropna(subset=['CodigoSocio',
                    'NroDocIdentidad',
                    'NumeroPrestamo',
                    'NroPrestamoFC',
-                   'TipoCredito'], inplace=True, how='all')
-
+                   'TipoCredito'], inplace = True, how = 'all')
+df1['NroPrestamoFC'] = df1['NroPrestamoFC'].str.strip()
 ############################################################
 ##        2 aqui va el reporte del mes pasado           ####
 ############################################################
@@ -101,6 +101,7 @@ df2 = df2.drop_duplicates(subset = 'NroPrestamoFC')
 df2.dropna(subset = ['NroDocIdentidad', 
                      'NumeroPrestamo',
                      'NroPrestamoFC'], inplace = True, how = 'all')
+df2['NroPrestamoFC'] = df2['NroPrestamoFC'].str.strip()
 
 ############################################################
 ##    3 ESTE TERCER ARCHIVO ES LA COBRANZA DEL MES       ###
@@ -118,6 +119,7 @@ df3_cobranza.dropna(subset = ['codigosocio',
                               'PagareFincore'], 
                     inplace = True, 
                     how     = 'all')
+df3_cobranza['PagareFincore'] = df3_cobranza['PagareFincore'].str.strip()
 
 ##########################################################################################################
 #    4 el reporte 'Utilidad año castigo 2018 2019 2020 2021 Y 2022 - JGM para añadir a Saldos e Ingresos'    ##
@@ -130,6 +132,7 @@ df4_JGM_año_castigo = pd.read_excel(UTILIDAD_CASTIGO,
 df4_JGM_año_castigo = df4_JGM_año_castigo.drop_duplicates(subset='Nro Prestamo Fincore')
 
 JGM_año_castigo =  df4_JGM_año_castigo[['Nro Prestamo Fincore', 'año castigo utilidad JGM']] #esta es la versión para hacer el merge
+JGM_año_castigo['Nro Prestamo Fincore'] = JGM_año_castigo['Nro Prestamo Fincore'].str.strip()
 
 #%%% copias por si acaso
 
