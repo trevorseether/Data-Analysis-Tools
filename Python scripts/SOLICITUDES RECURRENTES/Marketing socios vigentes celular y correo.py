@@ -14,8 +14,8 @@ import pandas as pd
 import pyodbc
 
 #%%
-fecha_corte = '20240430'
-fecha_hoy   = '20240605' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_corte = '20240531'
+fecha_hoy   = '20240611' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
 usar_sql     = True #False implica usar el excel, True implica obtener datos del sql
 nombre_excel = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx'
@@ -216,6 +216,8 @@ base_completada = anexo_06.merge(col_necesarias[['DOCUMENTO',
 
                                  on     = 'DOCUMENTO',
                                  how    = 'inner')
+#%%
+base_completada = base_completada.drop_duplicates()
 
 #%% excel
 base_completada.to_excel(f'base vigentes {fecha_corte}.xlsx',
