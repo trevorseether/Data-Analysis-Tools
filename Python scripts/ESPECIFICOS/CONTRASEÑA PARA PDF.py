@@ -14,9 +14,10 @@ Created on Thu Jun 13 09:29:26 2024
 import os
 from PyPDF2 import PdfReader, PdfWriter
 
+#%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\contraseña para pdf')
 
-#%%
+#%% FUNCIÓN QUE LEE EL PDF, LO COPIA Y GUARDA OTRO, PERO CON CONTRASEÑA
 def add_password(input_pdf, output_pdf, password):
     # Abrir el archivo PDF original
     with open(input_pdf, 'rb') as file:
@@ -28,17 +29,21 @@ def add_password(input_pdf, output_pdf, password):
             pdf_writer.add_page(pdf_reader.pages[page_num])
 
         # Añadir la contraseña
-        pdf_writer.encrypt(user_password=password, owner_password=None, use_128bit=True)
+        pdf_writer.encrypt(user_password  = password, 
+                           owner_password = None, 
+                           use_128bit     = True)
 
         # Escribir el PDF protegido
         with open(output_pdf, 'wb') as output_file:
             pdf_writer.write(output_file)
 
+#%%
 # Uso de la función
-input_pdf = 'CUL-M2JmODcxMWUtNDllYi00M2Y2LWJkNDEtMWJiYjE4OGFhOTFk.pdf'
+input_pdf  = 'SITUACION ECONÓMICA ABRIL 2024_CLIENTES CIB_03_04_2024.pdf'
 output_pdf = 'pdf_protegido.pdf'
-password = '123'
+password   = '123'
 
+#%%
 add_password(input_pdf, output_pdf, password)
 
 
