@@ -16,12 +16,14 @@ from PyPDF2 import PdfReader, PdfWriter
 import pandas as pd
 #%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\contraseña para pdf')
+data_excel         = 'contraseñas, nombres.xlsx'
+carpeta_resultados = 'resultados/'
 
 #%%
-listas = pd.read_excel(io = 'contraseñas, nombres.xlsx',
+listas = pd.read_excel(io = data_excel,
                        dtype = {'contraseña' : str})
 
-listas['nuevo nombre'] = 'resultados/' + listas['nuevo nombre']
+listas['nuevo nombre'] = carpeta_resultados + listas['nuevo nombre']
 
 #%% FUNCIÓN QUE LEE EL PDF, LO COPIA Y GUARDA OTRO, PERO CON CONTRASEÑA
 def add_password(input_pdf, output_pdf, password):
