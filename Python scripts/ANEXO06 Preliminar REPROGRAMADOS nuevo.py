@@ -127,6 +127,7 @@ menos_bruto['Numero de Crédito 18/']   = menos_bruto['Numero de Crédito 18/'].
 
 menos_bruto['Funcionario Origuinador'] = menos_bruto['Funcionario Origuinador'].str.strip()
 menos_bruto['Funcionario Actual']      = menos_bruto['Funcionario Actual'].str.strip()
+menos_bruto['Funcionaria TXT']         = menos_bruto['Funcionaria TXT'].str.strip()
 
 #conteo de duplicados
 mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)

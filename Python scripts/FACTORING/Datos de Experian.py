@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_04]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_14]'
 CARGA_SQL_SERVER = True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\ABRIL 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\MAYO')
 
-nombre = 'EXPERIAN DATA.xlsx'
-corte = '2024-04-30'
+nombre = 'datos enviados 14 - 06- 2024.xlsx'
+corte = '2024-06-14'
 
 #%%
 experian_data = pd.read_excel(io = nombre, 

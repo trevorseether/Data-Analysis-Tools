@@ -56,8 +56,8 @@ def add_password(input_pdf, output_pdf, password):
 
 #%%
 listas.apply(lambda row: add_password(row['nombre original'], 
-                                      row['nuevo nombre'], 
-                                      row['contraseña']), axis=1)
+                                      row['nuevo nombre']   , 
+                                      row['contraseña'])    , axis = 1)
 
 
 
