@@ -13,9 +13,15 @@ Created on Thu Jun 13 09:29:26 2024
 
 import os
 from PyPDF2 import PdfReader, PdfWriter
-
+import pandas as pd
 #%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\contraseña para pdf')
+
+#%%
+listas = pd.read_excel(io = 'contraseñas, nombres.xlsx',
+                       dtype = {'contraseña' : str})
+
+listas['nuevo nombre'] = 'resultados/' + listas['nuevo nombre']
 
 #%% FUNCIÓN QUE LEE EL PDF, LO COPIA Y GUARDA OTRO, PERO CON CONTRASEÑA
 def add_password(input_pdf, output_pdf, password):
@@ -38,12 +44,19 @@ def add_password(input_pdf, output_pdf, password):
             pdf_writer.write(output_file)
 
 #%%
-# Uso de la función
-input_pdf  = 'SITUACION ECONÓMICA ABRIL 2024_CLIENTES CIB_03_04_2024.pdf'
-output_pdf = 'pdf_protegido.pdf'
-password   = '123'
+# # Uso de la función
+# input_pdf  = 'SITUACION ECONÓMICA ABRIL 2024_CLIENTES CIB_03_04_2024.pdf'
+# output_pdf = 'pdf_protegido.pdf'
+# password   = '123'
+
+# #%%
+# add_password(input_pdf, output_pdf, password)
 
 #%%
-add_password(input_pdf, output_pdf, password)
+listas.apply(lambda row: add_password(row['nombre original'], 
+                                      row['nuevo nombre'], 
+                                      row['contraseña']), axis=1)
+
+
 
 
