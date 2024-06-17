@@ -42,7 +42,7 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Mayo 2024' # Mes Año
+fecha_mes               = 'Mayo 2024'  # Mes Año
 fecha_corte             = '2024-05-31' # año-mes-día
 fecha_corte_inicial     = '2024-05-01' # año-mes-día
 
@@ -54,7 +54,7 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = True #booleano True o False
+generar_excels = False #booleano True o False
 
 #%% ARCHIVOS
 
@@ -680,31 +680,159 @@ ordenado['Nro Prestamo \nFincore'] = ordenado['Nro Prestamo \nFincore'].str.stri
 #verificación del tipo de producto 19/
 #para créditos MYPE
 ordenado['Tipo de Crédito 19/'] = ordenado['Tipo de Crédito 19/'].astype(str) #por si acasito
+ordenado['Tipo de Crédito 19/'] = ordenado['Tipo de Crédito 19/'].str.strip()
 
 def etiqueta_mype(ordenado):
-    if ordenado['Tipo de Crédito 19/'] in ['08', '09', '10']:
+    if ordenado['Tipo de Crédito 19/'] in ['08', '09', '10', 8, 9, 10]:
         return 'mype'
     else:
         return 'otros'
 ordenado['etiqueta mype'] = ordenado.apply(etiqueta_mype, axis=1)
 
-def asign_prod_19(ordenado):
-    if (ordenado['etiqueta mype'] == 'mype') & \
-    (ordenado['Monto de Desembolso 22/'] > 0) & \
-    (ordenado['Monto de Desembolso 22/'] <= 20000):
-        return '10'
-    elif (ordenado['etiqueta mype'] == 'mype') & \
-    (ordenado['Monto de Desembolso 22/'] > 20000) & \
-    (ordenado['Monto de Desembolso 22/'] <= 300000):
-        return '09'
-    elif (ordenado['etiqueta mype'] == 'mype') & \
-    (ordenado['Monto de Desembolso 22/'] > 300000):
-        return '08'
-    else:
-        return ordenado['Tipo de Crédito 19/']
+###############################################################################
+# LECTURA DE INFORMACIÓN DE LOS 6 ÚLTIMOS MESES
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
 
+f_corte_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+
+query = f'''
+DECLARE @fechacorte AS VARCHAR(8) = '{f_corte_sql}';
+
+DECLARE @fecha6MESES AS DATETIME;
+SET @fecha6MESES = EOMONTH(DATEADD(MONTH, -5, EOMONTH(CONVERT(DATETIME, @fechacorte, 112))));
+
+SELECT 
+	Nro_Fincore, 
+	CodigoSocio7,
+	Saldodecolocacionescreditosdirectos24,
+	SaldosdeCreditosCastigados38,
+	Saldodecolocacionescreditosdirectos24 + SaldosdeCreditosCastigados38 as 'SALDO TOTAL',
+	FechaCorte1,
+	TipodeProducto43,
+	CASE 
+		WHEN TipodeProducto43 IN (34,35,36,37,38,39)       THEN 'DXP'
+		WHEN TipodeProducto43 IN (30,31,32,33)             THEN 'LIBRE DISPONIBILIDAD'
+		WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
+		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,29) THEN 'MICRO EMPRESA'
+		WHEN TipodeProducto43 IN (95,96,97,98,99)          THEN 'MEDIANA EMPRESA'
+		WHEN TipodeProducto43 IN (41,45)                   THEN 'HIPOTECARIA'
+		    ELSE 'OTROS'
+            
+		END AS 'TIPO_PRODUCTO',
+
+	TipodeCredito19,
+	CASE
+		WHEN TipodeCredito19 = 06 THEN 'CORPORATIVO'
+		WHEN TipodeCredito19 = 07 THEN 'GRAN EMPRESA'
+		WHEN TipodeCredito19 = 08 THEN 'MEDIANA EMPRESA'
+		WHEN TipodeCredito19 = 09 THEN 'PEQUEÑA EMPRESA'
+		WHEN TipodeCredito19 = 10 THEN 'MICRO EMPRESA'
+		WHEN TipodeCredito19 = 11 THEN 'CONSUMO REVOLVENTE'
+		WHEN TipodeCredito19 = 12 THEN 'CONSUMO NO REVOLVENTE'
+		WHEN TipodeCredito19 = 13 THEN 'HIPOTECARIO PARA VIVIENDA'
+			ELSE 'OTROS'
+
+		END AS 'TIPO_CRÉDITO'	
+FROM 
+	anexos_riesgos3..ANX06
+WHERE 
+	FechaCorte1 >= @fecha6MESES
+ORDER BY 
+	FechaCorte1,
+	CodigoSocio7
+
+'''
+    
+base_6meses = pd.read_sql_query(query, conn)
+
+base_6meses['Saldodecolocacionescreditosdirectos24'] = pd.to_numeric(base_6meses['Saldodecolocacionescreditosdirectos24'])
+
+del conn
+
+#%% PIVOT DE CODIGO SOCIO Y FECHA CORTE (SOLO MYPES)
+tipo_cred_mype = [8, 9, 10, '8', '08', '09', '10']
+
+base_6meses = base_6meses[base_6meses['TipodeCredito19'].isin(tipo_cred_mype)]
+
+pivot_6meses = base_6meses.pivot_table( values  = 'SALDO TOTAL',
+                                        index   = 'CodigoSocio7',
+                                        columns = 'FechaCorte1',
+                                        aggfunc = 'sum').reset_index()
+pivot_6meses = pivot_6meses.fillna(0)
+
+########## HASTA AQUÍ YA SE SUMÓ TODO EL SALDO CAPITAL DE 5 MESES ATRÁS #######
+
+df_corto = ordenado[['Tipo de Crédito 19/',
+                     'Saldos de Créditos Castigados 38/',
+                     'Saldo de colocaciones (créditos directos) 24/',
+                     'Código Socio 7/']]
+
+#sumamos saldo de cartera y saldo castigado
+df_corto.loc[:, 'monto mype'] = df_corto['Saldo de colocaciones (créditos directos) 24/'] + df_corto['Saldos de Créditos Castigados 38/']
+
+#filtrado
+corto_filtrado = df_corto.loc[df_corto['Tipo de Crédito 19/'].isin(tipo_cred_mype)]
+#tabla resumen de sumarización						                                          
+tabla_resumen = corto_filtrado.groupby('Código Socio 7/')['monto mype'].sum()
+tabla_resumen = tabla_resumen.reset_index()
+
+#rename
+tabla_resumen = tabla_resumen.rename(columns={"Código Socio 7/": "CodigoSocio7"})
+
+tabla_resumen = tabla_resumen.merge(pivot_6meses,
+                                    left_on  = "CodigoSocio7",
+                                    right_on = 'CodigoSocio7',
+                                    how      = 'left')
+
+tabla_resumen.fillna(0, inplace = True)
+
+def verificar_mype(fila):
+    #  08 MEDIANA EMPRESA
+    #  09 PEQUEÑA EMPRESA
+    #  10 MICRO EMPRESA
+    if any(valor > 300000 for valor in fila[1:]):
+        return '08'
+    elif any(valor > 20220 for valor in fila[1:]):
+        return '09'
+    else:
+        return '10'
+    
+tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis = 1)
+# ESTA TABLA AUXILIAR CONTIENE EL VERDADERO TIPO DE CÓDIGO QUE DEBE CORRESPONDER AL CRÉDITO
+#%% merge con la tabla auxiliar
+ordenado = ordenado.merge(tabla_resumen[['CodigoSocio7', 'tipo mype']],
+                          left_on  = 'Código Socio 7/',
+                          right_on = 'CodigoSocio7',
+                          how      = 'left')
+del ordenado['CodigoSocio7']
+
+def asign_prod_19(ordenado):
+    if pd.isna(ordenado['tipo mype']):
+        return ordenado['Tipo de Crédito 19/']
+    else:
+        return ordenado['tipo mype']
 ordenado['tipo crédito 19 corregido'] = ordenado.apply(asign_prod_19, axis=1)
+
+# def asign_prod_19(ordenado):
+#     if (ordenado['etiqueta mype'] == 'mype') & \
+#     (ordenado['Monto de Desembolso 22/'] > 0) & \
+#     (ordenado['Monto de Desembolso 22/'] <= 20000):
+#         return '10'
+#     elif (ordenado['etiqueta mype'] == 'mype') & \
+#     (ordenado['Monto de Desembolso 22/'] > 20000) & \
+#     (ordenado['Monto de Desembolso 22/'] <= 300000):
+#         return '09'
+#     elif (ordenado['etiqueta mype'] == 'mype') & \
+#     (ordenado['Monto de Desembolso 22/'] > 300000):
+#         return '08'
+#     else:
+#         return ordenado['Tipo de Crédito 19/']
+
+# ordenado['tipo crédito 19 corregido'] = ordenado.apply(asign_prod_19, axis=1)
+
 ordenado.drop(['etiqueta mype'], axis=1, inplace=True)
+ordenado.drop(['tipo mype'], axis=1, inplace=True)
+
 ordenado['Tipo de Crédito 19/ (original)'] = ordenado['Tipo de Crédito 19/']
 ordenado['Tipo de Crédito 19/'] = ordenado['tipo crédito 19 corregido']
 ordenado.drop(['tipo crédito 19 corregido'], axis=1, inplace=True)
@@ -1675,6 +1803,7 @@ print('intereses devengados1:')
 print(anx06_ordenado[columna_devengados].sum())
 print('suma total (1):')
 print(round(anx06_ordenado[columna_in_suspendo].sum() + anx06_ordenado[columna_devengados].sum(),2))
+val1_original = round(anx06_ordenado[columna_in_suspendo].sum() + anx06_ordenado[columna_devengados].sum(),2)
 
 #%% intereses en Suspenso + Devengados en caso de que tengan cero cuotas canceladas y tengan >30 días
 #se suman los intereses en suspenso y devengados
@@ -1683,7 +1812,7 @@ anx06_ordenado['Dias de Mora 33/'] = anx06_ordenado['Dias de Mora 33/'].astype(i
 
 def int_suspenso_y_devengados(anx06_ordenado):
     if (1 == 1) & \
-    (anx06_ordenado['Tipo de Crédito 19/'] == '08') & \
+    (anx06_ordenado['Tipo de Crédito 19/'] in ['08', 8]) & \
     (anx06_ordenado['Dias de Mora 33/'] > 15):
         return anx06_ordenado[columna_in_suspendo] + anx06_ordenado[columna_devengados]
     elif (1 == 1) & \
@@ -1700,12 +1829,12 @@ anx06_ordenado[columna_devengados] = anx06_ordenado[columna_devengados].astype(f
 #se le pone cero a esos mismos devengados
 def devengados_cero(anx06_ordenado):
     if (1 == 1) and \
-    anx06_ordenado['Tipo de Crédito 19/'] == '08' and \
-    anx06_ordenado['Dias de Mora 33/'] > 15:
+    (anx06_ordenado['Tipo de Crédito 19/'] in ['08', 8]) and \
+    (anx06_ordenado['Dias de Mora 33/'] > 15):
         return 0
     elif (1 == 1) and \
-    anx06_ordenado['Tipo de Crédito 19/'] in ['09', '10', '11', '12', '13', 9, 10, 11, 12, 13] and \
-    anx06_ordenado['Dias de Mora 33/'] > 30:
+    (anx06_ordenado['Tipo de Crédito 19/'] in ['09', '10', '11', '12', '13', 9, 10, 11, 12, 13]) and \
+    (anx06_ordenado['Dias de Mora 33/'] > 30):
         return 0
     else:
         return anx06_ordenado[columna_devengados]
@@ -1721,7 +1850,13 @@ print('suma total (2):')
 print(round(anx06_ordenado[columna_in_suspendo].sum() + anx06_ordenado[columna_devengados].sum(),2))
 print('')
 print('la suma total de (1) y (2) debe ser la misma')
-                      
+val2_nuevo = round(anx06_ordenado[columna_in_suspendo].sum() + anx06_ordenado[columna_devengados].sum(),2)
+
+if val1_original == val2_nuevo:
+    print('todo bien')
+else:
+    print('difiere')
+
 #%% ASIGNACIÓN DE LOS DEVENGADOS A LAS COLUMNAS QUE SÍ IRÁN EN EL ANEXO 06 PARA LA SBS
 # con esto hemos modificado el rendimiento devengado (cero) y hemos colocado todo el interés en el int suspenso
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado[columna_devengados].round(2)
@@ -1729,7 +1864,7 @@ anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado[columna_devengados
 anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado[columna_in_suspendo].round(2)
 
 #%% cálculo extra de DEVENGADO 40/
-# por solicitud de contabilidad
+# por solicitud de contabilidad (HELIO)
 def ajuste_devengados(anx06_ordenado):
     saldo_cartera  = anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
     tasa_diaria    = (((1 + anx06_ordenado['Tasa de Interés Anual 23/'])**(1/360))-1)
@@ -1747,7 +1882,7 @@ anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(ajuste_deven
 def flag_devengado_recalculado(anx06_ordenado):
     # saldo_cartera  = anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
     # tasa_diaria    = (((1 + anx06_ordenado['Tasa de Interés Anual 23/'])**(1/360))-1)
-    # dias_devengado = (mes_final - anx06_ordenado['Fecha Termino \nPeriodo Gracia']).days
+    # dias_devengado = (mes_final - anx06_ordenado['Fecha Termino \nPeriodo 0Gracia']).days
     
     if (anx06_ordenado['Número de Cuotas Pagadas 45/'] == 0) and \
        (anx06_ordenado['Fecha de Desembolso 21/'] >= 20230101) and \
@@ -1756,13 +1891,43 @@ def flag_devengado_recalculado(anx06_ordenado):
         return 'si'
     else:
         return ''
-anx06_ordenado['Flag Devengado Recalculado'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
+anx06_ordenado['Flag Devengado Recalculado'] = anx06_ordenado.apply(ajuste_devengados, axis = 1)
+
+#%% CORRIGIENDO SI EL NUEVO INTERÉS DEVENGADO EXISTE A LA VEZ QUE EL INTERÉS EN SUSPENSO
+# EN ESTE CASO SE REEMPLAZA EL INTERÉS EN SUSPENSO POR EL INTERÉS DEVENGADO
+# Y SE PONE INTERÉS DEVENGADO EN CERO
+
+def suspenso_flag(anx06_ordenado):
+    if (anx06_ordenado['Flag Devengado Recalculado'] == 'si') and \
+       (anx06_ordenado['Rendimiento\nDevengado 40/'] > 0) and \
+       (anx06_ordenado['Intereses en Suspenso 41/'] > 0):
+        return 'si'
+    else:
+        return ''
+anx06_ordenado['Flag Suspenso Recalculado'] = anx06_ordenado.apply(suspenso_flag, axis = 1)
+
+def suspenso_recalculado(anx06_ordenado):
+    if anx06_ordenado['Flag Suspenso Recalculado'] == 'si':
+        return anx06_ordenado['Rendimiento\nDevengado 40/']
+    else:
+        return anx06_ordenado['Intereses en Suspenso 41/']
+anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado.apply(suspenso_recalculado, axis = 1)
+
+def devengado_cero(anx06_ordenado):
+    if anx06_ordenado['Flag Suspenso Recalculado'] == 'si':
+        return 0
+    else:
+        return anx06_ordenado['Rendimiento\nDevengado 40/']
+anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_cero, axis = 1)
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])
-anx06_ordenado = anx06_ordenado.drop_duplicates(subset='Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
+anx06_ordenado = anx06_ordenado.drop_duplicates(subset = 'Nro Prestamo \nFincore') #por si acaso eliminamos duplicados
 print(anx06_ordenado.shape[0])
 print('si sale menos, es porque hubo duplicados')
+
+#%% CONTEO DE 
+DEBE_SER_CERO = anx06_ordenado
 
 #%% ORDENAMIENTO DE LAS COLUMNAS LAS ÚLTIMAS 5 AÑADIDAS PARA CONTABILIDAD
 '#############################################################################'

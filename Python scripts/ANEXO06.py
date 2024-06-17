@@ -943,6 +943,8 @@ SELECT
 	Nro_Fincore, 
 	CodigoSocio7,
 	Saldodecolocacionescreditosdirectos24,
+	SaldosdeCreditosCastigados38,
+	Saldodecolocacionescreditosdirectos24 + SaldosdeCreditosCastigados38 as 'SALDO TOTAL',
 	FechaCorte1,
 	TipodeProducto43,
 	CASE 
@@ -954,7 +956,21 @@ SELECT
 		WHEN TipodeProducto43 IN (41,45)                   THEN 'HIPOTECARIA'
 		    ELSE 'OTROS'
             
-		END AS 'TIPO_PRODUCTO'
+		END AS 'TIPO_PRODUCTO',
+
+	TipodeCredito19,
+	CASE
+		WHEN TipodeCredito19 = 06  THEN 'CORPORATIVO'
+		WHEN TipodeCredito19 = 07  THEN 'GRAN EMPRESA'
+		WHEN TipodeCredito19 = 08  THEN 'MEDIANA EMPRESA'
+		WHEN TipodeCredito19 = 09  THEN 'PEQUEÑA EMPRESA'
+		WHEN TipodeCredito19 = 10 THEN 'MICRO EMPRESA'
+		WHEN TipodeCredito19 = 11 THEN 'CONSUMO REVOLVENTE'
+		WHEN TipodeCredito19 = 12 THEN 'CONSUMO NO REVOLVENTE'
+		WHEN TipodeCredito19 = 13 THEN 'HIPOTECARIO PARA VIVIENDA'
+			ELSE 'OTROS'
+
+		END AS 'TIPO_CRÉDITO'	
 FROM 
 	anexos_riesgos3..ANX06
 WHERE 
@@ -967,13 +983,14 @@ ORDER BY
 base_6meses = pd.read_sql_query(query, conn)
 
 base_6meses['Saldodecolocacionescreditosdirectos24'] = pd.to_numeric(base_6meses['Saldodecolocacionescreditosdirectos24'])
+base_6meses['SALDO TOTAL'] = pd.to_numeric(base_6meses['SALDO TOTAL'])
 
 del conn
 
 #%% PIVOT DE CODIGO SOCIO Y FECHA CORTE (SOLO MYPES)
 base_6meses = base_6meses[base_6meses['TipodeProducto43'].isin(prod43_mype)]
 
-pivot_6meses = base_6meses.pivot_table( values  = 'Saldodecolocacionescreditosdirectos24',
+pivot_6meses = base_6meses.pivot_table( values  = 'SALDO TOTAL',
                                         index   = 'CodigoSocio7',
                                         columns = 'FechaCorte1',
                                         aggfunc = 'sum').reset_index()
@@ -1022,7 +1039,7 @@ tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis = 1)
 #%%% asignación del monto mype sumado
 #asignamos
 df_resultado_2 = df_resultado.copy()
-
+ 
 df_resultado_2 = df_resultado_2.merge(tabla_resumen[['socio mype','tipo mype']], 
                                       how      ='left', 
                                       left_on  =['Código Socio 7/'], 

@@ -22,15 +22,15 @@ CARGA_SQL_SERVER = True #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20240331'
+fecha_corte = '20240430'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\03 2024\\bueno ahora sí')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\04 2024')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '03 - MARZO 2024 (CIERRE) (1).xlsx'
+nombre = '04 - ABRIL 2024 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
@@ -385,7 +385,10 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
+#%%
+# una vez finalizado podemos actualizar los siguientes reportes de riesgos:
 
-
+    # Categorización de Planillas DxP - RECAUDACIÓN Abril 2024.xlsx
+    # 
 
 

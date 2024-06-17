@@ -14,6 +14,7 @@ warnings.filterwarnings('ignore')
 # =============================================================================
 # FUNCIONARIO APROBADOR DE LOS CRÉDITOS
 # =============================================================================
+# este código solo se ejecuta, no se tiene que modificar nada
 
 #%%
 # antiguedad de los créditos
