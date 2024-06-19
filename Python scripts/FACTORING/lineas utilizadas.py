@@ -37,6 +37,11 @@ lineas.dropna(subset = ['Fecha Reporte',
              inplace = True,
              how     = 'all')
 
+lineas['Deudor'] = lineas['Deudor'].str.strip()
+
+lineas.drop_duplicates(subset  = 'Deudor',
+                       inplace = True)
+
 #%%
 lineas = lineas.fillna(0)
 
@@ -72,7 +77,7 @@ lineas = lineas[['FechaCorte_linea',
                  'Deudor',
                  'Linea Asignada (S/.)',
                  'Linea Ocupada Total (S/.)',
-                 'Porcentaje de utilización' ]]
+                 'Porcentaje de utilización']]
 
 #%%
 if CARGA_SQL_SERVER == True:

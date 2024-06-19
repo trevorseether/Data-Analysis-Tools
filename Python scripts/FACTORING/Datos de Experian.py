@@ -17,18 +17,23 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_14]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_19]'
 CARGA_SQL_SERVER = True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\MAYO')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\junio\\19 06')
 
-nombre = 'datos enviados 14 - 06- 2024.xlsx'
-corte = '2024-06-14'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4516_19062024.txt'
+corte = '2024-06-19'
 
 #%%
-experian_data = pd.read_excel(io = nombre, 
-                              skiprows = 0,
-                              dtype = {'N. DOCUMENTO' : str})
+experian_data = pd.read_csv(nombre,
+                            skiprows = 0,
+                            dtype = {'N. DOCUMENTO' : str})
+
+
+# experian_data = pd.read_excel(io = nombre, 
+#                               skiprows = 0,
+#                               dtype = {'N. DOCUMENTO' : str})
 
 experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
 experian_data['FechaCorte'] = pd.Timestamp(corte)
