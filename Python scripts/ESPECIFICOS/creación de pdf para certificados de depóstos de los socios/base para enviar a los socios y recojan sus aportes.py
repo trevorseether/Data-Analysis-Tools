@@ -59,6 +59,8 @@ padron_socios['Tipo Persona TXT']            = padron_socios['Tipo Persona TXT']
 padron_socios['Tipo Documento TXT']          = padron_socios['Tipo Documento TXT'].str.strip()
 padron_socios['Nro Doc Identidad Unificado'] = padron_socios['Nro Doc Identidad Unificado'].str.strip()
 padron_socios['Email']                       = padron_socios['Email'].str.strip()
+padron_socios['Apellidos y Nombres']         = padron_socios['Apellidos y Nombres'].str.strip()
+
 #padron_socios['Celular1']                    = padron_socios['Celular1'].str.strip()
 
 columna_aporte = 'Aporte\nFinal a DIC.23' #'Aporte\nFinal'
