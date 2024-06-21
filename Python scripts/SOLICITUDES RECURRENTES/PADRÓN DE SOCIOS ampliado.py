@@ -15,28 +15,28 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS
-fecha_corte = '20240430' # formato para sql server
-f_corte     = 'Abril-24'
+fecha_corte = '20240531' # formato para sql server
+f_corte     = 'Mayo-24'
 
 filtrar_habiles = True
 
 #%% LECTURA PADRÓN DE SOCIOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\sin errore')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\envio de pdfs padron de socios y aportes\\AHORA SÍ')
 
 #%%
-padron = pd.read_excel('Rpt_PadronSocios Abril-24 Ampliado (columnas señaladas con errores pero sin ellos).xlsx',
+padron = pd.read_excel('Socios habiles a DIC-23 - para envio de certif aportes.xlsx',
                        skiprows = 1,
                        dtype = {'CodSoc'                  : str,
                                 'Celular1'                : str,
                                 'NO ENCONT EN RPT APORTE' : str
                                 })
 
-columna_estado_mes_anterior = padron.columns[29]
+columna_estado_mes_anterior = padron.columns[24] #29
 print(columna_estado_mes_anterior)
 print("Debe decir algo como 'ESTADO MAR.24' (mes anterior al actual)")
 
 #%%
-if filtrar_habiles == True:
+if filtrar_habiles == False:
     padron = padron[padron['Condicion'].isin(['HABIL', 
                                               'HÁBIL',
                                               'HABIL - REINGRESO',
@@ -128,6 +128,8 @@ datos_para_padron.drop_duplicates(subset  = 'CodSoc',
                                   keep    = 'first', 
                                   inplace = True)
 
+#%%
+datos_para_padron
 #%% MERGE DE LOS DATOS
 padron2 = padron.merge(datos_para_padron[['CodSoc', 'Edad', 'est_civil', 'INGRESOBRUTO', 'GradoInstrucción']],
                        on  = 'CodSoc',
