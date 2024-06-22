@@ -16,17 +16,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-tabla_nombre = 'FACTORING..[ADELANTOS_20240614]'
+tabla_nombre = 'FACTORING..[ADELANTOS_20240621]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte      = '2024-06-14'
+fecha_corte      = '2024-06-21'
 
-tipo_de_cambio   = 3.77
+tipo_de_cambio   = 3.8
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JUNIO\\17 06 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JUNIO\\21 06')
 
-nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendidoadelantos17062024.xlsx'
+nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendidoadelantos21062024.xlsx'
 
 filas_skip = 14
 

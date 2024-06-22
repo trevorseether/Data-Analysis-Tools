@@ -20,10 +20,10 @@ warnings.filterwarnings('ignore')
 tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_19]'
 CARGA_SQL_SERVER = True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\junio\\19 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\junio\\21 06')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4516_19062024.txt'
-corte = '2024-06-19'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4450.txt'
+corte = '2024-06-21'
 
 #%%
 experian_data = pd.read_csv(nombre,
