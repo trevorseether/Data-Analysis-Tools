@@ -115,3 +115,55 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
+#%%
+#%% EMPRESAS NO REPORTADAS POR EXPERIAN
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+###############################################################################
+query = '''
+	SELECT
+		DISTINCT
+		[Ruc Deudor],
+		Deudor 
+	FROM FACTORING..[REPORTE_SEMANAL]
+'''
+semanal = pd.read_sql_query(query, conn)
+###############################################################################
+query = '''
+	SELECT
+		DISTINCT
+		[Ruc Deudor],
+		Deudor 
+	FROM FACTORING..[ADELANTOS]
+'''
+adelantos = pd.read_sql_query(query, conn)
+###############################################################################
+query = '''
+	SELECT
+		DISTINCT
+		[N. DOCUMENTO] AS 'Ruc Deudor',
+		[NOMBRE CPT]
+	FROM FACTORING..EXPERIAN
+	WHERE FechaCorte = (select max(FechaCorte) from FACTORING..EXPERIAN)
+'''
+experian = pd.read_sql_query(query, conn)
+###############################################################################
+#%% unión de datos generados por el fincore
+base_fincore = pd.concat([semanal, 
+                          adelantos], axis = 0)
+base_fincore.drop_duplicates(subset  = ['Ruc Deudor', 'Deudor'],
+                             inplace = True)
+base_fincore.drop_duplicates(subset  = 'Ruc Deudor',
+                             inplace = True)
+
+#%% merge para ver cuales no están en la base que envía experian
+mergeado = base_fincore.merge(experian,
+                              on  = 'Ruc Deudor',
+                              how = 'left')
+
+no_reportados = mergeado[pd.isna(mergeado['NOMBRE CPT'])]
+
+no_reportados = no_reportados[['Ruc Deudor', 'Deudor']]
+
+#%%
+no_reportados.to_excel('no reportados por Experian.xlsx')
+
