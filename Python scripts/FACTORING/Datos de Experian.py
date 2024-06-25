@@ -46,6 +46,7 @@ experian_data = experian_data[['T. DOCUMENTO',
                                'SEM. ACT.',
                                'FechaCorte']]
 
+experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
 
 #%%
 if CARGA_SQL_SERVER == True:

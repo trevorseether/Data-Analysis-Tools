@@ -129,6 +129,12 @@ if CARGA_SQL_SERVER == True:
     for _, row in df.iterrows():
         cursor.execute(insert_query, tuple(row))
 
+    ###########################################################################
+    f_corte_formato = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+    cursor.execute(f"DELETE FROM FACTORING..[LINEAS] WHERE FechaCorte_linea = '{f_corte_formato}'")
+    cursor.execute(f"INSERT INTO FACTORING..[LINEAS] SELECT * FROM {tabla_nombre}")
+    ###########################################################################
+
     # Confirmar los cambios y cerrar la conexión
     cnxn.commit()
     cursor.close()

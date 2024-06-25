@@ -84,6 +84,7 @@ def proveedor(df):
     else:
         return df['Aceptante']
 adelantos['Deudor'] = adelantos.apply(proveedor, axis = 1)
+adelantos['Deudor'] = adelantos['Deudor'].str.strip()
 
 def ruc_deudor(df):
     if pd.isna(df['Ruc Aceptante']):
@@ -91,6 +92,7 @@ def ruc_deudor(df):
     else:
         return df['Ruc Aceptante']
 adelantos['Ruc Deudor'] = adelantos.apply(ruc_deudor, axis = 1)
+adelantos['Ruc Deudor'] = adelantos['Ruc Deudor'].str.strip()
 
 #%% RECTIFICACIÓN DE NRO RUC
 adelantos.loc[(adelantos['Deudor'] == 'SOCIEDAD MINERA CORONA S.A.') & \
@@ -139,6 +141,7 @@ adelantos['Cliente']       = adelantos['Cliente'].fillna('')
 adelantos['Ruc Aceptante'] = adelantos['Ruc Aceptante'].fillna('')
 adelantos['Aceptante']     = adelantos['Aceptante'].fillna('')
 adelantos['Proveedor']     = adelantos['Proveedor'].fillna('')
+
 #%% RENAME DE COLUMNAS
 adelantos = adelantos.rename(columns={'Monto\nAdelanto'   : 'Monto Adelanto'})
 

@@ -62,6 +62,7 @@ def proveedor(df):
     else:
         return df['Aceptante']
 datos['Deudor'] = datos.apply(proveedor, axis = 1)
+datos['Deudor'] = datos['Deudor'].str.strip()
 
 def ruc_deudor(df):
     if pd.isna(df['Ruc\nAceptante']):
@@ -69,6 +70,7 @@ def ruc_deudor(df):
     else:
         return df['Ruc\nAceptante']
 datos['Ruc Deudor'] = datos.apply(ruc_deudor, axis = 1)
+datos['Ruc Deudor'] = datos['Ruc Deudor'].str.strip()
 
 #%% RECTIFICACIÓN DE NRO RUC
 datos.loc[(datos['Deudor'] == 'SOCIEDAD MINERA CORONA S.A.') & \

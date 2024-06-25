@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Junio 2024'
-fecha_inicio = '2024-06-01'
-fecha_final  = '2024-06-30'
+MES          = 'Julio 2024'
+fecha_inicio = '2024-07-01'
+fecha_final  = '2024-07-31'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 05\\23 05')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 06\\25 06')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -155,7 +155,7 @@ kashio_union = kashio_filtrado.merge(df_fincore,
                                      #inner porque los casos que no hagan match es porque ya fueron cancelados
 
 owo = kashio_union[kashio_union['DNI'] != kashio_union['Doc_Identidad']]
-print(owo)
+# print(owo)
 
 #%%
 kashio_final = kashio_union[['DNI', 'Nombre Cliente', 'CODIGO KASHIO','CODIGO DE PAGO',
