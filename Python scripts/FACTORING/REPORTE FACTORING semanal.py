@@ -201,6 +201,12 @@ if CARGA_SQL_SERVER == True:
     for _, row in df.iterrows():
         cursor.execute(insert_query, tuple(row))
 
+    ###########################################################################
+    fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+    cursor.execute(f"DELETE FROM FACTORING..REPORTE_SEMANAL WHERE FechaCorte = '{fecha_format_sql}'")
+    cursor.execute(f"INSERT INTO FACTORING..REPORTE_SEMANAL SELECT * FROM {tabla}")
+    ###########################################################################
+
     # Confirmar los cambios y cerrar la conexión
     cnxn.commit()
     cursor.close()

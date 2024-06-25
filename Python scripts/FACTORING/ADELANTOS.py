@@ -16,17 +16,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-tabla_nombre = 'FACTORING..[ADELANTOS_20240621]'
+tabla_nombre = 'FACTORING..[ADELANTOS_20240624]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte      = '2024-06-21'
+fecha_corte      = '2024-06-24'
 
 tipo_de_cambio   = 3.8
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JUNIO\\21 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JUNIO\\24 06')
 
-nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendidoadelantos21062024.xlsx'
+nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendido24062024.xlsx'
 
 filas_skip = 14
 
@@ -260,6 +260,12 @@ if CARGA_SQL_SERVER == True:
     # Iterar sobre las filas del DataFrame e insertar en la base de datos
     for _, row in df.iterrows():
         cursor.execute(insert_query, tuple(row))
+
+    ###########################################################################
+    fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+    cursor.execute(f"DELETE FROM FACTORING..[ADELANTOS] WHERE FechaCorte = '{fecha_format_sql}'")
+    cursor.execute(f"INSERT INTO FACTORING..[ADELANTOS] SELECT * FROM {tabla}")
+    ###########################################################################
 
     # Confirmar los cambios y cerrar la conexión
     cnxn.commit()
