@@ -17,17 +17,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre     = 'FACTORING..[CARTERA_2024_05]'
+tabla_nombre     = 'FACTORING..[CARTERA_2024_06]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte      = '2024-05-31'
+fecha_corte      = '2024-06-28'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\MAYO 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\JUNIO\\28 06')
 
-nombre           = 'Reporte al 31-05-2024.xlsx'
+nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante28062024.xlsx'
 
-tipo_de_cambio   = 3.738
+tipo_de_cambio   = 3.831
 
 #%%
 datos = pd.read_excel(io       = nombre, 

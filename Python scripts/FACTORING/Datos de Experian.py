@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_19]'
-CARGA_SQL_SERVER = True
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_28]'
+CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\junio\\21 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\01 07 2024')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4450.txt'
-corte = '2024-06-21'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_9102.txt'
+corte = '2024-06-28'
 
 #%%
 experian_data = pd.read_csv(nombre,
@@ -127,7 +127,8 @@ query = '''
 		Deudor 
 	FROM FACTORING..[REPORTE_SEMANAL]
 '''
-semanal = pd.read_sql_query(query, conn)
+semanal = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
+semanal['Ruc Deudor'] = semanal['Ruc Deudor'].str.strip()
 ###############################################################################
 query = '''
 	SELECT
@@ -136,17 +137,20 @@ query = '''
 		Deudor 
 	FROM FACTORING..[ADELANTOS]
 '''
-adelantos = pd.read_sql_query(query, conn)
+adelantos = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
+adelantos['Ruc Deudor'] = adelantos['Ruc Deudor'].str.strip()
 ###############################################################################
 query = '''
 	SELECT
 		DISTINCT
 		[N. DOCUMENTO] AS 'Ruc Deudor',
-		[NOMBRE CPT]
+		[NOMBRE CPT],
+        FechaCorte
 	FROM FACTORING..EXPERIAN
 	WHERE FechaCorte = (select max(FechaCorte) from FACTORING..EXPERIAN)
 '''
-experian = pd.read_sql_query(query, conn)
+experian = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
+experian['Ruc Deudor'] = experian['Ruc Deudor'].str.strip()
 ###############################################################################
 #%% unión de datos generados por el fincore
 base_fincore = pd.concat([semanal, 
@@ -167,4 +171,5 @@ no_reportados = no_reportados[['Ruc Deudor', 'Deudor']]
 
 #%%
 no_reportados.to_excel('no reportados por Experian.xlsx')
+
 

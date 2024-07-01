@@ -18,17 +18,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[FACTORING_SEMANAL_20240621]'
+tabla_nombre = 'FACTORING..[FACTORING_SEMANAL_20240628]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte = '2024-06-21' # AAAA-MM-DD
+fecha_corte = '2024-06-28' # AAAA-MM-DD
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\JUNIO\\21 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\JUNIO\\28 06')
 
-excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante21062024.xlsx'
+excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante28062024.xlsx'
 
-tipo_de_cambio = 3.8
+tipo_de_cambio = 3.831
 
 #%%
 datos = pd.read_excel(io       = excel, 
