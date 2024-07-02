@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_28]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_30]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\01 07 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\02 07 2024')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_9102.txt'
-corte = '2024-06-28'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_6178.txt'
+corte = '2024-06-30'
 
 #%%
 experian_data = pd.read_csv(nombre,
@@ -172,4 +172,8 @@ no_reportados = no_reportados[['Ruc Deudor', 'Deudor']]
 #%%
 no_reportados.to_excel('no reportados por Experian.xlsx')
 
-
+if no_reportados.shape[0] > 0:
+    print(no_reportados)
+else:
+    print('todo bien')
+    

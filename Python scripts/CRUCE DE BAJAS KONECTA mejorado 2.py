@@ -28,11 +28,11 @@ FECHATXT = '2024-07-02'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\julio\\02 07'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\julio\\CONADIS'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '1ER INFORME 07_24 GRUPO KONECT.xlsx'
+nombre_archivo = 'CONADIS.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -40,7 +40,7 @@ filas_skip = 0                        ##
 ########################################
 
 'COLUMNA DEL DOCUMENTO IDENTIDAD' #############
-COL_DOC_IDENTIDAD = 'Documento' # 'Documento'
+COL_DOC_IDENTIDAD = 'DNI' # 'Documento'
 ###############################################
 
 'COLUMNA DE LA FECHA DE BAJA' #################
