@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '2024-06-22'  # FORMATO AÑO-MES-DÍA
+FECHATXT = '2024-07-02'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\junio\\24 jun'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\julio\\02 07'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '4to INFORME 06_24 GRUPO KONECT.xlsx'
+nombre_archivo = '1ER INFORME 07_24 GRUPO KONECT.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
