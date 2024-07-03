@@ -119,12 +119,14 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMJM'   , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMOM'   , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')    
-kashio.loc[kashio['EMAIL'] == 'CARLOSCASTILLOFUENTES12@', 'EMAIL'] = 'CARLOSCASTILLOFUENTES12@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'CARLOSCASTILLOFUENTES12@'  , 'EMAIL'] = 'CARLOSCASTILLOFUENTES12@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'DENIS_POBLETE@GHOTMAIL.COM', 'EMAIL'] = 'DENIS_POBLETE@HOTMAIL.COM'
-kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COM', 'EMAIL'] = 'RAQUELALINA@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COM'     , 'EMAIL'] = 'RAQUELALINA@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'RRENGIFOCORAL@HOTMAIL..COM', 'EMAIL'] = 'RRENGIFOCORAL@HOTMAIL.COM'
-kashio.loc[kashio['EMAIL'] == 'TATO.12.TLV@GMAOL.COM', 'EMAIL'] = 'TATO.12.TLV@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'TATO.12.TLV@GMAOL.COM'     , 'EMAIL'] = 'TATO.12.TLV@GMAIL.COM'
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM\n.COM', '@GMAIL.COM')    
 
+###############################################################################
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
 def correccion(row):
