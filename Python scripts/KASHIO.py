@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\02 07')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\03 07')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240702.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240703.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -130,20 +130,20 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM\n.COM', '@GMAIL.COM')
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
 
 def correccion(row):
-    palabras_a_buscar = ['GMAILCON', '\\', '/', 'FMAIL.COM', 
-                         'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
-                         'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 
-                         'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
-                         '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
-                         'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú',
-                         '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM']
+    palabras_a_buscar = [ 'GMAILCON', '\\', '/', 'FMAIL.COM', 
+                          'GAMIL.COM', 'GEMAIL.COM', 'GMAIL.COM.COM',
+                          'HOTMAIL.COM/MECHIBL_2000@HOTMAIL.COM', 
+                          'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
+                          '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
+                          'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú',
+                          '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM' ]
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
     else:
         return row['EMAIL ANTERIOR']
     
-kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis=1)
+kashio['EMAIL ANTERIOR'] = kashio.apply(correccion, axis = 1)
 
 kashio['EMAIL'] = kashio['EMAIL ANTERIOR']
 
@@ -181,8 +181,11 @@ kashio_ampliado = kashio_ampliado.rename(columns = {"NOMBRE" : "NOMBRE_1"})
 #%% AJUSTE DE TEXTO PARA DXP LIQUIDADOS
 mask_liquidados = kashio_ampliado['Unnamed: 10'] == 'LIQUIDADOS' #si en el fincore le cambian el nombre a esta columna, pues va a fallar esta línea
 
-kashio_ampliado.loc[mask_liquidados, 'DESCRIPCION'] = kashio_ampliado.loc[mask_liquidados, 'DESCRIPCION'].str.replace('PRESTAMO DESCUENTO POR PLANILLA', 
-                                                                                                                      'PRESTAMO DXP LIQUIDADOS')
+kashio_ampliado.loc[mask_liquidados, 
+                    'DESCRIPCION'] = kashio_ampliado.loc[mask_liquidados, 
+                                                         'DESCRIPCION'].str.replace('PRESTAMO DESCUENTO POR PLANILLA', 
+                                                                                    'PRESTAMO DXP LIQUIDADOS')
+                                                                                    
 #%%
 # kashio_sin_pyme = kashio_ampliado[kashio_ampliado['Unnamed: 10'] != 'PYME']
 # kashio_sin_pyme.to_excel('RECIBOS COOP SAN MIGUEL ' + str(ARCHIVO_HOY[29:37]) + ' no incluye PYME.xlsx',

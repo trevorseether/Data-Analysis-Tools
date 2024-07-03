@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Mayo 2024'  # Mes Año
-fecha_corte             = '2024-05-31' # año-mes-día
-fecha_corte_inicial     = '2024-05-01' # año-mes-día
+fecha_mes               = 'Junio 2024'  # Mes Año
+fecha_corte             = '2024-06-30' # año-mes-día
+fecha_corte_inicial     = '2024-06-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -54,26 +54,26 @@ columna_in_suspendo = 'Interes Suspenso Nuevo'
 uit = 5150
 
 #%%
-generar_excels = False #booleano True o False
+generar_excels = True #booleano True o False
 
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Abril 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -1897,8 +1897,8 @@ anx06_ordenado['Flag Devengado Recalculado'] = anx06_ordenado.apply(ajuste_deven
 # EN ESTE CASO SE REEMPLAZA EL INTERÉS EN SUSPENSO POR EL INTERÉS DEVENGADO
 # Y SE PONE INTERÉS DEVENGADO EN CERO
 
-def suspenso_flag(anx06_ordenado):
-    if (anx06_ordenado['Flag Devengado Recalculado'] == 'si') and \
+def suspenso_flag(anx06_ordenado): #(anx06_ordenado['Flag Devengado Recalculado'] == 'si') and \
+    if (1 == 1) and \
        (anx06_ordenado['Rendimiento\nDevengado 40/'] > 0) and \
        (anx06_ordenado['Intereses en Suspenso 41/'] > 0):
         return 'si'
@@ -1919,6 +1919,8 @@ def devengado_cero(anx06_ordenado):
     else:
         return anx06_ordenado['Rendimiento\nDevengado 40/']
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_cero, axis = 1)
+
+print(anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)])
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])
@@ -2096,12 +2098,14 @@ print(reprogramados['Saldo de colocaciones (créditos directos) 24/'].sum())
 
 #%% pequeña alerta detectada
 investigar = reprogramados[pd.isna(reprogramados['TIPO_REPRO'])]
+
 print(investigar.shape[0])
-print('debe salir cero, sino investigar')
+print('debe salir cero, sino investigar (falta tipo de reprogramación)')
+print(investigar['Nro Prestamo \nFincore'])
 
 #%% CREACIÓN DEL EXCEL DE REPROGRAMADOS
 if generar_excels == True:
-    
+
     try:
         ruta = f'Rpt_DeudoresSBS Créditos Reprogramados {fecha_mes} no incluye castigados.xlsx'
         os.remove(ruta)
@@ -2135,9 +2139,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240531' #mes actual
-fecha_corte_menos_1 = '20240430' #mes anterior
-fecha_corte_menos_2 = '20240331' #mes anterior del anterior
+fecha_corte_actual  = '20240630' #mes actual
+fecha_corte_menos_1 = '20240531' #mes anterior
+fecha_corte_menos_2 = '20240430' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2216,13 +2220,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Abril 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 abril\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Mayo 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'May-24'
-mes_anterior_txt = 'Abr-24'
+mes_actual_txt   = 'Jun-24'
+mes_anterior_txt = 'May-24'
 # =============================================================================
 #%% LECTURA
 
