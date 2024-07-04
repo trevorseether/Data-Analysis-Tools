@@ -27,7 +27,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\JUNIO\\28 06')
 
 nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante28062024.xlsx'
 
-tipo_de_cambio   = 3.831
+tipo_de_cambio   = 3.747
 
 #%%
 datos = pd.read_excel(io       = nombre, 
@@ -56,12 +56,12 @@ def tipo_prod(df):
         return 'Factoring'
 datos['Tipo producto'] = datos.apply(tipo_prod, axis = 1)
 
-def proveedor(df):
+def deudor(df):
     if pd.isna(df['Aceptante']):
         return df['Cliente']
     else:
         return df['Aceptante']
-datos['Deudor'] = datos.apply(proveedor, axis = 1)
+datos['Deudor'] = datos.apply(deudor, axis = 1)
 datos['Deudor'] = datos['Deudor'].str.strip()
 
 def ruc_deudor(df):
@@ -225,8 +225,8 @@ if CARGA_SQL_SERVER == True:
 
     ###########################################################################
     fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
-    cursor.execute(f"DELETE FROM FACTORING..[CARTERA] WHERE FECHACORTE = '{fecha_format_sql}'")
-    cursor.execute(f"INSERT INTO FACTORING..[CARTERA] SELECT * FROM {tabla}")
+    # cursor.execute(f"DELETE FROM FACTORING..[CARTERA] WHERE FECHACORTE = '{fecha_format_sql}'")
+    # cursor.execute(f"INSERT INTO FACTORING..[CARTERA] SELECT * FROM {tabla}")
     ###########################################################################
     
     # Confirmar los cambios y cerrar la conexión
