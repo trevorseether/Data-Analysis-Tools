@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\03 07')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\05 07')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240703.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240705.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -119,12 +119,84 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMJM'   , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMOM'   , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMM'    , '@GMAIL.COM')    
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAOL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GAIL.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMC.OM' , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMPM'   , '@GMAIL.COM')    
+
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAL.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIIL.COM'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAL.COM'    , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMPM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMIAL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILCOM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAI.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAL.COM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CCOM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL .COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILO.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILCOM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMNAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COPM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GAMAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMN'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GAMIL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GIMAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMCALLE CESAR VALEJO 420 INT' , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CM'      , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAILC.OM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMIAL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GAMIL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIOL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GNAIL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GAMAIL.COM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COJM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAOL.COM'     , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.'    , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM.CM'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'    , '@GMAIL.COM')    
+
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@OUTLOOCK.COM' , '@OUTLOOK.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOTMAIOL.COM' , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@OUTLOC.COM'   , '@OUTLOOK.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMCM'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMPE'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM*9'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COMPE'  , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM614' , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HTOMAIL.COM'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HPTMAIL.COM'  , '@HOTMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'   , '@GMAIL.COM')    
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.CONM'   , '@GMAIL.COM')    
+
+# usando regular expresiones
+kashio['EMAIL'] = kashio['EMAIL'].str.replace(r'@GMAIL$', '@GMAIL.COM', regex=True)
+
 kashio.loc[kashio['EMAIL'] == 'CARLOSCASTILLOFUENTES12@'  , 'EMAIL'] = 'CARLOSCASTILLOFUENTES12@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'DENIS_POBLETE@GHOTMAIL.COM', 'EMAIL'] = 'DENIS_POBLETE@HOTMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COM'     , 'EMAIL'] = 'RAQUELALINA@GMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'RRENGIFOCORAL@HOTMAIL..COM', 'EMAIL'] = 'RRENGIFOCORAL@HOTMAIL.COM'
 kashio.loc[kashio['EMAIL'] == 'TATO.12.TLV@GMAOL.COM'     , 'EMAIL'] = 'TATO.12.TLV@GMAIL.COM'
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COM\n.COM', '@GMAIL.COM')    
+
+kashio.loc[kashio['EMAIL'] == 'BRAULIO.18@@HOTMAIL.COM'          , 'EMAIL'] = 'BRAULIO.18@HOTMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'GISELAISABELLEONATOCHE@GMAIL.'    , 'EMAIL'] = 'GISELAISABELLEONATOCHE@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'RAQUELALINA@GNAIL.COMALDAIRPOLOPASTOR@GMAIL.COM9614' , 'EMAIL'] = 'ALDAIRPOLOPASTOR@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'HERRERA2019ROMULO@OUTLOOK.COM-'   , 'EMAIL'] = 'HERRERA2019ROMULO@OUTLOOK.COM'
+kashio.loc[kashio['EMAIL'] == 'CESARSOLISBARRETO@GM,AIL.COM'     , 'EMAIL'] = 'CESARSOLISBARRETO@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'LISSET_SS@HOTM,AIL.COM', 'EMAIL'] = 'LISSET_SS@HOTMAIL.COM'
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@KONECTA_GROUP.COM'    , '@KONECTA-GROUP.COM')    
+
+kashio.loc[kashio['EMAIL'] == 'MARJORIE.LIBRAVITVIL1994@GMAIL', 'EMAIL'] = 'MARJORIE.LIBRAVITVIL1994@GMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'CIBER_APOL@HOTMAIL'            , 'EMAIL'] = 'CIBER_APOL@HOTMAIL.COM'
+kashio.loc[kashio['EMAIL'] == 'JSU8095@GMAIL.COM*9'           , 'EMAIL'] = 'JSU8095@GMAIL.COM'
 
 ###############################################################################
 kashio['EMAIL ANTERIOR'] = kashio['EMAIL'] #si reactivamos la celda anterior, esto habría que eliminarlo o comentarlo
@@ -136,7 +208,7 @@ def correccion(row):
                           'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
                           '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
                           'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú',
-                          '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM' ]
+                          '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM', '?' , ',']
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'
@@ -151,6 +223,16 @@ kashio = kashio[columnas] #nos quedamos solo con las columnas necesarias
 
 #%% columna verificadora de correos
 kashio['dominio'] = kashio['EMAIL'].str.split('@', expand = True)[1]
+
+kashio['dominio'] = kashio['dominio'].fillna('REGULARIZARCORREO@GMAIL.COM')
+kashio.loc[kashio['dominio'] == ''  , 'dominio'] = 'REGULARIZARCORREO@GMAIL.COM'
+
+def regularizar_correo(kashio):
+    if ('REGULARIZARCORREO@GMAIL.COM' in kashio['dominio']):
+        return 'REGULARIZARCORREO@GMAIL.COM'
+    else:
+        return kashio['EMAIL']
+kashio['EMAIL'] = kashio.apply(regularizar_correo, axis = 1)    
 
 #%% REPORTE DE CLIENTES CORREGIDO PARA CHEQUEAR LOS CORREOS
 if crear_archivo == True:
@@ -231,9 +313,21 @@ else:
 
 #%% ARCHIVO FINAL PARA CONVERTIR A CSV
 
-kashio_para_csv = kashio_ampliado[['ID CLIENTE', 'DOCUMENTO', 'NUMERO DOCUMENTO', 'NOMBRE', 'EMAIL',
-                                   'TELEFONO', 'ESTADO', 'ID ORDEN DE PAGO', 'REFERENCIA', 'NOMBRE_1',
-                                   'DESCRIPCION', 'MONEDA', 'MONTO', 'VENCIMIENTO', 'EXPIRACION']]
+kashio_para_csv = kashio_ampliado[['ID CLIENTE', 
+                                   'DOCUMENTO', 
+                                   'NUMERO DOCUMENTO', 
+                                   'NOMBRE', 
+                                   'EMAIL',
+                                   'TELEFONO', 
+                                   'ESTADO', 
+                                   'ID ORDEN DE PAGO', 
+                                   'REFERENCIA', 
+                                   'NOMBRE_1',
+                                   'DESCRIPCION', 
+                                   'MONEDA', 
+                                   'MONTO', 
+                                   'VENCIMIENTO', 
+                                   'EXPIRACION']]
 
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('Á', 'A')
 kashio_para_csv['NOMBRE'] = kashio_para_csv['NOMBRE'].str.replace('É', 'E')
@@ -281,15 +375,15 @@ if pd.Timestamp(ultimo_dia_del_mes).day - pd.Timestamp(fecha_actual).day > 4:
     if pd.Timestamp(ultimo_dia_del_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
         print(Back.GREEN + 'Fechas bien puestas')
     else:
-        print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, debes cambiar la segunda en el fincore al último día del mes')
+        print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, cambiar la segunda en el fincore al último día del mes')
 elif pd.Timestamp(ultimo_dia_del_siguiente_mes) in list(kashio_para_csv['VENCIMIENTO parseado']):
     print(Back.GREEN + 'Fechas bien puestas')
 else:
-    print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, debes cambiar la segunda en el fincore al último día del mes')
+    print(Back.RED + '🚨🚨 Las fechas están mal 🚨🚨, cambiar la segunda en el fincore al último día del mes')
     
 # Columna ya no necesaria
 kashio_para_csv.drop('VENCIMIENTO parseado', 
-                     axis = 1, 
+                     axis    = 1, 
                      inplace = True)
 
 #%% EXPORTAR A CSV 

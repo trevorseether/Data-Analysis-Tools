@@ -20,9 +20,9 @@ ubicacion        = 'C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\TASAS Y COMISION
 
 nombre_excel     = 'Rpt_SolicitudesxPrestamoFactoringDetalle30062024.xlsx'
 
-tipo_de_cambio   = 3.747 
+tipo_de_cambio   = 3.831
 
-fecha_desembolso = '2024-04-30'
+fecha_desembolso = '2024-06-30'
 
 CARGA_SQL_SERVER = True
 
@@ -31,9 +31,9 @@ tabla_nombre     = 'FACTORING..[TEM_COMISION]'
 #%%
 tasas_comisiones = pd.read_excel(io       = ubicacion  + '\\' + nombre_excel, 
                                  skiprows = 14,
-                                 dtype    = {'Ruc Cliente'       : str,
-                                             'Ruc Aceptante'     : str,
-                                             'Fecha\nDesembolso' : str})
+                                 dtype    = { 'Ruc Cliente'       : str,
+                                              'Ruc Aceptante'     : str,
+                                              'Fecha\nDesembolso' : str })
 
 # Eliminación de columnas Unnamed
 tasas_comisiones = tasas_comisiones.loc[:, ~tasas_comisiones.columns.str.contains('^Unnamed')]
@@ -103,6 +103,13 @@ def solarizacion_NA(tasas_comisiones):
         return tasas_comisiones['Neto Ajustado']
 tasas_comisiones['Neto Ajustado SOLES'] = tasas_comisiones.apply(solarizacion_NA, axis = 1)
 
+def solarizacion_comisiones(tasas_comisiones):
+    if tasas_comisiones['MN'] == 'US$':
+        return tasas_comisiones['Comision'] * tipo_de_cambio
+    else:
+        return tasas_comisiones['Comision']
+tasas_comisiones['Comision'] = tasas_comisiones.apply(solarizacion_comisiones, axis = 1)
+ 
 #%% COLUMNAS AUXILIARES
 def tipo_prod(df):
     if (pd.isna(df['Aceptante'])) or (df['Aceptante'] == '-'):
@@ -253,5 +260,5 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
     
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-
+    print(f'Correspondiente al {fecha_desembolso}')
 
