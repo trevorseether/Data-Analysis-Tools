@@ -1942,6 +1942,7 @@ anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_ce
 print(anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)])
 
 print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
+
 # anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
 #                 'Número de Cuotas Pagadas 45/',
 #                 'Fecha de Desembolso 21/',
