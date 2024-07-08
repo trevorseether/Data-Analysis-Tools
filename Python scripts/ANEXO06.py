@@ -2457,22 +2457,22 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Mayo 2024'  # se pone el corte actual
+fecha_corte = 'Junio 2024'  # se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240430" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20240531" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados 04.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 04.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 mayo\\fase 2\\rectificado'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio\\fase 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2636,7 +2636,6 @@ df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Cartera Neta'] * \
                                              
 df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
 print(df_diferidos['Provisiones Requeridas 36/'].sum())
-print(df_diferidos['Provisiones Requeridas 36/'].sum())
 
 #%% Saldo de Créditos que no cuentan con cobertura 51/
 # Saldo de Créditos que no cuentan con cobertura 51/
@@ -2670,7 +2669,7 @@ SET @fechacorte = '{fechacorte_mes_pasado}'
 SELECT 
     SUM(ProvisionesConstituidas37) as 'ProvisionesConstituidas37' 
 FROM 
-    anexos_riesgos2..Anx06_preliminar
+    anexos_riesgos3..Anx06
 where FechaCorte1 = @fechacorte
 
 '''
@@ -2688,7 +2687,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2779,7 +2778,7 @@ print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 #%% redondeamos provisiones consitutidas y provisiones requeridas
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
-df_diferidos['Provisiones Requeridas 36/'] = df_diferidos['Provisiones Requeridas 36/'].round(2)
+df_diferidos['Provisiones Requeridas 36/']   = df_diferidos['Provisiones Requeridas 36/'].round(2)
 
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar
@@ -2894,11 +2893,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Mayo 2024'
+fecha = 'Junio 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20240430' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20240531' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
@@ -2935,7 +2934,7 @@ SELECT
 		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIA'
 	END AS 'TIPO DE PRODUCTO TXT'
 FROM 
-	anexos_riesgos2..Anx06_preliminar
+	anexos_riesgos3..Anx06
 WHERE FechaCorte1 = @fechacorte
 '''
 

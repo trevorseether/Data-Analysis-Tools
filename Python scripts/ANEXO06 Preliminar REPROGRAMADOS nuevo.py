@@ -1863,12 +1863,12 @@ else:
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado[columna_devengados].round(2)
 
 print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
-anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
-                'Número de Cuotas Pagadas 45/',
-                'Fecha de Desembolso 21/',
-                'Flag Termino Periodo Gracia',
-                'Nro Prestamo \nFincore',
-                'Dias de Mora 33/']].to_excel('devengados1.xlsx', index = False)
+# anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
+#                 'Número de Cuotas Pagadas 45/',
+#                 'Fecha de Desembolso 21/',
+#                 'Flag Termino Periodo Gracia',
+#                 'Nro Prestamo \nFincore',
+#                 'Dias de Mora 33/']].to_excel('devengados1.xlsx', index = False)
 
 anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado[columna_in_suspendo].round(2)
 
@@ -1931,8 +1931,9 @@ def suspenso_recalculado(anx06_ordenado):
 anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado.apply(suspenso_recalculado, axis = 1)
 
 def devengado_cero(anx06_ordenado):
-    if (anx06_ordenado['Flag Suspenso Recalculado'] == 'si') and \
-       (anx06_ordenado['Intereses en Suspenso 41/'] > 0):
+    if ((anx06_ordenado['Flag Suspenso Recalculado'] == 'si') and \
+       (anx06_ordenado['Intereses en Suspenso 41/'] > 0))     or  \
+       (anx06_ordenado['Refinanciado TXT'] == 'REFINANCIADO'):
         return 0
     else:
         return anx06_ordenado['Rendimiento\nDevengado 40/']
@@ -1941,12 +1942,12 @@ anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_ce
 print(anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)])
 
 print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
-anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
-                'Número de Cuotas Pagadas 45/',
-                'Fecha de Desembolso 21/',
-                'Flag Termino Periodo Gracia',
-                'Nro Prestamo \nFincore',
-                'Dias de Mora 33/']].to_excel('devengados3.xlsx', index = False)
+# anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
+#                 'Número de Cuotas Pagadas 45/',
+#                 'Fecha de Desembolso 21/',
+#                 'Flag Termino Periodo Gracia',
+#                 'Nro Prestamo \nFincore',
+#                 'Dias de Mora 33/']].to_excel('devengados3.xlsx', index = False)
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])
