@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024\\2024 mayo'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024\\2024 junio'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Mayo 2024 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Junio 2024 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202400773_RQ_COOPAC_SAN_MIGUEL_SEGMENTACION_RIESGO.xlsx'
+calificacion = '20523941047_70369063_PE202400930_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'Mayo'
+mes = 'Junio'
 año = 2024
 ###############################################################################
 

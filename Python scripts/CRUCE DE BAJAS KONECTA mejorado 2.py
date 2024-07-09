@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '2024-07-02'  # FORMATO AÑO-MES-DÍA
+FECHATXT = '2024-07-08'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\julio\\CONADIS'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\julio\\08 07'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = 'CONADIS.xlsx'
+nombre_archivo = '2do INFORME 07_24 GRUPO KONECT.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -40,7 +40,7 @@ filas_skip = 0                        ##
 ########################################
 
 'COLUMNA DEL DOCUMENTO IDENTIDAD' #############
-COL_DOC_IDENTIDAD = 'DNI' # 'Documento'
+COL_DOC_IDENTIDAD = 'Documento' #'DNI' # 'Documento'
 ###############################################
 
 'COLUMNA DE LA FECHA DE BAJA' #################

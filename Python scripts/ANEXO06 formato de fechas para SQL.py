@@ -11,8 +11,8 @@ import os
 
 #%% PARÁMETROS INICIALES:
 
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados 03.xlsx'
-ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 mayo\\fase 2'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 05.xlsx'
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio\\fase 2'
 filas_skip    = 2
 
 crear_excel   = True #True o False
@@ -59,13 +59,13 @@ df =pd.read_excel(anexo_del_mes,
                         },
                  skiprows = filas_skip)
 
-df.dropna(subset=['Apellidos y Nombres / Razón Social 2/', 
+df.dropna(subset=[ 'Apellidos y Nombres / Razón Social 2/', 
                    'Fecha de Nacimiento 3/',
                    'Número de Documento 10/',
                    'Domicilio 12/',
                    'Numero de Crédito 18/'], 
           inplace = True, 
-          how = 'all')
+          how     = 'all')
 
 #%% cambiando los formatos de fechas
 
