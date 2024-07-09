@@ -13,7 +13,7 @@ drop table cosecha..cosecha_nuevo
 
 select * 
 into cosecha..cosecha_nuevo
-from anexos_riesgos3..Anx06 where FechaCorte1 >= '20230430'
+from anexos_riesgos3..Anx06 where FechaCorte1 >= '20230531'
 
 update cosecha..cosecha_nuevo ----esta parte creo que no hace falta ejecutarla, (investigar si hace falta recuperar los castigados incluyendo los vendidos)
 set MCastigadoxM = 0 ---
@@ -131,6 +131,9 @@ where
 	and a.fechacorte1 < @fechaactual
 order by FechaCorte1
 
+-- declare @fechaactual as datetime
+-- set @fechaactual = '20240630' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+SELECT CONCAT('ejecutado con ' ,@fechaactual)
 
 --------------------------------------------------------------------------------------------------------------
 -----añadimos los montos de capital vencido, judicial, castigado, solo para que sirva en algunos filtros------

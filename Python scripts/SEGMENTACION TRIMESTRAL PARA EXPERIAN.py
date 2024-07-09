@@ -19,9 +19,9 @@ import os
 
 #%% FECHA DE CORTE, DIRECTORIO DE TRABAJO
 
-mes = 'MARZO 2024'
+mes = 'JUNIO 2024'
 # ubicación
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 MARZO') 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 JUNIO') 
 #en esta ubicación debemos poner el archivo de reprogramados que se manda a principio del mes
 
 ## donde dice @fechacorte se debe poner el mes ################################
@@ -30,12 +30,12 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 MARZO')
 #este reporte es trimestral pero solo van los datos del último mes
 
 ## REPORTE DE REPROGRAMADOS QUE SE MANDA A EXPERIAN ###########################
-repo_reprogramados = 'Marzo Reprogramados - 2024.xlsx'
+repo_reprogramados = 'Junio Reprogramados - 2024.xlsx'
 ###############################################################################
 
 #%% IMPORTACIÓN DEL ANEXO06
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 MARZO\\para sbs'
-nom = 'Rpt_DeudoresSBS Anexo06 - Marzo 2024 - campos ampliados 04.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio\\fase 2'
+nom = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 05.xlsx'
 
 #%% IMPORTACIÓN DEL ANEXO06 DEL SQL
 
@@ -112,9 +112,9 @@ df['Ingresos Diferidos 42/'] = df['Ingresos Diferidos 42/'].round(2)
 df['DEUDA DIRECTA'] = df['Saldo de colocaciones (créditos directos) 24/'] - df['Ingresos Diferidos 42/']
 df['DEUDA DIRECTA'] = df['DEUDA DIRECTA'].round(2)
 
-print(df['Saldo de colocaciones (créditos directos) 24/'].sum())
-print(df['Ingresos Diferidos 42/'].sum())
-print(df['DEUDA DIRECTA'].sum())
+# print(df['Saldo de colocaciones (créditos directos) 24/'].sum())
+# print(df['Ingresos Diferidos 42/'].sum())
+# print(df['DEUDA DIRECTA'].sum())
 
 del df['Saldo de colocaciones (créditos directos) 24/']
 del df['Ingresos Diferidos 42/']
