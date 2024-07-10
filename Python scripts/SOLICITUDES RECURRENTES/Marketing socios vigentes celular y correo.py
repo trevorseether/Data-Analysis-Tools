@@ -14,8 +14,8 @@ import pandas as pd
 import pyodbc
 
 #%%
-fecha_corte = '20240531'
-fecha_hoy   = '20240611' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_corte = '20240630'
+fecha_hoy   = '20240710' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
 usar_sql     = True #False implica usar el excel, True implica obtener datos del sql
 nombre_excel = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx'
@@ -176,7 +176,7 @@ def cel_51(celular):
 
 col_necesarias['Celular1'] = col_necesarias['Celular'].apply(cel_51)
 
-col_necesarias.to_excel('VIGENTES 05-06-2024.xlsx')
+# col_necesarias.to_excel('VIGENTES 05-06-2024.xlsx')
 #%% ANEXO 06
 if usar_sql == True:
     conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
