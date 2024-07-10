@@ -13,7 +13,11 @@ drop table cosecha..cosecha_nuevo
 
 select * 
 into cosecha..cosecha_nuevo
-from anexos_riesgos3..Anx06 where FechaCorte1 >= '20230531'
+from anexos_riesgos3..Anx06 where FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
+
+
+
+
 
 update cosecha..cosecha_nuevo ----esta parte creo que no hace falta ejecutarla, (investigar si hace falta recuperar los castigados incluyendo los vendidos)
 set MCastigadoxM = 0 ---
@@ -50,7 +54,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20230430' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20230531' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha_nuevo (
 nro_fincore,
@@ -125,11 +129,11 @@ a.[Provincia Negocio]
 FROM 
 	anexos_riesgos2..Anx06_preliminar AS A
 
-where
+WHERE
 	DATENAME(MONTH,a.FechaCorte1) = DATENAME(MONTH,a.FechadeDesembolso21)
-	and year(a.FechaCorte1) = year(a.FechadeDesembolso21)
+	and YEAR(a.FechaCorte1)       = YEAR(a.FechadeDesembolso21)
 	and a.fechacorte1 < @fechaactual
-order by FechaCorte1
+ORDER BY FechaCorte1
 
 -- declare @fechaactual as datetime
 -- set @fechaactual = '20240630' ---- hay que añadir los datos desde adelante hasta atrás, por un año
