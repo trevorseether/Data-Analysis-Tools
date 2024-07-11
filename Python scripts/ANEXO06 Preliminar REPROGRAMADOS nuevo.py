@@ -766,7 +766,9 @@ pivot_6meses = pivot_6meses.fillna(0)
 df_corto = ordenado[['Tipo de Crédito 19/',
                      'Saldos de Créditos Castigados 38/',
                      'Saldo de colocaciones (créditos directos) 24/',
-                     'Código Socio 7/']]
+                     'Código Socio 7/',
+                     
+                     'Nro Prestamo \nFincore']]
 
 #sumamos saldo de cartera y saldo castigado
 df_corto.loc[:, 'monto mype'] = df_corto['Saldo de colocaciones (créditos directos) 24/'] + df_corto['Saldos de Créditos Castigados 38/']
@@ -780,10 +782,10 @@ tabla_resumen = tabla_resumen.reset_index()
 #rename
 tabla_resumen = tabla_resumen.rename(columns={"Código Socio 7/": "CodigoSocio7"})
 
-tabla_resumen = tabla_resumen.merge(pivot_6meses,
-                                    left_on  = "CodigoSocio7",
-                                    right_on = 'CodigoSocio7',
-                                    how      = 'left')
+tabla_resumen = tabla_resumen.merge( pivot_6meses,
+                                     left_on  = "CodigoSocio7",
+                                     right_on = 'CodigoSocio7',
+                                     how      = 'left')
 
 tabla_resumen.fillna(0, inplace = True)
 
@@ -809,6 +811,8 @@ del ordenado['CodigoSocio7']
 
 def asign_prod_19(ordenado):
     if pd.isna(ordenado['tipo mype']):
+        return ordenado['Tipo de Crédito 19/']
+    elif (~pd.isna(ordenado['tipo mype'])) and (ordenado['Tipo de Crédito 19/'] not in tipo_cred_mype):
         return ordenado['Tipo de Crédito 19/']
     else:
         return ordenado['tipo mype']
@@ -867,6 +871,8 @@ if generar_excels == True:
                                  index=False)
 else:
     pass
+ordenado.to_excel('revisar.xlsx', index = False)
+
 
 #%% CLASIFICACIÓN SIN ALINEAMIENTO 14/
 #calculamos alineamiento 14/
