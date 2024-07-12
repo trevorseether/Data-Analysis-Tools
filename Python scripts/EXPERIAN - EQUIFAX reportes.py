@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Mayo 2024'
+FECHA_CORTE = 'Junio 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 mayo"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 junio"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - MAYO-24 - INSUMO.xlsx"
+insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - JUNIO-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,12 +35,12 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240531'
+f_corte_sql = '20240630'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
 
-ubicacion_calificacion = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 mayo"
+ubicacion_calificacion = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 junio"
 nombre_calif_experian = 'calificacion para reporte experian.xlsx'
 
 #%% ANEXO 06 DEL MISMO MES DE CORTE:
@@ -134,9 +134,9 @@ df_fincore['Nro Prestamo \nFincore'] = df_fincore['Nro Prestamo \nFincore'].str.
 df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].astype(str)
 df_fincore['Numero de Crédito 18/']  = df_fincore['Numero de Crédito 18/'].str.strip()
 
-suma_saldo_cartera = df_fincore['Capital Vigente 26/'] + \
+suma_saldo_cartera = df_fincore['Capital Vigente 26/']      + \
                      df_fincore['Capital Refinanciado 28/'] + \
-                     df_fincore['Capital Vencido 29/'] + \
+                     df_fincore['Capital Vencido 29/']      + \
                      df_fincore['Capital en Cobranza Judicial 30/']
 suma_saldo_cartera = suma_saldo_cartera.sum().round(2)
 
@@ -242,8 +242,8 @@ df_sentinel = df_sentinel.dropna(subset=['Nro_Fincore'])
 anexo_06_descap = anexo_06_descap.rename(columns={'Nro Prestamo \nFincore': 
                                                   'Nro_Fincore'})
 df_sentinel = df_sentinel.merge(anexo_06_descap, 
-                                on='Nro_Fincore', 
-                                how='left')
+                                on  = 'Nro_Fincore', 
+                                how = 'left')
 
 df_sentinel['ME Deuda Directa Vigente (*)'] =                   0
 df_sentinel['ME Deuda Directa Refinanciada (*)'] =              0
