@@ -499,6 +499,10 @@ ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1
 
 #%% ORIGINADOR CORRECTO
 # (modificar a partir del otro mes, para que el originador se saque del anexo06 preliminar de ahora en adelante)
+
+# originador_df = anx06_anterior[['Nro Prestamo \nFincore', 'Funcionario Origuinador']]
+# rename
+
 originador_df = pd.read_excel(io    = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\ORIGINADOR BASE DE DATOS DE REPORTES GERENCIALES.xlsx', 
                               dtype = {'Nro_Fincore_originador' : str})
 
