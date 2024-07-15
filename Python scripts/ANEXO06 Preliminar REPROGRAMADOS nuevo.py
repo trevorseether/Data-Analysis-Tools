@@ -453,7 +453,7 @@ ordenado = menos_bruto[[
     'Monto Desembolso\nSoles Fijo'
     ]]
 
-#%% REASIGNANDO FUNCIONARIO ADMINISTRADOR:
+#%% REASIGNANDO FUNCIONARIO ADMINISTRADOR: (COMPROBAR SI AÚN ES NECESARIO ESTE BLOQUE DE CÓDIGO)
 columna_funcionario = 'Funcionario Actual'
 # modificación del funcionario administrador JOSÉ SANCHEZ
 fincore_delf = ['00113801', '00104004', '00117340', '00095947', '00116920', '00110128', '00105401', '00111826', '00113403', 
@@ -485,6 +485,7 @@ def admin_reasignacion(df):
 ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
 
 ###############################################################################
+
 cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
                                    dtype = {'nro_fincore' : str})
 columna_funcionario = 'Funcionario Origuinador'
@@ -496,6 +497,27 @@ def originador_reasignacion(df):
 
 ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1)
 
+#%% ORIGINADOR CORRECTO
+# (modificar a partir del otro mes, para que el originador se saque del anexo06 preliminar de ahora en adelante)
+originador_df = pd.read_excel(io    = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\ORIGINADOR BASE DE DATOS DE REPORTES GERENCIALES.xlsx', 
+                              dtype = {'Nro_Fincore_originador' : str})
+
+originador_df['Nro_Fincore_originador']         = originador_df['Nro_Fincore_originador'].str.strip()
+originador_df['originador para rectificación']  = originador_df['originador para rectificación'].str.strip()
+
+ordenado = ordenado.merge(originador_df,
+                          left_on  = 'Nro Prestamo \nFincore',
+                          right_on = 'Nro_Fincore_originador',    #modificar
+                          how      = 'left')
+
+def originador_mes_anterior(ordenado):
+    if pd.isna(ordenado['Nro_Fincore_originador']):
+        return ordenado['Funcionario Origuinador']
+    else:
+        return ordenado['originador para rectificación']
+    
+ordenado['Funcionario Origuinador'] = ordenado.apply(originador_mes_anterior, axis = 1)
+print('rectificar este código, línea 520, porque se debe adaptar a que se saque datos del anexo06 preliminar cada mes')
 
 #%% SALDO DE GARANTÍA DEL MES PASADO
 # PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,

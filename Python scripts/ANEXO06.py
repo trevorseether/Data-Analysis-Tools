@@ -29,7 +29,7 @@ warnings.filterwarnings('ignore')
 
 # =============================================================================
 # validar que se hayan retirado del anexo06 los créditos vendidos en el mes respectivo **********
-# si es que se han vendido créditos claro
+# solo si es que se han vendido créditos
 # =============================================================================
 
 #%% ADVERTENCIA
@@ -183,16 +183,16 @@ print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas
 
 #%% corrección originador andrea bilbao
-cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
-                                   dtype = {'nro_fincore' : str})
-columna_funcionario = 'Funcionario Origuinador'
-def originador_reasignacion(df):
-    if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
-        return 'ANDREA BILBAO BRICEÑO'
-    else:
-        return df[columna_funcionario]
+# cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
+#                                    dtype = {'nro_fincore' : str})
+# columna_funcionario = 'Funcionario Origuinador'
+# def originador_reasignacion(df):
+#     if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
+#         return 'ANDREA BILBAO BRICEÑO'
+#     else:
+#         return df[columna_funcionario]
 
-df1[columna_funcionario] = df1.apply(originador_reasignacion, axis = 1)
+# df1[columna_funcionario] = df1.apply(originador_reasignacion, axis = 1)
 
 #%% CORRECCIÓN DEL TIPO DE DOCUMENTO
 
