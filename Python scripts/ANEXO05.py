@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 04.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 06.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########

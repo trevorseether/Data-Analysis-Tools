@@ -2468,7 +2468,7 @@ fechacorte_mes_pasado = "20240531" # se pone la del corte anterior para obtener 
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 04.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 06.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
@@ -2590,6 +2590,7 @@ df_diferidos = pd.read_excel(anx06_contabilidad,
                           'Fecha de Vencimiento Actual del Crédito 49/'   : object,
                           'Nro Prestamo \nFincore'    : str},
                          skiprows = 2
+                         #, sheet_name = 'Junio 2024' ################### <-- esto habrá que apagarlo
                              )
 
 df_diferidos.dropna(subset = [# 'Apellidos y Nombres / Razón Social 2/', 

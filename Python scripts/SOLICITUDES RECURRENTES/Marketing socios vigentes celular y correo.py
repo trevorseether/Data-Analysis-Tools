@@ -118,11 +118,11 @@ order by socio asc, p.fechadesembolso desc
 
 vigentes = pd.read_sql_query(query, 
                              conn, 
-                             dtype = {'codigosocio'    : str,
-                                      'DOCUMENTO'      : object,
-                                      'pagare_fincore' : object,
-                                      'fechadesembolso': object,
-                                      'Celular'        : str
+                             dtype = {'codigosocio'     : str,
+                                      'DOCUMENTO'       : object,
+                                      'pagare_fincore'  : object,
+                                      'fechadesembolso' : object,
+                                      'Celular'         : str
                                       })
 del conn
 vigentes.drop_duplicates(subset = 'pagare_fincore', inplace = True)
