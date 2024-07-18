@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\julio\\15 07')
-nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFecha16072024.xlsx'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\julio\\18 07')
+nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFecha17072024.xlsx'
 filas_skip       = 8
-tipo_cambio      = 3.726
-fecha_corte      = '2024-07-15'
+tipo_cambio      = 3.719
+fecha_corte      = '2024-07-18'
 CARGA_SQL_SERVER = True
-tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240715]' 
+tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240718]' 
 
 #%%
 lineas = pd.read_excel(io = nombre, 
@@ -140,6 +140,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
+    print('Se cargaron los datos a SQL SERVER FACTORING..[LINEAS]')
 
 else:
     print('No se ha cargado a SQL SERVER')

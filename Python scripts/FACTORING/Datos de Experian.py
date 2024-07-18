@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_06_30]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_07_17]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\02 07 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\18 07 2024')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_6178.txt'
-corte = '2024-06-30'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7362.txt'
+corte = '2024-07-17'
 
 #%%
 experian_data = pd.read_csv(nombre,
@@ -112,6 +112,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
+    print('Se cargaron los datos a SQL SERVER FACTORING..EXPERIAN')
 
 else:
     print('No se ha cargado a SQL SERVER')
@@ -170,10 +171,11 @@ no_reportados = mergeado[pd.isna(mergeado['NOMBRE CPT'])]
 no_reportados = no_reportados[['Ruc Deudor', 'Deudor']]
 
 #%%
-no_reportados.to_excel('no reportados por Experian.xlsx')
+# no_reportados.to_excel('no reportados por Experian.xlsx')
 
 if no_reportados.shape[0] > 0:
     print(no_reportados)
+    no_reportados.to_excel('no reportados por Experian.xlsx', index = False)
 else:
-    print('todo bien')
+    print('todo bien, todos están siendo reportados por Experian')
     

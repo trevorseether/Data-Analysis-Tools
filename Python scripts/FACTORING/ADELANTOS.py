@@ -16,17 +16,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-tabla_nombre = 'FACTORING..[ADELANTOS_20240715]'
+tabla_nombre = 'FACTORING..[ADELANTOS_20240717]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte      = '2024-07-15'
+fecha_corte      = '2024-07-17'
 
-tipo_de_cambio   = 3.726
+tipo_de_cambio   = 3.719
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JULIO\\15 07')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\JULIO\\18 07')
 
-nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendido15072024adelantos.xlsx'
+nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalle17072024.xlsx'
 
 filas_skip = 14
 
@@ -275,6 +275,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
+    print('Se cargaron los datos a SQL SERVER FACTORING..[ADELANTOS]')
 
 else:
     print('No se ha cargado a SQL SERVER')
