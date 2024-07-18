@@ -87,10 +87,10 @@ COLUMNAS = ['CodSoc',
 base = padron_socios[COLUMNAS]
 
 #%% Aplicar la función a la columna 'Monto'
-base['Monto_en_texto'] = base[columna_aporte].apply(numero_a_texto)
-
 # convertimos los números a texto
 padron_socios[columna_aporte] = padron_socios[columna_aporte].apply(lambda x: f"{x:.2f}")
+
+base['Monto_en_texto'] = base[columna_aporte].apply(numero_a_texto)
 
 #%%
 base = base[base['estado mayo 2024'] == 'INACTIVO']

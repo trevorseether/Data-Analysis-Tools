@@ -6,7 +6,9 @@ Created on Thu Jun 20 11:59:37 2024
 """
 
 # pip install PyPDF2 pandas reportlab
-
+# =============================================================================
+#      CREADOR DE PDFS CON CONTRASEÑA
+# =============================================================================
 
 import pandas as pd
 import PyPDF2
@@ -27,6 +29,14 @@ df = pd.read_excel(excel_file,
 input_pdf = 'I.pdf'
 pdf_reader = PdfReader(input_pdf)
 
+'''
+Este script para funcionar recibe como input:
+    un pdf con X cantidad de páginas
+    un excel con X cantidad de filas
+    en cada fila del excel debe haber un nombre de un pdf y una columna de nro de doc
+    en el orden del excel, separará el pdf en cada hoja individualmente y les asignará
+    el nombre y contraseña (nro documento) en orden (1era hoja, 1era fila, etc etc)
+'''
 #%%%
 # Función para agregar contraseña a un PDF
 def add_password(input_pdf, output_pdf, password):
