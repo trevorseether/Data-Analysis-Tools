@@ -14,16 +14,16 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Julio 2024'
-fecha_inicio = '2024-07-01'
-fecha_final  = '2024-07-31'
+MES          = 'Agosto 2024'
+fecha_inicio = '2024-08-01'
+fecha_final  = '2024-08-31'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 06\\25 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\24 07')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
-ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte .xlsx'
+ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte.xlsx'
 #####################################################################
 
 #%%

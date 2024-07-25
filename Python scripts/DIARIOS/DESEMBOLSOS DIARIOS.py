@@ -118,7 +118,7 @@ feriados_2023 = [datetime.strptime(fecha, '%d-%m-%Y') for fecha in feriados_2023
 def dia_no_laboral(fecha):
     if fecha in feriados_2023:
         return 'no laboral'
-    elif fecha.weekday() == 6:  # Domingo
+    elif fecha.weekday() == 6:  # 6 es Domingo
         return 'no laboral'
     else:
         return 'laboral'

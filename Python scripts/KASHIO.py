@@ -22,20 +22,20 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\18 07')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\24 07')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240718.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240724.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
-crear_archivo         = False #True o False
+crear_archivo         = True #True o False
 ###############################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA' ############################################
-mensajeria_preventiva = False #True o False
+mensajeria_preventiva = True #True o False
 ###############################################################################
 
 'filtrar solo mype' ###########################################################
@@ -402,7 +402,7 @@ kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv',
 #%% EXPORTAR A EXCEL SI ES QUE ES NECESARIO CREAR EL REPORTE MENSUAL
 
 if mensajeria_preventiva == True:
-    kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte ' + '.xlsx',
+    kashio_para_csv.to_excel('insumo cobranzas en caso de necesitar el reporte.xlsx',
                              index = False)
 else:
     pass

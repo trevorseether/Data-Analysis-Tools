@@ -18,13 +18,13 @@ warnings.filterwarnings('ignore')
 #%%
 # COLUMNA_ALINEAMIENTO = 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023' # Columna 32 en el excel (no incluye NO REGULADAS)
 
-CORTE_SQL         = '20240531'
+CORTE_SQL         = '20240630'
 
-tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_05]' # urgente siempre cambiar esta vaina
+tabla             = '[ANEXOS_RIESGOS3].[ALINEAMIENTO EXTERNO].[2024_06]' # urgente siempre cambiar esta vaina
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 mayo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\ALINEAMIENTO EXTERNO\\2024\\2024 junio')
 
-NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_246202484246_1.csv'
+NOMBRE_AL_EXTERNO = 'exceldoc_AlinCartera_2171967_42734875_2472024103146_1.csv'
 
 CARGA_SQL_SERVER  = True
 
@@ -88,6 +88,7 @@ base = pd.read_sql_query(query,
 del conn
 
 base['NumerodeDocumento10'] = base['NumerodeDocumento10'].str.strip()
+
 #%%
 
 al_externo = pd.read_csv(NOMBRE_AL_EXTERNO,
@@ -99,7 +100,7 @@ al_externo.drop_duplicates(subset = 'NUMERO DE DOCUMENTO', inplace = True)
 
 
 #%% SI LA ESTRUCTURA SE MANTIENE este debería ser una columna tipo 'ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023'
-COLUMNA_ALINEAMIENTO = al_externo.columns[31]
+COLUMNA_ALINEAMIENTO = al_externo.columns[28] #antes 31
 print(COLUMNA_ALINEAMIENTO)
 print('')
 print('''el nombre de la columna debe ser algo como:''')
@@ -191,7 +192,9 @@ print('si sale más de cero, hay que investigar')
 print('sale null en aquellos registros que Experian no procesa')
 
 #%% máximo alineamiento:
-    
+
+UNION.columns
+
 def max_clasificacion(UNION):
     if UNION['ALINEAMIENTO EXTERNO'] > UNION['ClasificaciondelDeudorconAlineamiento15']:
         return UNION['ALINEAMIENTO EXTERNO']

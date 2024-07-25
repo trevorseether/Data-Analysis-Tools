@@ -12,9 +12,9 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\julio\\17 07')
-archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_9319.txt'
-fecha_añadido   = '2024-07-17'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\julio\\19 07')
+archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_5794.txt'
+fecha_añadido   = '2024-07-19'
 carga_sql       = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
