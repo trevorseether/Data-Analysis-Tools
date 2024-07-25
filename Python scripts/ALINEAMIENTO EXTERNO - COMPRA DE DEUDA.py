@@ -86,7 +86,6 @@ base = pd.read_sql_query(query,
                          )
 
 del conn
-
 base['NumerodeDocumento10'] = base['NumerodeDocumento10'].str.strip()
 
 #%%
@@ -105,6 +104,7 @@ print(COLUMNA_ALINEAMIENTO)
 print('')
 print('''el nombre de la columna debe ser algo como:''')
 print('ALINEAMIENTO EXTERNO SBS RCC NOVIEMBRE 2023')
+
 #%%
 x = al_externo.columns
 
