@@ -19,9 +19,10 @@ SELECT
 	precuo.numerocuota, 
 	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda',
 	
-	year(ccab.fecha) AS 'AÑO TC',month(ccab.fecha) AS 'MES TC',
+	--year(ccab.fecha) AS 'AÑO TC',month(ccab.fecha) AS 'MES TC',
 
-	iif(cdet.CodMoneda='95', tcsbs.tcsbs,1) as 'TC_SBS',
+	iif(cdet.CodMoneda='95', tcsbs.tcsbs, 1) as 'TC_SBS',
+
 	ccab.fecha as 'fecha_cob', 
 	cdet.Capital, 
 	cdet.aporte as 'Aporte',
