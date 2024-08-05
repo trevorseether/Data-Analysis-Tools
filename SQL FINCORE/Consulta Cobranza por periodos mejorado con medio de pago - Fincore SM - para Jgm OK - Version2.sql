@@ -17,7 +17,11 @@ SELECT
 --------------------------------------------------------------------
 	pre.FechaDesembolso,
 	precuo.numerocuota, 
-	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda', 
+	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda',
+	
+	year(ccab.fecha) AS 'AÑO TC',month(ccab.fecha) AS 'MES TC',
+
+	iif(cdet.CodMoneda='95', tcsbs.tcsbs,1) as 'TC_SBS',
 	ccab.fecha as 'fecha_cob', 
 	cdet.Capital, 
 	cdet.aporte as 'Aporte',
@@ -73,12 +77,16 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
 
                             --------
   
+				left join TipoCambioSBS as tcsbs
+				on (year(ccab.fecha) = tcsbs.Anno) and (month(ccab.fecha) = tcsbs.MES)
+
 -- WHERE        (ccab.Fecha >= '01-01-2020' and ccab.Fecha <= '31-12-2020') and cdet.flagponderosa is null
 -- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  -- 376 Anulado and cdet.flagponderosa is null
 
-WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20241001' AND '20240630' and cdet.CodEstado <> 376  
+WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20240101' AND '20240630' and cdet.CodEstado <> 376  
 
-and right(concat('0000000',pre.numero),8)  = 00129322
+--and right(concat('0000000',pre.numero),8)  = 00129322
+
 
 ORDER BY socio, ccab.fecha
 
