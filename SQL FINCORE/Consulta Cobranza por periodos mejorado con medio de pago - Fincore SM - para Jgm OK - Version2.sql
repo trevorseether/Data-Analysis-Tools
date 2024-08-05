@@ -1,9 +1,20 @@
 SELECT 
 	soc.codsocio, 
 	soc.codigosocio, 
-	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) AS 'Socio', 
+	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) AS 'Socio',
+		soc.apellidopaterno,
+		soc.apellidomaterno,
+		soc.nombres,
+		soc.razonsocial,
 	iif(soc.CodTipoPersona =1,soc.nrodocIdentidad,soc.nroRuc) AS 'doc_ident', 
+--------------------------------------------------------------------
 	right(concat('0000000',pre.numero),8)  AS 'PagareFincore',
+	CASE 
+		WHEN pre.CodPrestamoFox IS NOT NULL THEN
+		RIGHT(CONCAT('000000',pre.CodPrestamoFox),6)
+	ELSE RIGHT(CONCAT('0000000',pre.numero),8)
+		END as 'pagare_fox', 
+--------------------------------------------------------------------
 	pre.FechaDesembolso,
 	precuo.numerocuota, 
 	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda', 

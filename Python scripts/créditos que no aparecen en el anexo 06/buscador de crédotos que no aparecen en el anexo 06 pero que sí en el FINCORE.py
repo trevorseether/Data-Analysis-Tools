@@ -15,12 +15,12 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio\\productos')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\productos')
 
-anexo06 = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados procesado 01.xlsx'
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
 
 fecha_inicio = '20220101' #formato para sql (no cambiar)
-fecha_corte  = '20240630' #formato para sql
+fecha_corte  = '20240731' #formato para sql
 
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 

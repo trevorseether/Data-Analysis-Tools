@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Junio 2024'  # Mes Año
-fecha_corte             = '2024-06-30' # año-mes-día
-fecha_corte_inicial     = '2024-06-01' # año-mes-día
+fecha_mes               = 'Julio 2024'  # Mes Año
+fecha_corte             = '2024-07-31' # año-mes-día
+fecha_corte_inicial     = '2024-07-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Mayo 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -486,16 +486,16 @@ ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
 
 ###############################################################################
 
-cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
-                                   dtype = {'nro_fincore' : str})
-columna_funcionario = 'Funcionario Origuinador'
-def originador_reasignacion(df):
-    if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
-        return 'ANDREA BILBAO BRICEÑO'
-    else:
-        return df[columna_funcionario]
+# cred_andrea_bilbao = pd.read_excel(io = 'ORIGINADOR ANDREA BILBAO.xlsx', 
+#                                     dtype = {'nro_fincore' : str})
+# columna_funcionario = 'Funcionario Origuinador'
+# def originador_reasignacion(df):
+#     if df['Nro Prestamo \nFincore'] in list(cred_andrea_bilbao['nro_fincore']):
+#         return 'ANDREA BILBAO BRICEÑO'
+#     else:
+#         return df[columna_funcionario]
 
-ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1)
+# ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1)
 
 #%% ORIGINADOR CORRECTO
 # (modificar a partir del otro mes, para que el originador se saque del anexo06 preliminar de ahora en adelante)
@@ -504,24 +504,28 @@ ordenado[columna_funcionario] = ordenado.apply(originador_reasignacion, axis = 1
 # rename
 
 originador_df = pd.read_excel(io    = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\ORIGINADOR BASE DE DATOS DE REPORTES GERENCIALES.xlsx', 
-                              dtype = {'Nro_Fincore_originador' : str})
+                              dtype = {'Nro_Fincore_originador' : str,
+                                       'Nro Prestamo \nFincore' : str},
+                              sheet_name = 'originador validado')
 
-originador_df['Nro_Fincore_originador']         = originador_df['Nro_Fincore_originador'].str.strip()
-originador_df['originador para rectificación']  = originador_df['originador para rectificación'].str.strip()
+originador_df['Nro Prestamo \nFincore']   = originador_df['Nro Prestamo \nFincore'].str.strip()
+originador_df['rectificación de nombre']  = originador_df['rectificación de nombre'].str.strip()
 
 ordenado = ordenado.merge(originador_df,
                           left_on  = 'Nro Prestamo \nFincore',
-                          right_on = 'Nro_Fincore_originador',    #modificar
+                          right_on = 'Nro Prestamo \nFincore',    #modificar
                           how      = 'left')
 
 def originador_mes_anterior(ordenado):
-    if pd.isna(ordenado['Nro_Fincore_originador']):
+    if pd.isna(ordenado['Nro Prestamo \nFincore']):
         return ordenado['Funcionario Origuinador']
     else:
-        return ordenado['originador para rectificación']
+        return ordenado['rectificación de nombre']
     
 ordenado['Funcionario Origuinador'] = ordenado.apply(originador_mes_anterior, axis = 1)
-print('rectificar este código, línea 520, porque se debe adaptar a que se saque datos del anexo06 preliminar cada mes')
+
+print('rectificar este código, aprox línea 520, porque se debe adaptar a que se saque datos del anexo06 preliminar cada mes')
+del ordenado['rectificación de nombre']
 
 #%% SALDO DE GARANTÍA DEL MES PASADO
 # PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
@@ -827,7 +831,9 @@ def verificar_mype(fila):
         return '10'
     
 tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis = 1)
+
 # ESTA TABLA AUXILIAR CONTIENE EL VERDADERO TIPO DE CÓDIGO QUE DEBE CORRESPONDER AL CRÉDITO
+
 #%% merge con la tabla auxiliar
 ordenado = ordenado.merge(tabla_resumen[['CodigoSocio7', 'tipo mype']],
                           left_on  = 'Código Socio 7/',
@@ -897,8 +903,6 @@ if generar_excels == True:
                                  index=False)
 else:
     pass
-ordenado.to_excel('revisar.xlsx', index = False)
-
 
 #%% CLASIFICACIÓN SIN ALINEAMIENTO 14/
 #calculamos alineamiento 14/
@@ -1921,12 +1925,13 @@ def ajuste_devengados(anx06_ordenado):
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
 
 print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
-anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
-                'Número de Cuotas Pagadas 45/',
-                'Fecha de Desembolso 21/',
-                'Flag Termino Periodo Gracia',
-                'Nro Prestamo \nFincore',
-                'Dias de Mora 33/']].to_excel('devengados2.xlsx', index = False)
+
+# anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
+#                 'Número de Cuotas Pagadas 45/',
+#                 'Fecha de Desembolso 21/',
+#                 'Flag Termino Periodo Gracia',
+#                 'Nro Prestamo \nFincore',
+#                 'Dias de Mora 33/']].to_excel('devengados2.xlsx', index = False)
 
 def flag_devengado_recalculado(anx06_ordenado):
     # saldo_cartera  = anx06_ordenado['Saldo de colocaciones (créditos directos) 24/']
@@ -1997,11 +2002,11 @@ columnas  = anx06_ordenado.columns
 largo_fin = len(columnas) - 5
 
 columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
-                                             'fecha término de gracia por desembolso ["v" + dias gracia (av)]',
+                                             'fecha término de gracia por desembolso ["v" + dias gracia (av)]', #esta columna se está duplicando
                                              'periodo de gracia por Reprog inicio',
                                              'periodo de gracia por Reprog Término',
                                              'Fecha Venc de Ult Cuota Cancelada\n(NVO)'] + list(columnas[64:largo_fin])
-    
+
 anx06_ordenado = anx06_ordenado[columnas_ordenadas]
 
 #%% AÑADIENDO MODIFICACIONES A LAS COLUMNAS 52, 53, 54, 55
@@ -2199,9 +2204,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240630' #mes actual
-fecha_corte_menos_1 = '20240531' #mes anterior
-fecha_corte_menos_2 = '20240430' #mes anterior del anterior
+fecha_corte_actual  = '20240731' #mes actual
+fecha_corte_menos_1 = '20240630' #mes anterior
+fecha_corte_menos_2 = '20240531' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2280,13 +2285,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Mayo 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 mayo\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Junio 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Jun-24'
-mes_anterior_txt = 'May-24'
+mes_actual_txt   = 'Jul-24'
+mes_anterior_txt = 'Jun-24'
 # =============================================================================
 #%% LECTURA
 

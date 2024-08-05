@@ -17,17 +17,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre     = 'FACTORING..[CARTERA_2024_06]'
+tabla_nombre     = 'FACTORING..[CARTERA_2024_07]'
 
 CARGA_SQL_SERVER = True
 
-fecha_corte      = '2024-06-28'
+fecha_corte      = '2024-07-31'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\JUNIO\\28 06')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\2024 julio')
 
-nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante28062024.xlsx'
+nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante31072024.xlsx'
 
-tipo_de_cambio   = 3.747
+tipo_de_cambio   = 3.717
 
 #%%
 datos = pd.read_excel(io       = nombre, 
@@ -225,8 +225,8 @@ if CARGA_SQL_SERVER == True:
 
     ###########################################################################
     fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
-    # cursor.execute(f"DELETE FROM FACTORING..[CARTERA] WHERE FECHACORTE = '{fecha_format_sql}'")
-    # cursor.execute(f"INSERT INTO FACTORING..[CARTERA] SELECT * FROM {tabla}")
+    cursor.execute(f"DELETE FROM FACTORING..[CARTERA] WHERE FECHACORTE = '{fecha_format_sql}'")
+    cursor.execute(f"INSERT INTO FACTORING..[CARTERA] SELECT * FROM {tabla}")
     ###########################################################################
     
     # Confirmar los cambios y cerrar la conexión
@@ -237,5 +237,4 @@ if CARGA_SQL_SERVER == True:
 
 else:
     print('No se ha cargado a SQL SERVER')
-    
     
