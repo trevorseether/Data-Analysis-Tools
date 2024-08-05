@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240731' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20240831' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_07]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_07_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_08]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_08_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -50,7 +50,7 @@ feriados = ['01-01-2024',
             '07-06-2024',
             '29-06-2024',
             '23-07-2024',
-            '26-07-2024',
+            #'26-07-2024',
             '28-07-2024',
             '29-07-2024',
             '06-08-2024',
@@ -165,7 +165,7 @@ dias_laborales = pd.concat([df,df_anterior], ignore_index = True)
 #%% Fecha de hoy para incluir o no el día de hoy
 
 if incluir_hoy == True:
-    fecha_hoy_sql = '20401231'
+    fecha_hoy_sql = '20401231' # fecha arbitrariamente lejana
 else:
     fecha_hoy_sql = str(date.today())
     fecha_hoy_sql = fecha_hoy_sql[0:4] + fecha_hoy_sql[5:7] + fecha_hoy_sql[8:10]
@@ -422,6 +422,7 @@ del union['Fecha']
 print('Debe salir cero:')
 print(union[pd.isna(union['Numero de dia laboral'])].shape[0])
 if union[pd.isna(union['Numero de dia laboral'])].shape[0] > 0:
+    revisar_fecha_desembolso = union[pd.isna(union['Numero de dia laboral'])]
     print('Si no sale cero, es porque se ha desembolsado en una fecha que no es laboral')
 
 #%% EXCEL

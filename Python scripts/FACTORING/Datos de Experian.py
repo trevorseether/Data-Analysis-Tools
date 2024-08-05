@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_07_17]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_07_26]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\18 07 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\julio\\26 07')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7362.txt'
-corte = '2024-07-17'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_3260.txt'
+corte = '2024-07-26'
 
 #%%
 experian_data = pd.read_csv(nombre,
