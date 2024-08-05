@@ -16,13 +16,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-ubicacion        = 'C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\TASAS Y COMISIONES'
+ubicacion        = 'C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\TASAS Y COMISIONES\\2024\\agosto\\05 08'
 
-nombre_excel     = 'Rpt_SolicitudesxPrestamoFactoringDetalle30062024.xlsx'
+nombre_excel     = 'Rpt_SolicitudesxPrestamoFactoringDetalle31072024.xlsx'
 
-tipo_de_cambio   = 3.831
+tipo_de_cambio   = 3.717
 
-fecha_desembolso = '2024-06-30'
+fecha_desembolso = '2024-07-31'
 
 CARGA_SQL_SERVER = True
 

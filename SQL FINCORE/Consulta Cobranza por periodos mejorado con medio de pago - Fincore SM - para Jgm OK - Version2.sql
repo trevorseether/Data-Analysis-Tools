@@ -65,18 +65,21 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
                            left join TablaMaestraDet as tmdet5 on pre.CodSituacion = tmdet5.CodTablaDet
 
                             -------
-                            left join CobranzaDocumento cdoc ON ccab.CodCobranzaDocumento =cdoc.CodCobranzaDocumento
-                            left join Cuenta  CU ON CU.CodCuenta  =cdoc.CodCuentaDestino
-                            left join NotaCredito  NC ON ccab.CodNotaCredito =NC.CodNotaCredito
-                            left join CobranzaDocumento CDDNC ON NC.CodCobranzaDocumento =CDDNC.CodCobranzaDocumento
-                            left join Cuenta  CUNC ON CDDNC.CodCuentaDestino=CUNC.CodCuenta
+                            left join CobranzaDocumento  AS cdoc   ON ccab.CodCobranzaDocumento = cdoc.CodCobranzaDocumento
+                            left join Cuenta             AS CU     ON CU.CodCuenta              = cdoc.CodCuentaDestino
+                            left join NotaCredito        AS NC     ON ccab.CodNotaCredito       = NC.CodNotaCredito
+                            left join CobranzaDocumento  AS CDDNC  ON NC.CodCobranzaDocumento   = CDDNC.CodCobranzaDocumento
+                            left join Cuenta             AS CUNC   ON CDDNC.CodCuentaDestino    = CUNC.CodCuenta
 
                             --------
   
 -- WHERE        (ccab.Fecha >= '01-01-2020' and ccab.Fecha <= '31-12-2020') and cdet.flagponderosa is null
 -- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  -- 376 Anulado and cdet.flagponderosa is null
 
-WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20231001' AND '20231031' and cdet.CodEstado <> 376   
+WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20241001' AND '20240630' and cdet.CodEstado <> 376  
+
+and right(concat('0000000',pre.numero),8)  = 00129322
+
 ORDER BY socio, ccab.fecha
 
 

@@ -29,13 +29,13 @@ fecha_fin    = '20240630' # en formato para SQLserver
 #%%
 columna_nro_identificador_del_credito = 'Numero de Crédito 18/'
 
-df_para_completar = pd.read_excel(io = excel_enviado_por_contabilidad, 
+df_para_completar = pd.read_excel(io       = excel_enviado_por_contabilidad, 
                                   skiprows = skip_filas,
-                                  dtype = {columna_nro_identificador_del_credito        : str,
-                                           'RUC'                                        : str,
-                                           'Número de Documento de identidad del socio' : str,
-                                           'Tipo de préstamo'                           : str,
-                                           'Tipo de moneda'                             : str})
+                                  dtype    = {columna_nro_identificador_del_credito        : str,
+                                              'RUC'                                        : str,
+                                              'Número de Documento de identidad del socio' : str,
+                                              'Tipo de préstamo'                           : str,
+                                              'Tipo de moneda'                             : str})
 
 df_para_completar[columna_nro_identificador_del_credito] = df_para_completar[columna_nro_identificador_del_credito].str.strip()
 
