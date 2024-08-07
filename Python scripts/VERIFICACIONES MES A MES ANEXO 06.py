@@ -16,11 +16,11 @@ import pyodbc
 # import numpy as np
 
 #%%
-FECHA_SQL = '20240531' #se pone la del mes pasado
+FECHA_SQL = '20240630' #se pone la del mes anterior al mes que estamos procesando
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio\\productos')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\productos')
 
-anx06_final = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados procesado 01.xlsx'
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
@@ -52,6 +52,11 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 df_mes_pasado = pd.read_sql_query(QUERY, conn)
 
 del conn
+
+if df_mes_pasado.shape[0] == 0:
+    print('el anexo06 del mes pasado está vacío, posiblemente fecha mal puesta')
+else:
+    pass
 
 df_mes_pasado['ApellidosyNombresRazonSocial2'] = df_mes_pasado['ApellidosyNombresRazonSocial2'].str.strip()
 df_mes_pasado['NumerodeDocumento10'] = df_mes_pasado['NumerodeDocumento10'].str.strip()
@@ -216,5 +221,5 @@ print(documento_diferente)
 print(nacimiento_diferente)
 print(dias_mora) #este sí es importante
 print(dif_clasificacion)
-print(dif_cred_18) #este sí es importante
+print(dif_cred_18) #este hay que analizarlo, posiblemente hay cambios por alineamiento
 
