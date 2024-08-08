@@ -21,7 +21,11 @@ SELECT
 		--------------------------------------------------------------
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
+	--------------------------------------------------------------<
 	p.montosolicitado as 'Otorgado', 
+	iif(p.CodMoneda='95', tcsbs.tcsbs, 1) as 'TC_SBS',
+	p.montosolicitado * iif(p.CodMoneda='95', tcsbs.tcsbs, 1) AS 'Monto Otorgado en soles',
+	--------------------------------------------------------------<
 	p.TEM, 
 	p.NroPlazos, 
 	p.CuotaFija,  
@@ -29,7 +33,13 @@ SELECT
 	tm.descripcion as 'Estado',
 	p.fechaCancelacion, 
 	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
+--------------------------------------<<<<<<<<<<<<<<<<<<<<	
 	p.flagrefinanciado,
+	CASE
+		WHEN (P.CodEstado<>563) and (flagRefinanciado=1 or (p.CodSolicitudCredito =0)) THEN 'REFINANCIADO'
+		ELSE 'normal'
+		END AS 'REFINANCIAMIENTO',
+--------------------------------------<<<<<<<<<<<<<<<<<<<<	
 	pro.CodGrupoCab,
 	pro.descripcion as 'Funcionario',
 	CASE
@@ -95,13 +105,13 @@ SELECT
 	gpo.descripcion as 'func_pla',
 	CONCAT(sc.nombrevia,' Nro ', sc.numerovia,' ', sc.nombrezona) as 'direcc_socio',
 	sc.ReferenciaDomicilio,
-	d.nombre as 'distrito', 
-	pv.nombre as 'provincia', 
-	dp.nombre as 'departamento',
+	d.nombre   AS 'distrito', 
+	pv.nombre  AS 'provincia', 
+	dp.nombre  AS 'departamento',
 	sc.ReferenciaDomicilio,
 	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
-	tm2.descripcion as 'est_civil', 
-	pais.descripcion as 'pais', 
+	tm2.descripcion  AS 'est_civil', 
+	pais.descripcion AS 'pais', 
 	s.fechanacimiento, 
 	s.profesion, 
 	sc.celular1, 
@@ -150,15 +160,22 @@ INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
 LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
 
+-----------------------------------------------------
+	LEFT JOIN TipoCambioSBS AS TCSBS
+	on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
+
+-----------------------------------------------------
 --LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
 
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20010101'
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20220101'
 --AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
 
 AND s.codigosocio     > 0
 AND p.montosolicitado > 0
+AND p.codestado <> 563 -- que no sea crédito anulado
 --and p.codestado = 342
---AND FI.CODIGO IN (15,16,17,18,19,20,21,22,23,24,25,29)
+AND FI.CODIGO IN (34,35,36,37,38,39)
+and p.flagponderosa <> 1
 
 -- AND (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 -- WHERE year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 

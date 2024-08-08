@@ -237,7 +237,13 @@ SELECT
 	tm.descripcion as 'Estado',
 	p.fechaCancelacion, 
 	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
-	p.flagrefinanciado, 
+--------------------------------------<<<<<<<<<<<<<<<<<<<<	
+	p.flagrefinanciado,
+	CASE
+		WHEN (P.CodEstado<>563) and (flagRefinanciado=1 or (p.CodSolicitudCredito =0)) THEN 'REFINANCIADO'
+		ELSE 'normal'
+		END AS 'REFINANCIAMIENTO_txt',
+--------------------------------------<<<<<<<<<<<<<<<<<<<<	
 	pro.descripcion as 'Funcionario',
 	CASE
 		WHEN pro.descripcion LIKE '%PROSEVA%' THEN pro.descripcion
