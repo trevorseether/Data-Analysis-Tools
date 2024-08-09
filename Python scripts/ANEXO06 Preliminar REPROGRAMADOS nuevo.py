@@ -785,9 +785,9 @@ tipo_cred_mype = [8, 9, 10, '8', '08', '09', '10']
 
 base_6meses = base_6meses[base_6meses['TipodeCredito19'].isin(tipo_cred_mype)]
 
-pivot_6meses = base_6meses.pivot_table( values  = 'SALDO TOTAL',
-                                        index   = 'CodigoSocio7',
-                                        columns = 'FechaCorte1',
+pivot_6meses = base_6meses.pivot_table( values  = 'SALDO TOTAL'  ,
+                                        index   = 'CodigoSocio7' ,
+                                        columns = 'FechaCorte1'  ,
                                         aggfunc = 'sum').reset_index()
 pivot_6meses = pivot_6meses.fillna(0)
 
