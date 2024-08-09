@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'Copia de REFINANCIADOS RECLASIFICADOS 30 06 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 07 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Junio' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Julio' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-06-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Junio 2024'
+fecha_corte     = '2024-07-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Julio 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -1193,15 +1193,17 @@ print(result)
 not_in = prod43_mype + [41, 45, '41', '45']
 mayores_para_investigar = df_resultado_2[~df_resultado_2['Tipo de Producto 43/'].isin(not_in)]
 mayores_para_investigar = mayores_para_investigar[mayores_para_investigar['Saldo de colocaciones (créditos directos) 24/'] > 50000]
-print(mayores_para_investigar[['Nro Prestamo \nFincore', 
+print(mayores_para_investigar[['Nro Prestamo \nFincore' , 
                                'Fecha de Desembolso 21/', 
-                               'Tipo de Producto 43/']])
+                               'Tipo de Producto 43/'   ,
+                               'Saldo de colocaciones (créditos directos) 24/']])
 
 if mayores_para_investigar.shape[0]:
     mayores_para_investigar[['Apellidos y Nombres / Razón Social 2/',
-                             'Nro Prestamo \nFincore', 
-                             'Fecha de Desembolso 21/', 
-                             'Tipo de Producto 43/']].to_excel('créditos medio raros.xlsx')
+                             'Nro Prestamo \nFincore'               ,
+                             'Fecha de Desembolso 21/'              ,
+                             'Tipo de Producto 43/'                 ,
+                             'Saldo de colocaciones (créditos directos) 24/']].to_excel('créditos medio raros.xlsx')
 #%% conclusión
 #########################################################################################
 #### HASTA AQUÍ YA TERMINAMOS EL TIPO DE PRODUCTO 43/, LO QUE SIGUE SON OTRAS COSAS  #####
