@@ -517,7 +517,7 @@ ordenado = ordenado.merge(originador_df,
                           how      = 'left')
 
 def originador_mes_anterior(ordenado):
-    if pd.isna(ordenado['Nro Prestamo \nFincore']):
+    if pd.isna(ordenado['rectificación de nombre']):
         return ordenado['Funcionario Origuinador']
     else:
         return ordenado['rectificación de nombre']
