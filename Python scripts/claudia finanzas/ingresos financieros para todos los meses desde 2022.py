@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 #%% 
 # FECHAS PARA LA RECAUDACIÓN:
-fecha_inicio = '20231101'
-fecha_final  = '20240430'
+fecha_inicio = '20240401'   # recordar que tiene que ser el inicio del mes
+fecha_final  = '20240630'
 
 # DIRECTORIO DE TRABAJO:
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\dataframes\\MULTIOFICIOS, LIBRE DISPONIBILIDAD'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresosn financieros por producto\\multi oficios'
 
 #%% QUERY
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -251,11 +251,13 @@ FROM prestamo as p
 	INNER JOIN TablaMaestraDet as tm4   ON s.codestado = tm4.CodTablaDet
 	--LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
-WHERE 
-CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101'
+WHERE    1 = 1
+AND   CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101' ---------------des/activar esto para multioficios
+
 --AND s.codigosocio>0  and p.codestado = 342
 
-AND FI.CODIGO IN (26,32) --ESTE ES EL PROD 43 EN LA EMPRESA
+AND FI.CODIGO IN (26,32) --ESTE ES EL PROD 43 EN LA EMPRESA  -----------------des/activar esto para multioficios
+
 
 --and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
 --where year(p.fechadesembolso) >= 2021 and month(p.fechadesembolso) >= 1 and s.codigosocio>0 and p.codestado <> 563 AND tc.CODTIPOCREDITO <>3 -- and pro.Descripcion like '%WILLIAMS TRAUCO%' --  and p.codcategoria=351

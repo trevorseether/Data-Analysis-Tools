@@ -2470,11 +2470,11 @@ fechacorte_mes_pasado = "20240630" # se pone la del corte anterior para obtener 
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 02.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 03.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\parte 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2690,7 +2690,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2782,6 +2782,8 @@ print("{:.2f}%".format(calculo_que_pidio_enrique*100))
 
 df_diferidos['Provisiones Constituidas 37/'] = df_diferidos['Provisiones Constituidas 37/'].round(2)
 df_diferidos['Provisiones Requeridas 36/']   = df_diferidos['Provisiones Requeridas 36/'].round(2)
+
+df_diferidos['Provisiones Requeridas 36/'].sum()
 
 #%% DATAFRAME FINAL, CON LOS DATOS QUE VAMOS A MANDAR
 #lo otro que podríamos hacer es crear un dataframe solo con las columnas que vamos a necesitar

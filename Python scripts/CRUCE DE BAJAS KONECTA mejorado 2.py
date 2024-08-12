@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '2024-08-05'  # FORMATO AÑO-MES-DÍA
+FECHATXT = '2024-08-12'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\agosto'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\agosto\\12 08'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '2DO INFORME 08_24 GRUPO KONECTA (A).xlsx'
+nombre_archivo = '3ER INFORME 08_24 GRUPO KONECT.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -44,7 +44,7 @@ COL_DOC_IDENTIDAD = 'Documento' #'DNI' # 'Documento'
 ###############################################
 
 'COLUMNA DE LA FECHA DE BAJA' #################
-COL_FECHA_BAJA = 'BAJA SAP' #'BAJA SAP'  #'Fecha egreso' # 'Documento' #'BAJA SAP
+COL_FECHA_BAJA = 'BAJA SAP' #'BAJA SAP'  #'Fecha egreso'
 ###############################################
 
 'Creación de excels'###########################
