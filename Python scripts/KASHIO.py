@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 08\\12 08')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 08\\13 08')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240812.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240813.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -208,7 +208,7 @@ def correccion(row):
                           'GMAI.COM', 'GMIAL.COM', 'GNMAIL.COM', 
                           '@MAIL.COM', 'Ñ', ' ', '  ', '   ', 
                           'GMAIL.COMN', 'GMNAIL.COM', 'Á', 'É', 'Í', 'Ó', 'Ú',
-                          '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM', '?' , ',']
+                          '@GIMAIL.COM', '@GMAIL.CONM', '@GMA.IL.COM', '?' , ','  ]
     
     if any(palabra in row['EMAIL ANTERIOR'] for palabra in palabras_a_buscar):
         return 'REGULARIZARCORREO@GMAIL.COM'

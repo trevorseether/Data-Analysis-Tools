@@ -11,11 +11,9 @@ go
 
 drop table cosecha..cosecha_nuevo
 
-select * 
-into cosecha..cosecha_nuevo
-from anexos_riesgos3..Anx06 where FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
-
-
+SELECT * 
+INTO cosecha..cosecha_nuevo
+FROM anexos_riesgos2..Anx06_preliminar   WHERE FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
 
 
 
@@ -54,7 +52,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20230531' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20230630' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha_nuevo (
 nro_fincore,
@@ -142,7 +140,8 @@ SELECT CONCAT('ejecutado con ' ,@fechaactual)
 --------------------------------------------------------------------------------------------------------------
 -----añadimos los montos de capital vencido, judicial, castigado, solo para que sirva en algunos filtros------
 --------------------------------------------------------------------------------------------------------------
----ejecutar este código demora casi 4 minutos
+--- ejecutar este código demora casi 4 minutos
+--- esta parte del código sirve para filtrar los créditos caídos con cero cuotas pagadas
 /*
 update a
 set a.vencido_auxiliar = b.nuevo_capitalvencido

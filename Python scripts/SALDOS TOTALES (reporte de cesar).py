@@ -17,15 +17,15 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'JUNIO-24' #servirá para el nombre del archivo
+FECHA = 'JULIO-24' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 junio')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 julio')
 
-INSUMO           =    'CarteraTotalSM07072024 - Junio24.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - MAYO-24_INC_CVV_DETALLADO.xlsx'
-COBRANZA         =    'Ingresos por Cobranza Junio-24 - General.xlsx'
+INSUMO           =    'CarteraTotalSM05082024.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JUNIO-24_INC_CVV_DETALLADO.xlsx'
+COBRANZA         =    'Ingresos por Cobranza Julio-24 - General.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##

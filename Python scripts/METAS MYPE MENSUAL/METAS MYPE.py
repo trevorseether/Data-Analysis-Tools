@@ -18,18 +18,20 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-ubi         = 'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 junio'
-nombre      =  '06 Mype - Junio 2024 (2).xlsx'
-fecha_corte = '2024-06-30'
+ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 julio'
+nombre      =  '07 Mype - Julio 2024.xlsx'
+fecha_corte =  '2024-07-31'
 
 carga_sql       = True
-tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20240630]'
+tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20240731]'
+
+pestaña_excel   = '75%'
 
 #%%
 os.chdir(ubi)
 
 metas = pd.read_excel(nombre, 
-                      sheet_name = '100%')
+                      sheet_name = pestaña_excel)
 
 metas.dropna(subset = ['Unnamed: 1',
                        'Unnamed: 2',
@@ -80,6 +82,7 @@ faltantes = mergeado[pd.isna(mergeado['nombre para merge'])]
 if faltantes.shape[0] > 0:
     print('falta asignar nombre a los siguientes casos')
     print(faltantes)
+    faltantes.to_excel('faltantes.xlsx')
 
 #%% Columnas necesarias
 df = pd.DataFrame()

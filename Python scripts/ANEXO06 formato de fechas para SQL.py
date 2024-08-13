@@ -11,8 +11,8 @@ import os
 
 #%% PARÁMETROS INICIALES:
 
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 05.xlsx'
-ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio\\fase 2'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 04.xlsx'
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\parte 2'
 filas_skip    = 2
 
 crear_excel   = True #True o False
@@ -26,7 +26,7 @@ def parse_date(date_str):
 
     for formato in formatos:
         try:
-            return pd.to_datetime(arg = date_str, 
+            return pd.to_datetime(arg    = date_str, 
                                   format = formato,)
         except ValueError:
             pass
