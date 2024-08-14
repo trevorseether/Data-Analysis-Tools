@@ -22,15 +22,15 @@ CARGA_SQL_SERVER = True #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20240531'
+fecha_corte = '20240630'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\05 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\06 2024')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '05 - MAYO 2024 (CIERRE).xlsx'
+nombre = '06 - JUNIO 2024 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
@@ -43,10 +43,10 @@ nombre = '05 - MAYO 2024 (CIERRE).xlsx'
 # # ===========================================================================
 
 # AQUÍ AÑADIMOS O QUITAMOS LAS PESTAÑAS DEL EXCEL, en el primero va el nombre de la columna
-datos = {'cs': ['Masivo - CS'],
-         'ml': ['Masivo - ML'],
-         'av': ['Masivo - AV'],
-         'kt': ['Masivo - KT'],
+datos = { 'cs': ['Masivo - CS'],
+          'ml': ['Masivo - ML'],
+          'av': ['Masivo - AV'],
+          'kt': ['Masivo - KT'],
          }
 # =============================================================================
 
@@ -390,5 +390,136 @@ else:
 
     # Categorización de Planillas DxP - RECAUDACIÓN Abril 2024.xlsx
     # 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%
+# =============================================================================
+#            RUC DE LAS PLANILLAS
+# =============================================================================
+CARGA_SQL_SERVER = True
+
+datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+
+server    =  datos['DATOS'][0]
+username  =  datos['DATOS'][2]
+password  =  datos['DATOS'][3]
+
+conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+conn = pyodbc.connect(conn_str)
+
+query = '''
+SELECT
+	E.NroRuc,
+	E.RAZONSOCIAL,
+	CASE
+		WHEN P.CODTIPOPLANILLA = 71   THEN 'CAS'
+		WHEN P.CODTIPOPLANILLA = 72   THEN 'NOMBRADOS'
+		WHEN P.CODTIPOPLANILLA = 69   THEN 'PENSIONISTA'
+		WHEN P.CODTIPOPLANILLA = 457  THEN 'CONTRATADOS'
+		WHEN P.CODTIPOPLANILLA = 68   THEN 'ACTIVOS'
+		WHEN P.CODTIPOPLANILLA = 564  THEN 'GRATIFICACION'
+		WHEN P.CODTIPOPLANILLA = 460  THEN 'CAFAE'
+		WHEN P.CODTIPOPLANILLA = 565  THEN 'ESCOLARIDAD'
+		WHEN P.CODTIPOPLANILLA = 1009 THEN 'OTRO'
+		WHEN P.CODTIPOPLANILLA = 1088 THEN 'LIBRE DISPONIBILIDAD'
+		WHEN P.CODTIPOPLANILLA = 458  THEN 'INCENTIVOS'
+		WHEN P.CODTIPOPLANILLA = 70   THEN 'RECIBOS POR HONORARIOS'
+		WHEN P.CODTIPOPLANILLA = 567  THEN 'CIERRE DE PLIEGO'
+
+		ELSE ''
+	END AS TIPO, --P.CODTIPOPLANILLA,
+	P.DESCRIPCION AS 'NOMBRE PLANILLA'
+	
+from SANMIGUEL..PLANILLA AS P
+left join SANMIGUEL..empresa AS E
+ON P.CODEMPRESA = E.CODEMPRESA
+'''
+
+planillas = pd.read_sql_query(query, conn)
+planillas.drop_duplicates(subset = 'NOMBRE PLANILLA', inplace = True)
+
+planillas['Planillas strip'] = planillas['NOMBRE PLANILLA'].str.strip()
+
+#%%
+planillas = planillas.fillna('')
+
+#%%
+if CARGA_SQL_SERVER == True:
+    # Esta es la tabla que estará en SQL SERVER
+    tabla =  '[Anexos_riesgos3]..[planillas_ruc]'
+    # Establecer la conexión con SQL Server
+    cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
+    cursor = cnxn.cursor()
+    
+    df = planillas
+    
+    # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
+    # EJEMPLO df = df.fillna(0)
+    
+    # Limpiar/eliminar la tabla antes de insertar nuevos datos
+    cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    
+
+    # Generar la sentencia CREATE TABLE dinámicamente
+    create_table_query = f"CREATE TABLE {tabla} ("
+    for column_name, dtype in df.dtypes.items():
+        sql_type = ''
+        if dtype == 'int64':
+            sql_type = 'INT'
+        elif dtype == 'int32':
+            sql_type = 'INT'
+        elif dtype == 'float64':
+            sql_type = 'FLOAT'
+        elif dtype == 'object':
+            sql_type = 'NVARCHAR(255)'  # Ajusta el tamaño según tus necesidades
+        elif dtype == '<M8[ns]':
+            sql_type = 'DATETIME'  # Ajusta el tamaño según tus necesidades
+
+        create_table_query += f"[{column_name}] {sql_type}, "
+        
+    create_table_query = create_table_query.rstrip(', ') + ")"  # Elimina la última coma y espacio
+
+    # Ejecutar la sentencia CREATE TABLE
+    cursor.execute(create_table_query)
+    
+    # CREACIÓN DE LA QUERY DE INSERT INTO
+    # Crear la lista de nombres de columnas con corchetes
+    column_names = [f"[{col}]" for col in df.columns]
+    # Crear la lista de placeholders para los valores
+    value_placeholders = ', '.join(['?' for _ in df.columns])
+    # Crear la consulta de inserción con los nombres de columna y placeholders de valores
+    insert_query = f"INSERT INTO {tabla} ({', '.join(column_names)}) VALUES ({value_placeholders})"
+
+    # Iterar sobre las filas del DataFrame e insertar en la base de datos
+    for _, row in df.iterrows():
+        cursor.execute(insert_query, tuple(row))
+
+    # Confirmar los cambios y cerrar la conexión
+    cnxn.commit()
+    cursor.close()
+
+    print(f'Se cargaron los datos a SQL SERVER {tabla}')
+
+else:
+    print('No se ha cargado a SQL SERVER')
 
 
