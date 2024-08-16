@@ -103,20 +103,20 @@ import os
 #%% INSUMOS
 
 # Directorio de trabajo #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024\\2024 junio'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPROGRAMADOS para SBS\\2024\\2024 julio'
 ###############################################################################
 
 # Anexo 06 de reprogramados ###################################################
-anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Junio 2024 no incluye castigados.xlsx'
+anx06_repro = 'Rpt_DeudoresSBS Créditos Reprogramados Julio 2024 no incluye castigados.xlsx'
 ###############################################################################
 
 # CALIFICACIÓN ENVIADA POR EXPERIAN ###########################################
-calificacion = '20523941047_70369063_PE202400930_SEGMENTACION_RIESGO_COOPAC_SANMIGUEL_SALIDA.xlsx'
+calificacion = '20523941047_70369063_PE202401111_COOPAC_SAN_MIGUEL_SEGMENTACION_RIESGO.xlsx'
 ###############################################################################
 
 #%%
 # mes y año ###################################################################
-mes = 'Junio'
+mes = 'Julio'
 año = 2024
 ###############################################################################
 
@@ -202,7 +202,7 @@ df.drop(['NUMERO DOCUMENTO'],
         axis = 1, 
         inplace = True)
 
-df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['NIVEL DE RIESGO']
+df['10/SEGRIESGO/ Segmentación de Riesgos'] = df['NIVEL DE RIESGO'] # información proveniente del reporte de experian
 
 df.drop(['NIVEL DE RIESGO'], 
         axis = 1, 
