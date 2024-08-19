@@ -24,11 +24,11 @@ fecha_corte = 'JULIO 2024'
 ##############################################
 #%% UBI
 # ubicación ###################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\parte 2')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas\\provisiones')
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 03.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 04 (nueva iteración).xlsx"
 ###############################################################################
 
 # filas ignoradas ###########

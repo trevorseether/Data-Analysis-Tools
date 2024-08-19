@@ -59,11 +59,11 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\versión 2 ahora sí'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_PadronSocios Julio-24 Ampliado v02 - incl inhabiles (original fincore).xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
@@ -1976,9 +1976,11 @@ def devengado_cero(anx06_ordenado):
         return anx06_ordenado['Rendimiento\nDevengado 40/']
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_cero, axis = 1)
 
-print(anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)])
-
-print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
+dev_y_suspenso_corregir = anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)]
+if dev_y_suspenso_corregir.shape[0] > 0:
+    print('hay casos con devengado y suspenso al mismo tiempo, investigar')
+    
+#print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
 
 # anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
 #                 'Número de Cuotas Pagadas 45/',

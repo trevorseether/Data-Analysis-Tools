@@ -43,7 +43,7 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
@@ -2470,11 +2470,11 @@ fechacorte_mes_pasado = "20240630" # se pone la del corte anterior para obtener 
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 03 (nueva iteración).xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\parte 2'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas\\provisiones'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2690,7 +2690,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
