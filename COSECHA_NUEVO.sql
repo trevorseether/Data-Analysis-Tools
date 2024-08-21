@@ -13,7 +13,7 @@ drop table cosecha..cosecha_nuevo
 
 SELECT * 
 INTO cosecha..cosecha_nuevo
-FROM anexos_riesgos2..Anx06_preliminar   WHERE FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
+FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
 
 
 
@@ -125,7 +125,7 @@ a.[Dpto Negocio],
 a.[Provincia Negocio]
 
 FROM 
-	anexos_riesgos2..Anx06_preliminar AS A
+	anexos_riesgos3..Anx06 AS A
 
 WHERE
 	DATENAME(MONTH,a.FechaCorte1) = DATENAME(MONTH,a.FechadeDesembolso21)
@@ -146,28 +146,28 @@ SELECT CONCAT('ejecutado con ' ,@fechaactual)
 update a
 set a.vencido_auxiliar = b.nuevo_capitalvencido
 from cosecha_nuevo as a
-left join anexos_riesgos2..Anx06_preliminar as b
+left join anexos_riesgos3..Anx06 as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.vencido_auxiliar is null
 
 update a
 set a.judicial_auxiliar = b.CapitalenCobranzaJudicial30
 from cosecha_nuevo as a
-left join anexos_riesgos2..Anx06_preliminar as b
+left join anexos_riesgos3..Anx06 as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.judicial_auxiliar is null
 
 update a
 set a.castigado_auxiliar = b.SaldosdeCreditosCastigados38
 from cosecha_nuevo as a
-left join anexos_riesgos2..Anx06_preliminar as b
+left join anexos_riesgos3..Anx06 as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.castigado_auxiliar is null
 
 update a
 set a.cuotas_pagadas_auxiliar = b.NumerodeCuotasPagadas45
 from cosecha_nuevo as a
-left join anexos_riesgos2..Anx06_preliminar as b
+left join anexos_riesgos3..Anx06 as b
 on ((a.nro_fincore = b.nro_fincore) and (a.fechacorte1 = b.fechacorte1))
 where a.cuotas_pagadas_auxiliar is null
 */

@@ -11,11 +11,11 @@ import os
 
 #%% PARÁMETROS INICIALES:
 
-anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 04.xlsx'
-ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\parte 2'
+anexo_del_mes = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 04 (nueva iteración).xlsx'
+ubicación     = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas\\provisiones\\para reportes'
 filas_skip    = 2
 
-crear_excel   = True #True o False
+crear_excel   = True # True o False
 
 #%% FUNCIÓN DE PARSEO
 #este parseador de datos es una basura, nunca me ha funcionado
