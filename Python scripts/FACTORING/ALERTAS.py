@@ -12,9 +12,9 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 08\\20 08')
-archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_8834.txt'
-fecha_añadido   = '2024-08-20'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 08\\21 08')
+archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4099.txt'
+fecha_añadido   = '2024-08-21'
 carga_sql       = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
@@ -59,7 +59,7 @@ if carga_sql == True:
     # nombre de la tabla en SQL
     tabla = tabla_principal  # Reemplaza con el nombre de tu tabla existente
     
-    df = df.copy()
+    #df = df.copy()
     df = df.fillna(0)  # Rellenar NaNs con 0 si es necesario
     
     fecha_formato = fecha_añadido[0:4] + fecha_añadido[5:7] + fecha_añadido[8:10]
@@ -83,3 +83,52 @@ if carga_sql == True:
     
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
     
+#%%
+# =============================================================================
+#       VALIDACIÓN DE QUE LAS ALERTAS SEAN DE EMPRESAS CON DEUDA VIGENTE
+# =============================================================================
+# EMPRESAS NO REPORTADAS POR EXPERIAN
+conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
+###############################################################################
+query = '''
+	SELECT
+		DISTINCT
+		[Ruc Deudor],
+		Deudor 
+	FROM FACTORING..[REPORTE_SEMANAL]
+	WHERE FechaCorte = (SELECT MAX(DISTINCT FechaCorte)FROM FACTORING..[REPORTE_SEMANAL])
+'''
+semanal = pd.read_sql_query(query, 
+                            conn, 
+                            dtype = {'Ruc Deudor' : str})
+semanal['Ruc Deudor'] = semanal['Ruc Deudor'].str.strip()
+
+lista_vigentes = list(semanal['Ruc Deudor'])
+
+#%% total alertas
+# query = '''
+# 	SELECT 
+# 		[N# DOCUMENTO] AS 'Ruc Deudor',
+#         [NOMBRE CPT]
+# 	FROM FACTORING.[dbo].[ALERTAS]
+# '''
+# alertas_todo = pd.read_sql_query(query, 
+#                                  conn, 
+#                                  dtype = {'Ruc Deudor' : str})
+# alertas_todo['Ruc Deudor'] = alertas_todo['Ruc Deudor'].str.strip()
+
+# lista_vigentes = list(semanal['Ruc Deudor'])
+# borrar_de_experian = alertas_todo[~alertas_todo['Ruc Deudor'].isin(lista_vigentes)]
+# borrar_de_experian.to_excel('borrar de experian.xlsx',
+#                             index = False)
+
+#%%
+alertas_actuales   = df[['N# DOCUMENTO', 'NOMBRE CPT']].copy()
+borrar_de_experian = alertas_actuales[~alertas_actuales['N# DOCUMENTO'].isin(lista_vigentes)]
+
+if borrar_de_experian.shape[0] > 0:
+    borrar_de_experian.to_excel('borrar de experian (alerta última).xlsx',
+                            index = False)
+else:
+    pass
+
