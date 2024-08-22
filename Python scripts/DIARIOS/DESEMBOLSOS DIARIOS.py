@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240731' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20240831' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_07]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_07_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_08]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_08_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -820,7 +820,7 @@ alerta = union.merge(union_2[['Socio', 'pagare_fincore', 'MONTO NETO']],
                      how = 'left')
 
 alerta = alerta[alerta['fechadesembolso'] >= inicio_mes]
-alerta = alerta[alerta['MONTO NETO'] < 1]
+alerta = alerta[alerta['MONTO NETO'] < 0]
 
 if alerta[['MONTO NETO', 'pagare_fincore']].shape[0] > 0:
     print('MONTO NETO NEGATIVO, investigar')

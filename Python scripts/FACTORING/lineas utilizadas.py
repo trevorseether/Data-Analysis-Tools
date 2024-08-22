@@ -37,10 +37,24 @@ lineas.dropna(subset = ['Fecha Reporte',
              inplace = True,
              how     = 'all')
 
+#%% SUMA DE LA LÍNEA ASIGNADA Y DE LA LÍNEA OCUPADA
+
 lineas['Deudor'] = lineas['Deudor'].str.strip()
+lineas = lineas.dropna(subset = ['Deudor'])
+total_linea = lineas.pivot_table(values  = [ 'Linea Asignada (S/.)',
+                                             'Linea Ocupada Total (S/.)'],
+                                 index   = 'Deudor',
+                                 aggfunc = 'sum').reset_index()
 
 lineas.drop_duplicates(subset  = 'Deudor',
                        inplace = True)
+
+del lineas['Linea Ocupada Total (S/.)']
+del lineas['Linea Asignada (S/.)']
+
+lineas = lineas.merge(total_linea,
+                      on  = 'Deudor',
+                      how = 'left')
 
 #%%
 lineas = lineas.fillna(0)
@@ -57,7 +71,7 @@ formatos = [ '%d/%m/%Y %H:%M:%S',
              '%Y-%m-%d %H:%M:%S PM',
              '%Y-%m-%d %H:%M:%S AM',
              '%Y/%m/%d %H:%M:%S PM',
-             '%Y/%m/%d %H:%M:%S AM' ] # Lista de formatos a analizar
+             '%Y/%m/%d %H:%M:%S AM' ]     # Lista de formatos a analizar
 
 def parse_date(date_str):
     for formato in formatos:
