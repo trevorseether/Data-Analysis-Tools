@@ -137,6 +137,3 @@ if CARGA_SQL_SERVER == True:
 else:
     print('No se ha cargado a SQL SERVER')
 
-
-
-

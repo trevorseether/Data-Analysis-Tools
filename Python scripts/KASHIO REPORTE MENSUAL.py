@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Agosto 2024'
-fecha_inicio = '2024-08-01'
-fecha_final  = '2024-08-31'
+MES          = 'Setiembre 2024'
+fecha_inicio = '2024-09-01'
+fecha_final  = '2024-09-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 07\\24 07')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 08\\23 08')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -29,7 +29,7 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte.xlsx'
 #%%
 # reporte de pagos sacado de la plataforma de Kashio ##########################
 # Reportes / Pagos / Fecha : TODOS / Exportar #################################
-pagos_rep_kashio = 'reporte_de_pagos_cus_V67tWEUeUPQhmWTDBSKbGX.xlsx'
+pagos_rep_kashio = '4eVgKzDWBhzvXz8p2KN8HT.xlsx'
 ###############################################################################
 
 #%%
@@ -72,12 +72,12 @@ kashio_ordenado['VENCIMIENTO'] = kashio_ordenado['VENCIMIENTO'].apply(parse_date
 kashio_filtrado = kashio_ordenado[(kashio_ordenado['VENCIMIENTO'] >= pd.Timestamp(fecha_inicio)) &
                                   (kashio_ordenado['VENCIMIENTO'] <= pd.Timestamp(fecha_final))]
 
-kashio_filtrado = kashio_filtrado.rename(columns={'NOMBRE'      : "Nombre Cliente",
-                                                  'ID ORDEN DE PAGO' : 'CODIGO DE PAGO',
-                                                  'MONTO'       : 'VALOR PAGO',
-                                                  'ID CLIENTE'  : 'codsoc',
-                                                  'REFERENCIA'  : 'num pagare',
-                                                  'VENCIMIENTO' : 'Fecha Cuota'})
+kashio_filtrado = kashio_filtrado.rename(columns={'NOMBRE'           :  "Nombre Cliente",
+                                                  'ID ORDEN DE PAGO' :  'CODIGO DE PAGO',
+                                                  'MONTO'            :  'VALOR PAGO',
+                                                  'ID CLIENTE'       :  'codsoc',
+                                                  'REFERENCIA'       :  'num pagare',
+                                                  'VENCIMIENTO'      :  'Fecha Cuota'})
 
 #%% IMPORTAMOS DATOS DEL SQL PARA HACER UN MERGE
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
