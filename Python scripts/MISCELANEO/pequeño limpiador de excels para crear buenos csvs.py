@@ -8,15 +8,17 @@ import pandas as pd
 import os 
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\AXON ENVÍO limpieza de datos\\limpieza 1\\axon csvs')
-excel = 'AXON_ENVIO_II.xlsx'
+os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Crediticio\\Envio 05 - 26Ago24')
+excel = 'Axon26082024.xlsx'
 
-sheet_nombre = 'prppg (2)'
+sheet_nombre = 'prgar'
+#%%
 ######################################################################
 df1 = pd.read_excel(io         = excel,
-                    skiprows   = 3,
+                    skiprows   = 2,
                     sheet_name = sheet_nombre,
                     dtype      = str)
+print(df1.shape[1])
 
 # df1['CodigoSocio'] = df1['CodigoSocio'].str.strip()
 df1 = df1.replace('Ü', 'U', regex=True)
@@ -29,9 +31,10 @@ df1 = df1.replace(';', '', regex=True)
 
 df1 = df1.fillna('')
 
-df1.to_csv(sheet_nombre + 'nuevo.csv', 
+#%%
+df1.to_csv(sheet_nombre + '.csv', 
            index    =  False,
-           encoding =  'utf-8', #'utf-8',
+           encoding =  'utf-8-sig', #'utf-8',
            header   =  False,
            sep      =  ';')
 

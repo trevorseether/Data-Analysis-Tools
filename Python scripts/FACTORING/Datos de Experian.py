@@ -17,24 +17,26 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_08_09]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_08_23]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\agosto 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\agosto 2024\\23 08')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_2336.txt'
-corte = '2024-08-09'
+nombre = 'experian deudas.xltx'
+corte  = '2024-08-23'
 
-#%%
-experian_data = pd.read_csv(nombre,
-                            skiprows = 0,
-                            dtype = {'N. DOCUMENTO' : str})
+#%% 
+"LECTOR DE .TXT"
+# experian_data = pd.read_csv(nombre,
+#                             skiprows = 0,
+#                             dtype    = {'N. DOCUMENTO' : str})
 
+"LECTOR DE EXCEL"
+experian_data = pd.read_excel(io       = nombre, 
+                              skiprows = 0,
+                              dtype    = {'N. DOCUMENTO' : str})
 
-# experian_data = pd.read_excel(io = nombre, 
-#                               skiprows = 0,
-#                               dtype = {'N. DOCUMENTO' : str})
-
+#%%%
 experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
 experian_data['FechaCorte'] = pd.Timestamp(corte)
 
@@ -125,8 +127,9 @@ query = '''
 	SELECT
 		DISTINCT
 		[Ruc Deudor],
-		Deudor 
+		Deudor
 	FROM FACTORING..[REPORTE_SEMANAL]
+	WHERE FechaCorte = (SELECT MAX(FechaCorte) FROM FACTORING..[REPORTE_SEMANAL])
 '''
 semanal = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
 semanal['Ruc Deudor'] = semanal['Ruc Deudor'].str.strip()
@@ -137,6 +140,7 @@ query = '''
 		[Ruc Deudor],
 		Deudor 
 	FROM FACTORING..[ADELANTOS]
+	WHERE FechaCorte = (SELECT MAX(FechaCorte) FROM FACTORING..ADELANTOS)
 '''
 adelantos = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
 adelantos['Ruc Deudor'] = adelantos['Ruc Deudor'].str.strip()
@@ -153,6 +157,7 @@ query = '''
 experian = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
 experian['Ruc Deudor'] = experian['Ruc Deudor'].str.strip()
 ###############################################################################
+
 #%% unión de datos generados por el fincore
 base_fincore = pd.concat([semanal, 
                           adelantos], axis = 0)
