@@ -12,15 +12,17 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 08\\21 08')
-archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4099.txt'
-fecha_añadido   = '2024-08-21'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 08\\29 08')
+archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_9845.txt'
+fecha_añadido   = '2024-08-29'
 carga_sql       = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
+delete_al_insertar = False  # True para hacer un delete de modo que no haya otra inserción con la misma fecha
+                            # False para tener varias inserciones con la misma fecha
 #%%
 # Lee el archivo .txt y conviértelo en un DataFrame
-df = pd.read_csv(archivo, 
+df = pd.read_csv(archivo,
                  delimiter = ',')
 
 df = df.drop(index = 0)
@@ -62,8 +64,11 @@ if carga_sql == True:
     #df = df.copy()
     df = df.fillna(0)  # Rellenar NaNs con 0 si es necesario
     
+    ###########################################################################
     fecha_formato = fecha_añadido[0:4] + fecha_añadido[5:7] + fecha_añadido[8:10]
-    cursor.execute(f"DELETE FROM {tabla} WHERE [fecha añadido] = '{fecha_formato}' ")
+    if delete_al_insertar == True:
+        cursor.execute(f"DELETE FROM {tabla} WHERE [fecha añadido] = '{fecha_formato}' ")
+    ###########################################################################
     
     # CREACIÓN DE LA QUERY DE INSERT INTO
     # Crear la lista de nombres de columnas con corchetes

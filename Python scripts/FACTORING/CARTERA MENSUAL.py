@@ -23,7 +23,7 @@ CARGA_SQL_SERVER = True
 
 fecha_corte      = '2024-07-31'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\2024 julio')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\2024 julio\\adicional para comparacion')
 
 nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante31072024.xlsx'
 
