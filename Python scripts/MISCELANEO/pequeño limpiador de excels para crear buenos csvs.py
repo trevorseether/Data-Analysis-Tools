@@ -21,13 +21,13 @@ df1 = pd.read_excel(io         = excel,
 print(df1.shape[1])
 
 # df1['CodigoSocio'] = df1['CodigoSocio'].str.strip()
-df1 = df1.replace('Ü', 'U', regex=True)
-df1 = df1.replace('Á', 'A', regex=True)
-df1 = df1.replace('É', 'E', regex=True)
-df1 = df1.replace('Í', 'I', regex=True)
-df1 = df1.replace('Ó', 'O', regex=True)
-df1 = df1.replace('Ú', 'U', regex=True)
-df1 = df1.replace(';', '', regex=True)
+# df1 = df1.replace('Ü', 'U', regex=True)
+# df1 = df1.replace('Á', 'A', regex=True)
+# df1 = df1.replace('É', 'E', regex=True)
+# df1 = df1.replace('Í', 'I', regex=True)
+# df1 = df1.replace('Ó', 'O', regex=True)
+# df1 = df1.replace('Ú', 'U', regex=True)
+df1 = df1.replace(';', '', regex = True)
 
 df1 = df1.fillna('')
 
