@@ -119,15 +119,15 @@ menos_bruto.dropna(subset=['Apellidos y Nombres / Razón Social 2/',
 
 menos_bruto['Código Socio 7/']         = menos_bruto['Código Socio 7/'].str.strip()
 menos_bruto['Apellidos y Nombres / Razón Social 2/'] = menos_bruto['Apellidos y Nombres / Razón Social 2/'].str.strip()
-menos_bruto['Profesion']               = menos_bruto['Profesion'].str.strip()
-menos_bruto['Ocupacion']               = menos_bruto['Ocupacion'].str.strip()
-menos_bruto['Actividad Economica']     = menos_bruto['Actividad Economica'].str.strip()
-menos_bruto['Nro Prestamo \nFincore']  = menos_bruto['Nro Prestamo \nFincore'].astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
-menos_bruto['Numero de Crédito 18/']   = menos_bruto['Numero de Crédito 18/'].str.strip()
+menos_bruto['Profesion']               = menos_bruto['Profesion']              .str.strip()
+menos_bruto['Ocupacion']               = menos_bruto['Ocupacion']              .str.strip()
+menos_bruto['Actividad Economica']     = menos_bruto['Actividad Economica']    .str.strip()
+menos_bruto['Nro Prestamo \nFincore']  = menos_bruto['Nro Prestamo \nFincore'] .astype(int).astype(str).str.zfill(8) #agregando los 8 ceros
+menos_bruto['Numero de Crédito 18/']   = menos_bruto['Numero de Crédito 18/']  .str.strip()
 
 menos_bruto['Funcionario Origuinador'] = menos_bruto['Funcionario Origuinador'].str.strip()
-menos_bruto['Funcionario Actual']      = menos_bruto['Funcionario Actual'].str.strip()
-menos_bruto['Funcionaria TXT']         = menos_bruto['Funcionaria TXT'].str.strip()
+menos_bruto['Funcionario Actual']      = menos_bruto['Funcionario Actual']     .str.strip()
+menos_bruto['Funcionaria TXT']         = menos_bruto['Funcionaria TXT']        .str.strip()
 
 #conteo de duplicados
 mask = menos_bruto['Nro Prestamo \nFincore'].duplicated(keep=False)
