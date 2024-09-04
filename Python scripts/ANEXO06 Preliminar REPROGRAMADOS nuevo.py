@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Julio 2024'  # Mes Año
-fecha_corte             = '2024-07-31' # año-mes-día
-fecha_corte_inicial     = '2024-07-01' # año-mes-día
+fecha_mes               = 'Agosto 2024'  # Mes Año
+fecha_corte             = '2024-08-31' # año-mes-día
+fecha_corte_inicial     = '2024-08-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\versión 2 ahora sí'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 agosto'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_PadronSocios Julio-24 Ampliado v02 - incl inhabiles (original fincore).xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio'
+ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Julio-24\\Version 02 FINAL - por cambio de fecha\\productos parte 1 (solo para reprogramados)'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -299,7 +299,7 @@ del nombre_anx06
 #agregando ceros al nro de fincore por si acaso
 anx06_anterior['Nro Prestamo \nFincore'] = anx06_anterior['Nro Prestamo \nFincore'].astype(str).str.zfill(8)
 
-mask = anx06_anterior['Nro Prestamo \nFincore'].duplicated(keep=False)
+mask = anx06_anterior['Nro Prestamo \nFincore'].duplicated(keep = False)
 df_duplicadossss = anx06_anterior[mask]
 print(df_duplicadossss.shape[0])
 
@@ -469,7 +469,7 @@ delfin = pd.DataFrame(data)
 fincore_truj = ['00085200', '00082052', '00082532', '00082493', '00087920', '00083856', '00100779', '00093786', '00080124', 
                 '00078609', '00079639', '00105716', '00080950', '00099281', '00081650', '00086835', '00086955', '00081102', 
                 '00084561', '00087435', '00105779', '00082874', '00106349', '00079613', '00087113', '00107949', '00090798']
-administrador_truj = ['ADMINISTRADOR TRUJILLO'] * 27
+administrador_truj = ['ADMINISTRADOR TRUJILLO'] * 27 #ADMINISTRADOR MYPE TRUJILLO
 data = {"fincore": fincore_truj, "administrador": administrador_truj}
 trujillo = pd.DataFrame(data)
 ###############################################################################
@@ -500,32 +500,42 @@ ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
 #%% ORIGINADOR CORRECTO
 # (modificar a partir del otro mes, para que el originador se saque del anexo06 preliminar de ahora en adelante)
 
-# originador_df = anx06_anterior[['Nro Prestamo \nFincore', 'Funcionario Origuinador']]
-# rename
+ubi_originador            = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\versión 2 de última hora'
+nombre_originador_archivo = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
+col_nro_fincore           = 'Nro Prestamo \nFincore'
+col_originador_final      = 'Funcionario Origuinador'
 
-originador_df = pd.read_excel(io    = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\ORIGINADOR BASE DE DATOS DE REPORTES GERENCIALES.xlsx', 
-                              dtype = {'Nro_Fincore_originador' : str,
-                                       'Nro Prestamo \nFincore' : str},
-                              sheet_name = 'originador validado')
+originador_df = pd.read_excel(io       = ubi_originador + '\\' + nombre_originador_archivo,
+                              skiprows = 2,
+                              dtype    = {col_nro_fincore: str},
+                              sheet_name = 'Julio 2024')
 
-originador_df['Nro Prestamo \nFincore']   = originador_df['Nro Prestamo \nFincore'].str.strip()
-originador_df['rectificación de nombre']  = originador_df['rectificación de nombre'].str.strip()
+originador_df = originador_df[[col_nro_fincore, col_originador_final]]
+originador_df = originador_df.rename(columns = {col_nro_fincore      : col_nro_fincore      + '(para rectificación)',
+                                                col_originador_final : col_originador_final + '(para rectificación)'})
+
+col_nro_fincore      = col_nro_fincore      + '(para rectificación)'
+col_originador_final = col_originador_final + '(para rectificación)'
+
+originador_df[col_nro_fincore]       = originador_df[col_nro_fincore].str.strip()
+originador_df[col_originador_final]  = originador_df[col_originador_final].str.strip()
 
 ordenado = ordenado.merge(originador_df,
                           left_on  = 'Nro Prestamo \nFincore',
-                          right_on = 'Nro Prestamo \nFincore',    #modificar
+                          right_on = col_nro_fincore,    #modificar
                           how      = 'left')
 
 def originador_mes_anterior(ordenado):
-    if pd.isna(ordenado['rectificación de nombre']):
+    if pd.isna(ordenado[col_originador_final]):
         return ordenado['Funcionario Origuinador']
     else:
-        return ordenado['rectificación de nombre']
+        return ordenado[col_originador_final]
     
 ordenado['Funcionario Origuinador'] = ordenado.apply(originador_mes_anterior, axis = 1)
 
-print('rectificar este código, aprox línea 520, porque se debe adaptar a que se saque datos del anexo06 preliminar cada mes')
-del ordenado['rectificación de nombre']
+print('verificar el buen funcionamiento del rectificador del funcionario originador')
+del ordenado[col_nro_fincore]
+del ordenado[col_originador_final]
 
 #%% SALDO DE GARANTÍA DEL MES PASADO
 # PONEMOS LOS SALDOS DE GARANTÍAS DEL MES PASADO, tenemos que tener cuidado con estO,
@@ -2206,9 +2216,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240731' #mes actual
-fecha_corte_menos_1 = '20240630' #mes anterior
-fecha_corte_menos_2 = '20240531' #mes anterior del anterior
+fecha_corte_actual  = '20240831' #mes actual
+fecha_corte_menos_1 = '20240731' #mes anterior
+fecha_corte_menos_2 = '20240630' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2287,13 +2297,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Junio 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Julio 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Julio-24\\Version 02 FINAL - por cambio de fecha\\productos parte 1 (solo para reprogramados)'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Jul-24'
-mes_anterior_txt = 'Jun-24'
+mes_actual_txt   = 'Ago-24'
+mes_anterior_txt = 'Jul-24'
 # =============================================================================
 #%% LECTURA
 
@@ -2620,10 +2630,10 @@ df['NUMERO DOCUMENTO']  = df['NUMERO DOCUMENTO'].str.strip()
 #%% NOMBRE
 
 lista_fecha = fecha_mes.split()
-X = lista_fecha[0]
-Y = lista_fecha[1]
-resultado = (str(X.lower().capitalize()) + " " + "Reprogramados - " +str(Y)) #métodos string para crear el nombre del archivo
-nombre = str(resultado)+".xlsx"
+X           = lista_fecha[0]
+Y           = lista_fecha[1]
+resultado   = (str(X.lower().capitalize()) + " " + "Reprogramados - " +str(Y)) #métodos string para crear el nombre del archivo
+nombre      = str(resultado)+".xlsx"
 
 #%% EXCEL
 try:
