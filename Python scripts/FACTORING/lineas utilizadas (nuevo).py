@@ -23,7 +23,7 @@ filas_skip       = 8
 tipo_cambio      = 3.78
 fecha_corte      = '2024-09-06'
 CARGA_SQL_SERVER = True
-tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240906]' 
+tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240906_v2]' 
 
 #%%
 lineas = pd.read_excel(io = nombre, 
@@ -32,7 +32,7 @@ lineas = pd.read_excel(io = nombre,
 # Eliminación de columnas Unnamed
 lineas = lineas.loc[:, ~lineas.columns.str.contains('^Unnamed')]
 
-lineas.dropna(subset = ['Fecha Reporte', 
+lineas.dropna(subset = ['Fecha Reporte',
                         'Producto'],
              inplace = True,
              how     = 'all')
@@ -41,25 +41,9 @@ lineas.dropna(subset = ['Fecha Reporte',
 
 lineas['Deudor'] = lineas['Deudor'].str.strip()
 lineas = lineas.dropna(subset = ['Deudor'])
-total_linea = lineas.pivot_table(values  = [ 'Linea Asignada (S/.)',
-                                             'Linea Ocupada Total (S/.)'],
-                                 index   = 'Deudor',
-                                 aggfunc = 'sum').reset_index()
-
-lineas.drop_duplicates(subset  = 'Deudor',
-                       inplace = True)
-
-del lineas['Linea Ocupada Total (S/.)']
-del lineas['Linea Asignada (S/.)']
-
-lineas = lineas.merge(total_linea,
-                      on  = 'Deudor',
-                      how = 'left')
 
 #%%
 lineas = lineas.fillna(0)
-
-lineas['Porcentaje de utilización'] = lineas['Linea Ocupada Total (S/.)'] / lineas['Linea Asignada (S/.)']
 
 #%%
 formatos = [ '%d/%m/%Y %H:%M:%S',
@@ -84,14 +68,6 @@ def parse_date(date_str):
 
 lineas['Fecha Reporte'] = lineas['Fecha Reporte'].apply(parse_date)
 lineas['FechaCorte_linea'] = pd.Timestamp(fecha_corte)
-
-#%%
-lineas = lineas[['FechaCorte_linea',
-                 'Producto',
-                 'Deudor',
-                 'Linea Asignada (S/.)',
-                 'Linea Ocupada Total (S/.)',
-                 'Porcentaje de utilización']]
 
 #%%
 if CARGA_SQL_SERVER == True:
@@ -145,8 +121,8 @@ if CARGA_SQL_SERVER == True:
 
     ###########################################################################
     f_corte_formato = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
-    cursor.execute(f"DELETE FROM FACTORING..[LINEAS] WHERE FechaCorte_linea = '{f_corte_formato}'")
-    cursor.execute(f"INSERT INTO FACTORING..[LINEAS] SELECT * FROM {tabla_nombre}")
+    cursor.execute(f"DELETE FROM FACTORING..[LINEAS_v2] WHERE FechaCorte_linea = '{f_corte_formato}'")
+    cursor.execute(f"INSERT INTO FACTORING..[LINEAS_v2] SELECT * FROM {tabla_nombre}")
     ###########################################################################
 
     # Confirmar los cambios y cerrar la conexión
@@ -154,7 +130,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-    print('Se cargaron los datos a SQL SERVER FACTORING..[LINEAS]')
+    print('Se cargaron los datos a SQL SERVER FACTORING..[LINEAS_v2]')
 
 else:
     print('No se ha cargado a SQL SERVER')
