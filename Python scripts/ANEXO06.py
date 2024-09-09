@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 07 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 08 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Julio' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Agosto' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-07-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Julio 2024'
+fecha_corte     = '2024-08-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Agosto 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -168,6 +168,8 @@ df1.loc[df1['Tipo de Producto 43/'] == '26', 'Tipo Credito TXT']     = 'EMPRENDE
 
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo Credito TXT']     = 'LD-MULTIOFICIOS'
 df1.loc[df1['Tipo de Producto 43/'] == '32', 'Tipo de Crédito 19/']  = '12'
+
+df1.loc[df1['Nro Prestamo \nFincore'] == '00120618', 'Tipo de Producto 43/']  = '37'
 
 print(df1[df1['Tipo de Producto 43/'] == '27'].shape[0])
 print('debe salir cero')
