@@ -13,7 +13,7 @@ drop table cosecha..cosecha_nuevo
 
 SELECT * 
 INTO cosecha..cosecha_nuevo
-FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20230531'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
+FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20230630'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
 
 
 

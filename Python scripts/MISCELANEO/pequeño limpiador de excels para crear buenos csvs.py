@@ -11,10 +11,10 @@ import os
 os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Crediticio\\04092024\\Procesamiento 06-09-2024')
 excel        = '002_Prestamos.xlsx'
 
-sheet_nombre = 'prgar'
-filas_skip   = 2
-crear_csv   = True
-crear_excel = False
+sheet_nombre = 'prppg (2)'
+filas_skip   = 10
+crear_csv   = False
+crear_excel = True
 #########################################
 verificar_duplicados = False
 columna_unica = 'NumerodePrestamoPRTSA'
@@ -40,112 +40,112 @@ df1 = df1.replace(';', '', regex = True)
 df1 = df1.fillna('')
 
 #%% VALIDACION DE INDEX prppg
-# df1['orden original'] = range(1, len(df1) + 1)
+df1['orden original'] = range(1, len(df1) + 1)
 
-# df1['index_unico']  = df1['NroPrestamo'] + '-'+ df1['numerocuota']
-# df1['es_duplicado'] = df1['index_unico'].duplicated(keep=False)
+df1['index_unico']  = df1['NroPrestamo'] + '-'+ df1['numerocuota']
+df1['es_duplicado'] = df1['index_unico'].duplicated(keep=False)
 
-# df1['es_duplicado_debajo'] = df1['index_unico'].duplicated(keep='first')
-# df1['es_duplicado_arriba'] = df1['index_unico'].duplicated(keep='last')
+df1['es_duplicado_debajo'] = df1['index_unico'].duplicated(keep='first')
+df1['es_duplicado_arriba'] = df1['index_unico'].duplicated(keep='last')
 
-# df1['capital_float'] = df1['capital'].astype(float)
+df1['capital_float'] = df1['capital'].astype(float)
 
-# df1['FechaVencimiento DateTime'] = pd.to_datetime(df1['FechaVencimiento'],format='%d/%m/%Y')
-# #
-# df1 = df1.sort_values(by=['NroPrestamo', 'FechaVencimiento DateTime'], ascending=[True, True])
-# df1['contador'] = df1.groupby('NroPrestamo').cumcount() + 1
+df1['FechaVencimiento DateTime'] = pd.to_datetime(df1['FechaVencimiento'],format='%d/%m/%Y')
+#
+df1 = df1.sort_values(by=['NroPrestamo', 'FechaVencimiento DateTime'], ascending=[True, True])
+df1['contador'] = df1.groupby('NroPrestamo').cumcount() + 1
 
-# def mantener(df1):
-#     if df1['es_duplicado'] == False:
-#         return 'mantener'
+def mantener(df1):
+    if df1['es_duplicado'] == False:
+        return 'mantener'
 
-#     if (df1['numerocuota'] == '0') and (df1['contador'] == 1):
-#         return 'mantener'
+    if (df1['numerocuota'] == '0') and (df1['contador'] == 1):
+        return 'mantener'
 
-#     if (df1['numerocuota'] == '0') and (df1['capital_float'] > 0):
-#         return 'mantener-amortización'
+    if (df1['numerocuota'] == '0') and (df1['capital_float'] > 0):
+        return 'mantener-amortización'
     
-#     if (df1['numerocuota'] != '0') and (df1['es_duplicado'] == True) and (df1['es_duplicado_arriba'] == False):
-#         return 'mantener'
-#     else:
-#         return ''
+    if (df1['numerocuota'] != '0') and (df1['es_duplicado'] == True) and (df1['es_duplicado_arriba'] == False):
+        return 'mantener'
+    else:
+        return ''
 
-# df1['mantener'] = df1.apply(mantener, axis = 1)
+df1['mantener'] = df1.apply(mantener, axis = 1)
 
-# dup = df1[df1['es_duplicado'] == True]
+dup = df1[df1['es_duplicado'] == True]
 
-# #%% identificación de monocuotas
+#%% identificación de monocuotas
 
-# df1['numero_cuota_int'] = df1['numerocuota'].astype(int)
-# monocuota = df1.pivot_table(values   = 'numero_cuota_int',
-#                              index   = 'NroPrestamo',
-#                              aggfunc = 'sum').reset_index()
-# monocuota = monocuota.rename(columns = {'numero_cuota_int' : 'suma_cuotas'})
+df1['numero_cuota_int'] = df1['numerocuota'].astype(int)
+monocuota = df1.pivot_table(values   = 'numero_cuota_int',
+                              index   = 'NroPrestamo',
+                              aggfunc = 'sum').reset_index()
+monocuota = monocuota.rename(columns = {'numero_cuota_int' : 'suma_cuotas'})
 
-# conteo_cuotas = df1.pivot_table(values  = 'numero_cuota_int',
+conteo_cuotas = df1.pivot_table(values  = 'numero_cuota_int',
                                 
-#                                 index   = 'NroPrestamo',
-#                                 aggfunc = 'count').reset_index()
-# conteo_cuotas = conteo_cuotas.rename(columns = {'numero_cuota_int' : 'numero_cuotas'})
+                                index   = 'NroPrestamo',
+                                aggfunc = 'count').reset_index()
+conteo_cuotas = conteo_cuotas.rename(columns = {'numero_cuota_int' : 'numero_cuotas'})
 
-# identificacion_monocuotas = monocuota.merge(conteo_cuotas,
-#                                             on = 'NroPrestamo',
-#                                             how = 'left')
-# def mono(df):
-#     if df['suma_cuotas'] == df['numero_cuotas']:
-#         return 'monocuota'
+identificacion_monocuotas = monocuota.merge(conteo_cuotas,
+                                            on = 'NroPrestamo',
+                                            how = 'left')
+def mono(df):
+    if df['suma_cuotas'] == df['numero_cuotas']:
+        return 'monocuota'
 
-# identificacion_monocuotas['mono'] = identificacion_monocuotas.apply(mono, axis = 1)
+identificacion_monocuotas['mono'] = identificacion_monocuotas.apply(mono, axis = 1)
 
-# monos   = identificacion_monocuotas[identificacion_monocuotas['mono'] == 'monocuota']
-# monos_1 = monos[monos['numero_cuotas'] == 1]
-# monos   = monos[monos['numero_cuotas'] > 1]
+monos   = identificacion_monocuotas[identificacion_monocuotas['mono'] == 'monocuota']
+monos_1 = monos[monos['numero_cuotas'] == 1]
+monos   = monos[monos['numero_cuotas'] > 1]
 
-# ################# ## etiqueta monocuota para la base total (hay que rectificar)
-# lista_monocuotas = list(monos['NroPrestamo'])
-# def etiqueta_mono(df1):
-#     if df1['NroPrestamo'] in lista_monocuotas:
-#         return 'monocuota'
-# df1['monocuota flag'] = df1.apply(etiqueta_mono, axis = 1)
+################# ## etiqueta monocuota para la base total (hay que rectificar)
+lista_monocuotas = list(monos['NroPrestamo'])
+def etiqueta_mono(df1):
+    if df1['NroPrestamo'] in lista_monocuotas:
+        return 'monocuota'
+df1['monocuota flag'] = df1.apply(etiqueta_mono, axis = 1)
 
-# #%% identificación de monocuotas (2)
+#%% identificación de monocuotas (2)
 
-# #NRO CUOTAS EN TOTAL
-# df1 = df1.merge(conteo_cuotas,
-#                 on = 'NroPrestamo',
-#                 how = 'left')
+#NRO CUOTAS EN TOTAL
+df1 = df1.merge(conteo_cuotas,
+                on = 'NroPrestamo',
+                how = 'left')
 
-# # etiqueta de monocuota
-# def etiqueta_credito(numeradores):
-#     unique_values = set(numeradores)
-#     if unique_values == {1}:
-#         return 'solo 1'
-#     elif unique_values == {0}:
-#         return 'solo 0'
-#     else:
-#         return ''
+# etiqueta de monocuota
+def etiqueta_credito(numeradores):
+    unique_values = set(numeradores)
+    if unique_values == {1}:
+        return 'solo 1'
+    elif unique_values == {0}:
+        return 'solo 0'
+    else:
+        return ''
 
-# df1['etiqueta monocuota 1 o 0'] = df1.groupby('NroPrestamo')['numero_cuota_int'].transform(etiqueta_credito)
+df1['etiqueta monocuota 1 o 0'] = df1.groupby('NroPrestamo')['numero_cuota_int'].transform(etiqueta_credito)
 
-# def rectifacion_mono_1_0(df1):
-#     if df1['numero_cuotas'] == 1:
-#         return ''
-#     else:
-#         return df1['etiqueta monocuota 1 o 0']
+def rectifacion_mono_1_0(df1):
+    if df1['numero_cuotas'] == 1:
+        return ''
+    else:
+        return df1['etiqueta monocuota 1 o 0']
 
-# df1['etiqueta monocuota 1 o 0'] = df1.apply(rectifacion_mono_1_0, axis = 1)
+df1['etiqueta monocuota 1 o 0'] = df1.apply(rectifacion_mono_1_0, axis = 1)
 
-# # asd = df1[(df1['etiqueta monocuota 1 o 0'] != '')]
-# #%% rectificación de 'mantener' para que incluya los monocuota
-# def rectifacion_mantener(df1):
-#     if df1['etiqueta monocuota 1 o 0'] in ['solo 1', 'solo 0']:
-#         return 'mantener-monocuota'
-#     else:
-#         return df1['mantener']
-# df1['mantener'] = df1.apply(rectifacion_mantener, axis = 1)
+# asd = df1[(df1['etiqueta monocuota 1 o 0'] != '')]
+#%% rectificación de 'mantener' para que incluya los monocuota
+def rectifacion_mantener(df1):
+    if df1['etiqueta monocuota 1 o 0'] in ['solo 1', 'solo 0']:
+        return 'mantener-monocuota'
+    else:
+        return df1['mantener']
+df1['mantener'] = df1.apply(rectifacion_mantener, axis = 1)
 
-# #%% RE ENUMERACIÓN DE LOS MONOCUOTAS
-# creds_monocuotas = df1[(df1['monocuota flag'] == 'monocuota') | (df1['etiqueta monocuota 1 o 0'] != '')]
+#%% RE ENUMERACIÓN DE LOS MONOCUOTAS
+creds_monocuotas = df1[(df1['monocuota flag'] == 'monocuota') | (df1['etiqueta monocuota 1 o 0'] != '')]
 
 #%% VERIFICACIÓN DE DUPLICADOS EN UNA COLUMNA EN ESPECÍFICO
 if verificar_duplicados == True:
@@ -332,16 +332,17 @@ else:
     pass
 
 #%% ordernamiento de nuevo
-# df1 = df1.sort_values(by=['orden original'], ascending=[True])
+df1 = df1.sort_values(by=['orden original'], ascending=[True])
 # df1 = df1[df1['mantener'] != '']
 
-# # df1['mantener'].unique()
+# df1['mantener'].unique()
 
-# columnas = ['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
-#            'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
-#            'Ahorros', 'Pagado']
+columnas = ['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
+            'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
+            'Ahorros', 'Pagado']
 
-# del df1['monocuota flag']
+del df1['monocuota flag']
+
 #%%
 if crear_csv == True:
     print('creando csv')

@@ -1934,6 +1934,9 @@ def ajuste_devengados(anx06_ordenado):
         return anx06_ordenado['Rendimiento\nDevengado 40/']
 anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(ajuste_devengados, axis=1)
 
+asd = anx06_ordenado[anx06_ordenado['Nro Prestamo \nFincore'] == '00133153']
+asd = asd[['Saldo de colocaciones (créditos directos) 24/', 'Tasa de Interés Anual 23/', 'Fecha Termino \nPeriodo Gracia']]
+
 print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
 
 # anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',

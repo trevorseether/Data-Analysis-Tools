@@ -20,19 +20,19 @@ import numpy as np
 
 #%% FECHA CORTE
 ##############################################
-fecha_corte = 'JULIO 2024'
+fecha_corte = 'AGOSTO 2024'
 ##############################################
 #%% UBI
 # ubicación ###################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 julio\\version 2 por cambio de fechas\\provisiones')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto')
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados 04 (nueva iteración).xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 03.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
-filas_skip = 2              #  
+filas_skip = 2              #
 #############################
 
 #%% LECTURA DEL ANEXO 06

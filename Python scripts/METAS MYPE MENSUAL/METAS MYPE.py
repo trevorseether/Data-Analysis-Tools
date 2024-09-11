@@ -18,14 +18,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 julio'
-nombre      =  '07 Mype - Julio 2024.xlsx'
-fecha_corte =  '2024-07-31'
+ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 agosto'
+nombre      =  '08 Mype - Agosto 2024.xlsx'
+fecha_corte =  '2024-08-31'
 
 carga_sql       = True
-tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20240731]'
+tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20240831]'
 
-pestaña_excel   = '75%'
+pestaña_excel   = '100%'
 
 #%%
 os.chdir(ubi)
