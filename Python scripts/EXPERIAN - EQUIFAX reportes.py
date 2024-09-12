@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Julio 2024'
+FECHA_CORTE = 'Agosto 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 julio"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 agosto"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - JULIO-24 - INSUMO.xlsx"
+insumo_principal = "PLANTILLA DECOMICRO Agosto24 - 05_09_2024.xlsm"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,7 +35,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240731'
+f_corte_sql = '20240831'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
@@ -302,7 +302,8 @@ df_duplicados = df_sentinel[mask]
 
 # Imprimir el nuevo DataFrame
 print(df_duplicados.shape[0])
-
+if df_duplicados.shape[0] > 0:
+    print('duplicados')
 #si hay duplicados vamos a investigarlos y eliminarlos
 #si hay duplicados posiblemente está mal la columna 'Tipo Documento Identidad(*)'
 #debemos arreglarlo

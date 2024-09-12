@@ -41,7 +41,7 @@ experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
 experian_data['FechaCorte'] = pd.Timestamp(corte)
 
 experian_data = experian_data[['T. DOCUMENTO',
-                               'N. DOCUMENTO', 
+                               'N. DOCUMENTO',
                                'NOMBRE CPT'  ,
                                'DEUDA SBS'   ,
                                '# ENTIDADES' ,

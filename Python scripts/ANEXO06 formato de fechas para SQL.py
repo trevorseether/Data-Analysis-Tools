@@ -26,7 +26,7 @@ def parse_date(date_str):
 
     for formato in formatos:
         try:
-            return pd.to_datetime(arg    = date_str, 
+            return pd.to_datetime(arg    = date_str,
                                   format = formato,)
         except ValueError:
             pass
