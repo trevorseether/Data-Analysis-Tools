@@ -17,24 +17,42 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_08_23]'
-CARGA_SQL_SERVER = False #True
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_09_10_v2]'
+CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\agosto 2024\\23 08')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\setiembre\\10 09')
 
-nombre = 'experian deudas.xltx'
-corte  = '2024-08-23'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_1182.txt'
+corte  = '2024-09-10' # yyyy-mm-dd
 
 #%% 
 "LECTOR DE .TXT"
-# experian_data = pd.read_csv(nombre,
-#                             skiprows = 0,
-#                             dtype    = {'N. DOCUMENTO' : str})
+experian_data = pd.read_csv(nombre,
+                            skiprows = 0,
+                            dtype    = {'N. DOCUMENTO' : str})
 
 "LECTOR DE EXCEL"
-experian_data = pd.read_excel(io       = nombre, 
-                              skiprows = 0,
-                              dtype    = {'N. DOCUMENTO' : str })
+# experian_data = pd.read_excel(io       = nombre, 
+#                               skiprows = 0,
+#                               dtype    = {'N. DOCUMENTO' : str })
+#%%
+experian_data.drop_duplicates(subset  = 'N. DOCUMENTO', 
+                              inplace = True)
+
+#%% calificación (nuevo)
+def calficacion(df):
+    if df['PER'] > 0:
+        return 'PÉRDIDA'
+    if df['DUD'] > 0:
+        return 'DUDOSO'
+    if df['DEF'] > 0:
+        return 'DEFICIENTE'
+    if df['CPP'] > 0:
+        return 'CPP'
+    else:
+        return 'NORMAL'
+
+experian_data['CALIFICACIÓN'] = experian_data.apply(calficacion, axis = 1)
 
 #%%%
 experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
@@ -45,7 +63,9 @@ experian_data = experian_data[['T. DOCUMENTO',
                                'NOMBRE CPT'  ,
                                'DEUDA SBS'   ,
                                '# ENTIDADES' ,
-                               'SEM. ACT.'   ,
+                               'PROTESTO'    ,  # (nuevo)
+                               'CALIFICACIÓN',  # (nuevo)
+                               #'SEM. ACT.'   ,
                                'FechaCorte']]
 
 experian_data['N. DOCUMENTO'] = experian_data['N. DOCUMENTO'].str.strip()
@@ -104,8 +124,8 @@ if CARGA_SQL_SERVER == True:
 
     ###########################################################################
     f_corte_formato = corte[0:4] + corte[5:7] + corte[8:10]
-    cursor.execute(f"DELETE FROM FACTORING..EXPERIAN WHERE FechaCorte = '{f_corte_formato}'")
-    cursor.execute(f"INSERT INTO FACTORING..EXPERIAN SELECT * FROM {tabla_nombre}")
+    cursor.execute(f"DELETE FROM FACTORING..EXPERIAN_v2 WHERE FechaCorte = '{f_corte_formato}'")
+    cursor.execute(f"INSERT INTO FACTORING..EXPERIAN_v2 SELECT * FROM {tabla_nombre}")
     ###########################################################################
 
 
@@ -114,7 +134,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-    print('Se cargaron los datos a SQL SERVER FACTORING..EXPERIAN')
+    print('Se cargaron los datos a SQL SERVER FACTORING..EXPERIAN_v2')
 
 else:
     print('No se ha cargado a SQL SERVER')
@@ -151,8 +171,8 @@ query = '''
 		[N. DOCUMENTO] AS 'Ruc Deudor',
 		[NOMBRE CPT],
         FechaCorte
-	FROM FACTORING..EXPERIAN
-	WHERE FechaCorte = (select max(FechaCorte) from FACTORING..EXPERIAN)
+	FROM FACTORING..EXPERIAN_v2
+	WHERE FechaCorte = (select max(FechaCorte) from FACTORING..EXPERIAN_v2)
 '''
 experian = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
 experian['Ruc Deudor'] = experian['Ruc Deudor'].str.strip()

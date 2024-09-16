@@ -16,14 +16,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Z TRASLADAR CARTERA\\mype y dxp')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\ANEXO DE JULIO, PARA MIGRAR EN SETIEMBRE')
 
-nombre = 'MIGRACION DE CARTERA COOPAC SM - ABRIL24.xlsx'
+nombre = 'MIGRACIÓN DE CARTERA.xlsx'
 
-corte       = 'MAYO 2024'
-nro_fincore = 'NroFincore' #columna del fincore del excel
-nuevo_func  = 'FDN FINAL'  #columna del nuevo funcionario del excel
-pestaña     = 'MYPE'       #considerar que     
+corte       = 'SET 2024'
+nro_fincore = 'fincore'     #columna del fincore del excel
+nuevo_func  = 'FN Final'    #columna del nuevo funcionario del excel
+pestaña     = 'Hoja1'       #pestaña del excel
 filas_skip  = 0
 
 #%%

@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 09\\12 09')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 09\\16 09')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240912.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20240916.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
