@@ -29,6 +29,8 @@ nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante31082024mes.
 
 tipo_de_cambio   = 3.739
 
+facturas_para_omitir = ['FN01-00004114']
+
 #%%
 datos = pd.read_excel(io       = nombre, 
                       skiprows = 12,
@@ -173,6 +175,10 @@ def fi_90(datos):
         return 0
 datos['Monto Financiado >90'] = datos.apply(fi_90, axis = 1)
 
+#%% ELIMINACIÓN DE FACTURAS
+
+datos = datos[~datos['Nro Factura'].isin(facturas_para_omitir)]
+
 #%% CARGA A SQL SERVER
 if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
@@ -234,7 +240,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-
+    print('Se cargaron los datos a FACTORING..[CARTERA]')
 else:
     print('No se ha cargado a SQL SERVER')
     

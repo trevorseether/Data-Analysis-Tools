@@ -30,6 +30,8 @@ excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante13092024.xlsx'
 
 tipo_de_cambio = 3.767
 
+facturas_para_omitir = ['FN01-00004114']
+
 #%%
 datos = pd.read_excel(io       = excel, 
                       skiprows = 12,
@@ -152,6 +154,10 @@ def solarizacion_VFN(datos):
         return datos['Valor Facial Neto']
 datos['Valor Facial Neto SOLES'] = datos.apply(solarizacion_VFN, axis = 1)
 
+#%% ELIMINACIÓN DE FACTURAS
+
+datos = datos[~datos['Nro Factura'].isin(facturas_para_omitir)]
+
 #%% CARGA A SQL SERVER
 if CARGA_SQL_SERVER == True:
     # Establecer la conexión con SQL Server
@@ -214,7 +220,7 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-
+    print('Se cargaron los datos a FACTORING..REPORTE_SEMANAL')
 else:
     print('No se ha cargado a SQL SERVER')
 
