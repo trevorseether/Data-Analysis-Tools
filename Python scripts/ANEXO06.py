@@ -2473,11 +2473,11 @@ fechacorte_mes_pasado = "20240731" # se pone la del corte anterior para obtener 
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 02.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 04.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto\\versión 4 (se retiró un crédito de comania mecanica y conminución)'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2917,6 +2917,14 @@ print("La ubicación actual es: " + ubicacion_actual)
 '##############################################################################'
 df_diferidos = df_diferidos_ampliado.copy()
 # EXTRAEMOS DATOS DEL MES PASADO
+
+# '###########################################################################'
+# import pandas as pd
+# import os
+# df_diferidos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto\\versión 4 (se retiró un crédito de comania mecanica y conminución)\\Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 04.xlsx',
+#                              skiprows = 2)
+
+# '###########################################################################'
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############

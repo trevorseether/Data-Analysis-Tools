@@ -24,11 +24,11 @@ fecha_corte = 'AGOSTO 2024'
 ##############################################
 #%% UBI
 # ubicación ###################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto\\versión 4 (se retiró un crédito de comania mecanica y conminución)')
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 03.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 04.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
