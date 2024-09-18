@@ -17,16 +17,18 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'JULIO-24' #servirá para el nombre del archivo
+FECHA = 'AGOSTO-24' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 julio')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 agosto')
 
-INSUMO           =    'CarteraTotalSM05082024.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JUNIO-24_INC_CVV_DETALLADO.xlsx'
-COBRANZA         =    'Ingresos por Cobranza Julio-24 - General.xlsx'
+INSUMO           =    'CarteraTotalsm Ago24 - 10092024.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JULIO-24_INC_CVV_DETALLADO.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
+
+COBRANZA         =    'Ingresos por Cobranza Agosto-24 - General.xlsx'
+cobranza_hoja    =    'IngCob Agosto24'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
 
@@ -110,7 +112,8 @@ df2['NroPrestamoFC'] = df2['NroPrestamoFC'].str.strip()
 df3_cobranza = pd.read_excel(COBRANZA,
                              dtype = {'codigosocio'  : object, 
                                       'doc_ident'    : object,
-                                      'PagareFincore': object} )
+                                      'PagareFincore': object} ,
+                             sheet_name = cobranza_hoja)
 #aquí NO hay que eliminar duplicados
 
 #eliminamos columnas vacías
