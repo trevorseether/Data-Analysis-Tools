@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20240930' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20241031' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_09]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_09_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_10]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_10_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 

@@ -16,9 +16,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\ANEXO DE JULIO, PARA MIGRAR EN SETIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\ANEXO AGOSTO 2024, para migrar en setiembre')
 
-nombre = 'MIGRACIÓN DE CARTERA.xlsx'
+nombre = 'Reasignación de cartera (AnexoAgosto24).xlsx'
 
 corte       = 'SET 2024'
 nro_fincore = 'fincore'     #columna del fincore del excel

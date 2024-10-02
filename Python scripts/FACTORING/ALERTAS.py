@@ -12,14 +12,18 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 09\\12 09')
-archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_6270.txt'
-fecha_añadido   = '2024-09-12' #yyyy-mm-dd
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 09\\23 09')
+archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_2036.txt'
+fecha_añadido   = '2024-09-23' #yyyy-mm-dd
 carga_sql       = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
-delete_al_insertar = True  # True para hacer un delete de modo que no haya otra inserción con la misma fecha
-                            # False para tener varias inserciones con la misma fecha
+'''/////////////////////////////////////////////////////////////////////////'''
+delete_al_insertar = True  
+        # True para hacer un delete de modo que no haya otra inserción con la misma fecha
+        # False para tener varias inserciones con la misma fecha
+'''/////////////////////////////////////////////////////////////////////////'''
+
 #%%
 # Lee el archivo .txt y conviértelo en un DataFrame
 df = pd.read_csv(archivo,

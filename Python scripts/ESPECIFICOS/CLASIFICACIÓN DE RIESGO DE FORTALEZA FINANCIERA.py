@@ -17,9 +17,9 @@ warnings.filterwarnings('ignore')
 # =============================================================================
 
 #%%
-mes = '20230228'
+mes = '20240131'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\clasificación de riesgo, fortaleza financiera')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\clasificación de riesgo, fortaleza financiera\\enero a junio 2024')
 
 #%%
 
@@ -67,7 +67,7 @@ total_saldo = base.pivot_table(values  = 'Saldodecolocacionescreditosdirectos24'
 
 df_ordenado = total_saldo.sort_values(by = 'Saldodecolocacionescreditosdirectos24', ascending = False)
 df_ordenado['Saldodecolocacionescreditosdirectos24'] = df_ordenado['Saldodecolocacionescreditosdirectos24'].round(2)
-top_20 = df_ordenado.head(20)
+top_20 = df_ordenado.head(30)
 
 #%% tipo de crédito
 
@@ -155,13 +155,14 @@ top_20.to_excel(f'top20 {mes}.xlsx')
 # =============================================================================
 import pandas as pd
 
-repro_archivo = 'Rpt_DeudoresSBS Anexo06 - Creditos Reprogramados ENERO-2022 - No incl castigados.xlsx'
+repro_archivo = 'Rpt_DeudoresSBS Créditos Reprogramados Junio 2024 no incluye castigados.xlsx'
 
-repro_ubi     = 'C:\\Users\\sanmiguel38\\Desktop\\Alexander\\Entregas Areas\\Reporte Sbs\\Reportes que envia Cesar'
+repro_ubi     = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 junio'
 
-CORTE         = 20220131
+CORTE         = 20240630
 
-filas_skip    = 3
+filas_skip    = 0
+
 #%%
 repro = pd.read_excel(repro_ubi + '\\' + repro_archivo,
                       skiprows = filas_skip,
@@ -169,6 +170,15 @@ repro = pd.read_excel(repro_ubi + '\\' + repro_archivo,
                                 'Nro Prestamo \nFincore' : str,
                                 'Tipo de Crédito 19/'    : str}
                       )
+
+# repro['FEC_ULT_REPROG'] = pd.to_datetime(repro['FEC_ULT_REPROG'], errors='coerce')
+
+# # Definir el rango de fechas para enero de 2024
+# start_date = '2024-01-01'
+# end_date   = '2024-01-31'
+
+# # Filtrar el DataFrame por fechas en enero de 2024
+# filtered_repro = repro[(repro['FEC_ULT_REPROG'] >= start_date) & (repro['FEC_ULT_REPROG'] <= end_date)]
 
 #%%
 def tipo_cred_txt(df):
@@ -335,7 +345,7 @@ pivot_castigado['fecha_corte'] = CORTE
 cols = [
         'corporativo', 
         'grande empresa',
-        'Mediana Empresa', 
+        'Mediana Empresa',
         'Pequeña Empresa',
         'Micro Empresa',
         'Consumo No Revolvente',

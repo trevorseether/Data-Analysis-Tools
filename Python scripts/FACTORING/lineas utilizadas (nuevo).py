@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\setiembre\\13 09')
-nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFecha13092024set.xlsx'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\setiembre\\30 09')
+nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFechaLINEAASIGNADA.xlsx'
 filas_skip       = 8
-tipo_cambio      = 3.767
-fecha_corte      = '2024-09-13'
+tipo_cambio      = 3.709
+fecha_corte      = '2024-09-30'
 CARGA_SQL_SERVER = True
-tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240913_v2]' # le dejé el v2 para diferenciar del modelo anterior 
+tabla_nombre     = 'FACTORING.DBO.[LINEAS_20240930_v2]' # le dejé el v2 para diferenciar del modelo anterior 
 
 #%%
 lineas = pd.read_excel(io = nombre, 
