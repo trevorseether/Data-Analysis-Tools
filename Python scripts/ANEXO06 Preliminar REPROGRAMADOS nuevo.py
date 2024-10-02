@@ -500,17 +500,15 @@ ordenado[columna_funcionario] = ordenado.apply(admin_reasignacion, axis = 1)
 #%% ORIGINADOR CORRECTO
 # (modificar a partir del otro mes, para que el originador se saque del anexo06 preliminar de ahora en adelante)
 
-ubi_originador            = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 julio\\versión 2 de última hora'
-nombre_originador_archivo = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
 col_nro_fincore           = 'Nro Prestamo \nFincore'
 col_originador_final      = 'Funcionario Origuinador'
+originador_df = anx06_anterior.copy()
 
-originador_df = pd.read_excel(io       = ubi_originador + '\\' + nombre_originador_archivo,
-                              skiprows = 2,
-                              dtype    = {col_nro_fincore: str},
-                              sheet_name = 'Julio 2024')
 
-originador_df = originador_df[[col_nro_fincore, col_originador_final]]
+originador_df = originador_df[[col_nro_fincore, 
+                               col_originador_final]]
+
+
 originador_df = originador_df.rename(columns = {col_nro_fincore      : col_nro_fincore      + '(para rectificación)',
                                                 col_originador_final : col_originador_final + '(para rectificación)'})
 
@@ -2014,7 +2012,7 @@ DEBE_SER_CERO = anx06_ordenado
 #%% ORDENAMIENTO DE LAS COLUMNAS LAS ÚLTIMAS 5 AÑADIDAS PARA CONTABILIDAD
 '#############################################################################'
 columnas  = anx06_ordenado.columns
-largo_fin = len(columnas) - 5
+largo_fin = len(columnas) - 6
 
 columnas_ordenadas = list(columnas[0:64]) + ['fecha desemb (v)',
                                              'fecha término de gracia por desembolso ["v" + dias gracia (av)]', #esta columna se está duplicando
