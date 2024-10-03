@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Agosto 2024'  # Mes Año
-fecha_corte             = '2024-08-31' # año-mes-día
-fecha_corte_inicial     = '2024-08-01' # año-mes-día
+fecha_mes               = 'Setiembre 2024'  # Mes Año
+fecha_corte             = '2024-09-30' # año-mes-día
+fecha_corte_inicial     = '2024-09-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 agosto'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 setiembre'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados- Insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Julio-24\\Version 02 FINAL - por cambio de fecha\\productos parte 1 (solo para reprogramados)'
+ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Agosto-24\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Julio 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -2217,9 +2217,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240831' #mes actual
-fecha_corte_menos_1 = '20240731' #mes anterior
-fecha_corte_menos_2 = '20240630' #mes anterior del anterior
+fecha_corte_actual  = '20240930' #mes actual
+fecha_corte_menos_1 = '20240831' #mes anterior
+fecha_corte_menos_2 = '20240731' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2298,13 +2298,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Julio 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Julio-24\\Version 02 FINAL - por cambio de fecha\\productos parte 1 (solo para reprogramados)'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Agosto 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Agosto-24\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Ago-24'
-mes_anterior_txt = 'Jul-24'
+mes_actual_txt   = 'Set-24'
+mes_anterior_txt = 'Ago-24'
 # =============================================================================
 #%% LECTURA
 
