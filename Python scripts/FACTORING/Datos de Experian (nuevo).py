@@ -17,24 +17,25 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_09_17_v2]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_04_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\setiembre\\18 09')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\el segundo')
 
-nombre = 'DATA 1 (1).xlsx'
-corte  = '2024-09-17' # yyyy-mm-dd
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7856.txt'
+corte  = '2024-10-04' # yyyy-mm-dd
 
 #%% 
-# "LECTOR DE .TXT"
-# experian_data = pd.read_csv(nombre,
-#                             skiprows = 0,
-#                             dtype    = {'N. DOCUMENTO' : str})
+"LECTOR DE .TXT"
+experian_data = pd.read_csv(nombre,
+                            skiprows = 0,
+                            dtype    = {'N. DOCUMENTO' : str})
 
-"LECTOR DE EXCEL"
-experian_data = pd.read_excel(io       = nombre, 
-                              skiprows = 0,
-                              dtype    = {'N. DOCUMENTO' : str })
+# "LECTOR DE EXCEL"
+# experian_data = pd.read_excel(io       = nombre, 
+#                               skiprows = 0,
+#                               dtype    = {'N. DOCUMENTO' : str })
+
 #%%
 experian_data.drop_duplicates(subset  = 'N. DOCUMENTO', 
                               inplace = True)
