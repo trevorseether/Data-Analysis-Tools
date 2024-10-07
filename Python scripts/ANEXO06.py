@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIEMBRE')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 08 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 09 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Agosto' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Setiembre' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2023  ###
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-08-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Agosto 2024'
+fecha_corte     = '2024-09-30' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Setiembre 2024'
 ########################################################
 
 #%% Códigos de los productos
@@ -178,8 +178,8 @@ print('debe salir cero')
 #POR SI ACASO VEMOS CUANTOS CRÉDITOS DE LA COOPAC HAY
 df1['Nombre PlanillaTXT'] = df1['Nombre PlanillaTXT'].fillna('')
 creditos_coopac = df1[df1['Nombre PlanillaTXT'].str.contains('dito san miguel', case = False) | 
-                     (df1['Nombre PlanillaTXT'].str.contains('san miguel', case = False) & 
-                     (df1['Nombre PlanillaTXT'].str.contains('coopac', case = False)))]
+                     (df1['Nombre PlanillaTXT'].str.contains('pac san miguel', case = False) & 
+                     (df1['Nombre PlanillaTXT'].str.contains('coopac san mi', case = False)))]
 
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']]) #vamos a ver las planillas
 print(creditos_coopac[['Numero de Crédito 18/', 'Nombre PlanillaTXT']].shape[0]) #vamos a ver las planillas
@@ -1455,7 +1455,7 @@ df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
     
 # df_resultado_2['rendimiento devengado'] = df_resultado_2.apply(devengados_genericos, axis=1)
 
-df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2)
+# df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2)
 
 # df_resultado_2['Rendimiento\nDevengado 40/'] = df_resultado_2['rendimiento devengado']
 
@@ -1717,7 +1717,7 @@ df_resultado_2['Fecha Ultimo Pago'] = df_resultado_2['Fecha Ultimo Pago'].fillna
 
 #%% REDONDEO DE DEVENGADOS e I.SUSPENSO A DOS DECIMALES
 #redondeando columnas 
-df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2) # mi estimación
+# df_resultado_2['rendimiento devengado'] = df_resultado_2['rendimiento devengado'].round(2) # mi estimación
 df_resultado_2['intereses en suspenso'] = df_resultado_2['intereses en suspenso'].round(2) # mi estimación
 
 #%% REDONDEO DE TEA A 4 DECIMALES
@@ -1971,7 +1971,7 @@ Fincore''',
 '''DG vs BW''',
 '''DG vs BW con FVUCC''',
 '''DH vs CS''',
-'''rendimiento devengado''',
+# '''rendimiento devengado''',
 'dias int suspenso',
 '''intereses en suspenso''',
 '''Cartera Neta''',

@@ -214,8 +214,8 @@ order by socio asc, p.fechadesembolso desc
 df_fincore = pd.read_sql_query(query, conn)
 del conn
 
-df_fincore = df_fincore[['pagare_fincore', 
-                         'Socio', 
+df_fincore = df_fincore[['pagare_fincore',
+                         'Socio',
                          'fechadesembolso',
                          'Otorgado',
                          'Planilla']]
