@@ -55,7 +55,6 @@ feriados = ['01-01-2024',
             '29-07-2024',
             '06-08-2024',
             '30-08-2024',
-            '07-10-2024',
             '08-10-2024',
             '01-11-2024',
             '06-12-2024',
@@ -165,7 +164,7 @@ dias_laborales = pd.concat([df,df_anterior], ignore_index = True)
 #%% Fecha de hoy para incluir o no el día de hoy
 
 if incluir_hoy == True:
-    fecha_hoy_sql = '20401231' # fecha arbitrariamente lejana
+    fecha_hoy_sql = '20501231' # fecha arbitrariamente lejana
 else:
     fecha_hoy_sql = str(date.today())
     fecha_hoy_sql = fecha_hoy_sql[0:4] + fecha_hoy_sql[5:7] + fecha_hoy_sql[8:10]
@@ -430,6 +429,7 @@ print(union[pd.isna(union['Numero de dia laboral'])].shape[0])
 if union[pd.isna(union['Numero de dia laboral'])].shape[0] > 0:
     revisar_fecha_desembolso = union[pd.isna(union['Numero de dia laboral'])]
     print('Si no sale cero, es porque se ha desembolsado en una fecha que no es laboral')
+    print(revisar_fecha_desembolso['fechadesembolso'].unique())
 
 #%% EXCEL
 union = union[['codigosocio', 

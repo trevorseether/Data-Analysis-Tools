@@ -16,21 +16,24 @@ import os
 import pyodbc
 from colorama import Back # , Style, init, Fore
 
+import warnings
+warnings.filterwarnings('ignore')
+
 #%%
 # PROCEDER CON CARGA A SQL SERVER? ============================================
 CARGA_SQL_SERVER = True #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20240731'
+fecha_corte = '20240831'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\07 2024')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\08 2024')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '07 - JULIO 2024 (CIERRE) (1).xlsx'
+nombre = '08 - AGOSTO 2024 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
@@ -521,5 +524,4 @@ if CARGA_SQL_SERVER == True:
 
 else:
     print('No se ha cargado a SQL SERVER')
-
 
