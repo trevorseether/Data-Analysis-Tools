@@ -2459,25 +2459,29 @@ print("La ubicación actual es: " + ubicacion_actual)
 #######################################################
 'UNA VEZ QUE NOS PASEN EL ANEXO 06 CON LOS INTERESES DIFERIDOS:'
 
+#%% importación de módulos
+import os
+import pandas as pd
+
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Agosto 2024'  # se pone el corte actual
+fecha_corte = 'Setiembre 2024'  # se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240731" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20240831" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados 04.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 02.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 agosto\\versión 4 (se retiró un crédito de comania mecanica y conminución)'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIEMBRE\\provisiones'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2571,9 +2575,6 @@ lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
     
                            ]
 
-#%% importación de módulos
-import os
-import pandas as pd
 #%% Créditos de la lista de provisiones al 100% que no están castigados
 
 # ubicados = df_diferidos[df_diferidos['Nro Prestamo \nFincore'].isin(lista_100_provisionales)]
@@ -2700,7 +2701,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.626 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2745,8 +2746,8 @@ print((vencido + judicial )/cartera)
 'ejecutar en sql server para ver al toque los datos del mes pasado'
 '''
 SELECT 
-	SUM(ProvisionesRequeridas36) AS REQUERIDAS_julio,
-	SUM(ProvisionesConstituidas37) AS CONSTITUIDAS_julio,
+	SUM(ProvisionesRequeridas36) AS REQUERIDAS,
+	SUM(ProvisionesConstituidas37) AS CONSTITUIDAS,
 	SUM(ProvisionesConstituidas37) / SUM(ProvisionesRequeridas36) as 'pc/pcr',
 	SUM(ProvisionesConstituidas37) / sum(CapitalVencido29 + CapitalenCobranzaJudicial30) AS 'cobertura de provision'
  
@@ -2928,11 +2929,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Agosto 2024'
+fecha = 'Setiembre 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20240731' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20240831' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%

@@ -268,17 +268,17 @@ ORDER BY socio ASC, p.fechadesembolso DESC
 df_creditos = pd.read_sql_query(query, conn)
 del conn
 
-datos_creditos = df_creditos[['Socio', 
-                              'Doc_Identidad', 
-                              'pagare_fincore',
-                              'moneda', 
-                              'Otorgado', 
-                              'fechadesembolso', 
-                              'Estado',
+datos_creditos = df_creditos[['Socio',            
+                              'Doc_Identidad',    
+                              'pagare_fincore',   
+                              'moneda',           
+                              'Otorgado',         
+                              'fechadesembolso',  
+                              'Estado',           
                               'fechaCancelacion', 
-                              'Planilla',
-                              'COD_FINALIDAD',
-                              'TipoCredito', 
+                              'Planilla',         
+                              'COD_FINALIDAD',    
+                              'TipoCredito',      
                               'FINALIDAD']]
 
 datos_creditos = datos_creditos.drop_duplicates(subset  = 'pagare_fincore')
