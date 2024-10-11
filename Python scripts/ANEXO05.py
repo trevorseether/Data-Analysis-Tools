@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIE
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 04.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 05.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
@@ -131,7 +131,9 @@ pivot_B = conteo_socios.pivot_table(columns   = 'Clasificación del Deudor con A
 pivot_B = pivot_B.reset_index()
 pivot_B.fillna(0, inplace = True)
 
-conteo_socios['Código Socio 7/'] = conteo_socios['Código Socio 7/'].str.strip()
+conteo_socios.loc[:, 'Código Socio 7/'] = conteo_socios['Código Socio 7/'].str.strip()
+# conteo_socios['Código Socio 7/']      = conteo_socios['Código Socio 7/'].str.strip()
+
 # CALCULAMOS EL NRO DE SOCIOS
 
 socios_0 =  conteo_socios[( conteo_socios['Clasificación del Deudor con Alineamiento 15/'] == 0)]['Código Socio 7/'].nunique()

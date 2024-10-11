@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 #%% 
 # FECHAS PARA LA RECAUDACIÓN:
-fecha_inicio = '20240401'   # recordar que tiene que ser el inicio del mes
-fecha_final  = '20240630'
+fecha_inicio = '20230101'   # recordar que tiene que ser el inicio del mes
+fecha_final  = '20240930'
 
 # DIRECTORIO DE TRABAJO:
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresosn financieros por producto\\multi oficios'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\POR MAGDALENA Y SANTA ANITA\\MAGDALENA'
 
 #%% QUERY
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -252,11 +252,97 @@ FROM prestamo as p
 	--LEFT JOIN PrestamoCuota as pcu    ON p.CodPrestamo = pcu.CodPrestamo
 
 WHERE    1 = 1
-AND   CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101' ---------------des/activar esto para multioficios
 
+AND pro.descripcion IN (
+'BORJA HERENCIA',
+'HERENCIA BORJA / G. HERRERA',
+'MARGIORY ELIAS BENAVIDES',
+'GIOVANNA HERRERA MATHEWS',
+'JONATHAN ESTRADA ESTRADA',
+'ADMINISTRADOR DXP MAGDALENA',
+'ALICIA OVIEDO VELASQUEZ',
+'GERENCIA GM',
+'ANDREA BILBAO BRICEÑO',
+'JAQUELINE CHUQUISUTA',
+'YOBANA LAUREANO',
+'ROSA MALDONADO FIGUREOA',
+'LUDHIANA CASTAÑEDA',
+'GUSTAVO PALLETE ALFERANO',
+'ROXANA QUISPE CHAVEZ',
+'CRISTIAN ZAMORA PERLECHE',
+'PROSEVA CHICLAYO',
+'MARGARITA CHINGA ESPINOZA',
+'MARIA DEL ROSARIO BORJA HERENCIA',
+'KELLY HUAMANI',
+'LUIS CASTAÑEDA ALEJOS',
+'HAXELL TINOCO ESQUEN',
+'ADMINISTRADOR MYPE MAGDALENA',
+'GREYCY BENITES',
+'ANTHONNY OSORIO',
+'CONSUELO MEDRANO',
+'JERSON ALVA FARFAN',
+'DAVID BORJA HERENCIA',
+'JHONATAN SEGAMA SALAZAR',
+'MIJAEL SERKOVICH PASCUAL',
+'KATHERIN RAMOS CCAMA',
+'MARTIN VILCA PRADO',
+'FIGARI VEGA AYQUIPA',
+'JULY GARCIA ALCANTARA',
+'GRUPO SAN MIGUEL',
+'EVELYN LOJA PINEDO',
+'JEFERSON MALVACEDA SAMANAMUD',
+'JAQUELINE LIÑAN MORE',
+'ALEXANDRE SALDAÑA LOPEZ',
+'PAMELA GARCIA',
+'YESENIA POTENCIANO',
+'GERSON SANCHEZ POSSO',
+'LUIS JUSTO',
+'JIMN MENDOZA CORNEJO',
+'AZUCENA OCHOA TERRY',
+'YULI ECHABAUTIS NAVARRO',
+'YULAISE MOREANO CHACON',
+'ELBER ALVARADO GARCIA',
+'ZAIRA KATHERINE ASCUE MARTINEZ',
+'ALEXANDER CASTAÑEDA',
+'ADOLFO HUAMAN',
+'JEAN KARLHO BRAVO MATIAS',
+'LUZ CABALLERO CARBAJAL',
+'VICTOR VARGAS AVALO',
+'JOSE SANCHEZ FLORES (Cesado 27/12/23)',
+'VICTOR FARFAN UGARTE',
+'MILAGROS VEREAU DE LOS SANTOS',
+'EDUARDO ROJAS DE LA CRUZ',
+'WILLIAMS TRAUCO PAREDES',
+'BEATRIZ PALOMINO',
+'SUSAN ROJAS TORRES',
+'EDUAR MIGUEL TITO',
+'AMERICA YESENIA CAMA AURIS',
+'ALEJANDRO HUAMAN FERNANDEZ',
+'ROBERT ZELADA TORRES',
+'GABRIELA CARBAJAL REYES',
+'BORIS CAMARGO',
+'DANTE FLORES BELTRAN',
+'WIGBERTO FRANK SANCHEZ NUREÑA',
+'OFICINA PRINCIPAL',
+'MARCOS NEYRA SUAREZ',
+'ESTEBAN EDUARDO YNGUNZA MUJICA',
+'EDDIN SEMINARIO SANCHEZ',
+'MIGUEL TELLO CESPEDES',
+'JOISE DALY DIAZ LIBERATO',
+'HUGO MARCHAND OSTOLAZA',
+'ELI YOSIP VARAS RONCAL',
+'CRISTINA CHAVEZ',
+'WILLIAM FRANK FLORES SUAZO',
+'ROXANA BENITES MENESES',
+'LESLIER MARTINEZ DE LA CRUZ',
+'JOSE YARLEQUE ESCATE'
+    
+)
+
+
+--AND   CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101' ---------------des/activar esto para multioficios
 --AND s.codigosocio>0  and p.codestado = 342
-
-AND FI.CODIGO IN (26,32) --ESTE ES EL PROD 43 EN LA EMPRESA  -----------------des/activar esto para multioficios
+--AND FI.CODIGO IN (26,32) --ESTE ES EL PROD 43 EN LA EMPRESA  -----------------des/activar esto para multioficios
 
 
 --and (p.CODTIPOCREDITO=2 or p.CODTIPOCREDITO=9) and pcu.NumeroCuota=1 and tm2.descripcion is null -- 341 PENDIENTES  /  p.codestado <> 563  anulados
@@ -318,6 +404,6 @@ for columna in columnas_numericas:
         dataframes_dict[nombre_df] = df_filtrado
 
         # Exportar el DataFrame a un archivo Excel con el mismo nombre
-        df_filtrado.to_excel(f"{nombre_df}.xlsx", 
+        df_filtrado.to_excel(f"{nombre_df} - MAGDALENA.xlsx", 
                              index = False)
 
