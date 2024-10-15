@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Agosto 2024'
+FECHA_CORTE = 'Setiembre 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 agosto"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 setiembre"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "PLANTILLA DECOMICRO Agosto24 - 05_09_2024.xlsm"
+insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - SET-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,7 +35,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240831'
+f_corte_sql = '20240930'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
@@ -1245,4 +1245,5 @@ f_equifax['TELEFONO']                                    = df_equifax['Telefono'
 nombre = f'Reporte COOPAC San Miguel - Periodo {f_corte_sql[4:6]}-{f_corte_sql[0:4]} 20523941047.xlsx'
 f_equifax.to_excel(nombre,
                    index = False)
+print('Excel guardado')
 

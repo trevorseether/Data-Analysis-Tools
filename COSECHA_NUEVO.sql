@@ -7,13 +7,32 @@
 
 use COSECHA
 go
-/*
 
+/*
+-- CÓDIGO PARA INSERTAR EL MES ACTUAL EN "ANEXOS_RIESGOS3..ANX06"
+-- ES LO MISMO QUE HAY EN EL REPORTE DE REMUNERACIONES DE MYPE
+
+INSERT INTO ANEXOS_RIESGOS3..ANX06 
+SELECT * FROM ANEXOS_RIESGOS2..ANX06_PRELIMINAR
+WHERE FECHACORTE1 = '20240930' -------<-------<-------<-------<-----<-----<--CAMBIAR ESTOOOOOO <------------------
+
+UPDATE A
+SET A.ORIGINADOR = B.FDN_DRIVE
+FROM anexos_riesgos3..ANX06 AS A
+INNER JOIN anexos_riesgos2..ORIGINADOR_ENERO_2023 AS B
+ON A.NRO_FINCORE = B.NRO_FINCORE
+
+*/
+------------------------------------------------------------------------------------------------------------------------------
+
+
+
+/*
 drop table cosecha..cosecha_nuevo
 
 SELECT * 
 INTO cosecha..cosecha_nuevo
-FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20230630'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
+FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20230731'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
 
 
 
@@ -52,7 +71,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20230630' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20230731' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha_nuevo (
 nro_fincore,
@@ -135,7 +154,7 @@ ORDER BY FechaCorte1
 
 -- declare @fechaactual as datetime
 -- set @fechaactual = '20240630' ---- hay que añadir los datos desde adelante hasta atrás, por un año
-SELECT CONCAT('ejecutado con ' ,@fechaactual)
+SELECT CONCAT('ejecutado con ' ,CONVERT(VARCHAR, @fechaactual, 120))
 
 --------------------------------------------------------------------------------------------------------------
 -----añadimos los montos de capital vencido, judicial, castigado, solo para que sirva en algunos filtros------

@@ -19,9 +19,9 @@ import os
 
 #%% FECHA DE CORTE, DIRECTORIO DE TRABAJO
 
-mes = 'JUNIO 2024'
+mes = 'SETIEMBRE 2024'
 # ubicación
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 JUNIO') 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 SETIEMBRE') 
 #en esta ubicación debemos poner el archivo de reprogramados que se manda a principio del mes
 
 ## donde dice @fechacorte se debe poner el mes ################################
@@ -30,12 +30,12 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 JUNIO')
 #este reporte es trimestral pero solo van los datos del último mes
 
 ## REPORTE DE REPROGRAMADOS QUE SE MANDA A EXPERIAN ###########################
-repo_reprogramados = 'Junio Reprogramados - 2024.xlsx'
+repo_reprogramados = 'Setiembre Reprogramados - 2024.xlsx'
 ###############################################################################
 
 #%% IMPORTACIÓN DEL ANEXO06
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 junio\\fase 2'
-nom = 'Rpt_DeudoresSBS Anexo06 - Junio 2024 - campos ampliados 05.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIEMBRE\\provisiones\\mejorado'
+nom = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 05.xlsx'
 
 #%% IMPORTACIÓN DEL ANEXO06 DEL SQL
 
@@ -151,7 +151,7 @@ df_resultado = df.merge(para_merge,
 
 df_resultado['TIPO DE REPROGRAMACION'] = df_resultado['tipo para merge']
 
-df_resultado.drop(['cod para merge', 'tipo para merge'], axis=1, inplace=True)
+df_resultado.drop(['cod para merge', 'tipo para merge'], axis = 1, inplace = True)
 
 #%% VERIFICACIÓN EL MERGE
 #para comprobar si hizo buen match
