@@ -17,18 +17,18 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'AGOSTO-24' #servirá para el nombre del archivo
+FECHA = 'SETIEMBRE-24' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 agosto')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 SETIEMBRE')
 
-INSUMO           =    'CarteraTotalsm Ago24 - 10092024.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - JULIO-24_INC_CVV_DETALLADO.xlsx'
+INSUMO           =    'CarteraTotal_SM Set24 - 08102024.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - AGOSTO-24_INC_CVV_DETALLADO.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
 
-COBRANZA         =    'Ingresos por Cobranza Agosto-24 - General.xlsx'
-cobranza_hoja    =    'IngCob Agosto24'
+COBRANZA         =    'Ingresos por Cobranza Setiembre-24 - General.xlsx'
+cobranza_hoja    =    'IngCob Set-24'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
 
@@ -755,6 +755,7 @@ except FileNotFoundError:
 df_finalizado.to_excel(nombre, 
                        index = False, 
                        engine = 'openpyxl')
+print('Excel guardado')
             
 # impte castigado no varía, eso solo se jala del mes anterior, a menos que haya nuevos castigos en el mes
    
@@ -967,4 +968,6 @@ for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las c
 
 book.save(nombre)
 book.close()
+
+print('Fin del proceso')
 
