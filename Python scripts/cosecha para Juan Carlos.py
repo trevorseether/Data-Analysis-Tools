@@ -13,8 +13,16 @@ import os
 import pyodbc
 
 #%%
-corte = 'Agosto 2024'
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CSV COSECHA\\2024\\AGOSTO')
+corte = 'Setiembre 2024'
+# Define el directorio
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\CSV COSECHA\\2024\\SETIEMBRE'
+
+#%%
+# Crea el directorio si no existe, incluyendo subdirectorios
+os.makedirs(directorio, exist_ok=True)
+
+# Cambia al directorio especificado
+os.chdir(directorio)
 
 #%%
 conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connection=Yes;APP=Microsoft Office 2016;WSID=SM-DATOS')
@@ -274,8 +282,4 @@ del conn
 base.to_csv('Cosecha corte ' + corte + '.csv', 
             index    = False,
             encoding = 'utf-8-sig')
-
-del base
-
-
 

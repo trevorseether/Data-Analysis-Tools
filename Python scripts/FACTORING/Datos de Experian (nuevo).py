@@ -20,9 +20,9 @@ warnings.filterwarnings('ignore')
 tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_04_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\el segundo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7856.txt'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_639.txt'
 corte  = '2024-10-04' # yyyy-mm-dd
 
 #%% 
