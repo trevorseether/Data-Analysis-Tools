@@ -17,19 +17,46 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_04_v2]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_17_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\17 10')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_639.txt'
-corte  = '2024-10-04' # yyyy-mm-dd
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_3286.txt'
+corte  = '2024-10-17' # yyyy-mm-dd
+
+# EN CASO DE REQUERIR UNIR 2 ARCHIVOS:
+unir_2_archivos = True # poner False para trabajar con solo un archivo:
+segundo_archivo = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_1938.txt'
+
+#%% uni excel
 
 #%% 
 "LECTOR DE .TXT"
-experian_data = pd.read_csv(nombre,
-                            skiprows = 0,
-                            dtype    = {'N. DOCUMENTO' : str})
+if unir_2_archivos == False:
+    # se trabajará con un solo archivo:
+    experian_data = pd.read_csv(nombre,
+                                skiprows = 0,
+                                dtype    = {'N. DOCUMENTO' : str})
+
+elif unir_2_archivos == True:
+    # se trabajará con un solo archivo:
+    experian_data = pd.read_csv(nombre,
+                                skiprows = 0,
+                                dtype    = {'N. DOCUMENTO' : str})
+
+    segundo_txt = pd.read_csv(segundo_archivo,
+                              skiprows = 0,
+                              dtype    = {'N. DOCUMENTO' : str})
+    
+    mismas_columnas = list(experian_data.columns) == list(segundo_txt.columns)
+    if mismas_columnas == True:
+        df_concatenado = pd.concat([experian_data, segundo_txt])
+        experian_data = df_concatenado.drop_duplicates(subset='N. DOCUMENTO')
+        print('DataFrames unidos')
+    else:
+        print('algo está mal, los 2 DataFrames tienen diferentes columnas')
+
 
 # "LECTOR DE EXCEL"
 # experian_data = pd.read_excel(io       = nombre, 
