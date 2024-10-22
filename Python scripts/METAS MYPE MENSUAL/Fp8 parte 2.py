@@ -1,76 +1,82 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 17 18:07:32 2024
+Created on Mon Oct 21 12:39:54 2024
 
 @author: sanmiguel38
 """
 
 # =============================================================================
-# LÍNEA ASIGNADA VS LÍNEA CONSUMIDA
+#  PARTE 2 DEL FP8, unión de los datos obtenidos en ambas fechas
 # =============================================================================
 
 import pandas as pd
 import os
+
 import pyodbc
 
 import warnings
 warnings.filterwarnings('ignore')
 
-#%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\2024\\octubre\\18 10')
-nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFechaLINEAASIGNADAVSLINEACONSUMIDA18102024.xlsx'
-filas_skip       = 8
-tipo_cambio      = 3.754
-fecha_corte      = '2024-10-18'
-CARGA_SQL_SERVER = True
-tabla_nombre     = 'FACTORING.DBO.[LINEAS_20241018_v2]' # le dejé el v2 para diferenciar del modelo anterior 
 
 #%%
-lineas = pd.read_excel(io = nombre, 
-                       skiprows = filas_skip)
+# asumiendo que elaboramos el fp8 justo después de procesar el de la fecha 20
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\setiembre')
 
-# Eliminación de columnas Unnamed
-lineas = lineas.loc[:, ~lineas.columns.str.contains('^Unnamed')]
+primero = 'fp8_2024-09-05.xlsx'
+segundo = 'fp8_2024-09-20.xlsx'
 
-lineas.dropna(subset = ['Fecha Reporte',
-                        'Producto'],
-             inplace = True,
-             how     = 'all')
-
-#%% SUMA DE LA LÍNEA ASIGNADA Y DE LA LÍNEA OCUPADA
-
-lineas['Deudor'] = lineas['Deudor'].str.strip()
-lineas = lineas.dropna(subset = ['Deudor'])
+cargar_SQL = True
+tabla_nombre = 'FUNCIONARIOS.[dbo].[Fp8_20240930]'
 
 #%%
-lineas = lineas.fillna(0)
+df_primero = pd.read_excel(io = primero)
+df_segundo = pd.read_excel(io = segundo)
+
+#%% MERGE
+unido = df_primero.merge(df_segundo,
+                         left_on  = 'Funcionario p1',
+                         right_on = 'Funcionario p2',
+                         how      = 'outer')
+
+def funcionario_ajuste(df):
+    if pd.isna(df['Funcionario p1']):
+        return df['Funcionario p2']
+    else:
+        return df['Funcionario p1']
+    
+unido['Funcionario'] = unido.apply(funcionario_ajuste, axis = 1)
+del unido['Funcionario p1']
+del unido['Funcionario p2']
 
 #%%
-formatos = [ '%d/%m/%Y %H:%M:%S',
-             '%d/%m/%Y',
-             '%Y%m%d',
-             '%Y-%m-%d',
-             '%Y-%m-%d %H:%M:%S',
-             '%Y/%m/%d %H:%M:%S',
-             '%Y-%m-%d %H:%M:%S PM',
-             '%Y-%m-%d %H:%M:%S AM',
-             '%Y/%m/%d %H:%M:%S PM',
-             '%Y/%m/%d %H:%M:%S AM' ]     # Lista de formatos a analizar
+unido = unido.fillna(0)
 
-def parse_date(date_str):
-    for formato in formatos:
-        try:
-            return pd.to_datetime(   arg = date_str, 
-                                  format = formato,)
-        except ValueError:
-            pass
-    return pd.NaT
+unido['numerador']   = unido['cancelado hasta 8 días p1'] + unido['cancelado hasta 8 días p2']
+unido['denominador'] = unido['numerador'] + unido['pendiente p1'] + unido['pendiente p2']
 
-lineas['Fecha Reporte'] = lineas['Fecha Reporte'].apply(parse_date)
-lineas['FechaCorte_linea'] = pd.Timestamp(fecha_corte)
+unido['Fp8'] = unido['numerador'] / unido['denominador']
 
-#%%
-if CARGA_SQL_SERVER == True:
+#%% NOMBRES PARA UNIÓN CON REPORTES GERENCIALES
+nombres_funcionarios = pd.read_excel(io = 'C:\\Users\\sanmiguel38\\Desktop\\fp8\\nombre de los funcionarios.xlsx', 
+                                     dtype = str)
+nombres_funcionarios.rename(columns={'reporte de cobranza': 'Funcionario'}, inplace=True)
+
+unido_cols = unido[['Funcionario', 'numerador', 'denominador', 'Fp8']]
+
+unido_cols = unido_cols.merge(nombres_funcionarios,
+                              on  = 'Funcionario',
+                              how = 'left')
+
+no_match = unido_cols[pd.isna(unido_cols['nombres para merge'])]
+if no_match.shape[0] > 0:
+    print('añadir a la lista:')
+    print(no_match['Funcionario'])
+
+unido_cols.columns
+
+
+#%% CARGA A SQL SERVER
+if cargar_SQL == True:
     # Establecer la conexión con SQL Server
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
@@ -78,7 +84,8 @@ if CARGA_SQL_SERVER == True:
     # nombre de la tabla en SQL
     tabla = tabla_nombre
     
-    df = lineas.copy()
+    df = unido_cols[['nombres para merge', 'numerador', 'denominador', 'Fp8']].copy()
+    df = df.fillna(0)
     # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
     # EJEMPLO df = df.fillna(0)
     
@@ -120,9 +127,9 @@ if CARGA_SQL_SERVER == True:
         cursor.execute(insert_query, tuple(row))
 
     ###########################################################################
-    f_corte_formato = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
-    cursor.execute(f"DELETE FROM FACTORING..[LINEAS_v2] WHERE FechaCorte_linea = '{f_corte_formato}'")
-    cursor.execute(f"INSERT INTO FACTORING..[LINEAS_v2] SELECT * FROM {tabla_nombre}")
+    # fecha_format_sql = fecha_corte[0:4] + fecha_corte[5:7] + fecha_corte[8:10]
+    # cursor.execute(f"DELETE FROM FACTORING..REPORTE_SEMANAL WHERE FechaCorte = '{fecha_format_sql}'")
+    # cursor.execute(f"INSERT INTO FACTORING..REPORTE_SEMANAL SELECT * FROM {tabla}")
     ###########################################################################
 
     # Confirmar los cambios y cerrar la conexión
@@ -130,9 +137,10 @@ if CARGA_SQL_SERVER == True:
     cursor.close()
 
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
-    print('Se cargaron los datos a SQL SERVER FACTORING..[LINEAS_v2]')
-
 else:
     print('No se ha cargado a SQL SERVER')
 
+#%%
+unido.to_excel('fp8 de las 2 fechas.xlsx',
+               index = False)
 
