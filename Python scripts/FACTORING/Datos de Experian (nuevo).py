@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_21_v2]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_22_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\21 10')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\22 10')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7484.txt'
-corte  = '2024-10-21' # yyyy-mm-dd
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7586.txt'
+corte  = '2024-10-22' # yyyy-mm-dd
 
 # EN CASO DE REQUERIR UNIR 2 ARCHIVOS:
 unir_2_archivos = False # poner False para trabajar con solo un archivo:
@@ -205,10 +205,23 @@ query = '''
 experian = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
 experian['Ruc Deudor'] = experian['Ruc Deudor'].str.strip()
 ###############################################################################
+query = '''
+    SELECT
+    	DISTINCT
+	    [Ruc Deudor] as 'Ruc Deudor',
+	    Deudor       as 'Deudor'
+
+    FROM FACTORING..[CARTERA]
+    WHERE FechaCorte = (select max(FechaCorte) from FACTORING..[CARTERA])
+'''
+mensual = pd.read_sql_query(query, conn, dtype = {'Ruc Deudor' : str})
+mensual['Ruc Deudor'] = mensual['Ruc Deudor'].str.strip()
 
 #%% unión de datos generados por el fincore
 base_fincore = pd.concat([semanal, 
-                          adelantos], axis = 0)
+                          adelantos,
+                          mensual], axis = 0)
+
 base_fincore.drop_duplicates(subset  = ['Ruc Deudor', 'Deudor'],
                              inplace = True)
 base_fincore.drop_duplicates(subset  = 'Ruc Deudor',
