@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Octubre 2024'
-fecha_inicio = '2024-10-01'
-fecha_final  = '2024-10-31'
+MES          = 'Noviembre 2024'
+fecha_inicio = '2024-11-01'
+fecha_final  = '2024-11-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 09\\18 09\\mensual')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 10\\24 10\\mensual')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -29,7 +29,7 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte.xlsx'
 #%%
 # reporte de pagos sacado de la plataforma de Kashio ##########################
 # Reportes / Pagos / Fecha : TODOS / Exportar #################################
-pagos_rep_kashio = 'kwTDs4XfRnAi9uSFX2287Z.xlsx'
+pagos_rep_kashio = 'ZM9Akq4gL2vJSoECPpUQuL.xlsx'
 ###############################################################################
 
 #%%

@@ -2166,13 +2166,18 @@ ya_casi['Tasa de Interés Anual 23/'] = ya_casi['Tasa de Interés Anual 23/'].ro
 #%% COLUMNA DE LA PLANILLA CONSOLIDADA (HISTÓRICO)
 ya_casi['PLANILLA CONSOLIDADA'] = ya_casi['Nombre PlanillaTXT']
 def planilla_consolidada(ya_casi):
+    
+    if (ya_casi['PLANILLA CONSOLIDADA'] == 'PLANILLA LIQUIDADOS') and (pd.isna(ya_casi['Planilla Anterior TXT'])):
+        return 'PLANILLA LIQUIDADOS'
+    
     if ya_casi['PLANILLA CONSOLIDADA'] == 'PLANILLA LIQUIDADOS':
-        return ya_casi['Planilla Anterior TXT']
+        return ya_casi['Planilla Anterior TXT']    
     else:
         return ya_casi['PLANILLA CONSOLIDADA']
 
 ya_casi['PLANILLA CONSOLIDADA'] = ya_casi.apply(planilla_consolidada, 
                                                 axis=1)
+print('verificar que la plantilla consolidada esté funcionando bien, se modificó la funcionalidad')
 
 #%% RECÁLCULO DE LA COLUMNA NRO_REGISTRO
 #por si acasito, corregimos la columna del nro Registro 1/

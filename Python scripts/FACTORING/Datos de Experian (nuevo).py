@@ -20,9 +20,9 @@ warnings.filterwarnings('ignore')
 tabla_nombre = 'FACTORING..[EXPERIAN_2024_10_22_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\22 10')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\23 10')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_7586.txt'
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_648.txt'
 corte  = '2024-10-22' # yyyy-mm-dd
 
 # EN CASO DE REQUERIR UNIR 2 ARCHIVOS:
