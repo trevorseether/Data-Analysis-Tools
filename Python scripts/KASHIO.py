@@ -396,6 +396,9 @@ kashio_para_csv.drop('VENCIMIENTO parseado',
                      inplace = True)
 
 #%% EXPORTAR A CSV 
+# kashio_para_csv.to_excel('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.xlsx', 
+#                        index    = False,
+#                        encoding = 'utf-8-sig')
 
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
                        index    = False,
