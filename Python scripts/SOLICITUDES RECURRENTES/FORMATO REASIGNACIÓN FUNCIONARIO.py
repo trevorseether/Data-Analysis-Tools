@@ -16,15 +16,15 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\ANEXO AGOSTO 2024, para migrar en setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\aplicar en anx06 de octubre')
 
-nombre = 'Reasignación de cartera (AnexoAgosto24).xlsx'
+nombre = 'Reasignación de cartera (Anexo09Setiembre24) vs02.xlsx'
 
-corte       = 'SET 2024'
-nro_fincore = 'fincore'     #columna del fincore del excel
-nuevo_func  = 'FN Final'    #columna del nuevo funcionario del excel
-pestaña     = 'Hoja1'       #pestaña del excel
-filas_skip  = 0
+corte       = 'OCT 2024'
+nro_fincore = 'NRO FINCORE'     #columna del fincore del excel
+nuevo_func  = 'FN'              #columna del nuevo funcionario del excel
+pestaña     = 'Migracion'       #pestaña del excel
+filas_skip  = 2
 
 #%%
 reasignacion = pd.read_excel(io         = nombre, 
