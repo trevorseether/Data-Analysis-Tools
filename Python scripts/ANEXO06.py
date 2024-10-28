@@ -26,7 +26,7 @@ from colorama import Back # , Style, init, Fore
 import pyodbc
 import warnings
 warnings.filterwarnings('ignore')
-
+ 
 # =============================================================================
 # validar que se hayan retirado del anexo06 los créditos vendidos en el mes respectivo **********
 # solo si es que se han vendido créditos
