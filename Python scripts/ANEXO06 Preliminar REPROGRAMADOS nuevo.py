@@ -717,6 +717,7 @@ ordenado['Nro Prestamo \nFincore'] = ordenado['Nro Prestamo \nFincore'].str.stri
 
 #%%CORRECCIÓN TIPO DE CRÉDITO 19/
 #verificación del tipo de producto 19/
+#validando 6 meses
 #para créditos MYPE
 ordenado['Tipo de Crédito 19/'] = ordenado['Tipo de Crédito 19/'].astype(str) #por si acasito
 ordenado['Tipo de Crédito 19/'] = ordenado['Tipo de Crédito 19/'].str.strip()
@@ -841,7 +842,6 @@ def verificar_mype(fila):
 tabla_resumen['tipo mype'] = tabla_resumen.apply(verificar_mype, axis = 1)
 
 # ESTA TABLA AUXILIAR CONTIENE EL VERDADERO TIPO DE CÓDIGO QUE DEBE CORRESPONDER AL CRÉDITO
-
 #%% merge con la tabla auxiliar
 ordenado = ordenado.merge(tabla_resumen[['CodigoSocio7', 'tipo mype']],
                           left_on  = 'Código Socio 7/',

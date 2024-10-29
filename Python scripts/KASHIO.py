@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 10\\28 10')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 10\\29 10')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241028.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241029.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -42,6 +42,9 @@ mensajeria_preventiva = False #True o False
 solo_pyme             = False #True o False
 ###############################################################################
 
+'Crear excel pero del csv que se manda diariamente' ###########################
+crear_excel = False
+###############################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #%%% lectura del archivo
 kashio = pd.read_excel(ARCHIVO_HOY,
@@ -396,13 +399,17 @@ kashio_para_csv.drop('VENCIMIENTO parseado',
                      inplace = True)
 
 #%% EXPORTAR A CSV 
-# kashio_para_csv.to_excel('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.xlsx', 
-#                        index    = False,
-#                        encoding = 'utf-8-sig')
+
 
 kashio_para_csv.to_csv('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.csv', 
-                       index    = False,
-                       encoding = 'utf-8-sig')
+                        index    = False,
+                        encoding = 'utf-8-sig')
+
+if crear_excel == True:
+    kashio_para_csv.to_excel('GeneracionData ' + str(ARCHIVO_HOY[29:37]) + '.xlsx', 
+                            index    = False,
+                            encoding = 'utf-8-sig')
+    
 # En esta línea de código, se utiliza la codificación 'utf-8-sig'. 
 # Esta codificación es similar a UTF-8, pero agrega un carácter de marca 
 # de orden de bytes (BOM) al principio del archivo CSV. El BOM es un 
