@@ -387,11 +387,11 @@ def parse_dates(date_str):
 
     '''
     #formatos en los cuales se tratará de convertir a DateTime
-    formatos = ['%d/%m/%Y %H:%M:%S',
-                '%d/%m/%Y',
-                '%Y%m%d', '%Y-%m-%d', 
-                '%Y-%m-%d %H:%M:%S', 
-                '%Y/%m/%d %H:%M:%S',
+    formatos = ['%d/%m/%Y %H:%M:%S',   
+                '%d/%m/%Y',            
+                '%Y%m%d', '%Y-%m-%d',  
+                '%Y-%m-%d %H:%M:%S',   
+                '%Y/%m/%d %H:%M:%S',   
                 '%Y-%m-%d %H:%M:%S PM',
                 '%Y-%m-%d %H:%M:%S AM',
                 '%Y/%m/%d %H:%M:%S PM',
@@ -399,7 +399,7 @@ def parse_dates(date_str):
 
     for formato in formatos:
         try:
-            return pd.to_datetime(date_str, format=formato)
+            return pd.to_datetime(date_str, format = formato)
         except ValueError:
             pass
     return pd.NaT

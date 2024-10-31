@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 10\\29 10')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 10\\30 10')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241029.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241030.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -42,8 +42,8 @@ mensajeria_preventiva = False #True o False
 solo_pyme             = False #True o False
 ###############################################################################
 
-'Crear excel pero del csv que se manda diariamente' ###########################
-crear_excel = False
+'Crear excel del csv que se manda diariamente' ################################
+crear_excel           = False
 ###############################################################################
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #%%% lectura del archivo
