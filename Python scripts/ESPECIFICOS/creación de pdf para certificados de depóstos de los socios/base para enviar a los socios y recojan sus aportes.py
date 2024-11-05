@@ -174,11 +174,11 @@ base['Nombre pdf'] = base['CodSoc'] + '_' + base['Apellidos y Nombres']
 #     start_row = i * max_rows_per_file
 #     end_row = start_row + max_rows_per_file
 #     subset_df = base.iloc[start_row:end_row]
-    
+
 #     # Guardar el DataFrame en un archivo Excel
 #     file_name = f'output_part_{i+1}.xlsx'
 #     subset_df.to_excel(file_name, index=False)
-    
+
 #     print(f'Guardado {file_name}')
 
 base.to_excel('reingresantes inactivos.xlsx',

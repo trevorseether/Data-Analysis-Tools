@@ -24,15 +24,15 @@ from colorama import Back # , Style, init, Fore
 #%% DIRECTORIO DE TRABAJO, fecha actual
 
 'AQUI SE PONE LA FECHA DE HOY' ################################################
-FECHATXT = '2024-10-22'  # FORMATO AÑO-MES-DÍA
+FECHATXT = '2024-11-05'  # FORMATO AÑO-MES-DÍA
 ###############################################################################
 
 'directorio de trabajo' #######################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\octubre\\22 10'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\BAJAS KONECTA\\2024\\noviembre\\05 11'
 ###############################################################################
 
 'NOMBRE DEL ARCHIVO DE BAJAS ENVIADO' #########################################
-nombre_archivo = '5TO INFORME - CM 10_24 GRUPO KONECTA.xlsx'
+nombre_archivo = '2DO INFORME 11_24 GRUPO KONECT.xlsx'
 ###############################################################################
 
 'filas a skipear' ######################
@@ -47,6 +47,10 @@ COL_DOC_IDENTIDAD = 'Documento' #'DNI' # 'Documento'
 COL_FECHA_BAJA = 'BAJA SAP' #'BAJA SAP'  #'Fecha egreso'
 ###############################################
 
+'HOJA DE EXCEL' ###############################
+nombre_sheet = 'Final'
+###############################################
+
 'Creación de excels'###########################
 crear_excel = True # True o False
 ###############################################
@@ -57,7 +61,8 @@ os.chdir(directorio)
 
 bajas = pd.read_excel(nombre_archivo,
                       skiprows = filas_skip,
-                      dtype    = ({COL_DOC_IDENTIDAD: object}))
+                      dtype    = ({COL_DOC_IDENTIDAD: object}),
+                      sheet_name = nombre_sheet)
 
 bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].astype(str)
 bajas[COL_DOC_IDENTIDAD] = bajas[COL_DOC_IDENTIDAD].str.strip()

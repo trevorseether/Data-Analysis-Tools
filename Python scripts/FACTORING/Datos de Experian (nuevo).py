@@ -244,4 +244,18 @@ if no_reportados.shape[0] > 0:
     no_reportados.to_excel('no reportados por Experian.xlsx', index = False)
 else:
     print('todo bien, todos están siendo reportados por Experian')
-    
+
+#%% Empresas que Experian reporta, pero por las puras es porque ya no son clientes.
+no_necesarios = experian.merge(mergeado,
+                               on  = 'Ruc Deudor',
+                               how = 'left')
+
+no_necesarios = no_necesarios[pd.isna(no_necesarios['Deudor'])]
+
+no_necesarios = no_necesarios[['Ruc Deudor', 'NOMBRE CPT_x']]
+
+no_necesarios.columns = ['Ruc Deudor', 'NOMBRE CPT']
+
+no_necesarios.to_excel('retirar de Experian.xlsx',
+                       index = False)
+

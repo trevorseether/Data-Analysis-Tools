@@ -18,12 +18,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-corte_actual      = '20241031' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
+corte_actual      = '20241130' #FUNCIONARÁ DESDE '20240229' EN ADELANTE
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\DIANA LORENA\\montos desembolsados diarios')
 
-tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_10]'
-tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_10_acum]'
+tabla             = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_11]'
+tabla_acumulada   = '[DESEMBOLSOS_DIARIOS].[dbo].[2024_11_acum]'
 
 CARGA_SQL_SERVER  = True #True o False
 
@@ -213,13 +213,13 @@ SELECT
 	DATENAME(dw, p.fechadesembolso) AS dia_semana,
 	
 	CASE DATEPART(WEEKDAY, p.fechadesembolso)
-        WHEN 1 THEN 'domingo '
-        WHEN 2 THEN 'lunes '
-        WHEN 3 THEN 'martes '
-        WHEN 4 THEN 'miércoles '
-        WHEN 5 THEN 'jueves '
-        WHEN 6 THEN 'viernes '
-        WHEN 7 THEN 'sábado '
+        WHEN 1 THEN 'lunes '
+        WHEN 2 THEN 'martes '
+        WHEN 3 THEN 'miércoles '
+        WHEN 4 THEN 'jueves '
+        WHEN 5 THEN 'viernes '
+        WHEN 6 THEN 'sábado '
+        WHEN 7 THEN 'domingo '
     END +
     CAST((DATEPART(DAY, p.fechadesembolso) - 1) / 7 + 1 AS VARCHAR) AS dia_numero,	
 	
@@ -405,6 +405,11 @@ WHERE
 AND s.codigosocio>0
 AND p.codestado <> 563
 
+
+---------------------------- crédito desembolsado en un día no laboral
+--and p.fechadesembolso <> '20231105'
+----------------------------
+
 ORDER BY p.fechadesembolso desc, Socio ASC
 
 '''
@@ -413,6 +418,15 @@ df_fincore = pd.read_sql_query(query, conn)
 
 df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.date
 df_fincore['fechadesembolso'] = pd.to_datetime(df_fincore['fechadesembolso'])
+
+# AJUSTE DE FECHA DE DESEMBOLSO PARA CASOS ULTRA EXCEPCIONALES
+# este crédito se desembolsó un domingo
+df_fincore.loc[(df_fincore['pagare_fincore'] == '00116680'),
+                'fechadesembolso'] = pd.Timestamp('2023-11-06')
+
+# normalización de fechas
+df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.normalize()
+
 
 # df_fincore = df_fincore[df_fincore['ETIQUETA REFINANCIADO'] == 'NO REFINANCIADO']
 
