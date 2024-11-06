@@ -52,7 +52,6 @@ padron_socios = pd.read_excel(io       = nombre,
                                           'Celular1'           : str,
                                           'ESTADO'             : str})
 
-#%% 
 #%%
 padron_socios['CodSoc']                      = padron_socios['CodSoc'].str.strip()
 padron_socios['Tipo Persona TXT']            = padron_socios['Tipo Persona TXT'].str.strip()
