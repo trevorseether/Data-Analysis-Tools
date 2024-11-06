@@ -10,18 +10,18 @@ from PyPDF2 import PdfWriter, PdfReader
 import os
 
 # Cambiar al directorio donde tienes los archivos
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\envio de pdfs padron de socios y aportes\\AHORA SÍ\\REINGRESANTES\\I')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\otros pdfs masivos\\V2')
 
 # Leer el archivo Excel
-excel_file = 'reingresantes inactivos.xlsx'
-df = pd.read_excel(excel_file, dtype={'Nro Doc Identidad Unificado': str})
+excel_file = 'Venta Cartera oct24 - base para legal (BD).xlsx'
+df = pd.read_excel(excel_file, dtype={'Número Docum Identidad': str})
 
 # Leer el PDF de origen
-input_pdf = 'I.pdf'
+input_pdf = 'v2.pdf'
 pdf_reader = PdfReader(input_pdf)
 
 # Número de páginas por PDF (puedes modificar esta variable)
-nro_hojas_por_pdf = 2  # Cambia a 1, 2, 3, etc. según prefieras
+nro_hojas_por_pdf = 2  # Cambia a 1, 2, 3, etc. según número de hojas necesarias por pdf
 
 #%%
 # Función para agregar contraseña a un PDF
@@ -35,11 +35,11 @@ def add_password(input_pdf, output_pdf, password):
 # Crear los PDFs con la cantidad de páginas especificada
 conteo = 1
 for index, row in df.iterrows():
-    nombre_pdf = row['Nombre pdf']
-    contraseña = row['Nro Doc Identidad Unificado']
+    nombre_pdf = row['nombre pdf']
+    contraseña = row['Número Docum Identidad']
     
     # Crear un nuevo PDF y agregar las páginas correspondientes
-    output_pdf_path = f"{nombre_pdf}.pdf"
+    output_pdf_path = f"{nombre_pdf}"
     pdf_writer = PdfWriter()
     
     # Agregar las páginas al PDF según el valor de nro_hojas_por_pdf

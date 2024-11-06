@@ -42,9 +42,9 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Setiembre 2024'  # Mes Año
-fecha_corte             = '2024-09-30' # año-mes-día
-fecha_corte_inicial     = '2024-09-01' # año-mes-día
+fecha_mes               = 'Octubre 2024'  # Mes Año
+fecha_corte             = '2024-10-31' # año-mes-día
+fecha_corte_inicial     = '2024-10-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 setiembre'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 octubre'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados- Insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Octubre 2024 - campos ampliados - insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Agosto-24\\productos'
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 setiembre\\productos'
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Agosto 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -154,30 +154,32 @@ else:
 #%% CÓDIGO ELIMINADOR DE CRÉDITOS SI ES QUE HACE FALTA ELIMINARLOS:
 
 # cartera vendida EN FEBRERO 2024
-# menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
-# print(menos_bruto.shape[0])
-# eliminar = ['00000681',
-#             '00025314',
-#             '00051147',
-#             '00021245',
-#             '00019565',
-#             '00019911',
-#             '00059920',
-#             '00052890',
-#             '00020153',
-#             '00055472',
-#             '00061987',
-#             '00010827',
-#             '00021016',
-#             '00023215',
-#             '00014819',
-#             '00058140',
-#             '00057592',
-#             '00060249',
-#             '00016572'
-#             ]
-# menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
-# print(menos_bruto.shape[0])
+menos_bruto['Nro Prestamo \nFincore'] = menos_bruto['Nro Prestamo \nFincore'].str.strip()
+print(menos_bruto.shape[0])
+eliminar = ['00000681',
+            '00025314',
+            '00051147',
+            '00021245',
+            '00019565',
+            '00019911',
+            '00059920',
+            '00052890',
+            '00020153',
+            '00055472',
+            '00061987',
+            '00010827',
+            '00021016',
+            '00023215',
+            '00014819',
+            '00058140',
+            '00057592',
+            '00060249',
+            '00016572',
+            
+
+            ]
+menos_bruto = menos_bruto[~menos_bruto['Nro Prestamo \nFincore'].isin(eliminar)]
+print(menos_bruto.shape[0])
 
 #%% VERIFICAR SI HAY DUPLICADOS EN EL CÓDIGO DE SOCIO (de la base de datos)
 
@@ -2217,9 +2219,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20240930' #mes actual
-fecha_corte_menos_1 = '20240831' #mes anterior
-fecha_corte_menos_2 = '20240731' #mes anterior del anterior
+fecha_corte_actual  = '20241031' #mes actual
+fecha_corte_menos_1 = '20240930' #mes anterior
+fecha_corte_menos_2 = '20240831' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2298,13 +2300,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Agosto 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\Cartera Anexo 06\\2024\\Agosto-24\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Setiembre 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 setiembre\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Set-24'
-mes_anterior_txt = 'Ago-24'
+mes_actual_txt   = 'Oct-24'
+mes_anterior_txt = 'Set-24'
 # =============================================================================
 #%% LECTURA
 
