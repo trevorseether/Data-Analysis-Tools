@@ -20,15 +20,15 @@ import numpy as np
 
 #%% FECHA CORTE
 ##############################################
-fecha_corte = 'SETIEMBRE 2024'
+fecha_corte = 'OCTUBRE 2024'
 ##############################################
 #%% UBI
 # ubicación ###################################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIEMBRE\\provisiones\\mejorado')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 OCTUBRE\\prov')
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 05.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Octubre 2024 - campos ampliados 03.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
