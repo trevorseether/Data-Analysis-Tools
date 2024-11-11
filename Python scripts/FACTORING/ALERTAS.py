@@ -12,9 +12,9 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 10\\30 10')
-archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4162.txt'
-fecha_añadido   = '2024-10-30' #yyyy-mm-dd
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\Alertas\\2024\\2024 11\\08 11')
+archivo         = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_4340.txt'
+fecha_añadido   = '2024-11-08' #yyyy-mm-dd
 carga_sql       = True
 tabla_principal = 'FACTORING.[dbo].[ALERTAS]'
 
@@ -91,6 +91,7 @@ if carga_sql == True:
     cursor.close()
     
     print(f'Se cargaron los datos a SQL SERVER {tabla}')
+    print(f'Correspondiente a la fecha {fecha_añadido}')
     
 #%%
 # =============================================================================
