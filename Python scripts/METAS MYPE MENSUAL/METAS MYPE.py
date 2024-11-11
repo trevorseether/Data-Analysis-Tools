@@ -18,13 +18,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 setiembre'
-nombre      =  '09 Mype - Septiembre 2024.xlsx'
-fecha_corte =  '2024-09-30'
+ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 octubre'
+nombre      =  '10 Mype - Octubre 2024 (2).xlsx'
+fecha_corte =  '2024-10-31'
 pestaña_excel   = '100%'
 
 carga_sql       = True
-tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20240930]'
+tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20241031]'
 
 #%%
 os.chdir(ubi)
@@ -82,6 +82,15 @@ if faltantes.shape[0] > 0:
     print('falta asignar nombre a los siguientes casos')
     print(faltantes)
     faltantes.to_excel('faltantes.xlsx')
+    print('usar el siguiente codigo en SQL para buscar los funcionarios:')
+    print('''
+SELECT 
+	* 
+FROM 
+	grupocab
+WHERE 
+	descripcion LIKE '%David%'
+          ''')
 
 #%% Columnas necesarias
 df = pd.DataFrame()

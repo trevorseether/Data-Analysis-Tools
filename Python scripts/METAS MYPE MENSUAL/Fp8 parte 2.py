@@ -20,13 +20,13 @@ warnings.filterwarnings('ignore')
 
 #%%
 # asumiendo que elaboramos el fp8 justo después de procesar el de la fecha 20
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\octubre')
 
-primero = 'fp8_2024-09-05.xlsx'
-segundo = 'fp8_2024-09-20.xlsx'
+primero = 'fp8_2024-10-05.xlsx'
+segundo = 'fp8_2024-10-20.xlsx'
 
 cargar_SQL = True
-tabla_nombre = 'FUNCIONARIOS.[dbo].[Fp8_20240930]'
+tabla_nombre = 'FUNCIONARIOS.[dbo].[Fp8_20241031]'
 
 #%%
 df_primero = pd.read_excel(io = primero)

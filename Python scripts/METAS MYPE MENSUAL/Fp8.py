@@ -18,13 +18,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\setiembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\octubre')
 
-archivo_base       = 'Rec_30.09.2024_r.xlsx'
-archivo_pendientes = 'Mora_30.09.2024_r.xlsx'
-fecha_corte        = '2024-09-30' # YYYY-MM-DD
+archivo_base       = 'Rec_31.10.2024_t.xlsx'
+archivo_pendientes = 'Mora_29.10.2024_r.xlsx'
 
-fecha_vencimiento  = '2024-09-20' #fecha 05 o fecha 20 YYYY-MM-DD
+fecha_corte        = '2024-10-31' # YYYY-MM-DD
+
+fecha_vencimiento  = '2024-10-20' #fecha 05 o fecha 20 YYYY-MM-DD
 numero_proceso     = 'p2' #p1 o p2
 
 unir_datos_desde_sql = False # True o False
@@ -32,6 +33,7 @@ unir_datos_desde_sql = False # True o False
 #%% DATOS DE LOS EXCELS
 base = pd.read_excel(archivo_base,
                      dtype = str)
+
 base['Fincore'] = base['N°\nPréstamo'].str.split('-').str[1]
 
 pendientes = pd.read_excel(archivo_pendientes,
@@ -47,10 +49,12 @@ columnas = ['Código\nSocio',
             'Vencido \nDesde', 
             'Empleador', 
             'Planilla', 
-            'Funcionario']
+            'Funcionario',
+            
+            'Codigo \nFinalidad']
 
 base       = base[columnas]
-pendientes = pendientes[columnas]
+pendientes = pendientes[columnas[0:-1]]
 
 #%%
 if unir_datos_desde_sql == True:
@@ -77,8 +81,7 @@ if unir_datos_desde_sql == True:
     
     del conn
     del fecha_corte_sql
-    
-    #%%
+    '-------------------------------------------------------------------------'    
     base = base.merge(anexo_06,
                       left_on  = 'Fincore',
                       right_on = 'Nro_Fincore',
@@ -94,8 +97,8 @@ base['Fecha Vencimiento']       = pd.to_datetime(base['Vencido \nDesde'],       
 pendientes['Fecha Vencimiento'] = pd.to_datetime(pendientes['Vencido \nDesde'], dayfirst=True, errors='coerce')
 
 # filtrando por producto
-base       = base[base['Producto'].isin(            ['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD'])]
-pendientes = pendientes[pendientes['Producto'].isin(['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD'])]
+# base       = base[base['Producto'].isin(            ['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD'])]
+# pendientes = pendientes[pendientes['Producto'].isin(['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD'])]
 
 fecha_ultimo_dia = pd.Timestamp(fecha_corte)
 fecha_primer_dia = pd.Timestamp(fecha_corte[0:8] + '01')
@@ -105,9 +108,12 @@ base_filtrado_mes = base[(base['Fecha Vencimiento'] >= fecha_primer_dia)  & (bas
 pend_filtrado_mes = pendientes[(pendientes['Fecha Vencimiento'] >= fecha_primer_dia)  & (pendientes['Fecha Vencimiento'] <= fecha_ultimo_dia)]
 
 # verificación de las fechas de vencimiento
-fechas_vencimiento = base_filtrado_mes[base_filtrado_mes['Producto'].isin(['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD'])]
+fechas_vencimiento = base_filtrado_mes[(base_filtrado_mes['Producto'].isin(['PEQUEÑA EMPRESA', 'MICROEMPRESA', 'LIBRE DISPONIBILIDAD',
+                                                                           'PEQUEÑA EMPRESAS', 'MICROEMPRESAS', ''])) &
+                                       (base_filtrado_mes['Codigo \nFinalidad'] != '41')   |
+                                       (base_filtrado_mes['Codigo \nFinalidad'] == '32')]
 print(fechas_vencimiento['Fecha Vencimiento'].unique())
-print('''Debe salir:
+print('''Debe salir como:
 ['2024-09-05T00:00:00.000000000' '2024-09-20T00:00:00.000000000']''')
 
 #%%
