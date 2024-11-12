@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 #%% 
 # FECHAS PARA LA RECAUDACIÓN:
-fecha_inicio = '20230101'   # recordar que tiene que ser el inicio del mes
+fecha_inicio = '20240701'   # recordar que tiene que ser el inicio del mes
 fecha_final  = '20240930'
 
 # DIRECTORIO DE TRABAJO:
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\POR MAGDALENA Y SANTA ANITA\\MAGDALENA'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\julio agosto setiembre 2024'
 
 #%% QUERY
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -101,7 +101,8 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
   
 -- WHERE        (ccab.Fecha >= '01-01-2020' and ccab.Fecha <= '31-12-2020') and cdet.flagponderosa is null
 -- where year(ccab.fecha)=2021 and cdet.CodEstado <> 376 -- and fin.codigo<30 and gr.descripcion like '%PROSEVA%'  
--- 376 Anulado and cdet.flagponderosa is null
+-- 376 Anulado 
+-- and cdet.flagponderosa is null
 
 Where CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '{fecha_inicio}' AND '{fecha_final}' 
 and cdet.CodEstado <> 376
@@ -253,6 +254,7 @@ FROM prestamo as p
 
 WHERE    1 = 1
 
+/*
 AND pro.descripcion IN (
 'BORJA HERENCIA',
 'HERENCIA BORJA / G. HERRERA',
@@ -338,7 +340,7 @@ AND pro.descripcion IN (
 'JOSE YARLEQUE ESCATE'
     
 )
-
+*/
 
 --AND   CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20231101' ---------------des/activar esto para multioficios
 --AND s.codigosocio>0  and p.codestado = 342
@@ -373,7 +375,7 @@ datos_creditos = datos_creditos.drop_duplicates(subset  = 'pagare_fincore')
 dat = ing_fin_sin_retenciones.merge(datos_creditos,
                                     left_on  = 'PagareFincore', 
                                     right_on = 'pagare_fincore',
-                                    how      = 'inner')
+                                    how      = 'left')
 
 #%%
 # CREACIÓN DE DATAFRAMES PARA CADA MES
@@ -404,6 +406,6 @@ for columna in columnas_numericas:
         dataframes_dict[nombre_df] = df_filtrado
 
         # Exportar el DataFrame a un archivo Excel con el mismo nombre
-        df_filtrado.to_excel(f"{nombre_df} - MAGDALENA.xlsx", 
+        df_filtrado.to_excel(f"{nombre_df}.xlsx", 
                              index = False)
 
