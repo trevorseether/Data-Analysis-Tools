@@ -13,9 +13,9 @@ import os
 import pyodbc
 
 #%%
-corte = 'Setiembre 2024'
+corte = 'Octubre 2024'
 # Define el directorio
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\CSV COSECHA\\2024\\SETIEMBRE'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\CSV COSECHA\\2024\\OCTUBRE'
 
 #%%
 # Crea el directorio si no existe, incluyendo subdirectorios

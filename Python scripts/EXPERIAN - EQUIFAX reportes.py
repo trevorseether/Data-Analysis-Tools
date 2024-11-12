@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Setiembre 2024'
+FECHA_CORTE = 'Octubre 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 setiembre"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 octubre"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - SET-24 - INSUMO.xlsx"
+insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - OCT-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,7 +35,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20240930'
+f_corte_sql = '20241031'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
@@ -174,7 +174,9 @@ df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del 
                       'N° Documento\nIdentidad (*)  DNI o RUC' : str,
                       'Tipo Persona (*)'                : object,
                       'Modalidad de Credito (*)'        : object
-                        })
+                        }                        ,
+                                                sheet_name = 'Hoja1'
+)
 
 #limpieza de filas vacías
 df_sentinel.dropna(subset = ['Cod. Prestamo', 
