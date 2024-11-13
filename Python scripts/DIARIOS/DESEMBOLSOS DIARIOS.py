@@ -420,7 +420,7 @@ df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.date
 df_fincore['fechadesembolso'] = pd.to_datetime(df_fincore['fechadesembolso'])
 
 # AJUSTE DE FECHA DE DESEMBOLSO PARA CASOS ULTRA EXCEPCIONALES
-# este crédito se desembolsó un domingo
+# este crédito se desembolsó un domingo (es refinanciado)
 df_fincore.loc[(df_fincore['pagare_fincore'] == '00116680'),
                 'fechadesembolso'] = pd.Timestamp('2023-11-06')
 
