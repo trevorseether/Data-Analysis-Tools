@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 11\\13 11')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 11\\14 11')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241113.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241114.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -54,8 +54,8 @@ kashio = pd.read_excel(ARCHIVO_HOY,
                        )
 
 kashio['ID CLIENTE'] = kashio['ID CLIENTE'].str.strip()
-kashio['EMAIL'] = kashio['EMAIL'].str.strip()
-kashio['EMAIL'] = kashio['EMAIL'].str.upper()
+kashio['EMAIL']      = kashio['EMAIL'].str.strip()
+kashio['EMAIL']      = kashio['EMAIL'].str.upper()
 
 columnas = list(kashio.columns)
 
