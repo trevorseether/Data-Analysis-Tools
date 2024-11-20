@@ -14,13 +14,13 @@ import os
 # data = {'archivo': [ 'asd.pdf', 'sdf.pdf', 'dfg.pdf']}
 # df = pd.DataFrame(data)
 
-ubi     = 'C:\\Users\\sanmiguel38\\Desktop\\inactivos prueba'
-archivo = 'Inactivos grupo 6.xlsx'
+ubi     = 'R:\\REPORTES DE GESTIÓN\\Procesos para Envio Masivo\\Notificacion por venta de cartera Oct.24\\ENVÍOS FÍSICOS PENDIENTES'
+archivo = 'Envío físico pendiente.xlsx'
 df = pd.read_excel(io = ubi + '\\' + archivo)
 
 # Directorio de origen y destino
-directorio_origen  = 'C:\\Users\\sanmiguel38\\Desktop\\inactivos prueba\\encontrados'
-directorio_destino = 'C:\\Users\\sanmiguel38\\Desktop\\inactivos prueba\\G6'
+directorio_origen  = 'R:\\REPORTES DE GESTIÓN\\Procesos para Envio Masivo\\Notificacion por venta de cartera Oct.24\\Correos válidos'
+directorio_destino = 'R:\\REPORTES DE GESTIÓN\\Procesos para Envio Masivo\\Notificacion por venta de cartera Oct.24\\ENVÍOS FÍSICOS PENDIENTES\\CARTAS'
 
 # Asegúrate de que el directorio de destino existe
 os.makedirs(directorio_destino, exist_ok=True)
@@ -28,7 +28,7 @@ os.makedirs(directorio_destino, exist_ok=True)
 conteo = 1
 no_encontrados = []
 # Iterar sobre los nombres de archivo en el DataFrame
-for nombre_archivo in df['Nombre pdf']:
+for nombre_archivo in df['nombre pdf']:
     ruta_origen = os.path.join(directorio_origen, nombre_archivo)
     ruta_destino = os.path.join(directorio_destino, nombre_archivo)
     
