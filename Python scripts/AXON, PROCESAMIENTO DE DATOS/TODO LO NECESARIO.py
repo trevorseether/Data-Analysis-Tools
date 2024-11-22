@@ -17,8 +17,8 @@ sub_carpeta  = '2 - Creditos'
 os.chdir('R:\\REPORTES DE GESTIÓN\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24' + '\\' + sub_carpeta)
 
 excel        = '02_Prestamos-completo.xlsx'
-sheet_nombre = 'prppg (2)'
-filas_skip   = 19
+sheet_nombre = 'prppg'
+filas_skip   = 18
 crear_csv    = True
 
 activar_limpieza    = False
@@ -74,6 +74,7 @@ base[columna] = base['NroPrestamo'] + '-' + base['numerocuota']
 
 columna_que_no_debe_duplicarse = columna
 
+# número de orden del archivo original
 base['orden original'] = range(1, len(base) + 1)
 
 #%%
@@ -239,8 +240,24 @@ if eliminar_duplicados == True:
 #%% filtrado de cuotas
 
 base['numerocuota int'] = base['numerocuota'].astype(int)
-base['fecha timestamp'] = pd.to_datetime(base['FechaVencimiento'], 
-                                         dayfirst=True)
+
+###############################################################################
+formatos = [ '%d-%m-%Y',
+             '%d/%m/%Y' ] # Lista de formatos a analizar
+
+def parse_date(date_str):
+    for formato in formatos:
+        try:
+            return pd.to_datetime(   arg = date_str, 
+                                  format = formato,)
+        except ValueError:
+            pass
+    return pd.NaT
+
+base['fecha timestamp'] = base['FechaVencimiento'].apply(parse_date)
+###############################################################################
+
+
 base['capital'] = base['capital'].astype(float)
 base['interes'] = base['interes'].astype(float)
 
@@ -249,7 +266,8 @@ base = base.sort_values(by=['NroPrestamo', 'fecha timestamp'],
                         ascending=[True, True])
 
 # Convertir la columna 'FechaVencimiento' a datetime
-base['FechaVencimiento'] = pd.to_datetime(base['FechaVencimiento'])
+base['FechaVencimiento'] = base['fecha timestamp']
+# base['FechaVencimiento'] = pd.to_datetime(base['FechaVencimiento'])
 
 # Función para identificar la primera cuota
 def marcar_primera_cuota(grupo):
@@ -344,7 +362,6 @@ if not os.path.exists(ruta_carpeta):
     print(f"Carpeta '{nombre_carpeta}' creada exitosamente.")
 else:
     print(f"La carpeta '{nombre_carpeta}' ya existe.")
-
 
 if crear_csv == True:
     print('creando csv')

@@ -19,21 +19,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 CARGA_SQL_SERVER = True
 
-tabla_nombre = 'FACTORING..[Calificacion_2023]'
+tabla_nombre = 'FACTORING..[Calificacion_2022_v2]'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ANUAL RANKING\\2023')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ANUAL RANKING\\nuevo')
 
-nombre = '7863_2024-05-29-115217_7859.xlsx'
+nombre = '7863_base_ranking_top_10_mil_2024-11-21_727694_8615.xlsx'
 
 #%%
 ranking = pd.read_excel(io       = nombre, 
                         skiprows = 0,
-                        dtype    = {'RUC' : str})
+                        dtype    = {'ruc' : str})
 
-ranking['RUC'] = ranking['RUC'].str.strip()
-ranking = ranking[['RUC',
-                   'Razón Social',
-                   'Ranking 2023']]
+ranking['ruc'] = ranking['ruc'].str.strip()
+ranking = ranking[['ruc',
+                   'razon_social',
+                   'ranking_2022']]
 
 #%%
 if CARGA_SQL_SERVER == True:
