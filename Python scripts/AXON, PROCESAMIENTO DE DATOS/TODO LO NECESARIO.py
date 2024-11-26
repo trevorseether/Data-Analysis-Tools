@@ -16,8 +16,8 @@ sub_carpeta  = '2 - Creditos'
 
 os.chdir('R:\\REPORTES DE GESTIÓN\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24' + '\\' + sub_carpeta)
 
-excel        = '02_Prestamos-completo.xlsx'
-sheet_nombre = 'prppg'
+excel        = '02_Prestamos-completo (interés negativo corregido).xlsx'
+sheet_nombre = 'prppg' #  "prppg"     "prppg (2)"
 filas_skip   = 18
 crear_csv    = True
 
@@ -29,7 +29,7 @@ eliminar_duplicados = True
 base = pd.read_excel(excel,
                      sheet_name = sheet_nombre,
                      skiprows   = filas_skip,
-                     dtype = str)
+                     dtype      = str)
 
 #%% strip eliminación de espacios
 columnas_strip = ['socio', 'DireccionDNI']
@@ -58,14 +58,14 @@ if activar_limpieza == True:
     
     for i in columnas_limpiar:
         base[i] = base[i].str.strip()
-        contar_reemplazos( base, i, '?') 
-        contar_reemplazos( base, i, '¿') 
-        contar_reemplazos( base, i, '|') 
-        contar_reemplazos( base, i, '*') 
-        contar_reemplazos( base, i, ';') 
-        contar_reemplazos( base, i, '!') 
-        contar_reemplazos( base, i, '=') 
-        contar_reemplazos( base, i, '*') 
+        contar_reemplazos( base, i, '?')
+        contar_reemplazos( base, i, '¿')
+        contar_reemplazos( base, i, '|')
+        contar_reemplazos( base, i, '*')
+        contar_reemplazos( base, i, ';')
+        contar_reemplazos( base, i, '!')
+        contar_reemplazos( base, i, '=')
+        contar_reemplazos( base, i, '*')
     
 #%% validación de duplicados
 columna = 'indice que debe ser único'

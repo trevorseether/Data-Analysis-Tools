@@ -9,6 +9,7 @@ import pandas as pd
 import os
 
 os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24\\2 - Creditos\\02_Prestamos-completo')
+nombre_csv = "prppg.csv"   #              "prppg (2).csv"            "prppg.csv"
 
 #%% MONTO DESEMBOLSADO
 columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegistro-3','(No column name)-4','(No column name)-5','(No column name)-6','TipoDeCredito-7','(No column name)-8',
@@ -22,11 +23,11 @@ columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegist
                          '(No column name)-69','(No column name)-70','(No column name)-71','(No column name)-72','(No column name)-73','(No column name)-74','(No column name)-75','(No column name)-76','(No column name)-77',
                          '(No column name)-78','(No column name)-79','(No column name)-80','(No column name)-81','(No column name)-82','(No column name)-83','(No column name)-84',]
 
-m_desem = pd.read_csv("prmpr.csv", 
+m_desem = pd.read_csv("prmpr.csv", #no cambiar 
                       header = None, 
                       names  = columnas_desembolsado,
-                      sep = ';',
-                      dtype = str)
+                      sep    = ';',
+                      dtype  = str)
 
 m_desem = m_desem[['NumerodePrestamo-1', 'MontoDesembolsadoAX-31', 'FechaDesembolsoAxon-40', 'Moneda_Axon-16', 'CodigoEstadoOperacion-33']]
 m_desem['MontoDesembolsadoAX-31'] = m_desem['MontoDesembolsadoAX-31'].astype(float).round(2)
@@ -36,7 +37,7 @@ del columnas_desembolsado
 #%% cuotas:
 col_cuotas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro','Aporte','TotalCargo','TotalPago','Ahorros','Pagado',]
 
-cuotas = pd.read_csv("prppg.csv", #                    "prppg.csv"             "prppg (2).csv"
+cuotas = pd.read_csv(nombre_csv, #                    "prppg.csv"             "prppg (2).csv"
                      header = None, 
                      names  = col_cuotas,
                      sep = ';',
@@ -57,7 +58,7 @@ del i
 
 def eliminar_ceros(cuotas):
     # si tienen cero en capital, interés, aportes y valor cuota, pues es una reprogramación, pero hay que eliminarlo porque en Axon genera problemas
-    if (cuotas['capital'] == 0) and (cuotas['interes'] == 0) and(cuotas['Aporte'] == 0) and (cuotas['TotalPago'] == 0):
+    if (cuotas['capital'] == 0) and (cuotas['interes'] == 0) and (cuotas['Aporte'] == 0) and (cuotas['TotalPago'] == 0):
         return 'eliminar, puro cero'
     else:
         return ''
@@ -162,18 +163,129 @@ cuotas_cero_para_incertar['NroPrestamo']      = min_cuota_con_observacion['NroPr
 cuotas_cero_para_incertar['FechaVencimiento'] = min_cuota_con_observacion['fecha cuota cero']
 cuotas_cero_para_incertar['numerocuota']      = '0'
 cuotas_cero_para_incertar['capital']          = 0
-cuotas_cero_para_incertar['interes']          = min_cuota_con_observacion['diferencia para cuota cero']
+cuotas_cero_para_incertar['interes']          = min_cuota_con_observacion['diferencia para cuota cero'].round(2)
 cuotas_cero_para_incertar['CargosGenerales']  = '0'
+cuotas_cero_para_incertar['CargosSeguro']     = '0'
 cuotas_cero_para_incertar['Aporte']           = 0
 cuotas_cero_para_incertar['TotalCargo']       = 0
 cuotas_cero_para_incertar['TotalPago']        = 0
 cuotas_cero_para_incertar['Ahorros']          = '0'
 cuotas_cero_para_incertar['Pagado']           = '9'
 cuotas_cero_para_incertar['index unico']      = cuotas_cero_para_incertar['NroPrestamo'] + '-0'
+cuotas_cero_para_incertar['EsFaltante']       = True
+
+# fechas de vencimiento en formato string
+cuotas_cero_para_incertar['FechaVencimiento'] = cuotas_cero_para_incertar['FechaVencimiento'].dt.strftime('%Y-%m-%d')
+
+#%% corrigiendo el interés mayor a cero, de las cuotas cero, (se reemplaza por cero)
+
+def correccion_cero_int_cuota_cero(df):
+    if df['interes'] > 0:
+        return 0
+    else:
+        return df['interes']
+cuotas_cero_para_incertar['interes'] = cuotas_cero_para_incertar.apply(correccion_cero_int_cuota_cero, axis = 1)
 
 #%%
 cuotas_concatenado =  pd.concat([cuotas,cuotas_cero_para_incertar], ignore_index = True)
 
 # falta ordenar la columna
+#%%
+df_combinado =  pd.concat([cuotas,cuotas_cero_para_incertar], ignore_index = True)
 
+df_combinado['OrdenOriginal'] = df_combinado.index
+
+# Crear un orden personalizado: 
+# Primero por 'Crédito', luego asegurando que las filas faltantes queden antes de las originales
+df_combinado = df_combinado.sort_values(by=['NroPrestamo', 'EsFaltante', 'OrdenOriginal'], ascending=[True, False, True])
+
+#%%
+creds_arreglar_prrprg2 = ['00100855','00100907','00100957','00100986', #'00101006',
+                          '00101087','00102064','00102067','00102129','00102185',
+                          '00103274','00103362','00107002','00108556','00135699',
+                          '00135950',] # podría faltar añadir los casos de la primera hoja
+
+corregir_interes = df_combinado[df_combinado['NroPrestamo'].isin(creds_arreglar_prrprg2) & (df_combinado['numerocuota'] == '0')]
+
+para_corregir_interes = pd.DataFrame()
+para_corregir_interes['NroPrestamo'] = corregir_interes['NroPrestamo']
+para_corregir_interes['int']         = corregir_interes['interes']
+
+df_combinado = df_combinado.merge(para_corregir_interes,
+                                  on  = ['NroPrestamo'],
+                                  how = 'left')
+
+def ajuste_final_cap_int_para_que_no_haya_int_negativo(df):
+    if (df['NroPrestamo'] in creds_arreglar_prrprg2) and (df['numerocuota'] == '1'):
+        return  df['capital'] - df['int']
+    else:
+        return df['capital']
+
+df_combinado['capital'] = df_combinado.apply(ajuste_final_cap_int_para_que_no_haya_int_negativo, axis = 1)
+
+
+def ajuste_final_cap_int_para_que_no_haya_int_negativo(df):
+    if (df['NroPrestamo'] in creds_arreglar_prrprg2) and (df['numerocuota'] == '1'):
+        return  df['interes'] + df['int']
+    else:
+        return df['interes']
+
+df_combinado['interes'] = df_combinado.apply(ajuste_final_cap_int_para_que_no_haya_int_negativo, axis = 1)
+
+del df_combinado['int']
+
+def asignar_cero_en_int_negativo(df):
+    if (df['NroPrestamo'] in creds_arreglar_prrprg2) and (df['numerocuota'] == '0'):
+        return 0
+    else:
+        return df['interes']
+df_combinado['interes'] = df_combinado.apply(asignar_cero_en_int_negativo, axis = 1)
+
+#%%
+m_desem.rename(columns = {'NumerodePrestamo-1':'NroPrestamo'}, inplace = True)
+
+df_combinado = df_combinado.merge(m_desem[['NroPrestamo', 'MontoDesembolsadoAX-31']],
+                                  on  = 'NroPrestamo',
+                                  how = 'left')
+
+#%% FILTRADo
+df_combinado = df_combinado[df_combinado['puro cero'] != 'eliminar, puro cero']
+df_combinado = df_combinado[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
+       'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
+       'Ahorros', 'Pagado']]
+
+#%% arreglo de las fechas
+
+# Convertir la columna de str a datetime y luego a str con el nuevo formato
+df_combinado['FechaVencimiento'] = pd.to_datetime(df_combinado['FechaVencimiento']).dt.strftime('%d/%m/%Y')
+
+# Verificar el resultado
+print(df_combinado['FechaVencimiento'])
+
+#%%
+# nombre = nombre_csv.split('.')[0]
+# df_combinado.to_excel(f'combinado ordenado ({nombre}).xlsx',
+#                       index = False)
+# print('guardado ordenado')
+
+#%%
+if 1==1:
+    print('creando csv')
+    # df1[columnas].to_csv(sheet_nombre + '.csv',  #código para el procesamiento de las cuotas
+    df_combinado.to_csv('corregido - ' + nombre_csv, 
+                        index    =  False,
+                        encoding =  'utf-8-sig', #'utf-8',
+                        header   =  False,
+                        sep      =  ';')
+    print('csv creado')
+
+negativos_investigaaaarr = df_combinado[df_combinado['interes'] < 0]
+if negativos_investigaaaarr.shape[0] > 0:
+    print('investigar interéses negativos')
+
+#%%
+
+# cuotas_concatenado.to_excel(f'combinado no ordenado ({nombre}).xlsx',
+#                             index = False)
+# print('guardado el no ordenado')
 
