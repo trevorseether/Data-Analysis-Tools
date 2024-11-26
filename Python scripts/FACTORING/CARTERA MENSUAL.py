@@ -23,9 +23,11 @@ CARGA_SQL_SERVER = True
 
 fecha_corte      = '2024-10-31'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\05 11')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CORTES MENSUALES\\2024\\octubre')
+# 'C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\octubre\\05 11'
+# 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante31102024CIERREMES.xlsx'
 
-nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptante31102024CIERREMES.xlsx'
+nombre           = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptanteoctubre.xlsx'
 
 tipo_de_cambio   = 3.768
 

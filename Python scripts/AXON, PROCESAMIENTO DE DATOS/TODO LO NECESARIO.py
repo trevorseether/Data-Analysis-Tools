@@ -17,8 +17,8 @@ sub_carpeta  = '2 - Creditos'
 os.chdir('R:\\REPORTES DE GESTIÓN\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24' + '\\' + sub_carpeta)
 
 excel        = '02_Prestamos-completo (interés negativo corregido).xlsx'
-sheet_nombre = 'prppg' #  "prppg"     "prppg (2)"
-filas_skip   = 18
+sheet_nombre = 'prmpr' #  "prppg"     "prppg (2)"
+filas_skip   = 10
 crear_csv    = True
 
 activar_limpieza    = False
@@ -68,14 +68,14 @@ if activar_limpieza == True:
         contar_reemplazos( base, i, '*')
     
 #%% validación de duplicados
-columna = 'indice que debe ser único'
+columna = 'NumerodePrestamo'
 
-base[columna] = base['NroPrestamo'] + '-' + base['numerocuota']
+# base[columna] = base['NroPrestamo'] + '-' + base['numerocuota']
 
 columna_que_no_debe_duplicarse = columna
 
-# número de orden del archivo original
-base['orden original'] = range(1, len(base) + 1)
+# # número de orden del archivo original
+# base['orden original'] = range(1, len(base) + 1)
 
 #%%
 df_duplicados = base[base.duplicated(subset = columna_que_no_debe_duplicarse, 
@@ -238,7 +238,9 @@ if eliminar_duplicados == True:
 # del kashio['EMAIL ANTERIOR']
 
 #%% filtrado de cuotas
-
+# =============================================================================
+# COMENTAR TODO ESTO SI SE VA A PROCESAR OTRAS HOJAS
+# =============================================================================
 base['numerocuota int'] = base['numerocuota'].astype(int)
 
 ###############################################################################
@@ -349,8 +351,12 @@ base3 = base3[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'int
                'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
                'Ahorros', 'Pagado']]
 
+# =============================================================================
+# HASTA ACÁ
+# =============================================================================
 #%% crear csv
 
+base3 = base
 nombre_carpeta = excel.split(".")[0]
 
 # Ruta completa de la carpeta
