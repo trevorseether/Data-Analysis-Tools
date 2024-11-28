@@ -259,3 +259,8 @@ no_necesarios.columns = ['Ruc Deudor', 'NOMBRE CPT']
 no_necesarios.to_excel('retirar de Experian.xlsx',
                        index = False)
 
+#%%%% vigentes de los últimos cortes por si hace falta
+base_fincore.to_excel('cartera vigente.xlsx',
+                      index = False)
+
+
