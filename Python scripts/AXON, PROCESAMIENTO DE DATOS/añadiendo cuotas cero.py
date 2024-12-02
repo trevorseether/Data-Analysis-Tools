@@ -8,8 +8,8 @@ Created on Fri Nov 22 10:02:10 2024
 import pandas as pd
 import os
 
-os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24\\2 - Creditos\\02_Prestamos-completo')
-nombre_csv = "prppg.csv"   #              "prppg (2).csv"            "prppg.csv"
+os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24\\2 - Creditos\\02_Prestamos-completo (interés negativo corregido)')
+nombre_csv = "prppg (2).csv"   #              "prppg (2).csv"            "prppg.csv"
 
 #%% MONTO DESEMBOLSADO
 columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegistro-3','(No column name)-4','(No column name)-5','(No column name)-6','TipoDeCredito-7','(No column name)-8',
@@ -23,7 +23,7 @@ columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegist
                          '(No column name)-69','(No column name)-70','(No column name)-71','(No column name)-72','(No column name)-73','(No column name)-74','(No column name)-75','(No column name)-76','(No column name)-77',
                          '(No column name)-78','(No column name)-79','(No column name)-80','(No column name)-81','(No column name)-82','(No column name)-83','(No column name)-84',]
 
-m_desem = pd.read_csv("prmpr.csv", #no cambiar 
+m_desem = pd.read_csv("prmpr.csv", #no cambiar
                       header = None, 
                       names  = columnas_desembolsado,
                       sep    = ';',
@@ -32,9 +32,13 @@ m_desem = pd.read_csv("prmpr.csv", #no cambiar
 m_desem = m_desem[['NumerodePrestamo-1', 'MontoDesembolsadoAX-31', 'FechaDesembolsoAxon-40', 'Moneda_Axon-16', 'CodigoEstadoOperacion-33']]
 m_desem['MontoDesembolsadoAX-31'] = m_desem['MontoDesembolsadoAX-31'].astype(float).round(2)
 
+creds_vigentes = m_desem[['NumerodePrestamo-1', 'CodigoEstadoOperacion-33']]
+creds_vigentes = creds_vigentes[creds_vigentes['CodigoEstadoOperacion-33'] != '9']
+
+
 del columnas_desembolsado
 
-#%% cuotas:
+#%% IMPORTAR CSV DE CUOTAS:
 col_cuotas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro','Aporte','TotalCargo','TotalPago','Ahorros','Pagado',]
 
 cuotas = pd.read_csv(nombre_csv, #                    "prppg.csv"             "prppg (2).csv"
@@ -47,7 +51,7 @@ del col_cuotas
 # número de orden del archivo original
 cuotas['orden original'] = range(1, len(cuotas) + 1)
 
-cuotas['fecha format'] = pd.to_datetime(cuotas['FechaVencimiento'], format='%Y-%m-%d')
+cuotas['fecha format'] = pd.to_datetime(cuotas['FechaVencimiento'], format = '%Y-%m-%d') # '%d/%m/%Y') #'%Y-%m-%d')
 
 cuotas['index unico'] = cuotas['NroPrestamo'] + '-' + cuotas['numerocuota'] + '-' + cuotas['orden original'].astype(str)
 ###############################################################################
@@ -76,7 +80,6 @@ sin_cuota_cero  = observaciones[observaciones['Detalle'] == 'NO TIENE CUOTA 0 IN
 fecha_cuota_dup = observaciones[observaciones['Detalle'] == 'PLAN DE PAGOS CON FECHA DUPLICADA (NO SE MIGRA)']
 
 #%%
-
 cuotas = cuotas.merge(sin_cuota_cero[['NPRE']],
                       left_on  = 'NroPrestamo',
                       right_on = 'NPRE',
@@ -94,6 +97,7 @@ del cuotas['NPRE']
 suma_amortizacion = cuotas.pivot_table(values = 'capital',
                                        index  = 'NroPrestamo',
                                        aggfunc = 'sum').reset_index()
+suma_amortizacion['capital'] = suma_amortizacion['capital'].round(2)
 
 # añadir el monto desembolsado
 suma_amortizacion = suma_amortizacion.merge(m_desem,
@@ -149,7 +153,6 @@ def fecha_cuota_cero(min_cuota):
 
 min_cuota['fecha cuota cero'] = min_cuota.apply(fecha_cuota_cero, axis = 1)
 
-
 min_cuota_con_observacion = min_cuota[min_cuota['NroPrestamo'].isin(list(sin_cuota_cero['NPRE']))]
 print('validar esta parte, sale 207, al probar con el segundo archivo debe salir dataframe de 602')
 
@@ -162,13 +165,13 @@ cuotas_cero_para_incertar = pd.DataFrame()
 cuotas_cero_para_incertar['NroPrestamo']      = min_cuota_con_observacion['NroPrestamo']
 cuotas_cero_para_incertar['FechaVencimiento'] = min_cuota_con_observacion['fecha cuota cero']
 cuotas_cero_para_incertar['numerocuota']      = '0'
-cuotas_cero_para_incertar['capital']          = 0
+cuotas_cero_para_incertar['capital']          =  0
 cuotas_cero_para_incertar['interes']          = min_cuota_con_observacion['diferencia para cuota cero'].round(2)
 cuotas_cero_para_incertar['CargosGenerales']  = '0'
 cuotas_cero_para_incertar['CargosSeguro']     = '0'
-cuotas_cero_para_incertar['Aporte']           = 0
-cuotas_cero_para_incertar['TotalCargo']       = 0
-cuotas_cero_para_incertar['TotalPago']        = 0
+cuotas_cero_para_incertar['Aporte']           =  0
+cuotas_cero_para_incertar['TotalCargo']       =  0
+cuotas_cero_para_incertar['TotalPago']        =  0
 cuotas_cero_para_incertar['Ahorros']          = '0'
 cuotas_cero_para_incertar['Pagado']           = '9'
 cuotas_cero_para_incertar['index unico']      = cuotas_cero_para_incertar['NroPrestamo'] + '-0'
@@ -177,14 +180,17 @@ cuotas_cero_para_incertar['EsFaltante']       = True
 # fechas de vencimiento en formato string
 cuotas_cero_para_incertar['FechaVencimiento'] = cuotas_cero_para_incertar['FechaVencimiento'].dt.strftime('%Y-%m-%d')
 
+cuotas_cero_para_incertar.to_excel('asdasd.xlsx',
+                                   index = False)
+
 #%% corrigiendo el interés mayor a cero, de las cuotas cero, (se reemplaza por cero)
 
-def correccion_cero_int_cuota_cero(df):
-    if df['interes'] > 0:
-        return 0
-    else:
-        return df['interes']
-cuotas_cero_para_incertar['interes'] = cuotas_cero_para_incertar.apply(correccion_cero_int_cuota_cero, axis = 1)
+# def correccion_cero_int_cuota_cero(df):
+#     if df['interes'] > 0:
+#         return 0
+#     else:
+#         return df['interes']
+# cuotas_cero_para_incertar['interes'] = cuotas_cero_para_incertar.apply(correccion_cero_int_cuota_cero, axis = 1)
 
 #%%
 cuotas_concatenado =  pd.concat([cuotas,cuotas_cero_para_incertar], ignore_index = True)
@@ -198,6 +204,8 @@ df_combinado['OrdenOriginal'] = df_combinado.index
 # Crear un orden personalizado: 
 # Primero por 'Crédito', luego asegurando que las filas faltantes queden antes de las originales
 df_combinado = df_combinado.sort_values(by=['NroPrestamo', 'EsFaltante', 'OrdenOriginal'], ascending=[True, False, True])
+
+val = df_combinado[(df_combinado['interes'] < 0) & (df_combinado['numerocuota'] == '0')]
 
 #%%
 creds_arreglar_prrprg2 = ['00100855','00100907','00100957','00100986', #'00101006',
@@ -259,8 +267,33 @@ df_combinado = df_combinado[['NroPrestamo', 'FechaVencimiento', 'numerocuota', '
 # Convertir la columna de str a datetime y luego a str con el nuevo formato
 df_combinado['FechaVencimiento'] = pd.to_datetime(df_combinado['FechaVencimiento']).dt.strftime('%d/%m/%Y')
 
-# Verificar el resultado
-print(df_combinado['FechaVencimiento'])
+df_combinado['nro cuota generado'] = df_combinado.groupby('NroPrestamo').cumcount()
+
+#%% VERIFICACIÓN DE QUE SI FALTA CUADRAR ALGO
+pivot_todo = df_combinado.pivot_table(values = 'capital',
+                                      index  = 'NroPrestamo',
+                                      aggfunc = 'sum').reset_index()
+pivot_todo['capital'] = pivot_todo['capital'].round(2)
+
+columna_cero = df_combinado[df_combinado['nro cuota generado'] == 0 & (df_combinado['capital'] == 0)][['NroPrestamo', 'interes']]
+
+pivot_todo = pivot_todo.merge(columna_cero,
+                              on = 'NroPrestamo',
+                              how = 'left')
+pivot_todo = pivot_todo.fillna(0)
+
+pivot_todo = pivot_todo.merge(m_desem[['NroPrestamo','MontoDesembolsadoAX-31']],
+                              on = 'NroPrestamo',
+                              how = 'left')
+
+pivot_todo['dif'] = (pivot_todo['capital'] - pivot_todo['interes']) - pivot_todo['MontoDesembolsadoAX-31']
+pivot_todo['dif'] = pivot_todo['dif'].round(2)
+
+verificar = pivot_todo[pivot_todo['dif'] != 0]
+verificar = verificar[verificar['NroPrestamo'].isin(list(creds_vigentes['NumerodePrestamo-1']))]
+
+nro_finco = '00089531'
+verificar2 = df_combinado[df_combinado['NroPrestamo'] == nro_finco]
 
 #%%
 # nombre = nombre_csv.split('.')[0]

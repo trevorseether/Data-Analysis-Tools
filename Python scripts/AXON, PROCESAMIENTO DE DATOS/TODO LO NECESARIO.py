@@ -17,8 +17,8 @@ sub_carpeta  = '2 - Creditos'
 os.chdir('R:\\REPORTES DE GESTIÓN\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 06Nov24' + '\\' + sub_carpeta)
 
 excel        = '02_Prestamos-completo (interés negativo corregido).xlsx'
-sheet_nombre = 'prmpr' #  "prppg"     "prppg (2)"
-filas_skip   = 10
+sheet_nombre = 'prppg (2)' #  "prppg"     "prppg (2)"
+filas_skip   = 19
 crear_csv    = True
 
 activar_limpieza    = False
@@ -68,14 +68,14 @@ if activar_limpieza == True:
         contar_reemplazos( base, i, '*')
     
 #%% validación de duplicados
-columna = 'NumerodePrestamo'
+columna = 'indice que debe ser único'
 
-# base[columna] = base['NroPrestamo'] + '-' + base['numerocuota']
+base[columna] = base['NroPrestamo'] + '-' + base['numerocuota']
 
 columna_que_no_debe_duplicarse = columna
 
-# # número de orden del archivo original
-# base['orden original'] = range(1, len(base) + 1)
+# número de orden del archivo original
+base['orden original'] = range(1, len(base) + 1)
 
 #%%
 df_duplicados = base[base.duplicated(subset = columna_que_no_debe_duplicarse, 
@@ -280,7 +280,7 @@ def marcar_primera_cuota(grupo):
     return grupo
 
 # Aplicar la función a cada grupo de 'NroPrestamo'
-base = base.groupby('NroPrestamo', group_keys=False).apply(marcar_primera_cuota)
+base = base.groupby('NroPrestamo', group_keys = False).apply(marcar_primera_cuota)
 
 def mantener_cuota_cero(base):
     if (base['Etiqueta'] == 'nacimiento cuota cero') and (base['interes'] > 0):
@@ -293,17 +293,22 @@ def mantener_cuota_cero(base):
         return ''
 base['mantener ceros'] = base.apply(mantener_cuota_cero, axis =1 )
 
+# =============================================================================
+# hasta aquí, siguen todas las cuotas
+# =============================================================================
+nro_finco = '00089730'
+verificar = base[base['NroPrestamo'] == nro_finco]
+
 #%%
 base = base.sort_values(by=['orden original'], 
                         ascending=[True])
 
 conteo_lista = base.pivot_table(values  = 'NroPrestamo',
-                                index   = 'indice que debe ser único',
+                                index   = columna,
                                 aggfunc = 'count').reset_index()
 
 conteo_cuotas_duplicadas = conteo_lista[conteo_lista['NroPrestamo'] > 1]
-conteo_cuotas_duplicadas.columns = ['indice que debe ser único', 'conteo']
-
+conteo_cuotas_duplicadas.columns = [columna, 'conteo']
 
 # def marcar_duplicados(base):
 #     if base['indice que debe ser único'] in lista_dups:
@@ -314,7 +319,7 @@ conteo_cuotas_duplicadas.columns = ['indice que debe ser único', 'conteo']
 'reemplazando el bloque anterior por un merge'
 
 base2 = base.merge(conteo_cuotas_duplicadas,
-                   on = 'indice que debe ser único',
+                   on = columna,
                    how = 'left')
 
 def dups(base2):
@@ -344,6 +349,10 @@ def eliminacion_final(base2):
 
 base2['eliminar cuota'] = base2.apply(eliminacion_final, axis = 1)
 
+nro_finco = '00089730'
+verificar = base[base['NroPrestamo'] == nro_finco]
+
+
 #%%
 base3 = base2[base2['eliminar cuota'] == 'mantener'].copy()
 
@@ -363,20 +372,20 @@ nombre_carpeta = excel.split(".")[0]
 ruta_carpeta = os.path.join(os.getcwd(), nombre_carpeta)
 
 # Verifica si la carpeta ya existe
-if not os.path.exists(ruta_carpeta):
-    os.makedirs(ruta_carpeta)
-    print(f"Carpeta '{nombre_carpeta}' creada exitosamente.")
-else:
-    print(f"La carpeta '{nombre_carpeta}' ya existe.")
+# if not os.path.exists(ruta_carpeta):
+#     os.makedirs(ruta_carpeta)
+#     print(f"Carpeta '{nombre_carpeta}' creada exitosamente.")
+# else:
+#     print(f"La carpeta '{nombre_carpeta}' ya existe.")
 
-if crear_csv == True:
-    print('creando csv')
-    # df1[columnas].to_csv(sheet_nombre + '.csv',  #código para el procesamiento de las cuotas
-    base3.to_csv(nombre_carpeta + '\\' + sheet_nombre + '.csv', 
-                 index    =  False,
-                 encoding =  'utf-8-sig', #'utf-8',
-                 header   =  False,
-                 sep      =  ';')
-    print('csv creado')
+# if crear_csv == True:
+#     print('creando csv')
+#     # df1[columnas].to_csv(sheet_nombre + '.csv',  #código para el procesamiento de las cuotas
+#     base3.to_csv(nombre_carpeta + '\\' + sheet_nombre + '.csv', 
+#                  index    =  False,
+#                  encoding =  'utf-8-sig', #'utf-8',
+#                  header   =  False,
+#                  sep      =  ';')
+#     print('csv creado')
 
 
