@@ -8,9 +8,10 @@ Created on Mon Dec  2 11:26:48 2024
 import pandas as pd
 
 # Ejemplo de datos
-data = {'nro de crédito': [1, 1, 1, 2, 2, 3, 3, 3, 3],
-        'valor cuota': [100, 100, 100, 200, 200, 150, 150, 150, 150],
-        'enumeración original': [0, 1, 2, 0, 1, 1, 2, 3, 4]}  # Ejemplo con errores en la enumeración
+data = {'nro de crédito'       : [1, 1, 1, 2, 2, 3, 3, 3, 3],
+        'valor cuota'          : [100, 100, 100, 200, 200, 150, 150, 150, 150],
+        'enumeración original' : [0, 1, 2, 0, 1, 1, 2, 3, 4]  }  # Ejemplo con errores en la enumeración
+
 df = pd.DataFrame(data)
 
 # Ajustar enumeración usando transform
@@ -24,3 +25,4 @@ df['enumeración ajustada'] = (
     df.groupby('nro de crédito')['enumeración original']
     .transform(ajustar_enumeracion)
 )
+
