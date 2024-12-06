@@ -10,18 +10,20 @@ from PyPDF2 import PdfWriter, PdfReader
 import os
 
 # Cambiar al directorio donde tienes los archivos
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\otros pdfs masivos\\V2')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\otros pdfs masivos\\datos modificados en reniec\\pdfs')
 
 # Leer el archivo Excel
-excel_file = 'Venta Cartera oct24 - base para legal (BD).xlsx'
+excel_file = '42 casos que se buscó la dirección en el Reniec.xlsx'
 df = pd.read_excel(excel_file, dtype={'Número Docum Identidad': str})
 
 # Leer el PDF de origen
-input_pdf = 'v2.pdf'
+input_pdf = 'pdfs.pdf'
 pdf_reader = PdfReader(input_pdf)
 
 # Número de páginas por PDF (puedes modificar esta variable)
 nro_hojas_por_pdf = 2  # Cambia a 1, 2, 3, etc. según número de hojas necesarias por pdf
+
+agregar_contraseña = False #True o False
 
 #%%
 # Función para agregar contraseña a un PDF
@@ -53,7 +55,8 @@ for index, row in df.iterrows():
         pdf_writer.write(output_pdf)
     
     # Agregar contraseña al PDF
-    add_password(output_pdf_path, output_pdf_path, contraseña)
+    if agregar_contraseña == True:
+        add_password(output_pdf_path, output_pdf_path, contraseña)
     
     print(f"Guardado {output_pdf_path} con contraseña")
     print(conteo)

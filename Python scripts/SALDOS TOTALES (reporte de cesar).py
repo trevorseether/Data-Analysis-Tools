@@ -17,18 +17,18 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'SETIEMBRE-24' #servirá para el nombre del archivo
+FECHA = 'OCTUBRE-24' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 SETIEMBRE')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2024\\2024 OCTUBRE')
 
-INSUMO           =    'CarteraTotal_SM Set24 - 08102024.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - AGOSTO-24_INC_CVV_DETALLADO.xlsx'
+INSUMO           =    'CarteraTotal_SM Oct24 - 10112024.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - SETIEMBRE-24_INC_CVV_DETALLADO.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
 
-COBRANZA         =    'Ingresos por Cobranza Setiembre-24 - General.xlsx'
-cobranza_hoja    =    'IngCob Set-24'
+COBRANZA         =    'Ingresos por Cobranza Octubre-24 - General.xlsx'
+cobranza_hoja    =    'IngCob Oct-24'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
 
@@ -190,6 +190,12 @@ def finalidad_producto(df_resultado):
         elif (('CONSUMO ORDINARIO' in df_resultado['Finalidad TXT']) and \
               ('MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT'])):
             return '19'
+
+        # nuevoo
+        elif (('MEDIANA EMPRESA - OTROS' in df_resultado['Finalidad TXT']) and \
+              ('MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT'])):
+            return '19'
+
         elif (('CAPITAL DE TRABAJO' in df_resultado['Finalidad TXT']) and \
               ('MEDIANAS EMPRESAS' in df_resultado['TipoCreditoTXT'])):
             return '19'    
@@ -238,6 +244,8 @@ df_resultado['CodFinalidad'] = df_resultado.apply(pond_41, axis=1)
 
 print('debe salir cero:')
 print(df_resultado[df_resultado['CodFinalidad'] == 'investigar'].shape[0])
+
+raro = df_resultado[df_resultado['CodFinalidad'] == 'investigar']
 
 #%% SOLARIZANDO LOS CRÉDITOS QUE ESTÁN EN DÓLARES
 

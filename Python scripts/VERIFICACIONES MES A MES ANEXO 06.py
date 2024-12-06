@@ -16,11 +16,11 @@ import pyodbc
 # import numpy as np
 
 #%%
-FECHA_SQL = '20240831' #se pone la del mes anterior al mes que estamos procesando
+FECHA_SQL = '20241031' #se pone la del mes anterior al mes que estamos procesando
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 setiembre\\productos')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 noviembre')
 
-anx06_final = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados procesado 01.xlsx'
+anx06_final = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados procesado 01.xlsx'
 
 #%% IMPORTACIÓN ANX06 DEL MES PASADO
 
