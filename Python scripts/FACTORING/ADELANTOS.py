@@ -24,9 +24,9 @@ fecha_corte      = '2024-12-06'
 
 tipo_de_cambio   = 3.723
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\diciembre\\06 12')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ADELANTOS\\2024\\diciembre\\06 12 (2)')
 
-nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendidoadelantos06122024.xlsx'
+nombre     = 'Rpt_SolicitudesxPrestamoFactoringDetalleExtendidoadelantos10122024.xlsx'
 
 filas_skip = 14
 
@@ -97,7 +97,6 @@ adelantos['Ruc Deudor'] = adelantos['Ruc Deudor'].str.strip()
 #%% RECTIFICACIÓN DE NRO RUC
 adelantos.loc[(adelantos['Deudor'] == 'SOCIEDAD MINERA CORONA S.A.') & \
           (1 == 1), 
-
           'Ruc Deudor'] = '20217427593'
 
 def parse_dates(date_str):
