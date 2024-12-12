@@ -1992,7 +1992,7 @@ anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(devengado_ce
 dev_y_suspenso_corregir = anx06_ordenado[(anx06_ordenado['Rendimiento\nDevengado 40/'] >0) & (anx06_ordenado['Intereses en Suspenso 41/'] >0)]
 if dev_y_suspenso_corregir.shape[0] > 0:
     print('hay casos con devengado y suspenso al mismo tiempo, investigar')
-    
+
 #print(anx06_ordenado['Rendimiento\nDevengado 40/'].sum())
 
 # anx06_ordenado[['Rendimiento\nDevengado 40/', 'Intereses en Suspenso 41/',
@@ -2001,6 +2001,26 @@ if dev_y_suspenso_corregir.shape[0] > 0:
 #                 'Flag Termino Periodo Gracia',
 #                 'Nro Prestamo \nFincore',
 #                 'Dias de Mora 33/']].to_excel('devengados3.xlsx', index = False)
+
+#%% LOS CRÉDITOS REPROGRAMADOS NO DEBEN TENER INTERESES DEVENGADOS, SOLO INTERESES EN SUSPENSO
+print('testear si funciona esta parte, simplemente los reprogramados no deben de tener devengados')
+def reprogramados_sin_devengados(anx06_ordenado):
+    if anx06_ordenado['TIPO_REPRO'] != '--':
+        if anx06_ordenado['Rendimiento\nDevengado 40/'] > 0:
+            return anx06_ordenado['Rendimiento\nDevengado 40/']
+        else:
+            return anx06_ordenado['Intereses en Suspenso 41/']
+    else:
+        return anx06_ordenado['Intereses en Suspenso 41/']
+anx06_ordenado['Intereses en Suspenso 41/'] = anx06_ordenado.apply(reprogramados_sin_devengados, axis = 1)
+
+
+def reprogramados_cero_devengados(anx06_ordenado):
+    if anx06_ordenado['TIPO_REPRO'] != '--':
+        return 0
+    else:
+        return anx06_ordenado['Rendimiento\nDevengado 40/']
+anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(reprogramados_cero_devengados, axis = 1)
 
 #%% por si acaso, eliminamos duplicados ( ´･･)ﾉ(._.`)
 print(anx06_ordenado.shape[0])

@@ -2472,22 +2472,22 @@ import pandas as pd
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Octubre 2024'  # se pone el corte actual
+fecha_corte = 'Noviembre 2024'  # se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20240930" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20241031" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Octubre 2024 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados 03.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 OCTUBRE\\prov'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 noviembre\\parte 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2731,7 +2731,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.6355 #0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2775,6 +2775,7 @@ print((vencido + judicial )/cartera)
 #Y LAS PROVISIONES CONSTITUIDAS DIVIDIDAS ENTRE LAS PROVISIONES REQUERIDAS DEBE SER > 60%
 'ejecutar en sql server para ver al toque los datos del mes pasado'
 '''
+
 SELECT 
 	SUM(ProvisionesRequeridas36) AS REQUERIDAS,
 	SUM(ProvisionesConstituidas37) AS CONSTITUIDAS,
@@ -2798,8 +2799,10 @@ div2 = suma_constituidas/suma_atrasada
 print('COBERTURA DE PROVISIÓN : consti / atrasa: ',"{:.2f}%".format(div2*100))
 
 print('variación de constituídas con el mes pasado', (suma_constituidas - float(mes_pasado)).round(2)) #aquí hacer una query para extraer los datos
+print('')
 
 print('provisiones constituidas: ' + str(suma_constituidas))
+print('provisiones requeridas: ' + str(suma_requeridas))
 
 print('')
 print('tasa de provisión general: ' ,"{:.2f}%".format(tasa_provision*100)) 
@@ -2959,11 +2962,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Octubre 2024'
+fecha = 'Noviembre 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20240930' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20241031' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
