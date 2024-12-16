@@ -10,14 +10,14 @@ from PyPDF2 import PdfWriter, PdfReader
 import os
 
 # Cambiar al directorio donde tienes los archivos
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\otros pdfs masivos\\datos modificados en reniec\\pdfs')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\otros pdfs masivos\\datos modificados en reniec\\MODIFICADOS RENUIEC DE NUEVO')
 
 # Leer el archivo Excel
-excel_file = '42 casos que se buscó la dirección en el Reniec.xlsx'
+excel_file = 'ULTIMOS FALTANTES.xlsx'
 df = pd.read_excel(excel_file, dtype={'Número Docum Identidad': str})
 
 # Leer el PDF de origen
-input_pdf = 'pdfs.pdf'
+input_pdf = 'CARTA DE COMUNICACIÓN.pdf'
 pdf_reader = PdfReader(input_pdf)
 
 # Número de páginas por PDF (puedes modificar esta variable)

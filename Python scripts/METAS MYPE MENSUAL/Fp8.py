@@ -18,14 +18,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\octubre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\noviembre')
 
-archivo_base       = 'Rec_31.10.2024_t.xlsx'
-archivo_pendientes = 'Mora_29.10.2024_r.xlsx'
+archivo_base       = 'Rec_30.11.2024_t.xlsx'
+archivo_pendientes = 'Mora_29.11.2024_r.xlsx'
 
-fecha_corte        = '2024-10-31' # YYYY-MM-DD
+fecha_corte        = '2024-11-30' # YYYY-MM-DD
 
-fecha_vencimiento  = '2024-10-20' #fecha 05 o fecha 20 YYYY-MM-DD
+fecha_vencimiento  = '2024-11-20' #fecha 05 o fecha 20 YYYY-MM-DD
 numero_proceso     = 'p2' #p1 o p2
 
 unir_datos_desde_sql = False # True o False
@@ -81,6 +81,7 @@ if unir_datos_desde_sql == True:
     
     del conn
     del fecha_corte_sql
+    
     '-------------------------------------------------------------------------'    
     base = base.merge(anexo_06,
                       left_on  = 'Fincore',

@@ -2483,7 +2483,7 @@ fechacorte_mes_pasado = "20241031" # se pone la del corte anterior para obtener 
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados 04.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
@@ -2791,21 +2791,21 @@ suma_requeridas = df_diferidos['Provisiones Requeridas 36/'].sum() #en base al 1
 suma_constituidas = df_diferidos['Provisiones Constituidas 37/'].sum()
 
 div = suma_constituidas/suma_requeridas
-print('EL PORCENTAJE de constituidas / requeridas es: ',"{:.2f}%".format(div*100))
+print('EL PORCENTAJE DE constituidas / requeridas es: ',"{:.2f}%".format(div*100))
 
 suma_atrasada = df_diferidos['Cartera Atrasada'].sum()
 div2 = suma_constituidas/suma_atrasada
 
 print('COBERTURA DE PROVISIÓN : consti / atrasa: ',"{:.2f}%".format(div2*100))
 
-print('variación de constituídas con el mes pasado', (suma_constituidas - float(mes_pasado)).round(2)) #aquí hacer una query para extraer los datos
+print('variación de constituídas con el mes pasado', (suma_constituidas - float(mes_pasado)).round(2)) # aquí hacer una query para extraer los datos
 print('')
 
-print('provisiones constituidas: ' + str(suma_constituidas))
-print('provisiones requeridas: ' + str(suma_requeridas))
+print('provisiones constituidas: ' + str(round(suma_constituidas,2)))
+print('provisiones requeridas: ' + str(round(suma_requeridas,2)))
 
 print('')
-print('tasa de provisión general: ' ,"{:.2f}%".format(tasa_provision*100)) 
+print('tasa de provisión general: ' ,"{:.2f}%".format(tasa_provision*100))
 
 # %%
 # SELECT
