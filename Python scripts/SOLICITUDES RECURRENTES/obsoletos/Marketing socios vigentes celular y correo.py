@@ -14,8 +14,8 @@ import pandas as pd
 import pyodbc
 
 #%%
-fecha_corte = '20241031'
-fecha_hoy   = '20241204' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_corte = '20241130'
+fecha_hoy   = '20241218' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
 usar_sql     = True #False implica usar el excel, True implica obtener datos del sql
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MARKETING\\socios con cred vigente')
@@ -188,6 +188,9 @@ def cel_51(celular):
         return 0
 
 col_necesarias['Celular1'] = col_necesarias['Celular'].apply(cel_51)
+
+
+col_necesarias[['pagare_fincore','Celular1']].to_excel('celulares.xlsx')
 
 #%% ANEXO 06
 if usar_sql == True:

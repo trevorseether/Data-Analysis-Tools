@@ -31,6 +31,8 @@ base = pd.read_excel(excel,
                      skiprows   = filas_skip,
                      dtype      = str)
 
+largo_excel = base.shape[1]
+
 #%% strip eliminación de espacios
 columnas_strip = ['socio', 'DireccionDNI']
 
@@ -371,21 +373,25 @@ nombre_carpeta = excel.split(".")[0]
 # Ruta completa de la carpeta
 ruta_carpeta = os.path.join(os.getcwd(), nombre_carpeta)
 
+#%%%
+if base.shape[1] != largo_excel:
+    print('falta eliminar alguna columna auxiliar')
+
+#%%
 # Verifica si la carpeta ya existe
-# if not os.path.exists(ruta_carpeta):
-#     os.makedirs(ruta_carpeta)
-#     print(f"Carpeta '{nombre_carpeta}' creada exitosamente.")
-# else:
-#     print(f"La carpeta '{nombre_carpeta}' ya existe.")
+if not os.path.exists(ruta_carpeta):
+    os.makedirs(ruta_carpeta)
+    print(f"Carpeta '{nombre_carpeta}' creada exitosamente.")
+else:
+    print(f"La carpeta '{nombre_carpeta}' ya existe.")
 
-# if crear_csv == True:
-#     print('creando csv')
-#     # df1[columnas].to_csv(sheet_nombre + '.csv',  #código para el procesamiento de las cuotas
-#     base3.to_csv(nombre_carpeta + '\\' + sheet_nombre + '.csv', 
-#                  index    =  False,
-#                  encoding =  'utf-8-sig', #'utf-8',
-#                  header   =  False,
-#                  sep      =  ';')
-#     print('csv creado')
-
+if crear_csv == True:
+    print('creando csv')
+    # df1[columnas].to_csv(sheet_nombre + '.csv',  #código para el procesamiento de las cuotas
+    base3.to_csv(nombre_carpeta + '\\' + sheet_nombre + '.csv', 
+                  index    =  False,
+                  encoding =  'utf-8-sig', #'utf-8',
+                  header   =  False,
+                  sep      =  ';')
+    print('csv creado')
 
