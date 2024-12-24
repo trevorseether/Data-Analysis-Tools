@@ -22,20 +22,20 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 12\\20 12')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 12\\23 12')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241220.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20241223.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
-crear_archivo         = False #True o False
+crear_archivo         = True #True o False
 ###############################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA' ############################################
-mensajeria_preventiva = False #True o False
+mensajeria_preventiva = True #True o False
 ###############################################################################
 
 'filtrar solo mype' ###########################################################
@@ -183,6 +183,8 @@ kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOSMAIL.COM'  , '@HOTMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@.COM'         , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@GMAIL.COML'   , '@GMAIL.COM')
 kashio['EMAIL'] = kashio['EMAIL'].str.replace('@.HOMAIL.COM'  , '@HOTMAIL.COM')
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HOMAIL.COM'  , '@HOTMAIL.COM')
+kashio['EMAIL'] = kashio['EMAIL'].str.replace('@HITMAIL.COM'  , '@HOTMAIL.COM')
 
 
 # usando regular expresions
