@@ -61,10 +61,11 @@ feriados = ['01-01-2024',
             '08-12-2024',
             '09-12-2024',
             #'23-12-2024',
-            #'24-12-2024',
+            '24-12-2024',
             '25-12-2024',
-            '30-12-2024',
-            '31-12-2024']
+            #'30-12-2024',
+            #'31-12-2024'
+            ]
 
 # Convertir fechas de feriados a formato datetime
 feriados = [datetime.strptime(fecha, '%d-%m-%Y') for fecha in feriados]
@@ -419,10 +420,12 @@ df_fincore = pd.read_sql_query(query, conn)
 df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.date
 df_fincore['fechadesembolso'] = pd.to_datetime(df_fincore['fechadesembolso'])
 
+###############################################################################
 # AJUSTE DE FECHA DE DESEMBOLSO PARA CASOS ULTRA EXCEPCIONALES
 # este crédito se desembolsó un domingo (es refinanciado)
 df_fincore.loc[(df_fincore['pagare_fincore'] == '00116680'),
                 'fechadesembolso'] = pd.Timestamp('2023-11-06')
+###############################################################################
 
 # normalización de fechas
 df_fincore['fechadesembolso'] = df_fincore['fechadesembolso'].dt.normalize()
