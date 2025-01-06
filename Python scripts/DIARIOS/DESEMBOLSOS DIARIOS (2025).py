@@ -689,6 +689,7 @@ SELECT
 	p.montosolicitado as 'Otorgado',
 	DESCUENTO.valor as 'retención',
 	--p.montosolicitado - DESCUENTO.valor as 'MONTO NETO',
+    DESCUENTO.CodDetalle,
     DESCUENTO.retencion as 'tipo reten'
 
 FROM prestamo AS p
@@ -770,6 +771,23 @@ union_2['MONTO NETO'] = union_2['Otorgado'] - union_2['retención por total']
 union_2['MONTO NETO'] = union_2['MONTO NETO'].round(2)
 union_2.drop_duplicates(subset = 'pagare_fincore', inplace = True)
 
+#%% MONTO NETO DE SOLAMENTE RETENCIONES POR AMPLIACIONES
+ret_ampliaciones = df_monto_neto[df_monto_neto['CodDetalle'] == 511]
+ret_amp          = ret_ampliaciones.pivot_table(values  = 'retención',
+                                                index   = 'pagare_fincore',
+                                                aggfunc = 'sum').reset_index()
+
+ret_amp = ret_amp.rename(columns = {'retención' : 'retención por ampliación'})
+
+#%%
+union_2 = union_2.merge(ret_amp,
+                        on  = 'pagare_fincore',
+                        how = 'left')
+union_2 = union_2.fillna(0)
+union_2['MONTO NETO ampliación'] = union_2['Otorgado'] - union_2['retención por ampliación']
+union_2['MONTO NETO ampliación'] = union_2['MONTO NETO ampliación'].round(2)
+union_2.drop_duplicates(subset = 'pagare_fincore', inplace = True)
+
 #%%
 if CARGA_SQL_SERVER == True:
     # Esta es la tabla que estará en SQL SERVER
@@ -778,7 +796,7 @@ if CARGA_SQL_SERVER == True:
     cnxn = pyodbc.connect('DRIVER=SQL Server;SERVER=SM-DATOS;UID=SA;PWD=123;')
     cursor = cnxn.cursor()
     
-    df = union_2[['Socio', 'pagare_fincore', 'MONTO NETO']].copy()
+    df = union_2[['Socio', 'pagare_fincore', 'MONTO NETO', 'MONTO NETO ampliación']].copy()
     df = df.fillna(0)
     
     # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
