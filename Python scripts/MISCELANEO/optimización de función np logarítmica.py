@@ -45,7 +45,7 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 
 # Datos de los puntos
-x_data = np.array([0, 2, 9])
+x_data = np.array([0, 2, 12])
 y_data = np.array([0, 10, 20])
 
 # Definir la función logarítmica a ajustar
@@ -71,4 +71,5 @@ plt.legend()
 plt.title('Ajuste de Función Logarítmica')
 plt.grid(True)
 plt.show()
+
 
