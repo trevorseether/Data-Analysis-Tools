@@ -8,7 +8,7 @@ Created on Fri Nov 22 10:02:10 2024
 import pandas as pd
 import os
 
-os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 18Dic24\\2 - Creditos\\02_Prestamos-completo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba\\02_Prestamos-completo')
 nombre_csv = "prppg (antes de añadir cuota cero).csv"   #  "prppg (2).csv"            "prppg.csv"
 
 #%% MONTO DESEMBOLSADO
@@ -38,7 +38,7 @@ creds_vigentes = creds_vigentes[creds_vigentes['CodigoEstadoOperacion-33'] != '9
 del columnas_desembolsado
 
 #%% IMPORTAR CSV DE CUOTAS:
-col_cuotas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro','Aporte','TotalCargo','TotalPago','Ahorros','Pagado',]
+col_cuotas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro','Aporte','TotalCargo','TotalPago','Ahorros','Pagado','CodEstado_aux']
 
 cuotas = pd.read_csv(nombre_csv, #                    "prppg.csv"             "prppg (2).csv"
                      header = None, 
@@ -160,11 +160,14 @@ def fecha_cuota_cero(min_cuota):
 min_cuota['fecha cuota cero'] = min_cuota.apply(fecha_cuota_cero, axis = 1)
 
 cuotas['nro cuota int'] = cuotas['numerocuota'].astype(int)
-cuotas_sin_cero = cuotas.pivot_table(values  = 'nro cuota int',
-                                     index   = 'NroPrestamo',
-                                     aggfunc = 'min').reset_index()
+
+cuotas_sin_cero = cuotas[~((cuotas['nro cuota int'] == 0) &
+                           (cuotas['capital'] > 0) & 
+                           (cuotas['TotalPago'] > 0))].pivot_table(values  = 'nro cuota int',
+                                                                   index   = 'NroPrestamo',
+                                                                   aggfunc = 'min').reset_index()
 del cuotas['nro cuota int']
-cuotas_sin_cero = cuotas_sin_cero[cuotas_sin_cero['nro cuota int'] > 0]
+cuotas_sin_cero = cuotas_sin_cero[(cuotas_sin_cero['nro cuota int'] > 0)]
 min_cuota = min_cuota[min_cuota['NroPrestamo'].isin(cuotas_sin_cero['NroPrestamo'])]
 
 min_cuota_con_observacion = min_cuota[min_cuota['NroPrestamo'] != '']
@@ -223,7 +226,10 @@ val = df_combinado[(df_combinado['interes'] < 0) & (df_combinado['numerocuota'] 
 #%%
 creds_arreglar_prrprg2 = ['',] # podría faltar añadir los casos de la primera hoja
 
-corregir_interes = df_combinado[~df_combinado['NroPrestamo'].isin(creds_arreglar_prrprg2) & (df_combinado['numerocuota'] == '0')]
+corregir_interes = df_combinado[~df_combinado['NroPrestamo'].isin(creds_arreglar_prrprg2) & 
+                                (df_combinado['numerocuota'] == '0') &
+                                (df_combinado['capital'] == 0) &
+                                (df_combinado['TotalPago'] == 0)]
 
 para_corregir_interes = pd.DataFrame()
 para_corregir_interes['NroPrestamo'] = corregir_interes['NroPrestamo']
@@ -232,6 +238,13 @@ para_corregir_interes['int']         = corregir_interes['interes']
 df_combinado = df_combinado.merge(para_corregir_interes,
                                   on  = ['NroPrestamo'],
                                   how = 'left')
+
+df_validado = para_corregir_interes
+df_validado = df_validado[df_validado['NroPrestamo'] == '00136314']
+if df_validado.shape[0] > 10:
+    print('detectado')
+
+para_corregir_interes.to_excel('cuotas cero para corregir.xlsx')
 
 def ajuste_final_cap_int_para_que_no_haya_int_negativo(df):
     if (df['int'] < 0) and (df['numerocuota'] == '1'):
@@ -270,7 +283,7 @@ df_combinado = df_combinado.merge(m_desem[['NroPrestamo', 'MontoDesembolsadoAX-3
 df_combinado = df_combinado[df_combinado['puro cero'] != 'eliminar, puro cero']
 df_combinado = df_combinado[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
        'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
-       'Ahorros', 'Pagado']]
+       'Ahorros', 'Pagado', 'CodEstado_aux']]
 
 #%% arreglo de las fechas
 
@@ -278,6 +291,30 @@ df_combinado = df_combinado[['NroPrestamo', 'FechaVencimiento', 'numerocuota', '
 df_combinado['FechaVencimiento'] = pd.to_datetime(df_combinado['FechaVencimiento']).dt.strftime('%d/%m/%Y')
 
 df_combinado['nro cuota generado'] = df_combinado.groupby('NroPrestamo').cumcount()
+
+#%% nro cuota que mantiene el NRO CERO de las reprogramaciones
+# df_combinado['CodEstado_aux']
+
+def calcular_nueva_numeracion(grupo):
+    nueva_numeracion = []
+    contador = 0
+    for index, row in grupo.iterrows():
+        if (row['numerocuota'] == '0' and row['nro cuota generado'] == 0) or \
+        (row['numerocuota'] == '0' and row["CodEstado_aux"] == '1003'):  
+            # Si se cumplen todas las condiciones, reiniciamos la numeración
+            nueva_numeracion.append(0)
+        else:
+            # Si no, incrementamos la numeración desde donde se quedó
+            contador += 1
+            nueva_numeracion.append(contador)
+    
+    grupo["nueva_numeracion"] = nueva_numeracion
+    return grupo
+
+df_combinado = df_combinado.groupby("NroPrestamo", group_keys=False).apply(calcular_nueva_numeracion)
+
+df_combinado['nro cuota generado'] = df_combinado["nueva_numeracion"].copy()
+del df_combinado["nueva_numeracion"]
 
 #%% VERIFICACIÓN DE QUE SI FALTA CUADRAR ALGO
 pivot_todo = df_combinado.pivot_table(values = 'capital',
@@ -353,12 +390,17 @@ negativos = suma_amortizacion[suma_amortizacion['dif para cuadre'] < 0]
 df_combinado = df_combinado.merge(suma_amortizacion[['NroPrestamo', 'dif para cuadre']],
                                   on  = 'NroPrestamo',
                                   how = 'left')
+
+df_combinado['nro auxiliar'] = df_combinado.groupby('NroPrestamo').cumcount()
+
 def ajuste_int_final_final(df):
-    if df['numerocuota'] == 0:
+    if (df['numerocuota'] == 0) and (df['nro auxiliar'] == 0):
         return df['dif para cuadre']
     else:
         return df['interes']
 df_combinado['interes'] = df_combinado.apply(ajuste_int_final_final, axis = 1)
+
+del df_combinado['nro auxiliar']
 
 #%% eliminar intereses negativos para completar el cuadre con el monto desembolsado
 def eliminacion_negativos(df):
@@ -368,9 +410,6 @@ def eliminacion_negativos(df):
         return df['capital']
 df_combinado['capital'] = df_combinado.apply(eliminacion_negativos, axis = 1)
 df_combinado['interes'] = df_combinado['interes'].apply(lambda x: max(x, 0))
-
-df_combinado.head(50000).to_excel(str(nombre_csv.split('.')[0]) + '.xlsx',
-                      index = False)
 
 #%%
 # df_combinado['Pagado'] = df_combinado['capital'] + df_combinado['interes'] + df_combinado['Aporte']
@@ -403,6 +442,7 @@ if negativos_investigaaaarr.shape[0] > 0:
     print('investigar interéses negativos')
 
 #%%
+df_combinado.to_excel('completo.xlsx')
 
 # cuotas_concatenado.to_excel(f'combinado no ordenado ({nombre}).xlsx',
 #                             index = False)

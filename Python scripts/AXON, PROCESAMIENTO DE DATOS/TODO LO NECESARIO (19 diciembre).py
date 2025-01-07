@@ -13,13 +13,13 @@ import pandas as pd
 import os
 
 #%%
-sub_carpeta  = '2 - Creditos'
+sub_carpeta  = 'prueba'
 
-os.chdir('R:\\REPORTES DE GESTIÓN\\DESARROLLO\\Implementacion NetBank\\Datos para Migracion\\Migracion 18Dic24' + '\\' + sub_carpeta)
+os.chdir('C:\\Users\\sanmiguel38\\Desktop' + '\\' + sub_carpeta)
 
 excel        = '02_Prestamos-completo.xlsx'
-sheet_nombre = 'prppg (2)' #  "prppg"     "prppg (2)"
-filas_skip   = 19
+sheet_nombre = 'prppg' #  "prppg"     "prppg (2)"
+filas_skip   = 18
 crear_csv    = True
 
 activar_limpieza    = False
@@ -364,8 +364,8 @@ verificar = base[base['NroPrestamo'] == nro_finco]
 base3 = base2[base2['eliminar cuota'] == 'mantener'].copy()
 
 base3 = base3[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
-                'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
-                'Ahorros', 'Pagado']]
+               'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
+               'Ahorros', 'Pagado', 'CodEstado_aux']]
 
 # =============================================================================
 # HASTA ACÁ
