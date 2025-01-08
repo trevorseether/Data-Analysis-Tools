@@ -43,21 +43,21 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 noviembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 diciembre')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 30 11 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 12 2024.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Noviembre' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Diciembre' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
@@ -66,8 +66,8 @@ uit = 5150 #valor de la uit en el año 2024  ###  # en el 2025 será 5350
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-11-30' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Noviembre 2024'
+fecha_corte     = '2024-12-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Diciembre 2024'
 ########################################################
 
 #%% Códigos de los productos
