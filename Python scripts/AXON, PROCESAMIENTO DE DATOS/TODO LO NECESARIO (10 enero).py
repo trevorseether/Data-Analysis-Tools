@@ -18,8 +18,8 @@ sub_carpeta  = 'prueba'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop' + '\\' + sub_carpeta)
 
 excel        = '02_Prestamos-completo.xlsx'
-sheet_nombre = 'prppg' #  "prppg"     "prppg (2)"
-filas_skip   = 18
+sheet_nombre = 'prmpr' #  "prppg"     "prppg (2)"
+filas_skip   = 10
 crear_csv    = True
 
 activar_limpieza    = False
@@ -77,14 +77,14 @@ if activar_limpieza == True:
         contar_reemplazos( base, i, '*')
     
 #%% validación de duplicados
-columna = 'identificador' # 'indice que debe ser único'
+columna = 'NumerodePrestamo' # 'indice que debe ser único'
 
-base[columna] = base['NroPrestamo'] + '-' + base['numerocuota'] # base['CodigoSocio'] + '-' + base['Item']#
+# base[columna] = base['NroPrestamo'] + '-' + base['numerocuota'] # base['CodigoSocio'] + '-' + base['Item']#
 
 columna_que_no_debe_duplicarse = columna
 
 # "número de orden del archivo original"
-base['orden original'] = range(1, len(base) + 1)
+# base['orden original'] = range(1, len(base) + 1)
 
 #%%
 
@@ -391,6 +391,68 @@ ruta_carpeta = os.path.join(os.getcwd(), nombre_carpeta)
 if base.shape[1] != largo_excel:
     print('falta eliminar alguna columna auxiliar')
 
+#%% AÑADIENDO DÍAS DE GRACIA
+if AÑADIR_DIAS_GRACIA == True:
+    
+    import pyodbc
+    import warnings
+    warnings.filterwarnings('ignore')
+    
+    datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+    
+    server      = datos['DATOS'][0]
+    username    = datos['DATOS'][2]
+    password    = datos['DATOS'][3]
+    
+    conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+    conn = pyodbc.connect(conn_str)
+
+    query = '''
+
+    SELECT
+    
+	CONCAT('',RIGHT(CONCAT('00000000',rtrim(P.Numero)),8)) AS NroPrestamoFincore, 
+	p.DiasGracia,
+	p.FechaDesembolso,
+	solicitud.FechaTenDesembolso,
+	p.FechaPrimeraCuota,
+	DATEADD(MONTH, -1, p.FechaPrimeraCuota) as 'primera cuota menos un mes',
+	DATEDIFF(DAY, DATEADD(MONTH, -1, p.FechaPrimeraCuota), 
+									solicitud.FechaTenDesembolso)*-1  as 'verdadero días de gracia'
+
+    from prestamo as p
+    LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito    
+
+    '''
+
+    dias_gracia = pd.read_sql_query(query, conn)
+    duplicados = dias_gracia[dias_gracia.duplicated(subset=['NroPrestamoFincore'], keep=False)]
+
+    dias_gracia.drop_duplicates(subset = 'NroPrestamoFincore', inplace = True)
+    
+    dias_gracia['verdadero días de gracia'] = dias_gracia['verdadero días de gracia'].fillna(0)
+    
+    # distinto = dias_gracia['verdadero días de gracia'].unique()
+    ##################################
+    # incluir procedimiento de limpieza aquí
+    ##################################
+    dias_gracia.to_excel('dias_de_gracia.xlsx', index = False)
+    # base.head(4).columns
+    # base.head(4).to_excel('asd.xlsx', index = False)
+    
+    base = base.merge(dias_gracia,
+                      left_on  = 'NumerodePrestamo',
+                      right_on = 'NroPrestamoFincore',
+                      how      = 'left')
+    def arreglo_dias_gracia(df):
+        if df['CodigoEstadoOperacion'] != '9':
+            return df['verdadero días de gracia']
+        else:
+            return 0
+    base['(No column name).11'] = base.apply(arreglo_dias_gracia, axis = 1)
+
+    base.to_excel('dias gracia ajustados.xlsx', index = False)
+
 #%%
 # Verifica si la carpeta ya existe
 if not os.path.exists(ruta_carpeta):
@@ -410,4 +472,10 @@ if crear_csv == True:
     print('csv creado')
     print(f'pestaña {sheet_nombre}')
 
+#%%
+import os
+ubicacion_actual = os.getcwd()
+
+# Imprimir la ubicación actual
+print("La ubicación actual es: " + ubicacion_actual)
 

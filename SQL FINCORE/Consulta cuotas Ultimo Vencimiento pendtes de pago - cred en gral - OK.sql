@@ -1,22 +1,22 @@
 select 
---p.codprestamo,
-SC.CodigoSocio,
-iif(sc.CodTipoPersona =1,CONCAT(SC.ApellidoPaterno,' ',SC.ApellidoMaterno, ' ', SC.Nombres),sc.razonsocial) AS Socio, SC.NroDocIdentidad, SC.FechaNacimiento,
-CONCAT('',RIGHT(CONCAT('00000000',rtrim(P.Numero)),8)) AS NroPrestamoFincore, 
---codprestamoFox, 
-FechaDesembolso, 
-PC.FechaVencimiento,   
-p.cuotaFija as CuotaMensual,
---Cuota_mensual, 
---estado_cuo as estado_cuota,
---p.CodEstado as Estado_pre, 
-FI.CODIGO AS COD_FINALIDAD, 
-FI.DESCRIPCION AS FINALIDAD, 
-plla.Descripcion as planilla, 
-gc.descripcion as Funcionario, 
-FechaVentaCartera, 
-FechaCastigo
-,sco.Celular1, sco.CelularContacto, sco.Email as Correo
+	--p.codprestamo,
+	SC.CodigoSocio,
+	iif(sc.CodTipoPersona =1,CONCAT(SC.ApellidoPaterno,' ',SC.ApellidoMaterno, ' ', SC.Nombres),sc.razonsocial) AS Socio, SC.NroDocIdentidad, SC.FechaNacimiento,
+	CONCAT('',RIGHT(CONCAT('00000000',rtrim(P.Numero)),8)) AS NroPrestamoFincore, 
+	--codprestamoFox, 
+	FechaDesembolso, 
+	PC.FechaVencimiento,   
+	p.cuotaFija as CuotaMensual,
+	--Cuota_mensual, 
+	--estado_cuo as estado_cuota,
+	--p.CodEstado as Estado_pre, 
+	FI.CODIGO AS COD_FINALIDAD, 
+	FI.DESCRIPCION AS FINALIDAD, 
+	plla.Descripcion as planilla, 
+	gc.descripcion as Funcionario, 
+	FechaVentaCartera, 
+	FechaCastigo
+	,sco.Celular1, sco.CelularContacto, sco.Email as Correo
 from prestamo p
 inner join socio sc on p.codsocio=sc.codsocio
 LEFT JOIN TablaMaestraDet EE ON P.CodEstado  =EE.CodTablaDet
