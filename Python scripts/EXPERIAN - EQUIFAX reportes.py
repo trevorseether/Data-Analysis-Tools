@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Noviembre 2024'
+FECHA_CORTE = 'Diciembre 2024'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 noviembre"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 diciembre"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - NOV-24 - INSUMO.xlsx"
+insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - DIC-24 - INSUMO.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,7 +35,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20241130'
+f_corte_sql = '20241231'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
@@ -1249,3 +1249,5 @@ f_equifax.to_excel(nombre,
                    index = False)
 print('Excel guardado')
 
+#%%
+print('fin')

@@ -19,9 +19,9 @@ import os
 
 #%% FECHA DE CORTE, DIRECTORIO DE TRABAJO
 
-mes = 'SETIEMBRE 2024'
+mes = 'DICIEMBRE 2024'
 # ubicación
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 SETIEMBRE') 
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 DICIEMBRE') 
 #en esta ubicación debemos poner el archivo de reprogramados que se manda a principio del mes
 
 ## donde dice @fechacorte se debe poner el mes ################################
@@ -30,12 +30,12 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SEGMENTACIONES\\2024 SETIEMBRE')
 #este reporte es trimestral pero solo van los datos del último mes
 
 ## REPORTE DE REPROGRAMADOS QUE SE MANDA A EXPERIAN ###########################
-repo_reprogramados = 'Setiembre Reprogramados - 2024.xlsx'
+repo_reprogramados = 'Diciembre Reprogramados - 2024.xlsx'
 ###############################################################################
 
 #%% IMPORTACIÓN DEL ANEXO06
-ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 SETIEMBRE\\provisiones\\mejorado'
-nom = 'Rpt_DeudoresSBS Anexo06 - Setiembre 2024 - campos ampliados 05.xlsx'
+ubi = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 diciembre\\parte 2'
+nom = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados 03.xlsx'
 
 #%% IMPORTACIÓN DEL ANEXO06 DEL SQL
 
