@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 #%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\pedidos\\contabilidad\\requerimiento sunat\\011 diciembre')
 
-excel_enviado_por_contabilidad = 'tabla 001 SUNAT2024 II.xlsx'
+excel_enviado_por_contabilidad = 'tabla 001 SUNAT2024 II (completado).xlsx'
 
 skip_filas = 0
 
@@ -50,9 +50,10 @@ SELECT
 	A.ApellidoMaterno,
 	A.Nombres,
 	A.razonsocial,
---B.FechaObservacion,
+B.FechaObservacion,
 A.FechaInscripcion,
 A.FechaNacimiento,
+B.CodValorNuevo,
 	CASE
 		WHEN B.CodValorNuevo = 301 THEN 'INHABIL'
         WHEN B.CodValorNuevo = 532 THEN 'INHABIL-FALLECIDO'
@@ -72,7 +73,9 @@ LEFT JOIN
 --WHERE 
 --	B.CodValorNuevo IN (301,532)
 
-ORDER BY iif(A.CodTipoPersona =1, A.nroDocIdentidad, A.nroruc)
+--where iif(A.CodTipoPersona =1, A.nroDocIdentidad, A.nroruc) = '18190701' --  '71351436'
+
+ORDER BY iif(A.CodTipoPersona =1, A.nroDocIdentidad, A.nroruc), B.FechaObservacion desc
 
 '''
 
@@ -82,7 +85,7 @@ df_fincore = pd.read_sql_query(query,
 
 df_fincore['Doc_Identidad'] = df_fincore['Doc_Identidad'].str.strip()
 
-df_fincore = df_fincore.sort_values(by = 'OBSERVACIÓN', ascending = False)
+# df_fincore = df_fincore.sort_values(by = 'OBSERVACIÓN', ascending = False)
 df_fincore = df_fincore.drop_duplicates(subset = 'Doc_Identidad', keep='first')
 
 df_fincore['fecha_egreso'] = df_fincore['fecha_egreso'].replace(pd.Timestamp('1900-01-01 00:00:00') , '')
@@ -109,3 +112,6 @@ else:
 #%% creación excel
 df_completado.to_excel('Tabla N 001 SUNAT.xlsx',
                        index = False)
+
+#%%
+print('fin')
