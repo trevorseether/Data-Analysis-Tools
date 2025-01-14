@@ -20,8 +20,9 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MARKETING\\socios con cred vigente')
 #%% LECTURA DE LAS CREDENCIALES
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
-corte_anx_06 = '20241130'
+corte_anx_06 = '20241231'
 usar_sql     = True # para usar Anexo 06
+
 #%% CREACIÓN DE LA CONECCIÓN A SQL
 
 server      = datos['DATOS'][0]
@@ -264,8 +265,11 @@ from datetime import datetime
 
 # Obtener la fecha de hoy
 fecha_hoy = datetime.today().strftime('%Y-%m-%d')
+
 #%%
 completado.to_excel(f'socios vigentes {fecha_hoy}.xlsx',
                     index = False)
 
+#%%
+print('fin')
 

@@ -17,9 +17,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\pedidos\\contabilidad\\requerimiento sunat\\TABLA N 001')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\pedidos\\contabilidad\\requerimiento sunat\\011 diciembre')
 
-excel_enviado_por_contabilidad = 'tabla 001 SUNAT2024 I.xlsx'
+excel_enviado_por_contabilidad = 'tabla 001 SUNAT2024 II.xlsx'
 
 skip_filas = 0
 
