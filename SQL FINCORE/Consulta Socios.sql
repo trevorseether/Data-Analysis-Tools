@@ -3,7 +3,14 @@
 SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
+	
 	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	CASE
+		WHEN S.CodTipoDocIdentidad = 5 THEN 'DNI'
+		WHEN S.CodTipoDocIdentidad = 100 THEN 'RUC'
+		WHEN S.CodTipoDocIdentidad = 6 THEN 'C.E.'
+		ELSE 'OTROS'
+		END AS 'TIPO DOCUMENTO',
 	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
 	pais.descripcion as 'pais', 
 	s.FechaNacimiento, 
@@ -30,4 +37,9 @@ FROM SOCIO as S
 
 WHERE
 	s.codigosocio in ('00031522','00032475')
+
+	----
+
+	select * from SOCIO
+
 

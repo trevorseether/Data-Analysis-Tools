@@ -17,17 +17,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\pedidos\\contabilidad\\requerimiento sunat')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\pedidos\\contabilidad\\requerimiento sunat\\003 diciembre 2024')
 
-excel_enviado_por_contabilidad = 'Tabla N 003 - 2024S1 - ReqSunat.xlsx'
+excel_enviado_por_contabilidad = 'Tabla N 003 - 2024S2.xlsx'
 
-skip_filas = 1
+skip_filas = 0
 
-fecha_inicio = '20240101' # en formato para SQLserver
-fecha_fin    = '20240630' # en formato para SQLserver
+fecha_inicio = '20240701' # en formato para SQLserver
+fecha_fin    = '20241231' # en formato para SQLserver
 
 #%%
-columna_nro_identificador_del_credito = 'Numero de Crédito 18/'
+columna_nro_identificador_del_credito = 'NumerodeCredito18'
 
 df_para_completar = pd.read_excel(io       = excel_enviado_por_contabilidad, 
                                   skiprows = skip_filas,
@@ -241,6 +241,7 @@ print('solo proceder si todo sale ok en la celda anterior')
 df_completado_2 = df_completado_1.merge(capital_interes,
                                         on  = 'pagare_fox',
                                         how = 'left')
+
 #%% limpieza de nulos
 df_completado_2['Capital'].fillna(0, inplace = True)
 df_completado_2['INT_CUOTA'].fillna(0, inplace = True)
@@ -249,12 +250,14 @@ df_completado_2['Capital'] = df_completado_2['Capital'].round(2)
 df_completado_2['INT_CUOTA'] = df_completado_2['INT_CUOTA'].round(2)
 
 #%% creación de excel
-df_completado_2[['Numero de Crédito 18/',
+df_completado_2[[columna_nro_identificador_del_credito,
                  'ApellidoPaterno',
                  'ApellidoMaterno', 
-                 'Nombres_y', 
+                 'Nombres', 
                  'razonsocial', 
                  'Capital', 
                  'INT_CUOTA']].to_excel('Tabla N 003 SUNAT.xlsx',
                                         index = False)
                                         
+df_completado_2.columns
+
