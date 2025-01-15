@@ -107,12 +107,19 @@ prmpr["dias redondeado"] = prmpr["dias"].round(0)
 raraso = prmpr[prmpr["dias redondeado"] < 0]
 if raraso.shape[0] > 0:
     print('dias de gracia negativos ahhhhhhhhhhhhhh')
+    
 #%%
 prmpr['dias de gracia final'] = prmpr['(No column name).11'].astype(int)
 
 def ajuste_dias_de_gracia(prmpr):
     if prmpr['dias de gracia final'] < 0:
         return prmpr["dias redondeado"]
+    if prmpr["dias redondeado"] == 0:
+        return 0
+    if prmpr['CodigoEstadoOperacion'] == '9': # para poner cero días de gracia a los cancelados
+        return 0
+
+    # añadir que todo crédito anterior a marzo/2022 debe tener cero de días de gracia
     else:
         return prmpr['dias de gracia final']
 
@@ -127,4 +134,5 @@ prmpr.to_excel('prmpr días de gracia arreglado.xlsx',
 #%%
 print('final')
 
+prmpr['CodigoEstadoOperacion'].unique()
 

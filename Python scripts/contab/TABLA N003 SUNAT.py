@@ -160,7 +160,22 @@ SELECT
 		S.ApellidoMaterno,
 		S.Nombres,
 		s.razonsocial,
+--------------------------------------------------------------------------------------------------------------------
 	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
+	CASE
+		WHEN S.CodTipoDocIdentidad = 5    THEN 'DNI'
+		WHEN S.CodTipoDocIdentidad = 100  THEN 'RUC'
+		WHEN S.CodTipoDocIdentidad = 6    THEN 'C.E.'
+		ELSE 'OTROS'
+		END AS 'TIPO DOCUMENTO TXT',
+
+	CASE
+		WHEN S.CodTipoDocIdentidad = 5    THEN '01'
+		WHEN S.CodTipoDocIdentidad = 100  THEN '06'
+		WHEN S.CodTipoDocIdentidad = 6    THEN '02'
+		ELSE 'OTROS'
+		END AS 'TIPO DOCUMENTO SBS',
+--------------------------------------------------------------------------------------------------------------------
 	IIF(S.CodSexo = 4, 'FEMENINO',
 		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
 		--------------------------------------------------------------
@@ -222,7 +237,9 @@ datos_soc = total_cred[['pagare_fox',
                         'ApellidoPaterno',
                         'ApellidoMaterno',
                         'Nombres',
-                        'razonsocial']]
+                        'razonsocial',
+                        'Doc_Identidad',
+                        'TIPO DOCUMENTO SBS']]
 
 #%% MERGE con los datos de los socios, separados
 df_completado_1 = df_para_completar.merge(datos_soc,
@@ -256,8 +273,10 @@ df_completado_2[[columna_nro_identificador_del_credito,
                  'Nombres', 
                  'razonsocial', 
                  'Capital', 
-                 'INT_CUOTA']].to_excel('Tabla N 003 SUNAT.xlsx',
+                 'INT_CUOTA',
+                 'Doc_Identidad',
+                 'TIPO DOCUMENTO SBS']].to_excel(f'Tabla N 003 SUNAT {fecha_fin}.xlsx',
                                         index = False)
                                         
-df_completado_2.columns
-
+#%%
+print('fin')

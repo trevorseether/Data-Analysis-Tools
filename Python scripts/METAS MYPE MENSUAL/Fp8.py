@@ -18,14 +18,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\noviembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\fp8\\2024\\diciembre')
 
-archivo_base       = 'Rec_30.11.2024_t.xlsx'
-archivo_pendientes = 'Mora_29.11.2024_r.xlsx'
+archivo_base       = 'Rec_31.12.2024_t.xlsx'
+archivo_pendientes = 'Mora_30.12.2024_r.xlsx'
 
-fecha_corte        = '2024-11-30' # YYYY-MM-DD
+fecha_corte        = '2024-12-31' # YYYY-MM-DD
 
-fecha_vencimiento  = '2024-11-20' #fecha 05 o fecha 20 YYYY-MM-DD
+fecha_vencimiento  = '2024-12-20' #fecha 05 o fecha 20 YYYY-MM-DD
 numero_proceso     = 'p2' #p1 o p2
 
 unir_datos_desde_sql = False # True o False

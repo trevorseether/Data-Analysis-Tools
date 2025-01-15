@@ -4,13 +4,22 @@ SELECT
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
 	
+--------------------------------------------------------------------------------------------------------------------
 	iif(s.CodTipoPersona =1, s.nroDocIdentidad, s.nroruc) AS 'Doc_Identidad',
 	CASE
-		WHEN S.CodTipoDocIdentidad = 5 THEN 'DNI'
-		WHEN S.CodTipoDocIdentidad = 100 THEN 'RUC'
-		WHEN S.CodTipoDocIdentidad = 6 THEN 'C.E.'
+		WHEN S.CodTipoDocIdentidad = 5    THEN 'DNI'
+		WHEN S.CodTipoDocIdentidad = 100  THEN 'RUC'
+		WHEN S.CodTipoDocIdentidad = 6    THEN 'C.E.'
 		ELSE 'OTROS'
-		END AS 'TIPO DOCUMENTO',
+		END AS 'TIPO DOCUMENTO TXT',
+
+	CASE
+		WHEN S.CodTipoDocIdentidad = 5    THEN '1'
+		WHEN S.CodTipoDocIdentidad = 100  THEN '6'
+		WHEN S.CodTipoDocIdentidad = 6    THEN '2'
+		ELSE 'OTROS'
+		END AS 'TIPO DOCUMENTO SBS',
+--------------------------------------------------------------------------------------------------------------------
 	iif(s.codigosocio>28790,'SOC.NVO', 'SOC.ANT') AS 'tipo_soc',
 	pais.descripcion as 'pais', 
 	s.FechaNacimiento, 
@@ -40,6 +49,6 @@ WHERE
 
 	----
 
-	select * from SOCIO
+	--select * from SOCIO
 
 
