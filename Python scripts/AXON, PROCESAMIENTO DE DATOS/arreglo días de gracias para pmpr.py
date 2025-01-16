@@ -98,7 +98,6 @@ del prmpr['NroPrestamo']
 prmpr["interes"] = prmpr["interes"].astype(float)
 prmpr["MontoDesembolsadoAX"] = prmpr["MontoDesembolsadoAX"].astype(float)
 
-
 import numpy as np
 prmpr["dias"] = np.log((prmpr["interes"] / prmpr["MontoDesembolsadoAX"]) + 1) / np.log(1 + prmpr["tasa diaria"])
 prmpr["dias redondeado"] = prmpr["dias"].round(0)
@@ -128,11 +127,9 @@ prmpr['dias de gracia final'] = prmpr.apply(ajuste_dias_de_gracia, axis = 1)
 #%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba')
 
-prmpr.to_excel('prmpr días de gracia arreglado.xlsx',
+prmpr.to_excel('prmpr días de gracia arreglado (2).xlsx',
                index = False)
 
 #%%
 print('final')
-
-prmpr['CodigoEstadoOperacion'].unique()
 
