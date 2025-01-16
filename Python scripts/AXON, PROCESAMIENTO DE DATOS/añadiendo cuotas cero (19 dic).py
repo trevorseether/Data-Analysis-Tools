@@ -8,8 +8,8 @@ Created on Fri Nov 22 10:02:10 2024
 import pandas as pd
 import os
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba\\02_Prestamos-completo')
-nombre_csv = "prppg (antes de añadir cuota cero).csv"   #  "prppg (2).csv"            "prppg.csv"
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba\\nueva generación de datos\\02_Prestamos-16012025')
+nombre_csv = "prppg (2) (antes de añadir cuota cero).csv"   #  "prppg (2).csv"            "prppg.csv"
 
 #%% MONTO DESEMBOLSADO
 columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegistro-3','(No column name)-4','(No column name)-5','(No column name)-6','TipoDeCredito-7','(No column name)-8',
@@ -23,7 +23,7 @@ columnas_desembolsado = ['NumerodePrestamo-1','CodigodeAgencia-2','FechadeRegist
                          '(No column name)-69','(No column name)-70','(No column name)-71','(No column name)-72','(No column name)-73','(No column name)-74','(No column name)-75','(No column name)-76','(No column name)-77',
                          '(No column name)-78','(No column name)-79','(No column name)-80','(No column name)-81','(No column name)-82','(No column name)-83','(No column name)-84',]
 
-m_desem = pd.read_csv("prmpr.csv", #no cambiar
+m_desem = pd.read_csv("prmpr.csv", # NO CAMBIAR
                       header = None, 
                       names  = columnas_desembolsado,
                       sep    = ';',
@@ -41,10 +41,11 @@ del columnas_desembolsado
 col_cuotas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro','Aporte','TotalCargo','TotalPago','Ahorros','Pagado','CodEstado_aux']
 
 cuotas = pd.read_csv(nombre_csv, #                    "prppg.csv"             "prppg (2).csv"
-                     header = None, 
-                     names  = col_cuotas,
-                     sep = ';',
-                     dtype = str)
+                     header  = None, 
+                     names   = col_cuotas,
+                     sep     = ';',
+                     dtype   = str,
+                     usecols = range(13)  )
 # cuotas_completo = cuotas.copy()
 # cuotas = cuotas.head(1181) 
 # print('eliminar esta vaina luego de terminar las pruebas')

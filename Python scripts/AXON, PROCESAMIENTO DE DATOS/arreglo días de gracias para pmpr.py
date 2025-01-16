@@ -19,17 +19,17 @@ import pandas as pd
 
 #%% prmpr
 nombre_prmpr_ampliado = 'dias gracia ajustados.xlsx'
-ubi_prmpr_ampliado    = 'C:\\Users\\sanmiguel38\\Desktop\\prueba'
+ubi_prmpr_ampliado    = 'C:\\Users\\sanmiguel38\\Desktop\\prueba\\nueva generación de datos\\02_Prestamos-16012025'
 
 prmpr_ampliado = pd.read_excel(ubi_prmpr_ampliado + '\\' + nombre_prmpr_ampliado,
-                               skiprows = 2,
+                               skiprows = 0,
                                dtype    = str)
 del nombre_prmpr_ampliado
-del ubi_prmpr_ampliado
+ubi_prmpr_ampliado
 
 #%% prtsa (tasa de interés del crédito)
-excel_completo = '02_Prestamos-completo.xlsx'
-ubi_excel_completo = 'C:\\Users\\sanmiguel38\\Desktop\\prueba'
+excel_completo = '02_Prestamos-16012025.xlsx'
+ubi_excel_completo = 'C:\\Users\\sanmiguel38\\Desktop\\prueba\\nueva generación de datos'
 
 pestana = 'prtsa'
 
@@ -46,7 +46,7 @@ tasas_interes['tasa diaria'] = ((1+((tasas_interes['TEAPRTSA'].astype(float))/10
 #%% interés capitalizado
 cuotas1    = 'prppg.csv'
 cuotas2    = 'prppg (2).csv'
-ubi_cuotas = 'C:\\Users\\sanmiguel38\\Desktop\\prueba\\02_Prestamos-completo'
+ubi_cuotas = 'C:\\Users\\sanmiguel38\\Desktop\\prueba\\nueva generación de datos\\02_Prestamos-16012025'
 
 columnas = ['NroPrestamo','FechaVencimiento','numerocuota','capital','interes','CargosGenerales','CargosSeguro',
             'Aporte','TotalCargo','TotalPago','Ahorros','Pagado']
@@ -113,8 +113,8 @@ prmpr['dias de gracia final'] = prmpr['(No column name).11'].astype(int)
 def ajuste_dias_de_gracia(prmpr):
     if prmpr['dias de gracia final'] < 0:
         return prmpr["dias redondeado"]
-    if prmpr["dias redondeado"] == 0:
-        return 0
+    # if prmpr["dias redondeado"] == 0:
+    #     return 0
     if prmpr['CodigoEstadoOperacion'] == '9': # para poner cero días de gracia a los cancelados
         return 0
 
@@ -125,7 +125,8 @@ def ajuste_dias_de_gracia(prmpr):
 prmpr['dias de gracia final'] = prmpr.apply(ajuste_dias_de_gracia, axis = 1)
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba')
+os.chdir(ubi_prmpr_ampliado)
+# os.chdir('C:\\Users\\sanmiguel38\\Desktop\\prueba')
 
 prmpr.to_excel('prmpr días de gracia arreglado (2).xlsx',
                index = False)
