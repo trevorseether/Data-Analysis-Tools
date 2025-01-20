@@ -17,13 +17,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[EXPERIAN_2024_12_24_v2]'
+tabla_nombre = 'FACTORING..[EXPERIAN_2025_01_17_v2]'
 CARGA_SQL_SERVER = True #True
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\diciembre\\24 12')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\2025\\enero\\17 01')
 
-nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_5818.txt'
-corte  = '2024-12-24' # yyyy-mm-dd
+nombre = 'C__inetpub_cliente__ExcelPano_Pano_2158968_45303354_1357.txt'
+corte  = '2025-01-17' # yyyy-mm-dd
 
 # EN CASO DE REQUERIR UNIR 2 ARCHIVOS:
 unir_2_archivos = False # poner False para trabajar con solo un archivo:
