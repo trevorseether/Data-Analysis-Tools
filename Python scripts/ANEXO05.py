@@ -28,7 +28,7 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 dicie
 ###############################################################################
 #%% ANX06
 # ANEXO 06 ####################################################################
-anx_06 = "Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados 03.xlsx"
+anx_06 = "Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados 04.xlsx"
 ###############################################################################
 
 # filas ignoradas ###########
@@ -1109,7 +1109,7 @@ nueva_fila = pd.DataFrame([['Provisiones Genéricas constituidas',
 anexo05 = pd.concat([anexo05,nueva_fila], ignore_index = True)
 
 nueva_fila = pd.DataFrame([['Provisiones específicas constituidas', 
-                            pivot_I.iloc[5,6] - pivot_I.iloc[5,1],
+                            pivot_I.iloc[5,6] - pivot_I.iloc[5,1], # Provisiones específicas constituídas = Provisiones Constituídas(total) - Provisiones Constituídas (solo clasificación cero [también llamadas provisiones genéricas])
                             np.nan, 
                             np.nan, 
                             np.nan, 
