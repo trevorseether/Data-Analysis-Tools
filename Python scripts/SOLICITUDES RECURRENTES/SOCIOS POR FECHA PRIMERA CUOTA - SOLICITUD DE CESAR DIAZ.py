@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 # CONTEO DE SOCIOS, REPORTE DE CESAR DÍAZ
 # =============================================================================
 #%%
-fecha_final      = '20241031' # único parámetro para cambiar cada mes
+fecha_final      = '20241231' # único parámetro para cambiar cada mes
 CARGA_SQL_SERVER = True
 
 #%%
