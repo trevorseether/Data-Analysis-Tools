@@ -52,7 +52,7 @@ conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
 
 conn = pyodbc.connect(conn_str)
 
-QUERY = f'''
+QUERY = '''
 SELECT
 	RIGHT(CONCAT('0000000',p.numero),8)               AS 'Nro Prestamo \nFincore',
 	CASE 
@@ -159,6 +159,13 @@ df_sentinel['Apellido Materno (*)'] = df_sentinel['Apellido Materno (*)'].str.st
 df_sentinel['Nombres (*)']          = df_sentinel['Nombres (*)'].str.strip()
 
 #%%
+def castigado_maximo(row):
+    if (row['MN Creditos Cartigados (*)'] > 0) and (row['MN Deuda Directa Cobranza Judicial (*)'] > 0):
+        return max(row['MN Creditos Cartigados (*)'], row['MN Deuda Directa Cobranza Judicial (*)'])
+    else:
+        return row['MN Creditos Cartigados (*)']
+df_sentinel['MN Creditos Cartigados (*)'] = df_sentinel.apply(castigado_maximo, axis=1)
+
 def arreglo_castigado(row):
     if row['MN Creditos Cartigados (*)'] > 0:
         return 0
@@ -934,7 +941,7 @@ if cred_duplicados.shape[0] > 0:
 
 mes = str(f_corte_sql[4:6])
 año = str(f_corte_sql[2:4])
-nombre_archivo = 'SM_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO' + '.xlsx'
+nombre_archivo = 'SM_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO (2)' + '.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)

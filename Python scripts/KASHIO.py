@@ -22,20 +22,20 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\2025 01\\23 01')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\2025 01\\24 01')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20250123.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20250124.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
-crear_archivo         = False #True o False
+crear_archivo         = True #True o False
 ###############################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA' ############################################
-mensajeria_preventiva = False #True o False
+mensajeria_preventiva = True #True o False
 ###############################################################################
 
 'filtrar solo mype' ###########################################################

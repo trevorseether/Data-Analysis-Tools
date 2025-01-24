@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Enero 2025'
-fecha_inicio = '2025-01-01'
-fecha_final  = '2025-01-31'
+MES          = 'Febrero 2025'
+fecha_inicio = '2025-02-01'
+fecha_final  = '2025-02-28'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\2024 12\\23 12\\mensual')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\2025 01\\24 01')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
