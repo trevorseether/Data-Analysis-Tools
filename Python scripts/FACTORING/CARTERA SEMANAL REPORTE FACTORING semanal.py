@@ -18,17 +18,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'FACTORING..[FACTORING_SEMANAL_20250117]'
+tabla_nombre = 'FACTORING..[FACTORING_SEMANAL_20250124]'
 
 CARGA_SQL_SERVER = True # True or False
 
-fecha_corte = '2025-01-17' # AAAA-MM-DD
+fecha_corte = '2025-01-24' # AAAA-MM-DD
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CARTERA SEMANAL\\2025\\enero\\17 01')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\CARTERA SEMANAL\\2025\\enero\\24 01')
 
-excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptantecarterasemanal20012025.xlsx'
+excel = 'Rpt_FacturasxPrestamoFactotingXClienteXAceptantecartera24012024.xlsx'
 
-tipo_de_cambio = 3.748
+tipo_de_cambio = 3.712
 
 facturas_para_omitir = ['FN01-00004114']
 

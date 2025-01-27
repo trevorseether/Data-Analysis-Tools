@@ -145,7 +145,8 @@ SELECT
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio',
-	USUARIO.IdUsuario AS 'USUARIO APROBADOR'
+	USUARIO.IdUsuario AS 'USUARIO APROBADOR',
+	ENFI.Descripcion AS 'banco del socio'
 	-- ,
 	-- DESCUENTO.valor as 'retención',
 	-- p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
@@ -175,6 +176,8 @@ INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
 LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
 
+LEFT JOIN SocioTransferencia AS SOT  ON SOLICITUD.CodSocioTransferencia = SOT.CodSocioTransferencia
+LEFT JOIN EntidadFinanciera AS ENFI  ON SOT.CodEntidadFinanciera = ENFI.CodEntidadFinanciera
 -----------------------------------------------------
 	LEFT JOIN TipoCambioSBS AS TCSBS
 	on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
@@ -182,7 +185,7 @@ LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARI
 -----------------------------------------------------
 --LEFT JOIN SolicitudCreditoOtrosDescuentos AS DESCUENTO ON P.CodSolicitudCredito = DESCUENTO.CodSolicitudCredito
 
-WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20220101'
+WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20240101'
 --AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
 
 AND s.codigosocio     > 0
