@@ -104,6 +104,27 @@ para_excel.columns = ['FINCORE',
                       ]
 
 #%%
+codgrupocab = df_codgrupocab[['CodGrupoCab', 'Funcionario']].drop_duplicates(subset='CodGrupoCab')
+codgrupocab['CodGrupoCab'] = codgrupocab['CodGrupoCab'].astype(int).astype(str)
+codgrupocab = codgrupocab.drop_duplicates(subset = 'Funcionario')
+
+filas_original = para_excel.shape[0]
+
+para_excel = para_excel.merge(codgrupocab,
+                              left_on  = 'REASIGNACIÓN',
+                              right_on = 'Funcionario',
+                              how = 'left' )
+
+filas_nuevo = para_excel.shape[0]
+if filas_nuevo != filas_original:
+    print('alerta alerta, se han duplicado con este merge')
+
+para_excel['CodGrupoCab (nuevo administrador)'] = para_excel['CodGrupoCab']
+
+del para_excel['CodGrupoCab']
+del para_excel['Funcionario']
+
+#%%
 para_excel.to_excel(f'Traslado {pestaña} Estructurado {corte}.xlsx',
                     index = False)
 
