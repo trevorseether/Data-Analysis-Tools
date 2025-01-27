@@ -16,11 +16,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\aplicar en anx06 de diciembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\MIGRACIÓN DE CARTERA\\aplicar en anx06 enero 2025')
 
-nombre = 'reasignación para python.xlsx'
+nombre = 'migra.xlsx'
 
-corte       = 'DIC 2024'
+corte       = 'ENERO 2025'
 nro_fincore = 'NRO FINCORE'     #columna del fincore del excel
 nuevo_func  = 'FN'              #columna del nuevo funcionario del excel
 pestaña     = 'Migracion'       #pestaña del excel
