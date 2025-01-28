@@ -39,15 +39,15 @@ def parse_dates(date_str):
 
     '''
     #formatos en los cuales se tratará de convertir a DateTime
-    formatos = ['%d/%m/%Y %H:%M:%S',
-                '%d/%m/%Y',
-                '%Y%m%d', '%Y-%m-%d', 
-                '%Y-%m-%d %H:%M:%S', 
-                '%Y/%m/%d %H:%M:%S',
-                '%Y-%m-%d %H:%M:%S PM',
-                '%Y-%m-%d %H:%M:%S AM',
-                '%Y/%m/%d %H:%M:%S PM',
-                '%Y/%m/%d %H:%M:%S AM']
+    formatos = ['%d/%m/%Y %H:%M:%S'    ,
+                '%d/%m/%Y'             ,
+                '%Y%m%d', '%Y-%m-%d'   , 
+                '%Y-%m-%d %H:%M:%S'    , 
+                '%Y/%m/%d %H:%M:%S'    ,
+                '%Y-%m-%d %H:%M:%S PM' ,
+                '%Y-%m-%d %H:%M:%S AM' ,
+                '%Y/%m/%d %H:%M:%S PM' ,
+                '%Y/%m/%d %H:%M:%S AM'     ]
 
     for formato in formatos:
         try:
