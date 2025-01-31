@@ -924,6 +924,21 @@ df_sentinel['Telefono'] = df_sentinel['Telefono'].astype(np.int64)
 #%%
 df_sentinel['Fecha del\nPeriodo\n(*)'] = str(f_corte_sql[0:4]) + '/' + str(f_corte_sql[4:6])
 
+#%%
+df_sentinel['cod socio'] = df_sentinel['Cod. Prestamo'].str.split('-', expand=True)[0]
+df_sentinel['pres 18'] = df_sentinel['Cod. Prestamo'].str.split('-', expand=True)[1]
+
+df_sentinel = df_sentinel.merge(df_fincore,
+                                left_on  = 'pres 18',
+                                right_on = 'NumerodeCredito18',
+                                how      = 'left')
+
+sin_match = df_sentinel[pd.isna(df_sentinel['Nro_Fincore'])]
+if sin_match.shape[0] > 0:
+    print('alerta, faltan numeros')
+    
+df_sentinel['Cod. Prestamo'] = df_sentinel['cod socio'] + '-' + df_sentinel['Nro_Fincore']
+
 #%% DETECTOR DE DUPLICADOS
 cred_duplicados = df_sentinel[df_sentinel['Tipo Persona (*)'] != '3']
 cred_duplicados = cred_duplicados[cred_duplicados.duplicated(subset = 'Cod. Prestamo', 
@@ -931,7 +946,7 @@ cred_duplicados = cred_duplicados[cred_duplicados.duplicated(subset = 'Cod. Pres
 if cred_duplicados.shape[0] > 0:
     print('estos son los créditos duplicados')
     print(cred_duplicados['Cod. Prestamo'])
-    
+
 #%% especificaciones finales
 
 'finalmente este archivo se llena al formato MIC_RUC_FECHA que envía Experian'
@@ -941,7 +956,7 @@ if cred_duplicados.shape[0] > 0:
 
 mes = str(f_corte_sql[4:6])
 año = str(f_corte_sql[2:4])
-nombre_archivo = 'SM_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO (2)' + '.xlsx'
+nombre_archivo = 'IR_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO (3)' + '.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)
@@ -957,6 +972,7 @@ df_sentinel.to_excel(nombre_archivo,
 ubicacion_actual = os.getcwd()
 
 # Imprimir la ubicación actual
+print('')
 print("La ubicación actual es: " + ubicacion_actual)
 
 #%% PARTE 2

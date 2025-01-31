@@ -146,8 +146,13 @@ SELECT
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio',
 	USUARIO.IdUsuario AS 'USUARIO APROBADOR',
-	ENFI.Descripcion AS 'banco del socio'
-	-- ,
+	ENFI.Descripcion AS 'banco del socio',
+	CASE
+		WHEN (CJC.BancoADepositar IS NULL) AND CJC.Documento LIKE '%N° ORDEN PAGO : ' THEN 'SCOTIABANK PERÚ'
+		ELSE CJC.BancoADepositar
+		END AS 'BANCO DEPÓSITO'
+
+	--,
 	-- DESCUENTO.valor as 'retención',
 	-- p.montosolicitado - DESCUENTO.valor as 'MONTO NETO'
 
@@ -178,6 +183,9 @@ LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARI
 
 LEFT JOIN SocioTransferencia AS SOT  ON SOLICITUD.CodSocioTransferencia = SOT.CodSocioTransferencia
 LEFT JOIN EntidadFinanciera AS ENFI  ON SOT.CodEntidadFinanciera = ENFI.CodEntidadFinanciera
+
+LEFT JOIN CajaCab AS CJC ON CJC.CodPrestamo = P.CodPrestamo
+
 -----------------------------------------------------
 	LEFT JOIN TipoCambioSBS AS TCSBS
 	on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
