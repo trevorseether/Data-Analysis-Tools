@@ -19,11 +19,11 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 CARGA_SQL_SERVER = True
 
-tabla_nombre = 'FACTORING..[Calificacion_2022_v2]'
+tabla_nombre = 'FACTORING..[Calificacion_2023_v2]'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ANUAL RANKING\\nuevo')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\ANUAL RANKING\\2023\\generado en enero 2025')
 
-nombre = '7863_base_ranking_top_10_mil_2024-11-21_727694_8615.xlsx'
+nombre = '7863_base_ranking_top_10_mil_2025-02-03_516128_3682.xlsx'
 
 #%%
 ranking = pd.read_excel(io       = nombre, 
@@ -33,7 +33,7 @@ ranking = pd.read_excel(io       = nombre,
 ranking['ruc'] = ranking['ruc'].str.strip()
 ranking = ranking[['ruc',
                    'razon_social',
-                   'ranking_2022']]
+                   'ranking_2023']]  ######################## Ojo con esta columna, también hay que cambiarla
 
 #%%
 if CARGA_SQL_SERVER == True:
