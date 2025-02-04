@@ -30,7 +30,7 @@ agregar_contraseña = False #True o False
 def add_password(input_pdf, output_pdf, password):
     pdf_writer = PdfWriter()
     pdf_writer.append(input_pdf)
-    pdf_writer.encrypt(user_pwd=password, owner_pwd=None, use_128bit=True)
+    pdf_writer.encrypt(user_pwd = password, owner_pwd = None, use_128bit = True)
     with open(output_pdf, 'wb') as output_file:
         pdf_writer.write(output_file)
 
