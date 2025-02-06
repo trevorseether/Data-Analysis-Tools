@@ -14,9 +14,9 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\DEPARTAMENTO Y ACTIVIDAD ECONÓMICA\\2024 12\\24 12')
-archivo     = 'cartera vigente.xlsx'
-fecha_corte = '2024-12-24'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\DEPARTAMENTO Y ACTIVIDAD ECONÓMICA\\2025 01\\31 01 2025')
+archivo     = 'CARTERA VIGENTE 31-01-2025.xlsx'
+fecha_corte = '2025-01-31'
 carga_sql   = True
 
 #%%

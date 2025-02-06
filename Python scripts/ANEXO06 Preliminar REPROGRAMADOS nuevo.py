@@ -42,16 +42,16 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Diciembre 2024'  # Mes Año
-fecha_corte             = '2024-12-31' # año-mes-día
-fecha_corte_inicial     = '2024-12-01' # año-mes-día
+fecha_mes               = 'Enero 2025'  # Mes Año
+fecha_corte             = '2025-01-31' # año-mes-día
+fecha_corte_inicial     = '2025-01-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
 columna_in_suspendo = 'Interes Suspenso Nuevo'
 
 #%% UIT actual
-uit = 5150
+uit = 5350 #5150
 
 #%%
 generar_excels = True #booleano True o False
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 diciembre'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2025\\enero'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados - insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados - insumo.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 noviembre\\productos' # productos
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 diciembre\\productos' # productos
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Noviembre 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -2174,6 +2174,24 @@ if alertaaa.shape[0] > 0:
 else:
     print(Back.GREEN + 'todo bien q(≧▽≦q)')
 
+#%% DEVENGADOS CERO CUANDO Flag Termino Periodo Gracia = NO, 
+# excepto que sea monocuota
+
+def dev_cero_no_gracia(df):
+    if (((df['Flag Termino Periodo Gracia'] == 'NO') and (df['Número de Cuotas Programadas 44/'] > 1))):
+        return 0
+    else:
+        return df['Rendimiento\nDevengado 40/']
+
+# def dev_cero_no_gracia(df):
+#     if (((df['Flag Termino Periodo Gracia'] == 'NO') and (df['Número de Cuotas Programadas 44/'] > 1)) \
+#     or (df['TIPO_REPRO'] in ['TIPO 1', 'TIPO 2', 'TIPO 3'])):
+#         return 0
+#     else:
+#         return df['Rendimiento\nDevengado 40/']
+    
+anx06_ordenado['Rendimiento\nDevengado 40/'] = anx06_ordenado.apply(dev_cero_no_gracia, axis = 1)
+
 #%% CREACIÓN DEL EXCEL
 df_vacío = pd.DataFrame({' ' : ['', '', ''], 
                          '  ': ['', '', '']})
@@ -2261,9 +2279,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20241231' #mes actual
-fecha_corte_menos_1 = '20241130' #mes anterior
-fecha_corte_menos_2 = '20241031' #mes anterior del anterior
+fecha_corte_actual  = '20250131' #mes actual
+fecha_corte_menos_1 = '20241231' #mes anterior
+fecha_corte_menos_2 = '20241130' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2298,8 +2316,9 @@ creditos_en_3_meses = df_mes_actual_copia.loc[df_mes_actual_copia['Nro Prestamo 
 
 creditos_no_aparecidos = creditos_en_3_meses[~creditos_en_3_meses['Nro Prestamo \nFincore'].str.strip().isin(list(df_menos1['NRO FINCORE'].str.strip()))]
 
-print(creditos_no_aparecidos)
+print(creditos_no_aparecidos.shape[0])
 print(creditos_no_aparecidos['Nro Prestamo \nFincore'])
+
 #%% ahora vamos a buscar respecto al excel original antes de eliminar los cancelados
 'FILTRAMOS AQUELLOS CRÉDITOS QUE TENGAN FECHA DE DESEMBOLSO DE HACE DOS MESES AL CORTE ACTUAL'
 antiguos_aparecen = df_mes_actual_copia[df_mes_actual_copia['Fecha de Desembolso 21/'].astype(int) <= int(fecha_corte_menos_2)]
@@ -2342,13 +2361,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Noviembre 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 noviembre\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Diciembre 2024 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 diciembre\\productos'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Dic-24'
-mes_anterior_txt = 'Nov-24'
+mes_actual_txt   = 'Ene-25'
+mes_anterior_txt = 'Dic-24'
 # =============================================================================
 #%% LECTURA
 
@@ -2661,12 +2680,12 @@ df['TIPO DE REPROGRAMACION']  = tabla1["TIPO_REPRO"]
 df['DEUDA REPROGRAMADA']      = tabla1["Saldo de colocaciones (créditos directos) 24/"]
 
 df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].astype(int)
-df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
-                                                   8  : '08',
-                                                   10 : '10',
-                                                   11 : '11',
-                                                   12 : '12',
-                                                   13 : '13'},
+df['TIPO DE CREDITO'] = df['TIPO DE CREDITO'].map({ 9  : '09', #REEMPLAZANDO LOS VALORES POR STRINGS CON CEROS
+                                                    8  : '08',
+                                                    10 : '10',
+                                                    11 : '11',
+                                                    12 : '12',
+                                                    13 : '13'},
                                                  na_action = None) #EN CASO DE NULO NO HACER NADA
 
 df['CODIGO SOCIO']      = df['CODIGO SOCIO'].str.strip()
