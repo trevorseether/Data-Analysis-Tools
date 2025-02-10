@@ -2178,6 +2178,9 @@ else:
 # excepto que sea monocuota
 
 def dev_cero_no_gracia(df):
+    
+    '''este proceso también existe en la parte 2'''
+    
     if (((df['Flag Termino Periodo Gracia'] == 'NO') and (df['Número de Cuotas Programadas 44/'] > 1))):
         return 0
     else:

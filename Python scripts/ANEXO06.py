@@ -43,31 +43,31 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 diciembre')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\enero')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 12 2024.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 01 2025.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Diciembre' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
 ###############################################
-uit = 5150 #valor de la uit en el año 2024  ###  # en el 2025 será 5350
+uit = 5350 #valor de la uit en el año 2024  ###  # en el 2025 será 5350
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2024-12-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Diciembre 2024'
+fecha_corte     = '2025-01-31' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Enero 2025'
 ########################################################
 
 #%% Códigos de los productos
@@ -222,30 +222,6 @@ else:
 #456        (df1['Refinanciado'] == 'TIPO 1') & \
 #456        (df1['producto'].isin([5, 7, 25, 0])), 'Tipo de Documento 9/'] = 1
 del tipo_cero
-
-#%% CORRECCIÓN CUENTA CONTABLE CASTIGADOS
-# código añadido al reporte preliminar
-
-# def añadiendo_cuenta_contable(df1):
-#     if df1['Saldos de Créditos Castigados 38/'] > 0:
-#         return '811302'
-#     else:
-#         return df1['Cuenta Contable Crédito Castigado 39/']
-    
-# df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(añadiendo_cuenta_contable, axis=1)    
-
-# #arreglando la Cuenta Contable Crédito Castigado 39/ (811302 ->  8113020000)
-# df1['Cuenta Contable Crédito Castigado 39/'] = df1['Cuenta Contable Crédito Castigado 39/'].str.strip()
-
-# def cuenta_contable_castigados(df1):
-#     if '811302' in df1['Cuenta Contable Crédito Castigado 39/']:
-#         return '8113020000'
-#     else:
-#         ''
-# df1['Cuenta Contable Crédito Castigado 39/'] = df1.apply(cuenta_contable_castigados, axis=1)
-
-# print(df1['Cuenta Contable Crédito Castigado 39/'].unique())
-# print('si sale 8113020000 entonces todo bien')
 
 #%% CLASIFICACIÓN DE LOS REFINANCIADOS
 
@@ -802,18 +778,52 @@ df_resultado['AUXILIAR_SITUACION'] = df_resultado.apply(situacion, axis=1)
 #%% ASIGNACIÓN DE CUENTAS CONTABLES
 'CREACIÓN DE LAS TABLAS DE LAS CUENTAS CONTABLES'
 
+# cuentas_01 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+#                            'VIGENTE':['1411120600','1411130600',
+#                                       '1411020600','1411030604',
+#                                       '1411040601'],
+#                            'REFINANCIADO':['1414120600','1414130600',
+#                                            '1414020600','1414030604',
+#                                            '1414040601'],
+#                            'VENCIDO':['1415120600','1415130600',
+#                                       '1415020600','1415030604',
+#                                       '1415040601'],
+#                            'JUDICIAL':['1416120600','1416130600',
+#                                        '1416020600','1416030604',
+#                                        '1416040601'],
+#                            ' ':['','',
+#                                        '','',
+#                                        '']})
+
+# cuentas_02 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+#                            'VIGENTE':['1421120600','1421130600',
+#                                       '1421020600','1421030604',
+#                                       '1421040601'],
+#                            'REFINANCIADO':['1424120600','1424130600',
+#                                            '1424020600','1424030604',
+#                                            '1424040601'],
+#                            'VENCIDO':['1425120600','1425130600',
+#                                       '1425020600','1425030604',
+#                                       '1425040601'],
+#                            'JUDICIAL':['1426120600','1426130600',
+#                                        '1426020600','1426030604',
+#                                        '1426040601'],
+#                            ' ':['','',
+#                                        '','',
+#                                        '']})
+
 cuentas_01 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
                            'VIGENTE':['1411120600','1411130600',
-                                      '1411020600','1411030604',
+                                      '1411020600','1411030612',
                                       '1411040601'],
                            'REFINANCIADO':['1414120600','1414130600',
-                                           '1414020600','1414030604',
+                                           '1414020600','1414030605',
                                            '1414040601'],
                            'VENCIDO':['1415120600','1415130600',
-                                      '1415020600','1415030604',
+                                      '1415020600','1415030612',
                                       '1415040601'],
                            'JUDICIAL':['1416120600','1416130600',
-                                       '1416020600','1416030604',
+                                       '1416020600','1416030612',
                                        '1416040601'],
                            ' ':['','',
                                        '','',
@@ -821,16 +831,16 @@ cuentas_01 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
 
 cuentas_02 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
                            'VIGENTE':['1421120600','1421130600',
-                                      '1421020600','1421030604',
+                                      '1421020600','1421030612',
                                       '1421040601'],
                            'REFINANCIADO':['1424120600','1424130600',
-                                           '1424020600','1424030604',
+                                           '1424020600','1424030605',
                                            '1424040601'],
                            'VENCIDO':['1425120600','1425130600',
-                                      '1425020600','1425030604',
+                                      '1425020600','1425030612',
                                       '1425040601'],
                            'JUDICIAL':['1426120600','1426130600',
-                                       '1426020600','1426030604',
+                                       '1426020600','1426030612',
                                        '1426040601'],
                            ' ':['','',
                                        '','',
@@ -2387,7 +2397,19 @@ if suspenso_castigados.shape[0] > 0:
     print('hay que quitar intereses en suspenso de los créditos castigados')
 else:
     print('todo bien')
+
+#%%
+#%% DEVENGADOS CERO CUANDO Flag Termino Periodo Gracia = NO, 
+# excepto que sea monocuota
+
+def dev_cero_no_gracia(df):
+    if (((df['Flag Termino Periodo Gracia'] == 'NO') and (df['Número de Cuotas Programadas 44/'] > 1))):
+        return 0
+    else:
+        return df['Rendimiento\nDevengado 40/']
     
+anexo06_casi['Rendimiento\nDevengado 40/'] = anexo06_casi.apply(dev_cero_no_gracia, axis = 1)
+
 #%% AJUSTE PUNTUAL DE VALORES, ANTES DE MANDARLO AL SUCAVE
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00016472', 'Sub Tipo de Crédito 20/'] = '99'
 anexo06_casi.loc[anexo06_casi['Nro Prestamo \nFincore'] == '00057366', 'Sub Tipo de Crédito 20/'] = '99'
@@ -2472,13 +2494,13 @@ import pandas as pd
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Diciembre 2024'  # se pone el corte actual
+fecha_corte = 'Enero 2025'  # se pone el corte actual
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20241130" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20251231" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
