@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 #%% 
 # FECHAS PARA LA RECAUDACIÓN:
-fecha_inicio = '20240701'   # recordar que tiene que ser el inicio del mes
-fecha_final  = '20240930'
+fecha_inicio = '20241001'   # recordar que tiene que ser el inicio del mes
+fecha_final  = '20241231'
 
 # DIRECTORIO DE TRABAJO:
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\julio agosto setiembre 2024'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\setiembre a diciembre 2024'
 
 #%% QUERY
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')

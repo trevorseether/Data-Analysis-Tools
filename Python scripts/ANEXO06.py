@@ -2494,22 +2494,22 @@ import pandas as pd
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Enero 2025'  # se pone el corte actual
+fecha_corte = 'Enero 2025'  # se pone el corte actual TXT
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20251231" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20241231" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados 03.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 diciembre\\parte 2'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\enero\\parte 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2753,7 +2753,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.6385 #0.6355 #0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.655 #0.6385 #0.6355 #0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2984,11 +2984,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Diciembre 2024'
+fecha = 'Enero 2024'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20241130' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20241231' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
