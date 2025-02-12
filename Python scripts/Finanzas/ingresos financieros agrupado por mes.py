@@ -20,6 +20,8 @@ warnings.filterwarnings('ignore')
 fecha_inicio = '20241001'   # recordar que tiene que ser el inicio del mes
 fecha_final  = '20241231'
 
+#columnas nuevas solicitadas
+
 # DIRECTORIO DE TRABAJO:
 directorio = 'C:\\Users\\sanmiguel38\\Desktop\\ingresos financierso\\setiembre a diciembre 2024'
 
@@ -39,10 +41,24 @@ query = f'''
 SELECT 
 	soc.codsocio, 
 	soc.codigosocio, 
+    
 	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) as Socio, 
-	iif(soc.CodTipoPersona =1,soc.nrodocIdentidad,soc.nroRuc) as doc_ident, right(concat('0000000',pre.numero),8) as PagareFincore,
+	
+    right(concat('0000000',pre.numero),8)  AS 'PagareFincore',
+	
+    CASE 
+		WHEN pre.CodPrestamoFox IS NOT NULL THEN
+		RIGHT(CONCAT('000000',pre.CodPrestamoFox),6)
+	ELSE RIGHT(CONCAT('0000000',pre.numero),8)
+		END as 'pagare_fox', 
+--------------------------------------------------------------------
 	pre.FechaDesembolso,
-	precuo.numerocuota, 
+
+	precuo.numerocuota,
+	precuo.NroPlazos,
+	precuo.FechaVencimiento,
+	precuo.FechaUltimoPago, 
+    
 	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS moneda, 
 	ccab.fecha as fecha_cob, 
 	cdet.Capital, 

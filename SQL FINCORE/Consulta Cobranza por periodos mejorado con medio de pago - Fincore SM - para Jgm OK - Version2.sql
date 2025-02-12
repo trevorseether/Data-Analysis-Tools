@@ -16,7 +16,13 @@ SELECT
 		END as 'pagare_fox', 
 --------------------------------------------------------------------
 	pre.FechaDesembolso,
-	precuo.numerocuota, 
+
+	precuo.numerocuota,
+	precuo.NroPlazos,
+	precuo.FechaVencimiento,
+	precuo.FechaUltimoPago,
+	pre.fechaCancelacion,
+	
 	iif(cdet.CodMoneda='95','DÓLAR','SOLES') AS 'moneda',
 	
 	--year(ccab.fecha) AS 'AÑO TC',month(ccab.fecha) AS 'MES TC',

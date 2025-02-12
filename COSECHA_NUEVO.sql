@@ -14,7 +14,7 @@ go
 
 INSERT INTO ANEXOS_RIESGOS3..ANX06 
 SELECT * FROM ANEXOS_RIESGOS2..ANX06_PRELIMINAR
-WHERE FECHACORTE1 = '20241231' -------<-------<-------<-------<-----<-----<--CAMBIAR ESTOOOOOO <------------------
+WHERE FECHACORTE1 = '20250131' -------<-------<-------<-------<-----<-----<--CAMBIAR ESTOOOOOO <------------------
 
 UPDATE A
 SET A.ORIGINADOR = B.FDN_DRIVE
@@ -32,7 +32,7 @@ drop table cosecha..cosecha_nuevo
 
 SELECT * 
 INTO cosecha..cosecha_nuevo
-FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20231031'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
+FROM anexos_riesgos3..Anx06   WHERE FechaCorte1 >= '20231130'  -----<----<----<<---- asegurarse de que ya hay datos actuales en esta tabla
 
 
 
@@ -72,7 +72,7 @@ add cuotas_pagadas_auxiliar int
 ------------------------------------------------------------------------------------
 
 declare @fechaactual as datetime
-set @fechaactual = '20231031' ---- hay que añadir los datos desde adelante hasta atrás, por un año
+set @fechaactual = '20231130' ---- hay que añadir los datos desde adelante hasta atrás, por un año
 ---- tema pendiente, aprender a usar cursores para añadir estos resultados
 INSERT INTO cosecha_nuevo (
 nro_fincore,
