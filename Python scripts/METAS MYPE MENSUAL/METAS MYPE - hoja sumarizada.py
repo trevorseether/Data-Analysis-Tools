@@ -18,53 +18,41 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2024 diciembre'
-nombre      =  '12 Mype - Diciembre.xlsx'
-fecha_corte =  '2024-12-31'
-pestaña_excel   = '100%'
+ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2025\\enero'
+nombre      =  'Mype enero.xlsx'
+fecha_corte =  '2025-01-31'
+pestaña_excel   = 'RankingMYPE'
 
-carga_sql       = False
-tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20241231]'
+carga_sql       = True
+tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20250131]'
 
+filas_skip      = 2
+columnas_excel  = 'K:P'
 #%%
 os.chdir(ubi)
 
-metas = pd.read_excel(nombre, 
+metas = pd.read_excel(nombre,
+                      
+                      skiprows   = filas_skip,
+                      usecols    = columnas_excel,
+                      skipfooter = 10, # filas al final para omitir
                       sheet_name = pestaña_excel)
 
-metas.dropna(subset = ['Unnamed: 1',
-                       'Unnamed: 2',
-                       'Unnamed: 3'],
-             inplace = True,
-             how     = 'all')
-
-metas.dropna(subset = ['Unnamed: 7',
-                       'Unnamed: 8',
-                       'Unnamed: 9'],
-             inplace = True,
-             how     = 'all')
-
-metas = metas.dropna(axis=1, how='all')
-
-#%% ELIMINACIÓN DE FILAS
-print(metas.iloc[0].tolist())
-print('el resultado debe ser los nombres de las columnas')
-metas.columns = metas.iloc[0].tolist()
-
-fila = metas.iloc[0].tolist()
-metas = metas[~(metas == fila).all(axis=1)]
-
-metas['FUNCIONARIO'] = metas['FUNCIONARIO'].str.upper()
-metas['FUNCIONARIO'] = metas['FUNCIONARIO'].str.strip()
-
-metas = metas[metas['FUNCIONARIO'] != 'TOTAL']
-metas = metas[metas['FUNCIONARIO'] != 'FUNCIONARIO']
-metas = metas[metas['FUNCIONARIO'] != 'SEDE']
-metas = metas[metas['FUNCIONARIO'] != 'LIMA']
-metas = metas[metas['FUNCIONARIO'] != 'PROVINCIA']
+metas = metas.dropna(subset=['Funcionario.1'])
 
 #%%
-metas['FECHA_CORTE'] = pd.Timestamp(fecha_corte)
+metas_estructurado = pd.DataFrame()
+
+metas_estructurado['FUNCIONARIO']            = metas['Funcionario.1']
+metas_estructurado['DESEMBOLSADO ANX06']     = 5
+metas_estructurado['DESEMBOLSADO_comercial'] = 0
+metas_estructurado['METAS_comercial']        = metas['Meta.1']
+metas_estructurado['FECHA_CORTE']            = pd.Timestamp(fecha_corte)
+
+metas_estructurado['FUNCIONARIO'] = metas_estructurado['FUNCIONARIO'].str.upper()
+metas_estructurado['FUNCIONARIO'] = metas_estructurado['FUNCIONARIO'].str.strip()
+
+metas_estructurado = metas_estructurado.fillna(0)
 
 #%% rectificación de nombres
 nombres = pd.read_excel(io = 'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\NOMBRES FUNCIONARIOS PARA RECTIFICAR.xlsx', 
@@ -72,10 +60,10 @@ nombres = pd.read_excel(io = 'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\NOMBR
 nombres['nombre reporte comercial'] = nombres['nombre reporte comercial'].str.strip()
 
 #%% merge
-mergeado = metas.merge(nombres,
-                       left_on  = 'FUNCIONARIO',
-                       right_on = 'nombre reporte comercial',
-                       how      = 'left')
+mergeado = metas_estructurado.merge(nombres,
+                                    left_on  = 'FUNCIONARIO',
+                                    right_on = 'nombre reporte comercial',
+                                    how      = 'left')
 
 faltantes = mergeado[pd.isna(mergeado['nombre para merge'])]
 if faltantes.shape[0] > 0:
@@ -92,13 +80,12 @@ WHERE
 	descripcion LIKE '%David%'
           ''')
 
-#%% Columnas necesarias
-df = pd.DataFrame()
-df['FUNCIONARIO']            = mergeado['nombre para merge']
-df['DESEMBOLSADO ANX06']     = 5
-df['DESEMBOLSADO_comercial'] = 0
-df['METAS_comercial']        = mergeado['META MONTO']
-df['FECHA_CORTE']            = mergeado['FECHA_CORTE']
+#%%
+df = mergeado.copy()
+
+df['FUNCIONARIO'] = df['nombre para merge']
+del df['nombre reporte comercial']
+del df['nombre para merge']
 
 #%% Reporte para sql
 if (faltantes.shape[0] == 0) and (carga_sql == True):
@@ -166,3 +153,5 @@ elif (faltantes.shape[0] > 0) and (carga_sql == True):
     print('no se han cargado los datos, falta corregir')
 else:
     print('no se han cargado los datos')
+    
+    
