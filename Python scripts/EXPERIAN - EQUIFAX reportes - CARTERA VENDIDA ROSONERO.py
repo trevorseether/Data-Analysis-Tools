@@ -16,15 +16,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Diciembre 2024'
+FECHA_CORTE = 'Enero 2025'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\experian rossonero"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\experian rossonero\\2025\\enero"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "smSentinel09012025-proseva_rossonero.xlsx"
+insumo_principal = "Sentinel Ene25 - CarteraVendida para Rossonero.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -34,7 +34,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20241231'
+f_corte_sql = '20250131'
 ####################################
 
 #%% ALGUNOS DATOS DEL FINCORE: 
@@ -122,6 +122,8 @@ os.chdir(ubicacion) #aqui se cambia el directorio de trabajo
 
 df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del archivo si es necesario
                   dtype = {
+                      'CodigoSocio'                     : str,
+                      'NumeroPrestamo'                  : str,
                       'Fecha del\nPeriodo\n(*)'         : object, 
                       'Codigo\nEntidad\n(*)'            : object,
                       'Tipo\nDocumento\nIdentidad (*)'  : object,
@@ -129,18 +131,18 @@ df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del 
                       'Tipo Persona (*)'                : object,
                       'Modalidad de Credito (*)'        : object
                           }                        ,
-                                   sheet_name = 'Hoja1'     )
+                               sheet_name = 'Hoja1'     )
 
 #limpieza de filas vacías
-df_sentinel.dropna(subset = ['Cod. Prestamo', 
+df_sentinel.dropna(subset = [#'Cod. Prestamo', 
                              'N° Documento\nIdentidad (*)  DNI o RUC',
                              'Razon Social (*)',
                              'Apellido Paterno (*)'], 
                    inplace = True, 
                    how     = 'all')
 
-#eliminación de duplicados
-df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
+#eliminación de duplicados(lo haremos después)
+# df_sentinel = df_sentinel.drop_duplicates(subset='Cod. Prestamo')
 
 
 #para segurarnos que sea STR (no parece que sea muy necesario)
@@ -179,6 +181,25 @@ df_sentinel['MN Deuda Directa Cobranza Judicial (*)'] = df_sentinel.apply(arregl
 
 df_fincore = df_fincore.rename(columns={'NumerodeCredito18': 
                                         'cod pres para merge'})
+    
+#%% arreglo del 'Cod. Prestamo'
+df_sentinel['CodigoSocio'] = df_sentinel['CodigoSocio'].str.strip()
+df_sentinel['CodigoSocio'] = df_sentinel['CodigoSocio'].str.replace("'", "", regex=False)
+
+df_sentinel['NumeroPrestamo'] = df_sentinel['NumeroPrestamo'].str.strip()
+df_sentinel['NumeroPrestamo'] = df_sentinel['NumeroPrestamo'].str.replace("'", "", regex=False)
+
+df_sentinel['Cod. Prestamo'] = df_sentinel['CodigoSocio'] + '-' + df_sentinel['NumeroPrestamo']
+
+#filtrado de créditos de rossonero
+creditos_de_rosonero = pd.read_excel('C:/Users/sanmiguel38/Desktop/experian rossonero/CRÉDITOS VENDIDOS QUE AHORA SON DE ROSSONERO.xlsx',
+                                     dtype = str)
+creditos_de_rosonero['Cod. Prestamo'] = creditos_de_rosonero['Cod. Prestamo'].str.strip()
+
+df_sentinel = df_sentinel[df_sentinel['Cod. Prestamo'].isin(creditos_de_rosonero['Cod. Prestamo'])]
+
+#%%
+
     
 df_sentinel['Cod. Prestamo'] = df_sentinel['Cod. Prestamo'].str.strip()
 df_fincore['cod pres para merge'] = df_fincore['cod pres para merge'].str.strip()
@@ -956,7 +977,7 @@ if cred_duplicados.shape[0] > 0:
 
 mes = str(f_corte_sql[4:6])
 año = str(f_corte_sql[2:4])
-nombre_archivo = 'IR_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO (3)' + '.xlsx'
+nombre_archivo = 'IR_' + mes + año + ' - SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - ' + FECHA_CORTE + ' - ROSSONERO' + '.xlsx'
 try:
     ruta = nombre_archivo
     os.remove(ruta)

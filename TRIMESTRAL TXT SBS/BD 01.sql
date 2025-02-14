@@ -1,4 +1,6 @@
+
 -- BD01
+
 SELECT
 	CodigoSocio7                  AS 'CIS',
 	TipodeDocumento9              AS 'TID',
@@ -11,7 +13,7 @@ SELECT
 	TipodeCredito19               AS 'TCR',
 	ClasificaciondelDeudorconAlineamiento15 AS 'CAL',
 	DiasdeMora33                  AS 'DAK',
-	DiasdeMora33                  AS 'DAKR', -- OJO, REVISAR ESTE CÁLCULO
+	NULL                          AS 'DAKR', -- OJO, REVISAR ESTE CÁLCULO
 	ProvisionesConstituidas37     AS 'PCI',
 	CapitalVigente26              AS 'KVI',
 	NULL                          AS 'CCVI', -- REVISAR CUENTA CONTABLE
@@ -34,15 +36,15 @@ SELECT
 	NULL                          AS 'ESAM', -- ESQUEMA DE AMORTIZACIÓN
 	PeriododeGracia47             AS 'DGR',
 	NULL                          AS 'FPPK', -- FECHA PRIMER PAGO(VENCIMIENTO PRIMERA CUOTA?)
-	NULL                          AS 'FVEG', -- FECHA VENCIMIENTO GENERAL
+	FechadeVencimientoOriguinaldelCredito48 AS 'FVEG',
 	NumerodeCuotasProgramadas44   AS 'NCPR',
 	ROUND(TasadeInteresAnual23 * 100,2)     AS 'TEA',
 	Periodicidaddelacuota46       AS 'PCUO',
 	NULL                          AS 'FVEP', -- FECHA DE VENCIMIENTO PUNTUAL
 	NumerodeCuotasPagadas45       AS 'NCPA',
-	'SECTOR DEL CRÉDITO'          AS 'SEC',
+	99                            AS 'SEC',
 	MASTER.[dbo].[tipo_producto](TipodeProducto43) AS 'TPR',
-	'CODIGO AGENCIA'              AS 'CAGE',
+	'01'                          AS 'CAGE',
 	'USUARIO DESEMBOLSO'          AS 'UDES',
 	'HORA DESEMBOLSO'             AS 'FOT_H',
 	'MODALIDAD'                   AS 'MDCR', -- CREO QUE YO MISMO LO PUEDO HACER
@@ -56,3 +58,5 @@ SELECT
 FROM anexos_riesgos3..ANX06
 	WHERE FechaCorte1 = '20241231'
 	AND SaldosdeCreditosCastigados38 = 0
+
+

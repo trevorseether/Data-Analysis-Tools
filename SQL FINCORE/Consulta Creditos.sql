@@ -5,7 +5,7 @@
 -- p.codestado = 342 -> cancelado
 -- tc.CODTIPOCREDITO -> ( 3=Cons.Ordinario / 1=Med.Empresa / 2=MicroEmp. / 9=Peq.Empresa)
 
-SELECT
+SELECT  top 1000
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
 --------------------------------------------------------------------------------------------------------------------
@@ -196,8 +196,8 @@ LEFT JOIN CajaCab AS CJC ON CJC.CodPrestamo = P.CodPrestamo
 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20240101'
 --AND DESCUENTO.retencion = 'TOTAL RETENCIÓN'
 
-AND s.codigosocio     > 0
-AND p.montosolicitado > 0
+AND s.codigosocio       >  0
+AND p.montosolicitado   >  0
 AND p.codestado <> 563 -- que no sea crédito anulado
 --and p.codestado = 342
 AND FI.CODIGO IN (34,35,36,37,38,39)
@@ -218,3 +218,4 @@ SELECT a.CodUsuarioPriAprob, a.CodUsuarioSegAprob, b.IdUsuario FROM SolicitudCre
 select CodSolicitudCredito,* from prestamo
 
 */
+

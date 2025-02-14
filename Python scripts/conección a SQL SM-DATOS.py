@@ -53,8 +53,12 @@ WHERE
 '''
 base = pd.read_sql_query(query, conn)
 
-del conn
+conn.close()
 
 #%%
 print(base)
+
+#%%
+
+
 

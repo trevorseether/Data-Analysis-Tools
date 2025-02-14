@@ -17,15 +17,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Diciembre 2024'
+FECHA_CORTE = 'Enero 2025'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2024\\2024 diciembre"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\EXPERIAN - EQUIFAX REPORTE\\2025\\ENERO"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "SENTINEL-EXPERIAN CART VIGENTE Y VENCIDA - DIC-24 - INSUMO.xlsx"
+insumo_principal = "insumo enero 2025.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -35,7 +35,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20241231'
+f_corte_sql = '20250131'
 ####################################
 
 #%% CALIFICACIÓN CON ALINEAMIENTO, PROVENIENTE DEL ANEXO 06, del mismo mes correspondiente
@@ -175,7 +175,7 @@ df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del 
                       'Tipo Persona (*)'                : object,
                       'Modalidad de Credito (*)'        : object
                         }                        ,
-                                                sheet_name = 'Hoja1'
+                                              #  sheet_name = 'Hoja1'
 )
 
 #limpieza de filas vacías
