@@ -12,6 +12,7 @@ Created on Fri Feb 14 10:26:33 2025
 import pandas as pd
 import os
 import pyodbc
+from datetime import datetime
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -22,6 +23,10 @@ fecha_corte = '20241231'
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-01')
 
 reprogramados_mismo_mes = 'C:/Users/sanmiguel38/Desktop/REPORTE DE REPROGRAMADOS (primer paso del anexo06)/2024/2024 diciembre/productos/Rpt_DeudoresSBS Créditos Reprogramados Diciembre 2024 no incluye castigados.xlsx'
+
+#%% hora inicio
+print('hora inicio:')
+print(datetime.now().strftime("%H:%M:%S"))
 
 #%%
 
@@ -47,7 +52,7 @@ SELECT
 
 	/*------------------------------------------------------------*/
 	CapitalVigente26              AS 'KVI',
-	CASE
+    	CASE
 		WHEN CuentaContable25 IN (  '1411120600','1411130600',
 									'1411020600','1411030612',
 									'1411040601','1411120600',
@@ -55,6 +60,7 @@ SELECT
 									'1411030604','1411040601'  )
         THEN  CuentaContable25 
 		END AS 'CCVI', -- CUENTA CONTABLE
+        
 	/*------------------------------------------------------------*/
 	CapitalRefinanciado28         AS 'KRF',
 		CASE
@@ -65,6 +71,7 @@ SELECT
 									'1414030605','1414040601' )
         THEN  CuentaContable25 
         END AS 'CCRF', -- CUENTA CONTABLE
+        
 	/*------------------------------------------------------------*/
 	CapitalVencido29              AS 'KVE',
 		CASE
@@ -75,6 +82,7 @@ SELECT
 									'1425030612','1425040601')
         THEN  CuentaContable25 
         END AS 'CCVE', -- CUENTA CONTABLE
+        
 	/*------------------------------------------------------------*/
 	CapitalenCobranzaJudicial30   AS 'KJU',
 		CASE
@@ -159,7 +167,8 @@ repro = pd.read_excel(io = reprogramados_mismo_mes,
                             },
                    skiprows = 2)
 
-#%% COBRANZAAAA
+#%% COBRANZAAAA (18 minutos)
+
 datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
 
 server      = datos['DATOS'][0]
@@ -200,7 +209,7 @@ SELECT
 	
 	--year(ccab.fecha) AS 'AÑO TC',month(ccab.fecha) AS 'MES TC',
 
-	iif(cdet.CodMoneda='95', tcsbs.tcsbs, 1) as 'TC_SBS',
+	iif(cdet.CodMoneda = '95', tcsbs.tcsbs, 1) as 'TC_SBS',
 
 	ccab.fecha as 'fecha_cob', 
 	cdet.Capital, 
@@ -268,7 +277,7 @@ WHERE CONVERT(VARCHAR(10),ccab.fecha,112) < '{fecha_corte}'
 --and right(concat('0000000',pre.numero),8)  = 00129322
 
 
-ORDER BY socio, ccab.fecha
+--ORDER BY socio, ccab.fecha
 '''
 
 df_cobranza = pd.read_sql_query(query, conn)
@@ -276,4 +285,24 @@ df_cobranza = pd.read_sql_query(query, conn)
 conn.close()
 del query
 
+#%%
+df_dakr = df_cobranza[['PagareFincore', 'FechaVencimiento', 'fecha_cob']]
+df_dakr = df_dakr.sort_values(by=['fecha_cob', 'FechaVencimiento'], ascending = [False, False])
+df_dakr = df_dakr.drop_duplicates(subset=['PagareFincore'], keep='first')
+
+df_dakr["diferencia_dias"] = (df_dakr["fecha_cob"] - df_dakr["FechaVencimiento"]).dt.days
+
+def dakr (df_dakr):
+    if df_dakr["diferencia_dias"] < 0:
+        return 0
+    else:
+        return df_dakr["diferencia_dias"]
+df_dakr['DAKR'] = df_dakr.apply(dakr, axis = 1)
+
+
+
+
+#%%
+print('hora final:')
+print(datetime.now().strftime("%H:%M:%S"))
 
