@@ -297,9 +297,20 @@ def dakr (df_dakr):
         return 0
     else:
         return df_dakr["diferencia_dias"]
-df_dakr['DAKR'] = df_dakr.apply(dakr, axis = 1)
+df_dakr['DAKR_generado'] = df_dakr.apply(dakr, axis = 1)
 
+###################### UNIÓN #########
+base = base.merge(df_dakr[['PagareFincore', 'DAKR_generado']],
+                  left_on  = 'CCR',
+                  right_on = 'PagareFincore',
+                  how      = 'left')
 
+base['DAKR'] = base['DAKR_generado']
+base['DAKR'] = base['DAKR'].fillna(0)
+base['DAKR'] = base['DAKR'].astype(int)
+
+del base['PagareFincore']
+del base['DAKR_generado']
 
 
 #%%

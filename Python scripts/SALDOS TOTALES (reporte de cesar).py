@@ -23,7 +23,7 @@ FECHA = 'ENERO-25' #servirá para el nombre del archivo
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2025\\enero')
 
-INSUMO           =    'CarteraTotal_SM - Ene25 - 12022025.xlsx'
+INSUMO           =    'CarteraTotalSM16022025.xlsx'
 MES_PASADO       =    'SALDO_COOPACSANMIGUEL - DICIEMBRE-24_INC_CVV_DETALLADO.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
 
@@ -963,7 +963,7 @@ columna_inicio = 20
 # Insertar los nombres de las columnas y los datos del DataFrame en el archivo Excel
 for fila in range(filas + 1):  # +1 para incluir la fila de los nombres de las columnas
     for columna in range(columnas):
-        celda = hoja.cell(row=fila + fila_inicio, column=columna + columna_inicio)
+        celda = hoja.cell(row=fila + fila_inicio, column = columna + columna_inicio)
         
         if fila == 0:
             # Insertar nombres de las columnas
