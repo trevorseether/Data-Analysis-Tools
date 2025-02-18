@@ -620,7 +620,8 @@ base['NRPRG'] = base['NRPRG'].astype(int)
 del base['Nro Prestamo \nFincore']
 del base['NRO REPROG']
 
-#%%
+#%% OSD
+
 #%%
 print('hora final:')
 print(datetime.now().strftime("%H:%M:%S"))
