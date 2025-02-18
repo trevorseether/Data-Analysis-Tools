@@ -5,7 +5,7 @@
 -- p.codestado = 342 -> cancelado
 -- tc.CODTIPOCREDITO -> ( 3=Cons.Ordinario / 1=Med.Empresa / 2=MicroEmp. / 9=Peq.Empresa)
 
-SELECT  top 1000
+SELECT  TOP 1000
 	s.codigosocio, 
 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
 --------------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ SELECT  top 1000
 		WHEN S.CodTipoDocIdentidad = 6    THEN '2'
 		ELSE 'OTROS'
 		END AS 'TIPO DOCUMENTO SBS',
---------------------------------------------------------------------------------------------------------------------
+        --------------------------------------------------------------
 	IIF(S.CodSexo = 4, 'FEMENINO',
 		IIF(S.CodSexo = 3, 'MASCULINO','EMPRESA')) AS 'SEXO',
 		--------------------------------------------------------------
@@ -36,7 +36,7 @@ SELECT  top 1000
 		--------------------------------------------------------------
 	iif(p.codmoneda=94,'S/','US$') as 'moneda', 
 	p.fechadesembolso, 
-	--------------------------------------------------------------<
+	------------------------------------------------------------------<
 	p.montosolicitado as 'Otorgado', 
 	iif(p.CodMoneda='95', tcsbs.tcsbs, 1) as 'TC_SBS',
 	p.montosolicitado * iif(p.CodMoneda='95', tcsbs.tcsbs, 1) AS 'Monto Otorgado en soles',
