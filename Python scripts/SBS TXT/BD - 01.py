@@ -127,7 +127,9 @@ SELECT
 	'TOTAL INTERES'               AS 'TPINT',
 	'# CAMBIOS CONTRACTUALES'     AS 'NRPRG',
 	'CIIUU ACTIVIDAD ECONÓMICA'   AS 'CCSD',
-	'OCUPACIÓN'                   AS 'OSD'
+	'OCUPACIÓN'                   AS 'OSD',
+    TipodeProducto43,
+    Refinanciado as 'flag refinanciado'
 
 FROM anexos_riesgos3..ANX06
 	
@@ -312,7 +314,8 @@ if 'df_desembolsos' not in globals():
                 
                 	FORMAT(p.fechadesembolso, 'yyyy-MM-dd') AS 'SoloFecha',
                     FORMAT(p.fechadesembolso, 'HH:mm:ss')   AS 'Hora_desembolso',
-                
+	
+					pla.descripcion as 'Planilla', 
                 	u.IdUsuario as 'User_Desemb'
                 
                 FROM prestamo AS p
@@ -320,7 +323,8 @@ if 'df_desembolsos' not in globals():
                 INNER JOIN socio AS s             ON s.codsocio = p.codsocio
                 INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
                 INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
-                
+				LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+
                 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
                 
                 ORDER BY p.fechadesembolso DESC    
@@ -411,6 +415,15 @@ if 'cuotas' not in globals():
     
     prppg_cuotas = pd.read_sql_query(query, conn)
     conn.close()
+
+#%% MON moneda en formato
+base['MON'] = base['MON'].map({'01' : '1',
+                               '02' : '2'})
+
+#%% TCR
+base['TCR'] = base['TCR'].astype(int)
+
+base['TCR'] = base['TCR'].astype(str)
 
 #%%  DAKR
 df_dakr = df_cobranza[['PagareFincore', 'FechaVencimiento', 'fecha_cob']]
@@ -621,15 +634,136 @@ del base['Nro Prestamo \nFincore']
 del base['NRO REPROG']
 
 #%% OSD
+base = base.merge(df_desembolsos[['pagare_fincore', 'Planilla']],
+                  left_on  = 'CCR',
+                  right_on = 'pagare_fincore',
+                  how      = 'left')
+
+planillas_onp = ['ONP - DL 13640','ONP - DL 16124 - VIUDEZ','ONP - DECRETO LEY 18846','ONP - DL 18846 - VIUDEZ',
+                 'ONP - DECRETO LEY 19990','ONP - DL 19990 - VIUDEZ','ONP - DL 25967','ONP - DL 25967 - SIN CONVENIO','ONP - DL 25967 - VIUDEZ',
+                 'ONP - DECRETO LEY 20530','ONP - LEY 20530 - SIN CONVENIO','ONP - MULTIRED 25967','ONP - DL 8433','ONP - 25967-CON CONCILIACION',
+                 'ONP - NOMBRADO','ONP - CONTRATADOS','ONP - CAS','ONP - GRATIFICACIÓN','OFICINA DE NORMALIZACION PREVISIONAL ONP - CONTRATADO',
+                 'OFICINA DE NORMALIZACION PREVISIONAL ONP - CAS','OFICINA DE NORMALIZACION PREVISIONAL ONP - PLANILLA SERVIR 30057',
+                 'OFICINA DE NORMALIZACION PREVISIONAL ONP - NOMBRADO',]
+def OSD(base):
+    if base['Planilla'] in planillas_onp:
+        return '6'
+    if base['TipodeProducto43'] in ['34', '35', '36', '37', '38', '39']:
+        return '3'
+    if base['TipodeProducto43'] in ('15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'):
+        return '10'
+    else:
+        return '99'
+base['OSD'] = base.apply(OSD, axis = 1)
+    
+del base['TipodeProducto43']
+del base['pagare_fincore']
+del base['Planilla']
+
+#%% CCSIN cuenta contable de devengados
+
+base['SIN'] = base['SIN'].astype(float)
+def CCSIN(base):
+    if base['SIN'] > 0:
+        if base['MON'] == '1':
+            if base['TCR'] == '7':
+                return '14181106'
+            if base['TCR'] == '8':
+                return '14181206'
+            if base['TCR'] == '9':
+                return '14181306'
+            if base['TCR'] == '10':
+                return '14180206'
+            if base['TCR'] == '12':
+                return '14180306'
+            if base['TCR'] == '13':
+                return '14180406'
+
+        if base['MON'] == '2':
+            if base['TCR'] == '7':
+                return '14281106'
+            if base['TCR'] == '8':
+                return '14281206'
+            if base['TCR'] == '9':
+                return '14281306'
+            if base['TCR'] == '10':
+                return '14280206'
+            if base['TCR'] == '12':
+                return '14280306'
+            if base['TCR'] == '13':
+                return '14280406'
+    else:
+        return ''
+base['CCSIN'] = base.apply(CCSIN, axis = 1)
+
+#%% CCSID cuenta contable de int diferidos
+
+base['SID'] = base['SID'].astype(float)  # int diferidos
+base['KJU'] = base['KJU'].astype(float)  # cap judicial
+base['KVE'] = base['KVE'].astype(float)  # cao vencido
+
+def CCSID(base):
+    if base['flag refinanciado'] == 'REFINANCIADO':
+        if base['SID'] > 0:
+            if base['MON'] == '1':
+                if base['KJU'] > 0:
+                    return '29110106'
+                if base['KVE'] > 0:
+                    return '29110105'
+                else:
+                    return '29110104'
+    
+            if base['MON'] == '2':
+                if base['KJU'] > 0:
+                    return '29210106'
+                if base['KVE'] > 0:
+                    return '29210105'
+                else:
+                    return '29210104'
+    else:
+        return ''
+base['CCSID'] = base.apply(CCSID, axis = 1)
+
+#%% CCSIS cuenta contable de int suspenso
+
+base['SIS'] = base['SIS'].astype(float)
+def CCSIS(base):
+    if base['SIS'] > 0:
+        if base['MON'] == '1':
+            if base['KJU'] > 0:
+                return '811403'
+            if base['KVE'] > 0:
+                return '811402'
+            
+        if base['MON'] == '2':
+            if base['KJU'] > 0:
+                return '811403'
+            if base['KVE'] > 0:
+                return '811402'
+base['CCSIS'] = base.apply(CCSIS, axis = 1)
 
 #%%
-print('hora final:')
+del base['flag refinanciado']
+
+#%%
+print('hora final de procesamiento:')
 print(datetime.now().strftime("%H:%M:%S"))
 
-base.columns
+#%%
+nombre = '20523941047_BD01_' + fecha_corte[0:6]
 
-'''Nro Prestamo 
-Fincore'''
+base.to_excel(nombre + '.xlsx', 
+              index = False)   
 
+base.to_csv(nombre + '.txt', 
+            sep      = '\t', 
+            index    = False, 
+            encoding = 'utf-8')
 
+print('')
+print('hora guardado documentos:')
+print(datetime.now().strftime("%H:%M:%S"))
+
+#%%
+print('fin')
 
