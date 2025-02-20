@@ -150,7 +150,9 @@ SELECT  TOP 1000
 	CASE
 		WHEN (CJC.BancoADepositar IS NULL) AND CJC.Documento LIKE '%N° ORDEN PAGO : ' THEN 'SCOTIABANK PERÚ'
 		ELSE CJC.BancoADepositar
-		END AS 'BANCO DEPÓSITO'
+		END AS 'BANCO DEPÓSITO',
+
+		AE.CIIU
 
 	--,
 	-- DESCUENTO.valor as 'retención',
@@ -186,6 +188,7 @@ LEFT JOIN EntidadFinanciera AS ENFI  ON SOT.CodEntidadFinanciera = ENFI.CodEntid
 
 LEFT JOIN CajaCab AS CJC ON CJC.CodPrestamo = P.CodPrestamo
 
+LEFT JOIN ActividadEconomica AS AE ON S.CodActividadEconomica = AE.CodActividad
 -----------------------------------------------------
 	LEFT JOIN TipoCambioSBS AS TCSBS
 	on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)

@@ -24,6 +24,8 @@ os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-01')
 
 reprogramados_mismo_mes = 'C:/Users/sanmiguel38/Desktop/REPORTE DE REPROGRAMADOS (primer paso del anexo06)/2024/2024 diciembre/productos/Rpt_DeudoresSBS Créditos Reprogramados Diciembre 2024 no incluye castigados.xlsx'
 
+CREAR_DOCUMENTOS = True
+
 #%% hora inicio
 print('hora inicio:')
 print(datetime.now().strftime("%H:%M:%S"))
@@ -47,68 +49,70 @@ SELECT
 	TipodeCredito19               AS 'TCR',
 	ClasificaciondelDeudorconAlineamiento15 AS 'CAL',
 	DiasdeMora33                  AS 'DAK',
-	NULL                          AS 'DAKR', -- OJO, REVISAR ESTE CÁLCULO
+	''                            AS 'DAKR', -- OJO, REVISAR ESTE CÁLCULO
 	ProvisionesConstituidas37     AS 'PCI',
 
 	/*------------------------------------------------------------*/
 	CapitalVigente26              AS 'KVI',
     	CASE
-		WHEN CuentaContable25 IN (  '1411120600','1411130600',
-									'1411020600','1411030612',
-									'1411040601','1411120600',
-									'1411130600','1411020600',
-									'1411030604','1411040601'  )
+		WHEN CuentaContable25 IN (  '1411120600', '1411030604', '1421030612', 
+                                    '1411040601', '1411030612', '1411130600', 
+                                    '1421130600', '1421020600', '1411020600', 
+                                    '1421120600', '1421030604', '1421040601' )
         THEN  CuentaContable25 
+        ELSE ''
 		END AS 'CCVI', -- CUENTA CONTABLE
         
 	/*------------------------------------------------------------*/
 	CapitalRefinanciado28         AS 'KRF',
 		CASE
-		WHEN CuentaContable25 IN (  '1414120600','1414130600',
-                                    '1414020600','1414030604',
-                                    '1414040601','1414120600',
-									'1414130600','1414020600',
-									'1414030605','1414040601' )
+		WHEN CuentaContable25 IN (  '1424020600', '1414120600', '1414020600', 
+                                    '1414040601', '1424130600', '1424120600', 
+                                    '1414130600', '1414030605', '1424040601', 
+                                    '1424030604', '1424030605', '1414030604')
         THEN  CuentaContable25 
+        ELSE ''
         END AS 'CCRF', -- CUENTA CONTABLE
         
 	/*------------------------------------------------------------*/
 	CapitalVencido29              AS 'KVE',
 		CASE
-		WHEN CuentaContable25 IN (  '1425120600','1425130600',
-                                    '1425020600','1425030604',
-                                    '1425040601','1425120600',
-									'1425130600','1425020600',
-									'1425030612','1425040601')
+		WHEN CuentaContable25 IN (  '1415120600', '1415040601', '1415130600', 
+                                    '1425020600', '1425030604', '1425040601', 
+                                    '1415030612', '1425130600', '1425030612', 
+                                    '1415020600', '1415030604', '1425120600')
         THEN  CuentaContable25 
+        ELSE ''
         END AS 'CCVE', -- CUENTA CONTABLE
         
 	/*------------------------------------------------------------*/
 	CapitalenCobranzaJudicial30   AS 'KJU',
 		CASE
-		WHEN CuentaContable25 IN (  '1416120600','1416130600',
-                                    '1416020600','1416030612',
-                                    '1416040601','1426120600',
-									'1426130600','1426020600',
-									'1426030612','1426040601')
+		WHEN CuentaContable25 IN (  '1416040601', '1426030604', '1416030612', 
+                                    '1416030604', '1416120600', '1426020600', 
+                                    '1426130600', '1426120600', '1416130600', 
+                                    '1426030612', '1416020600', '1426040601')
         THEN  CuentaContable25
+        ELSE ''
 		END AS 'CCJU', -- CUENTA CONTABLE
         
 	/*------------------------------------------------------------*/
 
+-- CuentaContable25,
+
 	0                             AS 'KCO',  -- REVISAR SALDO CONTINGENTE
-	NULL                          AS 'CCCO', -- REVISAR CUENTA CONTABLE
-	0                             AS 'FCC', --REVISAR CON RIESGOS
+	''                            AS 'CCCO', -- REVISAR CUENTA CONTABLE
+	'1'                           AS 'FCC', --REVISAR CON RIESGOS
 	Rendimiento_Devengado40       AS 'SIN',
-	NULL                          AS 'CCSIN', --REVISAR CUENTA CONTABLE
+	''                            AS 'CCSIN', --REVISAR CUENTA CONTABLE
 	IngresosDiferidos42           AS 'SID',
-	NULL                          AS 'CCSID', -- REVISAR CUENTA CONTABLE
+	''                            AS 'CCSID', -- REVISAR CUENTA CONTABLE
 	InteresesenSuspenso41         AS 'SIS',
-	NULL                          AS 'CCSIS', -- REVISAR CUENTA CONTABLE
+	''                            AS 'CCSIS', -- REVISAR CUENTA CONTABLE
 	FORMAT(FechadeDesembolso21, 'dd/MM/yyyy')                     AS 'FOT',
-	NULL                          AS 'ESAM', -- ESQUEMA DE AMORTIZACIÓN
+	''                            AS 'ESAM', -- ESQUEMA DE AMORTIZACIÓN
 	PeriododeGracia47             AS 'DGR',
-	NULL                          AS 'FPPK', -- FECHA PRIMER PAGO(VENCIMIENTO PRIMERA CUOTA?)
+	''                            AS 'FPPK', -- FECHA PRIMER PAGO(VENCIMIENTO PRIMERA CUOTA?)
     FORMAT(FechadeVencimientoOriguinaldelCredito48, 'dd/MM/yyyy') AS 'FVEG',
 	NumerodeCuotasProgramadas44   AS 'NCPR',
 	ROUND(TasadeInteresAnual23 * 100,2)                           AS 'TEA',
@@ -316,7 +320,8 @@ if 'df_desembolsos' not in globals():
                     FORMAT(p.fechadesembolso, 'HH:mm:ss')   AS 'Hora_desembolso',
 	
 					pla.descripcion as 'Planilla', 
-                	u.IdUsuario as 'User_Desemb'
+                	u.IdUsuario as 'User_Desemb',
+                    AE.CIIU
                 
                 FROM prestamo AS p
                 
@@ -324,6 +329,7 @@ if 'df_desembolsos' not in globals():
                 INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
                 INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 				LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+                LEFT JOIN ActividadEconomica AS AE ON S.CodActividadEconomica = AE.CodActividad
 
                 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
                 
@@ -650,7 +656,7 @@ def OSD(base):
         return '6'
     if base['TipodeProducto43'] in ['34', '35', '36', '37', '38', '39']:
         return '3'
-    if base['TipodeProducto43'] in ('15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'):
+    if (base['TipodeProducto43'] in ('15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29')) and (base['TID'] in ['1', '2']):
         return '10'
     else:
         return '99'
@@ -667,31 +673,31 @@ def CCSIN(base):
     if base['SIN'] > 0:
         if base['MON'] == '1':
             if base['TCR'] == '7':
-                return '14181106'
+                return '1418110600'
             if base['TCR'] == '8':
-                return '14181206'
+                return '1418120600'
             if base['TCR'] == '9':
-                return '14181306'
+                return '1418130600'
             if base['TCR'] == '10':
-                return '14180206'
+                return '1418020600'
             if base['TCR'] == '12':
-                return '14180306'
+                return '1418030600'
             if base['TCR'] == '13':
-                return '14180406'
+                return '1418040600'
 
         if base['MON'] == '2':
             if base['TCR'] == '7':
-                return '14281106'
+                return '1428110600'
             if base['TCR'] == '8':
-                return '14281206'
+                return '1428120600'
             if base['TCR'] == '9':
-                return '14281306'
+                return '1428130600'
             if base['TCR'] == '10':
-                return '14280206'
+                return '1428020600'
             if base['TCR'] == '12':
-                return '14280306'
+                return '1428030600'
             if base['TCR'] == '13':
-                return '14280406'
+                return '1428040600'
     else:
         return ''
 base['CCSIN'] = base.apply(CCSIN, axis = 1)
@@ -707,19 +713,19 @@ def CCSID(base):
         if base['SID'] > 0:
             if base['MON'] == '1':
                 if base['KJU'] > 0:
-                    return '29110106'
+                    return '2911010600'
                 if base['KVE'] > 0:
-                    return '29110105'
+                    return '2911010500'
                 else:
-                    return '29110104'
+                    return '2911010400'
     
             if base['MON'] == '2':
                 if base['KJU'] > 0:
-                    return '29210106'
+                    return '2921010600'
                 if base['KVE'] > 0:
-                    return '29210105'
+                    return '2921010500'
                 else:
-                    return '29210104'
+                    return '2921010400'
     else:
         return ''
 base['CCSID'] = base.apply(CCSID, axis = 1)
@@ -731,38 +737,59 @@ def CCSIS(base):
     if base['SIS'] > 0:
         if base['MON'] == '1':
             if base['KJU'] > 0:
-                return '811403'
+                return '8114030000'
             if base['KVE'] > 0:
-                return '811402'
+                return '8114020000'
             
         if base['MON'] == '2':
             if base['KJU'] > 0:
-                return '811403'
+                return '8114030000'
             if base['KVE'] > 0:
-                return '811402'
+                return '8114020000'
 base['CCSIS'] = base.apply(CCSIS, axis = 1)
 
-#%%
+#%% CIIU
+base = base.merge(df_desembolsos[['pagare_fincore', 'CIIU']],
+                  left_on  = 'CCR',
+                  right_on = 'pagare_fincore',
+                  how      = 'left')
+base['CCSD'] = base['CIIU']
+
+del base['pagare_fincore']
+del base['CIIU']
 del base['flag refinanciado']
 
 #%%
-print('hora final de procesamiento:')
-print(datetime.now().strftime("%H:%M:%S"))
+for I in ['CCVI', 'CCRF', 'CCVE', 'CCJU']:
+    base[I] = base[I].astype(str).str.replace(r'\.0$', '', regex=True)  # Elimina .0 del final
+    base[I] = base[I].replace('0', '')  # Reemplaza "0" por un espacio vacío
 
 #%%
-nombre = '20523941047_BD01_' + fecha_corte[0:6]
+base = base.fillna('')
 
-base.to_excel(nombre + '.xlsx', 
-              index = False)   
-
-base.to_csv(nombre + '.txt', 
-            sep      = '\t', 
-            index    = False, 
-            encoding = 'utf-8')
-
+#%%
 print('')
-print('hora guardado documentos:')
+print('hora final de procesamiento:')
 print(datetime.now().strftime("%H:%M:%S"))
+print('')
+
+#%%
+if CREAR_DOCUMENTOS == True:
+    nombre = '20523941047_BD01_' + fecha_corte[0:6]
+    
+    base.to_excel(nombre + '.xlsx', 
+                  index = False)
+    print('excel creado')
+    
+    base.to_csv(nombre + '.txt', 
+                sep      = '\t', 
+                index    = False, 
+                encoding = 'utf-8')
+    print('txt creado')
+    
+    print('')
+    print('hora guardado documentos:')
+    print(datetime.now().strftime("%H:%M:%S"))
 
 #%%
 print('fin')
