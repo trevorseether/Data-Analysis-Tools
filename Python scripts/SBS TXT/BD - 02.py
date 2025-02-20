@@ -110,3 +110,41 @@ if 'cuotas' not in globals():
     prppg_cuotas = pd.read_sql_query(query, conn)
     conn.close()
 
+#%%
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+select top 1000 CodEstado,* from PrestamoCuota
+where CodEstado = 1003
+
+CodEstado = 22 -- cancelado
+1003 = -- cuota cero amortización de capital
+
+---- para los 1003 (cuotas reprogramadas)
+select * from PrestamoCuota
+where CodPrestamo = 1890
+and CodEstado not in ( 379 , 24)
+order by CodPrestamoCuota
+
+
+
+
+
+
+
+
+
+
+
+
+'''

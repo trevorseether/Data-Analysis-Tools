@@ -1,4 +1,4 @@
-SELECT 
+SELECT  top 10000
 	soc.codsocio, 
 	soc.codigosocio, 
 	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) AS 'Socio',
@@ -98,5 +98,18 @@ WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20240101' AND '20240630' and 
 ORDER BY socio, ccab.fecha
 
 
+
+select top 1000 CodEstado,* from PrestamoCuota
+where CodEstado = 1003
+
+CodEstado = 22 -- cancelado
+1003 = -- cuota cero amortización de capital
+
+
+---- para los 1003 (cuotas reprogramadas)
+select * from PrestamoCuota
+where CodPrestamo = 1890
+and CodEstado not in ( 379 , 24)
+order by CodPrestamoCuota
 
 
