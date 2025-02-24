@@ -228,9 +228,9 @@ val = df_combinado[(df_combinado['interes'] < 0) & (df_combinado['numerocuota'] 
 creds_arreglar_prrprg2 = ['',] # podría faltar añadir los casos de la primera hoja
 
 corregir_interes = df_combinado[~df_combinado['NroPrestamo'].isin(creds_arreglar_prrprg2) & 
-                                (df_combinado['numerocuota'] == '0') &
-                                (df_combinado['capital'] == 0) &
-                                (df_combinado['TotalPago'] == 0)]
+                                (df_combinado['numerocuota']  == '0') &
+                                (df_combinado['capital']      == 0) &
+                                (df_combinado['TotalPago']    == 0)]
 
 para_corregir_interes = pd.DataFrame()
 para_corregir_interes['NroPrestamo'] = corregir_interes['NroPrestamo']
@@ -282,9 +282,11 @@ df_combinado = df_combinado.merge(m_desem[['NroPrestamo', 'MontoDesembolsadoAX-3
 
 #%% FILTRADo
 df_combinado = df_combinado[df_combinado['puro cero'] != 'eliminar, puro cero']
-df_combinado = df_combinado[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
-       'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
-       'Ahorros', 'Pagado', 'CodEstado_aux']]
+df_combinado = df_combinado[['NroPrestamo'     , 'FechaVencimiento', 
+                             'numerocuota'     , 'capital'         , 'interes',
+                             'CargosGenerales' , 'CargosSeguro'    , 'Aporte', 
+                             'TotalCargo'      , 'TotalPago'       , 'Ahorros', 
+                             'Pagado'          , 'CodEstado_aux']]
 
 #%% arreglo de las fechas
 
