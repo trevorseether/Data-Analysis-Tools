@@ -73,7 +73,8 @@ if 'cuotas' not in globals():
             
             -----------------------
             pc.FechaCreacion,
-            FORMAT(pc.FechaCreacion, 'dd/MM/yyyy') as 'FechaCreacion'
+            FORMAT(pc.FechaCreacion, 'dd/MM/yyyy') as 'FechaCreacionTXT',
+            pc.CodprestamoCuota
             
             
             
@@ -86,24 +87,24 @@ if 'cuotas' not in globals():
         CD ON pc.CodPrestamoCuota =CD.CodPrestamoCuota
         where
         pc.CodEstado not in (24) and p.CodEstado <>563   and CONVERT(VARCHAR(10),pc.FechaVencimiento,103) is not null --and (pc.Capital + pc.Interes + pc.FondoContigencia + pc.Aporte)>0
-         AND S.CodSocio  not in (select codsocio from #TMP_SOCIOBLOQUEAR) 
-         AND PC.CodPrestamoCuota NOT IN (
+        AND S.CodSocio  not in (select codsocio from #TMP_SOCIOBLOQUEAR) 
+        AND PC.CodPrestamoCuota NOT IN (
         							 SELECT CodPrestamoCuota  FROM (
         							select
         							PC.CodPrestamoCuota,
         							ISNULL(pc.numerocuota,'') as numerocuota,
         							pc.interes,
         							iif(pc.CodEstado in (22,1003),'9','0') as Pagado,
-        							iif(pc.codestado=346,0,(pc.Capital + pc.Interes + pc.FondoContigencia + pc.Aporte)) as TotalPago
+        							iif(pc.codestado = 346,0,(pc.Capital + pc.Interes + pc.FondoContigencia + pc.Aporte)) as TotalPago
         							from prestamocuota pc
-        							inner join prestamo p on pc.CodPrestamo =p.CodPrestamo
-        							inner join socio s on p.CodSocio =s.CodSocio
+        							inner join prestamo p on pc.CodPrestamo = p.CodPrestamo
+        							inner join socio s on p.CodSocio = s.CodSocio
         							where
-        							pc.CodEstado not in (24,379) and p.CodEstado <>563   and CONVERT(VARCHAR(10),pc.FechaVencimiento,103) is not null 
-        							 AND S.CodSocio  not in (select codsocio from #TMP_SOCIOBLOQUEAR) 
-        							 AND   P.FECHAVENTACARTERA IS NULL
-        							 ) TABLA 
-        							 WHERE numerocuota =0 AND Interes =0 AND TotalPago =0
+        							pc.CodEstado not in (24,379) and p.CodEstado <>563 and CONVERT(VARCHAR(10),pc.FechaVencimiento,103) is not null 
+        							AND S.CodSocio  not in (select codsocio from #TMP_SOCIOBLOQUEAR) 
+        							AND   P.FECHAVENTACARTERA IS NULL
+        							) TABLA 
+        							WHERE numerocuota =0 AND Interes =0 AND TotalPago =0
          
          )
         -- AND   P.FECHAVENTACARTERA IS NULL

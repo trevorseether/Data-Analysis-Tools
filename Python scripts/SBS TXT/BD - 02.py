@@ -23,8 +23,15 @@ os.chdir('R:/REPORTES DE GESTIÓN/Insumo para Analisis/prppgs, cortes trimestral
 fecha_corte = '20241231' # FÓRMATO SQL
 
 #%%
-cuotas = pd.read_csv('prppg 2024-12-31.csv',
+cuotas = pd.read_csv('prppg 03-2024.csv',
                      dtype = str)
+
+cuotas.dropna(subset = [ 'MCUO' ,
+                         'SIC'  ,
+                         'SCOM' ,
+                         'TCUO'   ],
+            inplace = True  ,
+            how     = 'all')
 
 #%%
 if 'df_desembolsos' not in globals():
@@ -86,7 +93,9 @@ if 'df_cobranza' not in globals():
     conn = pyodbc.connect(conn_str)
     
     query = f'''
-	SELECT 
+	SELECT
+    	precuo.CodprestamoCuota,
+
      	right(concat('0000000',pre.numero),8)  AS 'PagareFincore',
      	CASE 
     		WHEN pre.CodPrestamoFox IS NOT NULL THEN
@@ -178,15 +187,15 @@ del cuotas['pagare_fincore']
 del cuotas['moneda']
 
 #%% FCAN fecha de cancelación
-cuotas['id'] = cuotas['CCR'] + '-' + cuotas['NCUO']
+df_cobranza['CodprestamoCuota'] = df_cobranza['CodprestamoCuota'].astype(str)
 
-f_cob       = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob']]
+f_cob       = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob', 'CodprestamoCuota']]
 f_cob       = f_cob.sort_values(by = ['fecha_cob'], ascending = [False])
-f_cob['id'] = f_cob['PagareFincore'] + '-' + f_cob['numerocuota'].astype(str)
-f_cob       = f_cob.drop_duplicates(subset = ['id'], keep = 'first')
 
-cuotas = cuotas.merge(f_cob[['id', 'fecha_cob']],
-                      on  = 'id',
+f_cob       = f_cob.drop_duplicates(subset = ['CodprestamoCuota'], keep = 'first')
+
+cuotas = cuotas.merge(f_cob[['CodprestamoCuota', 'fecha_cob']],
+                      on  = 'CodprestamoCuota',
                       how = 'left')
 
 def FCAN1(cuotas):
@@ -197,32 +206,35 @@ def FCAN1(cuotas):
 cuotas['FCAN'] = cuotas.apply(FCAN1, axis = 1)
 del cuotas['fecha_cob']
 
-###############################################################################
-# f_crea       = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob']]
-# f_crea       = f_cob.sort_values(by = ['fecha_cob'], ascending = [False])
-# f_crea['id'] = f_cob['PagareFincore'] + '-' + f_cob['numerocuota'].astype(str)
-# f_crea       = f_cob.drop_duplicates(subset = ['id'], keep = 'first')
+def FCAN2(cuotas):
+    if cuotas['CodEstado'] == '1003':
+        return cuotas['FechaCreacionTXT']
+    else:
+        return cuotas['FCAN']
+cuotas['FCAN'] = cuotas.apply(FCAN2, axis = 1)
 
-# cuotas = cuotas.merge(f_cob[['id', 'fecha_cob']],
-#                       on  = 'id',
-#                       how = 'left')
+#%% DAKC
+f_corte = fecha_corte[6:8] + '/' + fecha_corte[4:6] + '/' + fecha_corte[0:4]
 
-# def FCAN1(cuotas):
-#     if cuotas['Pagado'] == '9':
-#         return cuotas['fecha_cob']
-#     else: 
-#         return '00/00/0000'
-# cuotas['FCAN'] = cuotas.apply(FCAN1, axis = 1)
-# del cuotas['fecha_cob']
+def safe_to_datetime(series):
+    return pd.to_datetime(series.replace("00/00/0000", f_corte), format="%d/%m/%Y", errors="coerce")
 
+# Reemplazando nulos en FCAN por FVEP (son cuotas con condonaciones)
+cuotas["FCAN"] = cuotas["FCAN"].fillna(cuotas["FVEP"])
 
-
-
+# Aplicar la conversión a datetime
+cuotas["FCAN dt"] = safe_to_datetime(cuotas["FCAN"])
+cuotas["FVEP dt"] = safe_to_datetime(cuotas["FVEP"])
 
 
+# Calcular la diferencia en días
+cuotas["DIFERENCIA_DIAS"] = (cuotas["FCAN dt"] - cuotas["FVEP dt"]).dt.days
 
+# Reemplazar valores negativos por 0
+cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].clip(lower=0)
+cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].astype(int)
 
-
+cuotas['DAKC'] = cuotas["DIFERENCIA_DIAS"]
 
 
 
@@ -246,10 +258,6 @@ order by CodPrestamoCuota
 
 
 '''
-
-
-
-
-
-
+#%%
+print('fin')
 
