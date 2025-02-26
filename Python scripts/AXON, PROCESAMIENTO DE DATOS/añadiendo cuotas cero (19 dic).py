@@ -115,7 +115,6 @@ suma_amortizacion = suma_amortizacion.merge(m_desem,
 suma_amortizacion = suma_amortizacion[['NroPrestamo', 'capital','MontoDesembolsadoAX-31']]
 suma_amortizacion['diferencia para cuota cero'] = suma_amortizacion['capital'] - suma_amortizacion['MontoDesembolsadoAX-31']
 
-
 # sin_cuota_cero = sin_cuota_cero.merge(suma_amortizacion[['NroPrestamo', 'diferencia para cuota cero']],
 #                                       left_on  = 'NPRE',
 #                                       right_on = 'NroPrestamo',
@@ -134,12 +133,12 @@ from dateutil.relativedelta import relativedelta                                
                                                                                  ##
 def restar_30_dias(fecha):                                                       ##
     # Restar 30 días directamente a objetos datetime/Timestamp                   ##
-    nueva_fecha = fecha - timedelta(days=30)                                     ##
+    nueva_fecha = fecha - timedelta(days = 30)                                   ##
     return nueva_fecha                                                           ##
                                                                                  ##
 def restar_un_mes(fecha):                                                        ##
     # Restar un mes completo usando relativedelta                                ##
-    nueva_fecha = fecha - relativedelta(months=1)                                ##
+    nueva_fecha = fecha - relativedelta(months = 1)                              ##
     return nueva_fecha                                                           ##
                                                                                  ##
 min_cuota['Fecha un mes antes'] = min_cuota['fecha mínima'].apply(restar_un_mes) ##
@@ -293,6 +292,7 @@ df_combinado = df_combinado[['NroPrestamo'     , 'FechaVencimiento',
 # Convertir la columna de str a datetime y luego a str con el nuevo formato
 df_combinado['FechaVencimiento'] = pd.to_datetime(df_combinado['FechaVencimiento']).dt.strftime('%d/%m/%Y')
 
+# re enumeración de cuotas
 df_combinado['nro cuota generado'] = df_combinado.groupby('NroPrestamo').cumcount()
 
 #%% nro cuota que mantiene el NRO CERO de las reprogramaciones

@@ -23,7 +23,7 @@ os.chdir('R:/REPORTES DE GESTIÓN/Insumo para Analisis/prppgs, cortes trimestral
 fecha_corte = '20241231' # FÓRMATO SQL
 
 #%%
-cuotas = pd.read_csv('prppg 03-2024.csv',
+cuotas = pd.read_csv('prppg 12-2024.csv',
                      dtype = str)
 
 cuotas.dropna(subset = [ 'MCUO' ,
@@ -51,6 +51,13 @@ if 'df_desembolsos' not in globals():
                 	iif(s.CodTipoPersona =1, CONCAT(S.ApellidoPaterno,' ',S.ApellidoMaterno, ' ', S.Nombres),s.razonsocial) AS 'Socio',
                 	RIGHT(CONCAT('0000000',p.numero),8) as 'pagare_fincore',
                 	p.fechadesembolso,
+					p.montosolicitado as 'Otorgado', 
+					iif(p.CodMoneda='95', tcsbs.tcsbs, 1) as 'TC_SBS',
+					p.montosolicitado * iif(p.CodMoneda='95', tcsbs.tcsbs, 1) AS 'Monto Otorgado en soles',
+					--------------------------------------------------------------<
+					p.TEM, 
+					p.NroPlazos, 
+					p.CuotaFija,  
                 	iif(p.codmoneda=94,'1','2') as 'moneda', 
 
                 	FORMAT(p.fechadesembolso, 'yyyy-MM-dd') AS 'SoloFecha',
@@ -67,9 +74,14 @@ if 'df_desembolsos' not in globals():
                 LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
                 LEFT JOIN ActividadEconomica AS AE ON S.CodActividadEconomica = AE.CodActividad
 
+				LEFT JOIN TipoCambioSBS AS TCSBS
+				on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
+
                 WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
                 
                 ORDER BY p.fechadesembolso DESC    
+                
+                
                 '''
     
     df_desembolsos = pd.read_sql_query(query, conn)
@@ -79,6 +91,9 @@ if 'df_desembolsos' not in globals():
     df_desembolsos = df_desembolsos.drop_duplicates(subset = ['pagare_fincore'], keep = 'first')
 
     del query
+
+dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
+
 
 #%% COBRANZAAAA (18 minutos)
 
@@ -189,12 +204,11 @@ del cuotas['moneda']
 #%% FCAN fecha de cancelación
 df_cobranza['CodprestamoCuota'] = df_cobranza['CodprestamoCuota'].astype(str)
 
-f_cob       = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob', 'CodprestamoCuota']]
-f_cob       = f_cob.sort_values(by = ['fecha_cob'], ascending = [False])
+f_cob = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob', 'CodprestamoCuota', 'tipoPago']]
+f_cob = f_cob.sort_values(by = ['fecha_cob'], ascending = [False])
+f_cob = f_cob.drop_duplicates(subset = ['CodprestamoCuota'], keep = 'first')
 
-f_cob       = f_cob.drop_duplicates(subset = ['CodprestamoCuota'], keep = 'first')
-
-cuotas = cuotas.merge(f_cob[['CodprestamoCuota', 'fecha_cob']],
+cuotas = cuotas.merge(f_cob[['CodprestamoCuota', 'fecha_cob', 'tipoPago']],
                       on  = 'CodprestamoCuota',
                       how = 'left')
 
@@ -226,7 +240,6 @@ cuotas["FCAN"] = cuotas["FCAN"].fillna(cuotas["FVEP"])
 cuotas["FCAN dt"] = safe_to_datetime(cuotas["FCAN"])
 cuotas["FVEP dt"] = safe_to_datetime(cuotas["FVEP"])
 
-
 # Calcular la diferencia en días
 cuotas["DIFERENCIA_DIAS"] = (cuotas["FCAN dt"] - cuotas["FVEP dt"]).dt.days
 
@@ -236,7 +249,119 @@ cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].astype(int)
 
 cuotas['DAKC'] = cuotas["DIFERENCIA_DIAS"]
 
+#%% FOCAN forma de cancelación
 
+# def FOCAN(cuotas):
+#     if cuotas['tipoPago'] in ['EFECTIVO']:
+#         return '1'
+#     if cuotas['tipoPago'] in ['DEPOSITO', 'TRANSFERENCIA']:
+#         return '2'
+#     if cuotas['tipoPago'] in ['REFINANCIAMIENTO']:
+#         return '3'
+#     if cuotas['tipoPago'] in ['NOTA DE CREDITO']:
+#         return '4'
+#     if cuotas['tipoPago'] in ['RETENCIONES', 'OTROS', 'CHEQUE', 'FONDO PREVISIONAL', 'RECIBO']:
+#         return '5'
+# cuotas['FOCAN'] = cuotas.apply(FOCAN, axis = 1)
+
+# Diccionario de mapeo
+tipo_pago_mapeo = {
+    'EFECTIVO': '1',
+    'DEPOSITO': '2', 'TRANSFERENCIA': '2',
+    'REFINANCIAMIENTO': '3',
+    'NOTA DE CREDITO': '4',
+    'RETENCIONES': '5', 'OTROS': '5', 'CHEQUE': '5',
+    'FONDO PREVISIONAL': '5', 'RECIBO': '5'
+}
+
+# Aplicar el mapeo de forma vectorizada para mejorar rendimiento
+cuotas['FOCAN'] = cuotas['tipoPago'].map(tipo_pago_mapeo)
+
+#%%%
+# Parte 2 eliminación de cuotas con cero en capital e interés
+cuotas['MCUO'] = cuotas['MCUO'].astype(float)
+cuotas['SIC']  = cuotas['SIC'].astype(float)
+cuotas['SCOM'] = cuotas['SCOM'].astype(float)
+cuotas['TCUO'] = cuotas['TCUO'].astype(float)
+
+def eliminacion(cuotas):
+    # if (cuotas['NCUO'] == '0') and (cuotas['MCUO'] == 0) and (cuotas['SIC'] == 0) and (cuotas['SCOM'] == 0) and (cuotas['TCUO'] == 0):
+    #     return 'eliminar'
+    if (cuotas['NCUO'] != '0') and(cuotas['MCUO'] == 0) and (cuotas['SIC'] == 0) and (cuotas['SCOM'] == 0) and (cuotas['TCUO'] == 0):
+        return 'eliminar'
+
+    else:
+        return 'mantener'
+cuotas['fil_1'] = cuotas.apply(eliminacion, axis = 1)
+
+# cuotas = cuotas[cuotas['fil_1'] == 'mantener']
+eliminados = cuotas[cuotas['fil_1'] == 'eliminar']
+# aver = cuotas[cuotas['CCR'] == '00000333' ]
+
+#%% agregando filas
+cuotas['orden original'] = range(1, len(cuotas) + 1)
+
+# reenumeración de cuotas
+cuotas['nro cuota generado'] = cuotas.groupby('CCR').cumcount()
+
+# créditos a los que le falta la cuota cero
+con_cuota_cero = cuotas[ (cuotas['NCUO'] == '0') & (cuotas['nro cuota generado'] == 0) & (cuotas['MCUO'] == 0)]
+
+sin_cuotas = cuotas[~cuotas['CCR'].isin(list(con_cuota_cero['CCR']))]
+sin_cuotas = sin_cuotas.drop_duplicates(subset = ['CCR'], keep = 'first')
+
+cuotas = cuotas[~cuotas['orden original'].isin(con_cuota_cero['orden original'])]
+
+sin_cuotas['NCUO']  = '0'
+sin_cuotas['MCUO']  =  0
+sin_cuotas['SIC']   =  0
+sin_cuotas['SCOM']  =  0
+sin_cuotas['TCUO']  =  0
+sin_cuotas['FVEP']  = '00/00/0000'
+sin_cuotas['FCAN']  = '00/00/0000'
+sin_cuotas['DAKC']  =  0
+sin_cuotas['FOCAN'] = ''
+
+cuotas_cero = pd.concat([sin_cuotas, con_cuota_cero], ignore_index = True)
+
+cuotas_cero['FCAN']  = '00/00/0000'
+
+
+###############################################################################
+def arreglo_negativos(cuotas):
+    if cuotas['SIC'] < 0:
+        return cuotas['MCUO'] + cuotas['SIC']
+    else:
+        return cuotas['MCUO']
+cuotas['MCUO'] = cuotas.apply(arreglo_negativos, axis = 1)
+cuotas['SIC']  = cuotas['SIC'].clip(lower = 0)
+
+###############################################################################
+suma_cap = cuotas.pivot_table(index   = 'CCR',
+                              values  = 'MCUO',
+                              aggfunc = 'sum').reset_index()
+suma_cap.rename(columns = {'MCUO':'sumMCUO'}, inplace = True)
+
+suma_cap = suma_cap.merge(df_desembolsos[['pagare_fincore', 'Otorgado']],
+                          left_on  = 'CCR',
+                          right_on = 'pagare_fincore',
+                          how      = 'left')
+
+alerta = suma_cap[pd.isna(suma_cap['Otorgado'])]
+if alerta.shape[0] > 0:
+    print('algún crédito no aparece en la base de datos')
+
+suma_cap['Dif cuadre cap'] = suma_cap['sumMCUO'] - suma_cap['Otorgado']
+
+alerta_dif_cuadre = suma_cap[suma_cap['Dif cuadre cap'] < 0]
+if alerta_dif_cuadre.shape[0] > 0:
+    print('el cuadre resulta negativo')
+
+# aver = cuotas[cuotas['CCR'] == '00118890']
+aver2 = suma_cap[suma_cap['pagare_fincore'] == '00118890']
+
+#%%
+print('fin')
 
 '''
 
@@ -258,6 +383,3 @@ order by CodPrestamoCuota
 
 
 '''
-#%%
-print('fin')
-

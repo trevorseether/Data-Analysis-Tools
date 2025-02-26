@@ -255,124 +255,124 @@ if eliminar_duplicados == True:
 # COMENTAR TODO ESTO SI SE VA A PROCESAR OTRAS HOJAS
 # =============================================================================
 '''-------------------------------------------------------------------------'''
-# base['numerocuota int'] = base['numerocuota'].astype(int)
+base['numerocuota int'] = base['numerocuota'].astype(int)
 
-# ###############################################################################
-# formatos = [ '%d-%m-%Y',
-#               '%d/%m/%Y' ] # Lista de formatos a analizar
+###############################################################################
+formatos = [ '%d-%m-%Y',
+              '%d/%m/%Y' ] # Lista de formatos a analizar
 
-# def parse_date(date_str):
-#     for formato in formatos:
-#         try:
-#             return pd.to_datetime(   arg = date_str, 
-#                                   format = formato,)
-#         except ValueError:
-#             pass
-#     return pd.NaT
+def parse_date(date_str):
+    for formato in formatos:
+        try:
+            return pd.to_datetime(   arg = date_str, 
+                                  format = formato,)
+        except ValueError:
+            pass
+    return pd.NaT
 
-# base['fecha timestamp'] = base['FechaVencimiento'].apply(parse_date)
-# ###############################################################################
+base['fecha timestamp'] = base['FechaVencimiento'].apply(parse_date)
+###############################################################################
 
-# #convertir txt a numeritos
-# base['capital'] = base['capital'].astype(float)
-# base['interes'] = base['interes'].astype(float)
+#convertir txt a numeritos
+base['capital'] = base['capital'].astype(float)
+base['interes'] = base['interes'].astype(float)
 
-# # creditos que nacen con cero, es correcto
-# base = base.sort_values(by=['NroPrestamo', 'fecha timestamp'], 
-#                         ascending=[True, True])
+# creditos que nacen con cero, es correcto
+base = base.sort_values(by=['NroPrestamo', 'fecha timestamp'], 
+                        ascending=[True, True])
 
-# # Convertir la columna 'FechaVencimiento' a datetime
-# base['FechaVencimiento'] = base['fecha timestamp']
-# # base['FechaVencimiento'] = pd.to_datetime(base['FechaVencimiento'])
+# Convertir la columna 'FechaVencimiento' a datetime
+base['FechaVencimiento'] = base['fecha timestamp']
+# base['FechaVencimiento'] = pd.to_datetime(base['FechaVencimiento'])
 
-# # Función para identificar la primera cuota
-# def marcar_primera_cuota(grupo):
-#     grupo = grupo.sort_values(by='fecha timestamp')
-#     grupo['Etiqueta'] = 'sin etiqueta'  # Etiqueta predeterminada
-#     if grupo.iloc[0]['numerocuota int'] == 0:  # Revisar si la primera cuota es 0
-#         grupo.iloc[0, grupo.columns.get_loc('Etiqueta')] = 'nacimiento cuota cero'
-#     return grupo
+# Función para identificar la primera cuota
+def marcar_primera_cuota(grupo):
+    grupo = grupo.sort_values(by='fecha timestamp')
+    grupo['Etiqueta'] = 'sin etiqueta'  # Etiqueta predeterminada
+    if grupo.iloc[0]['numerocuota int'] == 0:  # Revisar si la primera cuota es 0
+        grupo.iloc[0, grupo.columns.get_loc('Etiqueta')] = 'nacimiento cuota cero'
+    return grupo
 
-# # Aplicar la función a cada grupo de 'NroPrestamo'
-# base = base.groupby('NroPrestamo', group_keys = False).apply(marcar_primera_cuota)
+# Aplicar la función a cada grupo de 'NroPrestamo'
+base = base.groupby('NroPrestamo', group_keys = False).apply(marcar_primera_cuota)
 
-# def mantener_cuota_cero(base):
-#     if (base['Etiqueta'] == 'nacimiento cuota cero') and (base['interes'] > 0):
-#         return '(mantener) cuota cero original con capital'
-#     if (base['numerocuota int'] == 0) and (base['capital'] > 0):
-#         return '(mantener) amortización de capital'
-#     if (base['numerocuota int'] == 0) and (base['capital'] == 0):
-#         return '(eliminar) cap cero'
+def mantener_cuota_cero(base):
+    if (base['Etiqueta'] == 'nacimiento cuota cero') and (base['interes'] > 0):
+        return '(mantener) cuota cero original con capital'
+    if (base['numerocuota int'] == 0) and (base['capital'] > 0):
+        return '(mantener) amortización de capital'
+    if (base['numerocuota int'] == 0) and (base['capital'] == 0):
+        return '(eliminar) cap cero'
+    else:
+        return ''
+base['mantener ceros'] = base.apply(mantener_cuota_cero, axis =1 )
+
+# =============================================================================
+# hasta aquí, siguen todas las cuotas
+# =============================================================================
+nro_finco = '00089730'
+verificar = base[base['NroPrestamo'] == nro_finco]
+
+#%%
+base = base.sort_values(by=['orden original'], 
+                        ascending=[True])
+
+conteo_lista = base.pivot_table(values  = 'NroPrestamo',
+                                index   = columna,
+                                aggfunc = 'count').reset_index()
+
+conteo_cuotas_duplicadas = conteo_lista[conteo_lista['NroPrestamo'] > 1]
+conteo_cuotas_duplicadas.columns = [columna, 'conteo']
+
+# def marcar_duplicados(base):
+#     if base['indice que debe ser único'] in lista_dups:
+#         return 'cuota duplicada'
 #     else:
 #         return ''
-# base['mantener ceros'] = base.apply(mantener_cuota_cero, axis =1 )
+# base['duplicidad cuota'] = base.apply(marcar_duplicados, axis = 1)
+'reemplazando el bloque anterior por un merge'
 
-# # =============================================================================
-# # hasta aquí, siguen todas las cuotas
-# # =============================================================================
-# nro_finco = '00089730'
-# verificar = base[base['NroPrestamo'] == nro_finco]
+base2 = base.merge(conteo_cuotas_duplicadas,
+                    on = columna,
+                    how = 'left')
 
-# #%%
-# base = base.sort_values(by=['orden original'], 
-#                         ascending=[True])
+def dups(base2):
+    if base2['conteo'] >= 2:
+        return 'duplicado'
+    else:
+        return ''
+base2['duplicidad cuota'] = base2.apply(dups, axis = 1)
 
-# conteo_lista = base.pivot_table(values  = 'NroPrestamo',
-#                                 index   = columna,
-#                                 aggfunc = 'count').reset_index()
+#%%
+base2 = base2.sort_values(by=['NroPrestamo', 'fecha timestamp', 'orden original'], 
+                          ascending=[True, True, True])
 
-# conteo_cuotas_duplicadas = conteo_lista[conteo_lista['NroPrestamo'] > 1]
-# conteo_cuotas_duplicadas.columns = [columna, 'conteo']
+# duplicados, para eliminar y mostrar solo la ultima cuota, (más reciente en el tiempo)
+base2['estado'] = base.duplicated(subset=['NroPrestamo', 'numerocuota int'], keep='last').map(
+                    {True: 'eliminar', False: 'mantener'})
 
-# # def marcar_duplicados(base):
-# #     if base['indice que debe ser único'] in lista_dups:
-# #         return 'cuota duplicada'
-# #     else:
-# #         return ''
-# # base['duplicidad cuota'] = base.apply(marcar_duplicados, axis = 1)
-# 'reemplazando el bloque anterior por un merge'
-
-# base2 = base.merge(conteo_cuotas_duplicadas,
-#                     on = columna,
-#                     how = 'left')
-
-# def dups(base2):
-#     if base2['conteo'] >= 2:
-#         return 'duplicado'
-#     else:
-#         return ''
-# base2['duplicidad cuota'] = base2.apply(dups, axis = 1)
-
-# #%%
-# base2 = base2.sort_values(by=['NroPrestamo', 'fecha timestamp', 'orden original'], 
-#                           ascending=[True, True, True])
-
-# # duplicados, para eliminar y mostrar solo la ultima cuota, (más reciente en el tiempo)
-# base2['estado'] = base.duplicated(subset=['NroPrestamo', 'numerocuota int'], keep='last').map(
-#                     {True: 'eliminar', False: 'mantener'})
-
-# #%% finalmente, eliminar duplicados
-# def eliminacion_final(base2):
+#%% finalmente, eliminar duplicados
+def eliminacion_final(base2):
     
-#     if (base2['mantener ceros'] == '(eliminar) cap cero'):
-#         return 'eliminar'
-#     #if (base2['estado'] == 'eliminar') and (base2['mantener ceros'] == ''):
-#     #    return 'eliminar'
-#     else:
-#         return 'mantener'
+    if (base2['mantener ceros'] == '(eliminar) cap cero'):
+        return 'eliminar'
+    #if (base2['estado'] == 'eliminar') and (base2['mantener ceros'] == ''):
+    #    return 'eliminar'
+    else:
+        return 'mantener'
 
-# base2['eliminar cuota'] = base2.apply(eliminacion_final, axis = 1)
+base2['eliminar cuota'] = base2.apply(eliminacion_final, axis = 1)
 
-# nro_finco = '00089730'
-# verificar = base[base['NroPrestamo'] == nro_finco]
+nro_finco = '00089730'
+verificar = base[base['NroPrestamo'] == nro_finco]
 
 
-# #%%
-# base3 = base2[base2['eliminar cuota'] == 'mantener'].copy()
+#%%
+base3 = base2[base2['eliminar cuota'] == 'mantener'].copy()
 
-# base3 = base3[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
-#                'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
-#                'Ahorros', 'Pagado', 'CodEstado_aux']]
+base3 = base3[['NroPrestamo', 'FechaVencimiento', 'numerocuota', 'capital', 'interes',
+                'CargosGenerales', 'CargosSeguro', 'Aporte', 'TotalCargo', 'TotalPago',
+                'Ahorros', 'Pagado', 'CodEstado_aux']]
 '''-------------------------------------------------------------------------'''
 
 # # =============================================================================
