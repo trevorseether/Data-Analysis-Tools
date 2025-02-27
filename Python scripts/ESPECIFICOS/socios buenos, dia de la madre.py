@@ -13,8 +13,8 @@ import pyodbc
 import os
 
 #%%
-fecha_corte = '20240430'
-fecha_hoy   = '20240515' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
+fecha_corte = '20250131'
+fecha_hoy   = '20250207' # para especificar hasta qué fecha incluir desembolsos(desembolsos nuevos que no están en el ANX06)
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\socios buenos para sorteo\\15 mayo 2024')
 

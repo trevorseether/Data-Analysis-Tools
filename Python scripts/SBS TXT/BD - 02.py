@@ -94,8 +94,7 @@ if 'df_desembolsos' not in globals():
 
 dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
 
-
-#%% COBRANZAAAA (18 minutos)
+#%% COBRANZA
 
 if 'df_cobranza' not in globals():
     datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -266,13 +265,17 @@ cuotas['DAKC'] = cuotas["DIFERENCIA_DIAS"]
 
 # Diccionario de mapeo
 tipo_pago_mapeo = {
-    'EFECTIVO': '1',
-    'DEPOSITO': '2', 'TRANSFERENCIA': '2',
+    'EFECTIVO':         '1',
+    'DEPOSITO':         '2', 
+    'TRANSFERENCIA':    '2',
     'REFINANCIAMIENTO': '3',
-    'NOTA DE CREDITO': '4',
-    'RETENCIONES': '5', 'OTROS': '5', 'CHEQUE': '5',
-    'FONDO PREVISIONAL': '5', 'RECIBO': '5'
-}
+    'NOTA DE CREDITO':  '4',
+    'RETENCIONES':      '5', 
+    'OTROS':            '5', 
+    'CHEQUE':           '5',
+    'FONDO PREVISIONAL':'5', 
+    'RECIBO':           '5'
+    }
 
 # Aplicar el mapeo de forma vectorizada para mejorar rendimiento
 cuotas['FOCAN'] = cuotas['tipoPago'].map(tipo_pago_mapeo)
@@ -294,8 +297,9 @@ def eliminacion(cuotas):
         return 'mantener'
 cuotas['fil_1'] = cuotas.apply(eliminacion, axis = 1)
 
-# cuotas = cuotas[cuotas['fil_1'] == 'mantener']
-eliminados = cuotas[cuotas['fil_1'] == 'eliminar']
+cuotas = cuotas[cuotas['fil_1'] == 'mantener']
+
+# eliminados = cuotas[cuotas['fil_1'] == 'eliminar'] # en teoría esto no sirve para nada
 # aver = cuotas[cuotas['CCR'] == '00000333' ]
 
 #%% agregando filas
@@ -305,7 +309,7 @@ cuotas['orden original'] = range(1, len(cuotas) + 1)
 cuotas['nro cuota generado'] = cuotas.groupby('CCR').cumcount()
 
 # créditos a los que le falta la cuota cero
-con_cuota_cero = cuotas[ (cuotas['NCUO'] == '0') & (cuotas['nro cuota generado'] == 0) & (cuotas['MCUO'] == 0)]
+con_cuota_cero = cuotas[ (cuotas['NCUO'] == '0') & (cuotas['nro cuota generado'] == 0) & (cuotas['MCUO'] == 0) & (cuotas['Pagado'] != '9')]
 
 sin_cuotas = cuotas[~cuotas['CCR'].isin(list(con_cuota_cero['CCR']))]
 sin_cuotas = sin_cuotas.drop_duplicates(subset = ['CCR'], keep = 'first')
@@ -321,11 +325,55 @@ sin_cuotas['FVEP']  = '00/00/0000'
 sin_cuotas['FCAN']  = '00/00/0000'
 sin_cuotas['DAKC']  =  0
 sin_cuotas['FOCAN'] = ''
+sin_cuotas['Pagado']= '0'
 
+## FECHA DE VENCIMIENTO PARA LAS CUOTAS CERO GENERADAS
+min_fecha = cuotas.pivot_table(values  = 'FVEP dt',
+                               index   = 'CCR',
+                               aggfunc = 'min').reset_index()
+min_fecha.rename(columns = {'FVEP dt':'fecha mínima'}, inplace = True)
+###################################################################################
+from datetime import timedelta                                                   ##
+from dateutil.relativedelta import relativedelta                                 ##
+                                                                                 ##
+def restar_30_dias(fecha):                                                       ##
+    # Restar 30 días directamente a objetos datetime/Timestamp                   ##
+    nueva_fecha = fecha - timedelta(days = 30)                                   ##
+    return nueva_fecha                                                           ##
+                                                                                 ##
+def restar_un_mes(fecha):                                                        ##
+    # Restar un mes completo usando relativedelta                                ##
+    nueva_fecha = fecha - relativedelta(months = 1)                              ##
+    return nueva_fecha                                                           ##
+                                                                                 ##
+min_fecha['Fecha un mes antes'] = min_fecha['fecha mínima'].apply(restar_un_mes) ##
+###################################################################################
+# ahora procedemos a compararlo con la fecha de desembolso
+m_desem = df_desembolsos[['pagare_fincore', 'fechadesembolso']]
+min_fecha = min_fecha.merge(df_desembolsos[['pagare_fincore', 'fechadesembolso']],
+                            left_on  = 'CCR',
+                            right_on = 'pagare_fincore',
+                            how      = 'left')
+def fecha_cuota_cero(min_cuota):
+    if min_cuota['Fecha un mes antes'] > min_cuota['fechadesembolso']:
+        return min_cuota['Fecha un mes antes']
+    else:
+        return min_cuota['fechadesembolso']
+min_fecha['fecha cuota cero'] = min_fecha.apply(fecha_cuota_cero, axis = 1)
+
+sin_cuotas = sin_cuotas.merge(min_fecha[['CCR', 'fecha cuota cero']],
+                              on  = 'CCR',
+                              how = 'left')
+if sin_cuotas[pd.isna(sin_cuotas['fecha cuota cero'])].shape[0] > 0:
+    print('revisar, aquí debe haber match completo')
+
+sin_cuotas['FVEP'] = sin_cuotas['fecha cuota cero'].dt.strftime('%d/%m/%Y')
+
+###############################################################################
 cuotas_cero = pd.concat([sin_cuotas, con_cuota_cero], ignore_index = True)
 
-cuotas_cero['FCAN']  = '00/00/0000'
-
+# cuotas_cero['FCAN']       = '00/00/0000'
+cuotas_cero['EsFaltante'] = True
 
 ###############################################################################
 def arreglo_negativos(cuotas):
@@ -334,7 +382,7 @@ def arreglo_negativos(cuotas):
     else:
         return cuotas['MCUO']
 cuotas['MCUO'] = cuotas.apply(arreglo_negativos, axis = 1)
-cuotas['SIC']  = cuotas['SIC'].clip(lower = 0)
+cuotas['SIC']  = cuotas['SIC'].clip(lower = 0) # coloca cero en interés negativo
 
 ###############################################################################
 suma_cap = cuotas.pivot_table(index   = 'CCR',
@@ -352,19 +400,54 @@ if alerta.shape[0] > 0:
     print('algún crédito no aparece en la base de datos')
 
 suma_cap['Dif cuadre cap'] = suma_cap['sumMCUO'] - suma_cap['Otorgado']
+suma_cap["Dif cuadre cap"] = suma_cap["Dif cuadre cap"].round(2)
+suma_cap["Dif cuadre cap"] = suma_cap["Dif cuadre cap"].apply(lambda x: 0 if abs(x) < 1e-10 else x)
 
 alerta_dif_cuadre = suma_cap[suma_cap['Dif cuadre cap'] < 0]
 if alerta_dif_cuadre.shape[0] > 0:
     print('el cuadre resulta negativo')
-
 # aver = cuotas[cuotas['CCR'] == '00118890']
-aver2 = suma_cap[suma_cap['pagare_fincore'] == '00118890']
+# aver2 = suma_cap[suma_cap['pagare_fincore'] == '00118890']
 
+# =============================================================================
+#  SE REQUIERE AJUSTE PUNTUAL para solucionar negativos <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+'DEBE IR ANTES DE ESTE CÓDIGO'
+# ajuste
+alerta_dif_cuadre["Dif cuadre cap"] = alerta_dif_cuadre["Dif cuadre cap"].abs()
+para_corregir = cuotas[cuotas['CCR'].isin(alerta_dif_cuadre['CCR'])]
+para_corregir = para_corregir.drop_duplicates(subset = ['CCR'], keep = 'first')
+
+cuotas = cuotas[~cuotas['orden original'].isin(list(para_corregir['orden original']))]
+para_corregir = para_corregir.merge(alerta_dif_cuadre[['CCR', "Dif cuadre cap"]],
+                                    on  = 'CCR',
+                                    how = 'left')
+para_corregir['MCUO'] = para_corregir['MCUO'] +  para_corregir['Dif cuadre cap']
+para_corregir['TCUO'] = para_corregir['TCUO'] +  para_corregir['Dif cuadre cap']
+
+
+###############################################################################
+cuotas_cero = cuotas_cero.merge(suma_cap[['CCR', 'Dif cuadre cap']],
+                                on  = 'CCR',
+                                how = 'left')
+
+if cuotas_cero[pd.isna(cuotas_cero['Dif cuadre cap'])].shape[0] > 0:
+    print('raraso, aquí siempre debe haber match completo')
+    
+cuotas_cero['SIC'] = cuotas_cero['Dif cuadre cap']
+del cuotas_cero['Dif cuadre cap']
+# =============================================================================
+
+# UNIÓN TOTAL CON LAS CUOTAS CERO
+cuotas = pd.concat([cuotas, cuotas_cero, para_corregir], ignore_index = True)
+# para esta parte ya debería estar cuadrado todo
+
+cuotas = cuotas.sort_values(by = ['CCR', 'EsFaltante', 'orden original'], ascending = [True, False, True])
+
+#%% reenumeración final
 #%%
 print('fin')
 
 '''
-
 
 
 select top 1000 CodEstado,* from PrestamoCuota
@@ -381,5 +464,7 @@ order by CodPrestamoCuota
 
 
 
-
 '''
+
+
+
