@@ -58,14 +58,18 @@ if 'df_desembolsos' not in globals():
 					p.TEM, 
 					p.NroPlazos, 
 					p.CuotaFija,  
-                	iif(p.codmoneda=94,'1','2') as 'moneda', 
+                	iif(p.codmoneda = 94,'1','2') as 'moneda', 
 
                 	FORMAT(p.fechadesembolso, 'yyyy-MM-dd') AS 'SoloFecha',
                     FORMAT(p.fechadesembolso, 'HH:mm:ss')   AS 'Hora_desembolso',
 	
 					pla.descripcion as 'Planilla', 
                 	u.IdUsuario as 'User_Desemb',
-                    AE.CIIU
+                    AE.CIIU,
+
+					p.fechaventacartera,
+					P.FechaCastigo 
+
                 
                 FROM prestamo AS p
                 
@@ -92,8 +96,9 @@ if 'df_desembolsos' not in globals():
 
     del query
 
-dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
-
+    # dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
+    castigados_vendidos = df_desembolsos[ (~pd.isna(df_desembolsos['fechaventacartera'])) |  (~pd.isna(df_desembolsos['FechaCastigo']))]
+    
 #%% COBRANZA
 
 if 'df_cobranza' not in globals():
