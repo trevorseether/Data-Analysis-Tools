@@ -314,7 +314,7 @@ def calcular_nueva_numeracion(grupo):
     grupo["nueva_numeracion"] = nueva_numeracion
     return grupo
 
-df_combinado = df_combinado.groupby("NroPrestamo", group_keys=False).apply(calcular_nueva_numeracion)
+df_combinado = df_combinado.groupby("NroPrestamo", group_keys = False).apply(calcular_nueva_numeracion)
 
 df_combinado['nro cuota generado'] = df_combinado["nueva_numeracion"].copy()
 del df_combinado["nueva_numeracion"]

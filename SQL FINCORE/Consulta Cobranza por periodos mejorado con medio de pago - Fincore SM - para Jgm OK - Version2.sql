@@ -1,4 +1,5 @@
-SELECT  top 10000
+SELECT 
+	precuo.CodprestamoCuota,
 	soc.codsocio, 
 	soc.codigosocio, 
 	iif(soc.CodTipoPersona =1,concat(soc.apellidopaterno,' ',soc.apellidomaterno,' ',soc.nombres),soc.razonsocial) AS 'Socio',
@@ -36,7 +37,7 @@ SELECT  top 10000
 	cdet.InteresCompensatorio as 'IntCompVencido', 
 	cdet.Mora AS 'INTCOMP_MORA', 
 	cdet.GastoCobranza, 
-	cdet.FondoContigencia+cdet.MoraAnterior+cdet.GastoTeleOperador+cdet.GastoJudicial+cdet.GastoLegal+cdet.GastoOtros AS 'GTO_OTROS',
+	cdet.FondoContigencia + cdet.MoraAnterior + cdet.GastoTeleOperador + cdet.GastoJudicial + cdet.GastoLegal + cdet.GastoOtros AS 'GTO_OTROS',
 	cdoc.numeroOperacion,
 	cdoc.numeroOperacionDestino, --tmdet.descripcion as TipoDocmto, 
 	gr.descripcion as 'Funcionario', 
@@ -93,7 +94,7 @@ FROM   CobranzaDet AS cdet INNER JOIN prestamoCuota AS precuo ON precuo.Codprest
 WHERE CONVERT(VARCHAR(10),ccab.fecha,112) BETWEEN '20240101' AND '20240630' and cdet.CodEstado <> 376  
 
 --and right(concat('0000000',pre.numero),8)  = 00129322
-
+and tmdet.descripcion is null
 
 ORDER BY socio, ccab.fecha
 

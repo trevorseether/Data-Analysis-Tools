@@ -17,7 +17,7 @@ ENVIAR_CORREOS = True
 #%%
 # Carga tu dataframe (asegúrate de que tiene las columnas 'correo', 'mensaje' y 'asunto')
 df = pd.read_excel('Account m365 garantiacapital password.xlsx',
-                   sheet_name = 'prueba',
+                   sheet_name = 'Hoja1',
                    skiprows   = 0,
                    dtype      = str)  # Reemplaza con tu archivo
 
@@ -88,7 +88,7 @@ if ENVIAR_CORREOS == True:
     </table>
     
     <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;"><strong>&nbsp;</strong></p>
-    <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;"><strong>A partir de dicha hora (9pm), y en adelante, todo proceso de envio y recepcion de correos ser&aacute; mediante la nueva plataforma v&iacute;a Microsoft</strong> (la plataforma webmail dejará de operar, no recibiendo, ni poder enviar mensaje alguno).</p>
+    <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;"><strong>A partir de dicha hora (9pm), y en adelante, todo proceso de envio y recepcion de correos ser&aacute; mediante la nueva plataforma v&iacute;a Microsoft</strong> (la plataforma de correo actual dejará de operar, no recibiendo, ni poder enviar mensaje alguno).</p>
     <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;"><strong>&nbsp;</strong></p>
     <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;">IMPORTANTE:</p>
     <p style="text-align: left;color: rgb(44, 54, 58);background-color: rgb(255, 255, 255);font-size: 14px;font-family: Roboto, sans-serif;">1.No realizar cambio de clave al menos la primera semana (por el proceso de migraci&oacute;n).</p>

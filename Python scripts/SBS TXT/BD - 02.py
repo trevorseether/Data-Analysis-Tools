@@ -26,12 +26,14 @@ fecha_corte = '20241231' # FÓRMATO SQL
 cuotas = pd.read_csv('prppg 12-2024.csv',
                      dtype = str)
 
-cuotas.dropna(subset = [ 'MCUO' ,
-                         'SIC'  ,
-                         'SCOM' ,
-                         'TCUO'   ],
+cuotas.dropna(subset = [  'MCUO' ,
+                          'SIC'  ,
+                          'SCOM' ,
+                          'TCUO'   ],
             inplace = True  ,
             how     = 'all')
+
+cuotas = cuotas[cuotas['CodEstado'] != '346'] # eliminando cuotas de capitalización de interés (porque ya lo estoy generando yo)
 
 #%%
 if 'df_desembolsos' not in globals():
@@ -99,7 +101,10 @@ if 'df_desembolsos' not in globals():
     # dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
     # FILTRACIÓN DE CASTIGADOS Y VENDIDOS
     castigados_vendidos = df_desembolsos[ (~pd.isna(df_desembolsos['fechaventacartera'])) |  (~pd.isna(df_desembolsos['FechaCastigo']))]
-    castigados_vendidos = castigados_vendidos[castigados_vendidos['fechaventacartera']]
+    castigados_vendidos = castigados_vendidos[(castigados_vendidos['fechaventacartera'] <= pd.Timestamp(fecha_corte))  |  (castigados_vendidos['FechaCastigo'] <= pd.Timestamp(fecha_corte))]
+
+#%% eliminando castigados y vendidos de las cuotas
+cuotas = cuotas[ ~cuotas['CCR'].isin(castigados_vendidos['pagare_fincore'])]    
     
 #%% COBRANZA
 
@@ -418,7 +423,6 @@ if alerta_dif_cuadre.shape[0] > 0:
 
 # =============================================================================
 #  SE REQUIERE AJUSTE PUNTUAL para solucionar negativos <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-'DEBE IR ANTES DE ESTE CÓDIGO'
 # ajuste
 alerta_dif_cuadre["Dif cuadre cap"] = alerta_dif_cuadre["Dif cuadre cap"].abs()
 para_corregir = cuotas[cuotas['CCR'].isin(alerta_dif_cuadre['CCR'])]
@@ -448,9 +452,34 @@ del cuotas_cero['Dif cuadre cap']
 cuotas = pd.concat([cuotas, cuotas_cero, para_corregir], ignore_index = True)
 # para esta parte ya debería estar cuadrado todo
 
+# ORDENAMIENTO
 cuotas = cuotas.sort_values(by = ['CCR', 'EsFaltante', 'orden original'], ascending = [True, False, True])
 
 #%% reenumeración final
+cuotas['CodEstado'].unique()
+
+def calcular_nueva_numeracion(grupo):
+    nueva_numeracion = []
+    contador = 0
+    for index, row in grupo.iterrows():
+        if (row['NCUO'] == '0' and row['nro cuota generado'] == 0) or \
+        (row['NCUO'] == '0' and row["CodEstado"] in [ '1003', '379' ]):  
+            # Si se cumplen todas las condiciones, reiniciamos la numeración
+            nueva_numeracion.append(0)
+        else:
+            # Si no, incrementamos la numeración desde donde se quedó
+            contador += 1
+            nueva_numeracion.append(contador)
+    
+    grupo["nueva_numeracion"] = nueva_numeracion
+    return grupo
+
+cuotas = cuotas.groupby("CCR", group_keys=False).apply(calcular_nueva_numeracion)
+
+#%% BD 02 - B
+cuotas_c = cuotas.copy()
+cuotas_c = cuotas_c.rename(columns=lambda col: col + "_C")
+
 #%%
 print('fin')
 
