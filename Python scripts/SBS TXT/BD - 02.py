@@ -97,7 +97,9 @@ if 'df_desembolsos' not in globals():
     del query
 
     # dolares = df_desembolsos[df_desembolsos['moneda'] == '2']
+    # FILTRACIÓN DE CASTIGADOS Y VENDIDOS
     castigados_vendidos = df_desembolsos[ (~pd.isna(df_desembolsos['fechaventacartera'])) |  (~pd.isna(df_desembolsos['FechaCastigo']))]
+    castigados_vendidos = castigados_vendidos[castigados_vendidos['fechaventacartera']]
     
 #%% COBRANZA
 
