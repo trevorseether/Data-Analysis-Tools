@@ -18,7 +18,7 @@ warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
 tabla_nombre = 'FACTORING..[EXPERIAN_2025_02_18_v2]'
-CARGA_SQL_SERVER = True #True
+CARGA_SQL_SERVER = True
 
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\MENSUAL-EXPERIAN\\2025\\febrero\\18 02')
 

@@ -15,12 +15,12 @@ import os
 import pyodbc
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2024\\2024 diciembre\\parte 2')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\enero\\parte 2')
 
-anexo06 = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados 03.xlsx'
+anexo06 = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados 03.xlsx'
 
-fecha_inicio = '20220101' #formato para sql (no cambiar)
-fecha_corte  = '20241231' #formato para sql
+fecha_inicio = '20210101' #formato para sql (no cambiar)
+fecha_corte  = '20250131' #formato para sql
 
 #%%
 df_anx06 = pd.read_excel(io         = anexo06, 
@@ -87,6 +87,8 @@ SELECT
 	--p.codestado, 
 	tm.descripcion as 'Estado',
 	p.fechaCancelacion, 
+	P.FechaCastigo,
+	P.FechaVentaCartera,
 	iif(p.codcategoria=351,'NVO','AMPL') as 'tipo_pre', 
 	p.flagrefinanciado, 
 	pro.descripcion as 'Funcionario',
@@ -175,7 +177,8 @@ SELECT
 	s.fechaInscripcion, 
 	u.IdUsuario as 'User_Desemb', 
 	tm4.descripcion as 'EstadoSocio'
--- pcu.FechaVencimiento as Fecha1raCuota, pcu.NumeroCuota, pcu.SaldoInicial,
+
+
 FROM prestamo as p
 
 inner join socio as s on s.codsocio = p.codsocio
@@ -200,6 +203,7 @@ LEFT JOIN PrestamosVendidos AS VENDIDOSS ON P.CodPrestamoPND = VENDIDOSS.CodPres
 
 where 
 CONVERT(VARCHAR(10),p.fechadesembolso,112) BETWEEN '{fecha_inicio}' and '{fecha_corte}' 
+
 and s.codigosocio>0  and p.codestado = 341
 --and tm4.descripcion = 'HABIL'
 and VENDIDOSS.CodPrestamoPND IS NULL
@@ -214,11 +218,14 @@ order by socio asc, p.fechadesembolso desc
 df_fincore = pd.read_sql_query(query, conn)
 del conn
 
-df_fincore = df_fincore[['pagare_fincore',
-                         'Socio',
-                         'fechadesembolso',
-                         'Otorgado',
-                         'Planilla']]
+df_fincore = df_fincore[['pagare_fincore'  , 
+                         'Socio'           , 
+                         'fechadesembolso' , 
+                         'Otorgado'        , 
+                         'Planilla'        , 
+                         'FechaVentaCartera']]
+
+df_fincore = df_fincore[ pd.isna(df_fincore['FechaVentaCartera']) | (df_fincore['FechaVentaCartera'] >= pd.Timestamp(fecha_corte))]
 
 #%%
 

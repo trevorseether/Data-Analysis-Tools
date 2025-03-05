@@ -221,4 +221,3 @@ SELECT a.CodUsuarioPriAprob, a.CodUsuarioSegAprob, b.IdUsuario FROM SolicitudCre
 select CodSolicitudCredito,* from prestamo
 
 */
-

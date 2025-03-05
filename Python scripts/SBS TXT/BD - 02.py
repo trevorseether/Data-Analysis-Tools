@@ -12,7 +12,7 @@ Created on Wed Feb 19 18:06:24 2025
 import pandas as pd
 import os
 import pyodbc
-# from datetime import datetime
+from datetime import datetime
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -21,6 +21,14 @@ warnings.filterwarnings('ignore')
 os.chdir('R:/REPORTES DE GESTIÓN/Insumo para Analisis/prppgs, cortes trimestrales')
 
 fecha_corte = '20241231' # FÓRMATO SQL
+
+bd01 = 'C:/Users/sanmiguel38/Desktop/SBS TXT/BD-01/20523941047_BD01_202412.txt'
+
+CREAR_TXT = False
+
+#%% hora inicio
+print('hora inicio:')
+print(datetime.now().strftime("%H:%M:%S"))
 
 #%%
 cuotas = pd.read_csv('prppg 12-2024.csv',
@@ -36,6 +44,11 @@ cuotas.dropna(subset = [  'MCUO' ,
 cuotas = cuotas[cuotas['CodEstado'] != '346'] # eliminando cuotas de capitalización de interés (porque ya lo estoy generando yo)
 
 #%%
+base01 = pd.read_csv(bd01,
+                     dtype = str,
+                     sep = "\t")
+ 
+#%%
 if 'df_desembolsos' not in globals():
     datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
     
@@ -46,7 +59,7 @@ if 'df_desembolsos' not in globals():
     conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
     conn = pyodbc.connect(conn_str)
     
-    query = '''
+    query = f'''
                 SELECT
                 
                 	s.codigosocio, 
@@ -70,24 +83,24 @@ if 'df_desembolsos' not in globals():
                     AE.CIIU,
 
 					p.fechaventacartera,
-					P.FechaCastigo 
+					P.FechaCastigo,
+                    
+                    p.fechaCancelacion
 
-                
                 FROM prestamo AS p
                 
-                INNER JOIN socio AS s             ON s.codsocio = p.codsocio
-                LEFT JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
-                LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
+                INNER JOIN socio AS s              ON s.codsocio = p.codsocio
+                LEFT JOIN usuario AS u             ON p.CodUsuario = u.CodUsuario
+                LEFT JOIN planilla AS pla          ON p.codplanilla = pla.codplanilla
                 LEFT JOIN ActividadEconomica AS AE ON S.CodActividadEconomica = AE.CodActividad
 
 				LEFT JOIN TipoCambioSBS AS TCSBS
-				on (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
+				ON (year(p.fechadesembolso) = tcsbs.Anno) and (month(p.fechadesembolso) = tcsbs.MES)
 
-                WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) >= '20000101'
+                WHERE CONVERT(VARCHAR(10),p.fechadesembolso,112) <= '{fecha_corte}'
                 
                 ORDER BY p.fechadesembolso DESC    
-                
-                
+
                 '''
     
     df_desembolsos = pd.read_sql_query(query, conn)
@@ -103,9 +116,15 @@ if 'df_desembolsos' not in globals():
     castigados_vendidos = df_desembolsos[ (~pd.isna(df_desembolsos['fechaventacartera'])) |  (~pd.isna(df_desembolsos['FechaCastigo']))]
     castigados_vendidos = castigados_vendidos[(castigados_vendidos['fechaventacartera'] <= pd.Timestamp(fecha_corte))  |  (castigados_vendidos['FechaCastigo'] <= pd.Timestamp(fecha_corte))]
 
+    desembolsados_posteriores = df_desembolsos[df_desembolsos['fechadesembolso'] > pd.Timestamp(fecha_corte)]
+    
 #%% eliminando castigados y vendidos de las cuotas
 cuotas = cuotas[ ~cuotas['CCR'].isin(castigados_vendidos['pagare_fincore'])]    
-    
+  
+cuotas = cuotas[ ~cuotas['CCR'].isin(desembolsados_posteriores['pagare_fincore'])]  
+
+cancelados = df_desembolsos[ ~pd.isna(df_desembolsos['fechaCancelacion']) ]
+
 #%% COBRANZA
 
 if 'df_cobranza' not in globals():
@@ -255,7 +274,7 @@ cuotas["FVEP dt"] = safe_to_datetime(cuotas["FVEP"])
 cuotas["DIFERENCIA_DIAS"] = (cuotas["FCAN dt"] - cuotas["FVEP dt"]).dt.days
 
 # Reemplazar valores negativos por 0
-cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].clip(lower=0)
+cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].clip(lower = 0)
 cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].astype(int)
 
 cuotas['DAKC'] = cuotas["DIFERENCIA_DIAS"]
@@ -463,7 +482,9 @@ def calcular_nueva_numeracion(grupo):
     contador = 0
     for index, row in grupo.iterrows():
         if (row['NCUO'] == '0' and row['nro cuota generado'] == 0) or \
-        (row['NCUO'] == '0' and row["CodEstado"] in [ '1003', '379' ]):  
+        (row['NCUO'] == '0' and row["CodEstado"] in [ '1003', 
+                                                      '379' 
+                                                      ]):  
             # Si se cumplen todas las condiciones, reiniciamos la numeración
             nueva_numeracion.append(0)
         else:
@@ -476,9 +497,58 @@ def calcular_nueva_numeracion(grupo):
 
 cuotas = cuotas.groupby("CCR", group_keys=False).apply(calcular_nueva_numeracion)
 
+cuotas['numeración original prppg'] = cuotas['NCUO']
+
+cuotas['NCUO'] = cuotas["nueva_numeracion"]
+
+#%%
+bd02a = cuotas[cuotas['CCR'].isin(base01['CCR'])]
+
+#%% EXCEL DE LA BD02-A
+if CREAR_TXT == True:
+    nombre = '20523941047_BD02A_' + fecha_corte[0:6]
+    
+    bd02a[['CIS',  'CCR',   'NCUO',  'MON',  'MCUO', 
+           'SIC',  'SCOM',  'SEGS',  'SIM',  'TCUO', 
+           'FVEP', 'FCAN',  'SCONK', 'SCONINT', 
+           'DAKC', 'FOCAN', 'SCA']].to_csv(nombre + '.txt', 
+                                           sep      = '\t', 
+                                           index    = False, 
+                                           encoding = 'utf-8')
+    print('BD02A creado')
+    print('')
+
+    print(datetime.now().strftime("%H:%M:%S"))
+else:
+    print('no se ha creado BD02A')
+
 #%% BD 02 - B
-cuotas_c = cuotas.copy()
-cuotas_c = cuotas_c.rename(columns=lambda col: col + "_C")
+cuotas_c = cuotas[ ~cuotas['CCR'].isin(base01['CCR']) ]
+cuotas_c = cuotas_c.rename(columns = lambda col: col + "_C")
+
+cuotas_c = cuotas_c[['CIS_C',     'CCR_C',    'NCUO_C',   'MON_C',   'MCUO_C', 
+                     'SIC_C',     'SCOM_C',   'SEGS_C',   'SIM_C',   'TCUO_C', 
+                     'FVEP_C',    'FCAN_C',   'DAKC_C',   'SCA_C',   'SCONK_C', 
+                     'SCONINT_C', 'FOCAN_C',  'numeración original prppg_C']]
+
+cuotas_c = cuotas_c.merge(cancelados[['pagare_fincore' ,'fechaCancelacion']],
+                          left_on  = 'CCR_C',
+                          right_on = 'pagare_fincore',
+                          how      = 'inner') # esto eliminaría algunos créditos que no aparecen ni el la bd01 ni como cancelados
+
+def fecha_canc(cuotas_c):
+    if cuotas_c['FCAN_C'] == '00/00/0000':
+        return cuotas_c['FVEP_C']
+    else:
+        return cuotas_c['FCAN_C']
+cuotas_c['FCAN_C'] = cuotas_c.apply(fecha_canc, axis = 1)
+
+def forma_can(cuotas_c):
+    if pd.isna(cuotas_c['FOCAN_C']):
+        return '5'
+    else:
+        return cuotas_c['FOCAN_C']
+cuotas_c['FOCAN_C'] = cuotas_c.apply(fecha_canc, axis = 1)
 
 #%%
 print('fin')
