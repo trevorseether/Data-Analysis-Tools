@@ -18,11 +18,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-fecha_corte = '20241231'
+fecha_corte = '20230331'
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-01')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-01\\2023 03 31')
 
-reprogramados_mismo_mes = 'C:/Users/sanmiguel38/Desktop/REPORTE DE REPROGRAMADOS (primer paso del anexo06)/2024/2024 diciembre/productos/Rpt_DeudoresSBS Créditos Reprogramados Diciembre 2024 no incluye castigados.xlsx'
+reprogramados_mismo_mes = 'C:/Users/sanmiguel38/Desktop/REPROGRAMADOS para SBS/2023/2023 MARZO/Rpt_DeudoresSBS Anexo06 - Creditos Reprogramados Marzo-2023 - No incl castigados.xlsx'
 
 CREAR_DOCUMENTOS = True
 
@@ -326,7 +326,7 @@ if 'df_desembolsos' not in globals():
                 FROM prestamo AS p
                 
                 INNER JOIN socio AS s             ON s.codsocio = p.codsocio
-                INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
+                LEFT  JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
                 INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
 				LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
                 LEFT JOIN ActividadEconomica AS AE ON S.CodActividadEconomica = AE.CodActividad
@@ -342,6 +342,7 @@ if 'df_desembolsos' not in globals():
     df_desembolsos = df_desembolsos.drop_duplicates(subset = ['pagare_fincore'], keep = 'first')
 
     del query
+    
 #%%
 if 'cuotas' not in globals():
     datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
@@ -412,7 +413,7 @@ if 'cuotas' not in globals():
         							 AND S.CodSocio  not in (select codsocio from #TMP_SOCIOBLOQUEAR) 
         							 AND   P.FECHAVENTACARTERA IS NULL
         							 ) TABLA 
-        							 WHERE numerocuota =0 AND Interes =0 AND TotalPago =0
+        							 WHERE numerocuota = 0 AND Interes =0 AND TotalPago =0
          
          )
         -- AND   P.FECHAVENTACARTERA IS NULL
@@ -465,6 +466,8 @@ base = base.merge(df_desembolsos[['pagare_fincore', 'User_Desemb', 'Hora_desembo
                   how      = 'left')
 
 base['UDES']  = base['User_Desemb']
+base['UDES']  = base['UDES'].fillna('SISTEMAS')
+
 base['FOT_H'] = base['Hora_desembolso']
 
 base['UDES']  = base['UDES'].fillna('')
@@ -529,7 +532,7 @@ def ESAM(base):
 
 base['ESAM'] = base.apply(ESAM, axis = 1)
 
-#%%    FPPK
+#%% FPPK
 prppg_cuotas_primer_pago = prppg_cuotas[prppg_cuotas['numerocuota'] == 1]
 prppg_cuotas_primer_pago.drop_duplicates(subset  = 'NroPrestamo', 
                            inplace = True)
@@ -786,6 +789,7 @@ if CREAR_DOCUMENTOS == True:
                 index    = False, 
                 encoding = 'utf-8')
     print('txt creado')
+    print(f'correspondientes con el corte {fecha_corte}')
     
     print('')
     print('hora guardado documentos:')

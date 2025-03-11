@@ -43,31 +43,31 @@ warnings.filterwarnings('ignore')
 #%% PARÁMETROS INICIALES
 
 # DIRECTORIO DE TRABAJO ########################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\febrero')
 ################################################################################
 
 # ANEXO PRELIMINAR (el que se hace junto a los reprogramados) #######################
-anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados procesado 01.xlsx"
+anexo_del_mes = "Rpt_DeudoresSBS Anexo06 - Febrero 2025 - campos ampliados procesado 01.xlsx"
 #####################################################################################
 
 # CALIFICACIÓN REFINANCIADOS: (este es el archivo de la calificación que añade Enrique manualmente) ####################
-archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 31 01 2025.xlsx' #nombre del archivo de los refinanciados ########
+archivo_refinanciados = 'REFINANCIADOS RECLASIFICADOS 28 02 2025.xlsx' #nombre del archivo de los refinanciados ########
 ########################################################################################################################
 
 # Cuando Enrique nos manda la calificación de los refinanciados, debemos eliminar las demás
 # columnas en ese excel y solo quedarnos con el mes que necesitamos:
 #################################################################################################
-mes_calif = 'Enero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
+mes_calif = 'Febrero' # aqui debemos poner el mes donde esté la calificación más reciente       ###
 # es el nombre de la columna más reciente que nos manda Enrique                               ###
 #################################################################################################
 
 ###############################################
-uit = 5350 #valor de la uit en el año 2024  ###  # en el 2025 será 5350
+uit = 5350 #valor de la uit en el año 2025  ### 
 ###############################################
 
 # FECHA DE CORTE #######################################
-fecha_corte     = '2025-01-31' #ejemplo '2023-06-30' ###
-fech_corte_txt  = 'Enero 2025'
+fecha_corte     = '2025-02-28' #ejemplo '2023-06-30' ###
+fech_corte_txt  = 'Febrero 2025'
 ########################################################
 
 #%% Códigos de los productos
@@ -76,6 +76,7 @@ prod43_mype = [15,16,17,18,19,             '15','16','17','18','19',
                95,96,97,98,99,             '95','96','97','98','99']
 
 prod_dxp  = [34, 35, 36, 37, 38, 39]
+prod_dxp_escolar  = [51]
 prod_ld   = [30, 31, 32, 33]
 prod_mic  = [20, 21, 22, 23, 24, 25, 26, 29]
 prod_peq  = [15, 16, 17, 18, 19]
@@ -961,6 +962,7 @@ SELECT
 	TipodeProducto43,
 	CASE 
 		WHEN TipodeProducto43 IN (34,35,36,37,38,39)       THEN 'DXP'
+		WHEN TipodeProducto43 IN (51)                      THEN 'DXP-ESCOLARIDAD'
 		WHEN TipodeProducto43 IN (30,31,32,33)             THEN 'LIBRE DISPONIBILIDAD'
 		WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
 		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,29) THEN 'MICRO EMPRESA'
@@ -1452,7 +1454,6 @@ df_resultado_2['DH vs CS 2'] = df_resultado_2.apply(modificacion_dhvscs, axis=1)
 df_resultado_2['DH vs CS'] = df_resultado_2['DH vs CS 2']
 df_resultado_2.drop(['DH vs CS 2'], axis=1, inplace=True)
 
-
 #%% DEVENGADOS
 'intereses devengados, calculados de manera genérica'
 # def devengados_genericos(df_resultado_2):
@@ -1758,6 +1759,8 @@ def producto_txt(df_resultado_2):
     
     if tipo_producto in prod_dxp:
         return 'DXP'
+    if tipo_producto in prod_dxp_escolar:
+        return 'DXP-ESCOLARIDAD'    
     elif tipo_producto in prod_ld:
         return 'LD'
     elif tipo_producto in prod_mic:
@@ -1783,7 +1786,7 @@ df_resultado_2['Ingresos Diferidos 2'] =  ''
 df_resultado_2['Tipo de Producto 43/'] = df_resultado_2['Tipo de Producto 43/'].astype(int).astype(str)
 
 def import_vencido_60_dxp(df_resultado_2):
-    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39']):
+    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39', '51']):
         if (df_resultado_2['Dias de Mora 33/'] > 90):
             return df_resultado_2['Saldo de colocaciones (créditos directos) 24/']
         elif (df_resultado_2['Dias de Mora 33/'] > 60):
@@ -1798,7 +1801,7 @@ df_resultado_2['''Importe Vencido > 60d
 
 #%% segunda columna azul
 def dias_venc_consumo(df_resultado_2):
-    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39']):
+    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39', '51']):
         return df_resultado_2['Dias de Mora 33/']
     else:
         return 0
@@ -1807,7 +1810,7 @@ df_resultado_2['Dias vencido (Solo DxP)'] = df_resultado_2.apply(dias_venc_consu
 
 #%% tercera columna azul
 def porcion_vencida(df_resultado_2):
-    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39']):
+    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39', '51']):
         if (df_resultado_2['Dias de Mora 33/'] > 90) or \
             (df_resultado_2['Capital en Cobranza Judicial 30/'] > 0):
             return 'TOTAL'
@@ -1821,7 +1824,7 @@ df_resultado_2['Porción Vencido'] = df_resultado_2.apply(porcion_vencida, axis=
 
 #%% 4ta columna azul
 def situacion_cred_consumo(df_resultado_2):
-    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39']):
+    if (df_resultado_2['Tipo de Producto 43/'] in ['30','31','32','33','34','35','36','37','38','39', '51']):
         return df_resultado_2['Tipo Credito TXT']
     else:
         return ''
@@ -3017,12 +3020,13 @@ SELECT
 	IngresosDiferidos42                   AS 'INTERESES DIFERIDOS',
     Reprogramados52                       AS 'SALDO REPROGRAMADO',
 	CASE
-		WHEN TipodeProducto43 IN (34,35,36,37,38,39) THEN 'DXP'
-		WHEN TipodeProducto43 IN (30,31,32,33) THEN 'LD'
+		WHEN TipodeProducto43 IN (34,35,36,37,38,39)          THEN 'DXP'
+		WHEN TipodeProducto43 IN (51)                         THEN 'DXP-ESCOLARIDAD'
+		WHEN TipodeProducto43 IN (30,31,32,33)                THEN 'LD'
 		WHEN TipodeProducto43 IN (21,22,23,24,25,26,28,27,29) THEN 'MICRO'
-		WHEN TipodeProducto43 IN (15,16,17,18,19) THEN 'PEQUEÑA'
-		WHEN TipodeProducto43 IN (95,96,97,98,99) THEN 'MEDIANA'
-		WHEN TipodeProducto43 IN (41,45) THEN 'HIPOTECARIA'
+		WHEN TipodeProducto43 IN (15,16,17,18,19)             THEN 'PEQUEÑA'
+		WHEN TipodeProducto43 IN (95,96,97,98,99)             THEN 'MEDIANA'
+		WHEN TipodeProducto43 IN (41,45)                      THEN 'HIPOTECARIA'
 	END AS 'TIPO DE PRODUCTO TXT'
 FROM 
 	anexos_riesgos3..Anx06

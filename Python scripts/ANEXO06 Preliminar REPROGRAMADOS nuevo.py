@@ -42,16 +42,16 @@ warnings.filterwarnings('ignore')
 
 #%% ESTABLECER FECHA DEL MES
 
-fecha_mes               = 'Enero 2025'  # Mes Año
-fecha_corte             = '2025-01-31' # año-mes-día
-fecha_corte_inicial     = '2025-01-01' # año-mes-día
+fecha_mes               = 'Febrero 2025'  # Mes Año
+fecha_corte             = '2025-02-28' # año-mes-día
+fecha_corte_inicial     = '2025-02-01' # año-mes-día
 
 #%%
 columna_devengados  = 'Interes Devengado Nuevo'
 columna_in_suspendo = 'Interes Suspenso Nuevo'
 
-#%% UIT actual
-uit = 5350 #5150
+#%% UIT del año actual
+uit = 5350 
 
 #%%
 generar_excels = True #booleano True o False
@@ -59,21 +59,21 @@ generar_excels = True #booleano True o False
 #%% ARCHIVOS
 
 # ESTABLECER EL DIRECTORIO ACTUAL ##########################################################
-directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2025\\enero'
+directorio = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2025\\febrero'
 ############################################################################################
 
 # NOMBRE DE INSUMO ACTUAL ##################################################################
-anx06_actual = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados - insumo.xlsx'
+anx06_actual = 'Rpt_DeudoresSBS2022-III.xlsx'
 ############################################################################################
 
 # DATOS DEL MES PASADO
 # ubicación del ANX 06 del mes pasado ######################################################
 #aquí el anexo06 del mes pasado, el preliminar (el que se genera para reprogramados)
-ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 diciembre\\productos' # productos
+ubicacion_anx06_anterior = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2025\\enero\\productos 2 (ajuste devengados)' # productos
 ############################################################################################
 
 # ANX06 PRELIMINAR DEL MES PASADO ##########################################################
-nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Diciembre 2024 - campos ampliados procesado 01.xlsx'
+nombre_anx06 = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados procesado 01.xlsx'
 ############################################################################################
 
 # filas a omitir del anexo actual ##########################################################
@@ -753,6 +753,7 @@ SELECT
 	TipodeProducto43,
 	CASE 
 		WHEN TipodeProducto43 IN (34,35,36,37,38,39)       THEN 'DXP'
+		WHEN TipodeProducto43 IN (51)                      THEN 'DXP-ESCOLARIDAD'
 		WHEN TipodeProducto43 IN (30,31,32,33)             THEN 'LIBRE DISPONIBILIDAD'
 		WHEN TipodeProducto43 IN (15,16,17,18,19)          THEN 'PEQUEÑA EMPRESA'
 		WHEN TipodeProducto43 IN (21,22,23,24,25,26,27,29) THEN 'MICRO EMPRESA'
@@ -898,21 +899,21 @@ filtrado_credito_19 = filtrado_credito_19[['Registro 1/',
                                            'Monto de Desembolso 22/',
                                            'Moneda del crédito 17/'
                                            ]]
-ordenado.drop(['Tipo de Crédito 19/ (original)'], axis=1, inplace=True)
-filtrado_credito_19 = filtrado_credito_19.rename(columns={'Nro Prestamo \nFincore': "Fincore"})
+ordenado.drop(['Tipo de Crédito 19/ (original)'], axis = 1, inplace = True)
+filtrado_credito_19 = filtrado_credito_19.rename(columns = {'Nro Prestamo \nFincore': "Fincore"})
 
 #guardamos este excel para mandárselo a Cesar
-if generar_excels == True:
-    try:
-        ruta = "Corrección Tipo de Crédito 19.xlsx"
-        os.remove(ruta)
-    except FileNotFoundError:
-        pass
+# if generar_excels == True:
+#     try:
+#         ruta = "Corrección Tipo de Crédito 19.xlsx"
+#         os.remove(ruta)
+#     except FileNotFoundError:
+#         pass
 
-    filtrado_credito_19.to_excel(ruta, 
-                                 index=False)
-else:
-    pass
+#     filtrado_credito_19.to_excel(ruta, 
+#                                  index=False)
+# else:
+#     pass
 
 #%% CLASIFICACIÓN SIN ALINEAMIENTO 14/
 #calculamos alineamiento 14/
@@ -2282,9 +2283,9 @@ conn = pyodbc.connect('DRIVER=SQL Server;SERVER=(local);UID=sa;Trusted_Connectio
 #donde dice @fechacorte se debe poner el mes
 
 # FECHAS EN FORMATO SQL =======================================================
-fecha_corte_actual  = '20250131' #mes actual
-fecha_corte_menos_1 = '20241231' #mes anterior
-fecha_corte_menos_2 = '20241130' #mes anterior del anterior
+fecha_corte_actual  = '20250228' #mes actual
+fecha_corte_menos_1 = '20250131' #mes anterior
+fecha_corte_menos_2 = '20241231' #mes anterior del anterior
 # =============================================================================
 
 #%%
@@ -2364,13 +2365,13 @@ actual = reprogramados.copy()
 # =============================================================================
 
 # REPROGRAMADOS DEL MES PASADO ================================================
-repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Diciembre 2024 no incluye castigados.xlsx'
-ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2024\\2024 diciembre\\productos'
+repro_anterior = 'Rpt_DeudoresSBS Créditos Reprogramados Enero 2025 no incluye castigados.xlsx'
+ubi_anterior   = 'C:\\Users\\sanmiguel38\\Desktop\\REPORTE DE REPROGRAMADOS (primer paso del anexo06)\\2025\\enero\\productos 2 (ajuste devengados)'
 # =============================================================================
 
 # NOMBRES PARA LAS COLUMNA DEL REPORTE ========================================
-mes_actual_txt   = 'Ene-25'
-mes_anterior_txt = 'Dic-24'
+mes_actual_txt   = 'Feb-25'
+mes_anterior_txt = 'Ene-25'
 # =============================================================================
 #%% LECTURA
 

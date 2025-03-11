@@ -14,12 +14,12 @@ import pandas as pd
 import pyodbc
 import os
 
-MES          = 'Marzo 2025'
-fecha_inicio = '2025-03-01'
-fecha_final  = '2025-03-31'
+MES          = 'Abril 2025'
+fecha_inicio = '2025-04-01'
+fecha_final  = '2025-04-30'
 
 #%% UBICACIÓN DE LOS ARCHIVOS
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\2025 02\\21 02')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\03\\10 03')
 
 #%%
 'NOMBRE DEL ARCHIVO DE HOY' ##########################################
@@ -29,7 +29,7 @@ ARCHIVO_HOY = 'insumo cobranzas en caso de necesitar el reporte.xlsx'
 #%%
 # reporte de pagos sacado de la plataforma de Kashio ##########################
 # Reportes / Pagos / Fecha : TODOS / Exportar #################################
-pagos_rep_kashio = 'iKUo6aArs4s2aopx4uzRiM.xlsx'
+pagos_rep_kashio = '4iYFpFWXBeho6WXBmLaNnk.xlsx'
 ###############################################################################
 
 #%%
@@ -173,6 +173,7 @@ kashio_final = kashio_final.rename(columns={'codsoc'    : 'CODSOC',
                                             'provincia' : 'PROVINCIA',
                                             'distrito'  : 'DISTRITO',
                                             'TipoCredito'   : 'PRODUCTO'})
+
 
 #%% arreglito para libre disponibilidad
 def libre_disponibildiad(kashio_final):

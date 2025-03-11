@@ -18,20 +18,21 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('R:/REPORTES DE GESTIÓN/Insumo para Analisis/prppgs, cortes trimestrales')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-02\\prppgs (insumo)')
 
-fecha_corte = '20241231' # FÓRMATO SQL
+prppg       = 'prppg 09-2023.csv'
+fecha_corte = '20230930' # FÓRMATO SQL
 
-bd01 = 'C:/Users/sanmiguel38/Desktop/SBS TXT/BD-01/20523941047_BD01_202412.txt'
+bd01 = 'C:/Users/sanmiguel38/Desktop/SBS TXT/BD-01/2023 09 30/20523941047_BD01_202309.txt'
 
-CREAR_TXT = False
+CREAR_TXT = True
 
 #%% hora inicio
 print('hora inicio:')
 print(datetime.now().strftime("%H:%M:%S"))
 
 #%%
-cuotas = pd.read_csv('prppg 12-2024.csv',
+cuotas = pd.read_csv(prppg,
                      dtype = str)
 
 cuotas.dropna(subset = [  'MCUO' ,
@@ -42,6 +43,9 @@ cuotas.dropna(subset = [  'MCUO' ,
             how     = 'all')
 
 cuotas = cuotas[cuotas['CodEstado'] != '346'] # eliminando cuotas de capitalización de interés (porque ya lo estoy generando yo)
+
+cuotas.rename(columns = { "CodPrestamoCuota" : "CodprestamoCuota"}, inplace = True)
+cuotas.rename(columns = { "PagadoPP2"        : "Pagado"}, inplace = True)
 
 #%%
 base01 = pd.read_csv(bd01,
@@ -202,6 +206,34 @@ ORDER BY ccab.fecha DESC;
 
     df_cobranza = df_cobranza[df_cobranza['fecha_cob_datetime'] <= pd.Timestamp(fecha_corte)]
 
+#%% FECHA_CREACIÓN
+
+if 'df_cuotas_fecha_creacion_txt' not in globals():
+    datos = pd.read_excel('C:\\Users\\sanmiguel38\\Desktop\\Joseph\\USUARIO SQL FINCORE.xlsx')
+    
+    server      = datos['DATOS'][0]
+    username    = datos['DATOS'][2]
+    password    = datos['DATOS'][3]
+    
+    conn_str = f'DRIVER=SQL Server;SERVER={server};UID={username};PWD={password};'
+    conn = pyodbc.connect(conn_str)
+    
+    query = '''
+    SELECT  top 1000
+    
+    	CodPrestamoCuota                    AS 'CodprestamoCuota', 
+        FechaCreacion,
+        FORMAT(FechaCreacion, 'dd/MM/yyyy') AS 'FechaCreacionTXT'
+    
+    FROM PrestamoCuota
+
+    '''
+    
+    df_fdc_txt = pd.read_sql_query(query, conn,dtype = str,)
+    
+    conn.close()
+    del query
+
 #%% CIS y MON
 
 filas_original1 = cuotas[['CCR', 'NCUO']]
@@ -238,7 +270,12 @@ f_cob = df_cobranza[['PagareFincore', 'numerocuota', 'fecha_cob', 'CodprestamoCu
 f_cob = f_cob.sort_values(by = ['fecha_cob'], ascending = [False])
 f_cob = f_cob.drop_duplicates(subset = ['CodprestamoCuota'], keep = 'first')
 
-cuotas = cuotas.merge(f_cob[['CodprestamoCuota', 'fecha_cob', 'tipoPago']],
+cuotas = cuotas.merge(f_cob[[    'CodprestamoCuota', 'fecha_cob', 'tipoPago']],
+                      left_on  = 'CodprestamoCuota',
+                      right_on = 'CodprestamoCuota',
+                      how = 'left')
+
+cuotas = cuotas.merge(df_fdc_txt[['CodprestamoCuota', 'FechaCreacionTXT']],
                       on  = 'CodprestamoCuota',
                       how = 'left')
 
@@ -257,21 +294,43 @@ def FCAN2(cuotas):
         return cuotas['FCAN']
 cuotas['FCAN'] = cuotas.apply(FCAN2, axis = 1)
 
+def FCAN3(cuotas):
+    if (cuotas['Pagado'] == '9') and (pd.isna(cuotas['FCAN'])):
+        return cuotas["FVEP"]
+    else:
+        return cuotas['FCAN']
+cuotas['FCAN'] = cuotas.apply(FCAN3, axis = 1)
+
+contiene_guion = cuotas['FCAN'].astype(str).apply(lambda x: "-" in x)
+cont = cuotas[contiene_guion]
+if cont.shape[0] > 0:
+    print('''alerta, FCAN contiene guiones (debe ser solo separado por "/")''')
+canc_nul= cuotas[pd.isna(cuotas["FCAN"])]
+if canc_nul.shape[0] > 0:
+    print('alerta, hay fechas de cancelación nulas, revisar')
+del contiene_guion
+
 #%% DAKC
 f_corte = fecha_corte[6:8] + '/' + fecha_corte[4:6] + '/' + fecha_corte[0:4]
 
 def safe_to_datetime(series):
-    return pd.to_datetime(series.replace("00/00/0000", f_corte), format="%d/%m/%Y", errors="coerce")
+    return pd.to_datetime(series.replace("00/00/0000", f_corte), format = "%d/%m/%Y", errors = "coerce")
 
-# Reemplazando nulos en FCAN por FVEP (son cuotas con condonaciones)
-cuotas["FCAN"] = cuotas["FCAN"].fillna(cuotas["FVEP"])
+cuotas["FCAN2"] = safe_to_datetime(cuotas["FCAN"])
+cuotas["FVEP2"] = safe_to_datetime(cuotas["FVEP"])
 
-# Aplicar la conversión a datetime
-cuotas["FCAN dt"] = safe_to_datetime(cuotas["FCAN"])
-cuotas["FVEP dt"] = safe_to_datetime(cuotas["FVEP"])
+fechas_vencimiento_nulas = cuotas[pd.isna(cuotas["FVEP2"])]
+if fechas_vencimiento_nulas.shape[0] > 0:
+    print('alerta, hay fechas de vencimiento nulas, revisar')
+fechas_vencimiento_nulas = cuotas[pd.isna(cuotas["FCAN2"])]
+if fechas_vencimiento_nulas.shape[0] > 0:
+    print('alerta, hay fechas de cancelación nulas, revisar')
 
 # Calcular la diferencia en días
-cuotas["DIFERENCIA_DIAS"] = (cuotas["FCAN dt"] - cuotas["FVEP dt"]).dt.days
+cuotas["DIFERENCIA_DIAS"] = (cuotas["FCAN2"] - cuotas["FVEP2"]).dt.days
+
+del cuotas["FCAN2"]
+cuotas.rename(columns = {"FVEP2":'FVEP dt'}, inplace = True)
 
 # Reemplazar valores negativos por 0
 cuotas["DIFERENCIA_DIAS"] = cuotas["DIFERENCIA_DIAS"].clip(lower = 0)
@@ -454,14 +513,14 @@ para_corregir = para_corregir.merge(alerta_dif_cuadre[['CCR', "Dif cuadre cap"]]
 para_corregir['MCUO'] = para_corregir['MCUO'] +  para_corregir['Dif cuadre cap']
 para_corregir['TCUO'] = para_corregir['TCUO'] +  para_corregir['Dif cuadre cap']
 
-
+print('negativos corregidos')
 ###############################################################################
 cuotas_cero = cuotas_cero.merge(suma_cap[['CCR', 'Dif cuadre cap']],
                                 on  = 'CCR',
                                 how = 'left')
 
 if cuotas_cero[pd.isna(cuotas_cero['Dif cuadre cap'])].shape[0] > 0:
-    print('raraso, aquí siempre debe haber match completo')
+    print('alerta, aquí siempre debe haber match completo')
     
 cuotas_cero['SIC'] = cuotas_cero['Dif cuadre cap']
 del cuotas_cero['Dif cuadre cap']
@@ -522,7 +581,11 @@ if CREAR_TXT == True:
 else:
     print('no se ha creado BD02A')
 
-#%% BD 02 - B
+#%%
+# =============================================================================
+#  BD 02 - B
+# =============================================================================
+ 
 cuotas_c = cuotas[ ~cuotas['CCR'].isin(base01['CCR']) ]
 cuotas_c = cuotas_c.rename(columns = lambda col: col + "_C")
 
@@ -549,6 +612,25 @@ def forma_can(cuotas_c):
     else:
         return cuotas_c['FOCAN_C']
 cuotas_c['FOCAN_C'] = cuotas_c.apply(fecha_canc, axis = 1)
+
+#%% EXCEL DE LA BD02-A
+if CREAR_TXT == True:
+    nombre = '20523941047_BD02B_' + fecha_corte[0:6]
+    
+    cuotas_c[['CIS_C',     'CCR_C',    'NCUO_C',   'MON_C',   'MCUO_C', 
+              'SIC_C',     'SCOM_C',   'SEGS_C',   'SIM_C',   'TCUO_C', 
+              'FVEP_C',    'FCAN_C',   'DAKC_C',   'SCA_C',   'SCONK_C', 
+              'SCONINT_C', 'FOCAN_C']].to_csv(nombre + '.txt', 
+                                       sep      = '\t', 
+                                       index    = False, 
+                                       encoding = 'utf-8')
+    print('BD02B creado')
+    print('')
+
+    print(datetime.now().strftime("%H:%M:%S"))
+    print(f'TXT correspondientes a {fecha_corte}')
+else:
+    print('no se ha creado BD02B')
 
 #%%
 print('fin')

@@ -57,9 +57,9 @@ def parse_dates(date_str):
 ############################################################
 
 df1 = pd.read_excel(INSUMO,
-                 dtype = {'CodigoSocio'    : object, 
-                          'NroDocIdentidad': object,
-                          'NumeroPrestamo' : object, 
+                 dtype = {'CodigoSocio'    : str, 
+                          'NroDocIdentidad': str,
+                          'NumeroPrestamo' : float, 
                           'NroPrestamoFC'  : object,
                           'TlfSocio'       : object, 
                           'CelularSocio'   : object,

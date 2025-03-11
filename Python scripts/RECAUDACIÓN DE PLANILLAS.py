@@ -25,15 +25,15 @@ CARGA_SQL_SERVER = True #True o False
 # =============================================================================
 
 # FECHA CORTE PARA SQL ========================================================
-fecha_corte = '20241130'
+fecha_corte = '20250131'
 # =============================================================================
 
 # DIRECTORIO DE TRABAJO =======================================================
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2024\\11 2024\\corregido')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\RECAUDACIÓN\\2025\\01 2025')
 # =============================================================================
 
 # RECAUDACIÓN DEL MES =========================================================
-nombre = '11 - NOVIEMBRE 2024 (CIERRE).xlsx'
+nombre = '01 - ENERO 2025 (CIERRE).xlsx'
 # =============================================================================
 
 # # UBICACIÓN DEL ANEXO 06=====================================================
@@ -130,7 +130,7 @@ df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCION REGIONAL DE TRANSPOR
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'DIRECCIÓN REGIONAL DE TRANSPORTES PIURA - NOMBRADOS',      'PLANILLA'] = 'DIRECCION REGIONAL DE TRANSPORTES Y COMU NICACIONES - PIURA - NOMBRADOS'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'UNIVERSIDAD NACIONAL DE TUMBES - ACTIVOS',                 'PLANILLA'] = 'UNIVERSIDAD NACIONAL DE TUMBES'
 
-df_concatenado.loc[df_concatenado['PLANILLA'] == 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOMBRADOS',     'PLANILLA'] = 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOBRADOS'
+# df_concatenado.loc[df_concatenado['PLANILLA'] == 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOMBRADOS',     'PLANILLA'] = 'SERVICIOS BASICOS DE SALUD-CAÑETE-YAUYOS - NOBRADOS'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'PROGRAMA NACIONAL DE CENTROS JUVENILES - CONTRATADOS ',    'PLANILLA'] = 'PROGRAMA NACIONAL DE CENTROS JUVENILES - CONTRATADOS'
 df_concatenado.loc[df_concatenado['PLANILLA'] == 'AUTORIDAD PARA LA RECONSTRUCCION CON CAMBIOS - CONTRATADOS','PLANILLA'] = 'AUTORIDAD PARA LA RECONSTRUCCIÓN CON CAMBIOS - CONTRATADOS'
 
@@ -242,7 +242,7 @@ planillas_masomenos_ese_nombre = base_sin_duplicados[base_sin_duplicados['PLANIL
 'revisar las planillas que masomenos contienen ese nombre'
 
 #%% BUSCADOR DE NOMBRE DE LAS PLANILLAS
-texto = 'tli alma'
+texto = 'NOBRAD'
 aver = no_match[no_match['PLANILLA COBRANZAS'].str.contains(texto.upper(), 
                                                             na = False)]
 

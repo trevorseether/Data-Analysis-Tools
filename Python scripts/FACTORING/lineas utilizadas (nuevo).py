@@ -17,16 +17,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\2025\\marzo\\04 03')
-nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFechalineas05032025.xlsx'
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\FACTORING\\lineas consumidas\\2025\\marzo\\07 03')
+nombre           = 'Rpt_LineaAsignadaXLineaConsumidaXFechalineas10032025.xlsx'
 filas_skip       = 8
-tipo_cambio      = 3.69
-fecha_corte      = '2025-03-04'
+tipo_cambio      = 3.656
+fecha_corte      = '2025-03-07'
 CARGA_SQL_SERVER = True
-tabla_nombre     = 'FACTORING.DBO.[LINEAS_20250304_v2]' # le dejé el v2 para diferenciar del modelo anterior 
+tabla_nombre     = 'FACTORING.DBO.[LINEAS_20250307_v2]' # le dejé el v2 para diferenciar del modelo anterior 
 
 #%%
-lineas = pd.read_excel(io = nombre, 
+lineas = pd.read_excel(io       = nombre, 
                        skiprows = filas_skip)
 
 # Eliminación de columnas Unnamed
