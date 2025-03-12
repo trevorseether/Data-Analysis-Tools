@@ -2493,26 +2493,28 @@ print("La ubicación actual es: " + ubicacion_actual)
 #%% importación de módulos
 import os
 import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INCIALES
 
 # mes actual #####################################################
-fecha_corte = 'Enero 2025'  # se pone el corte actual TXT
+fecha_corte = 'Febrero 2025'  # se pone el corte actual TXT
 ##################################################################
 
 # mes anterior al que estamos trabajando actualmente
 # formato de fecha para extraer datos desde SQL
 ##################################################################
-fechacorte_mes_pasado = "20241231" # se pone la del corte anterior para obtener información de ellos
+fechacorte_mes_pasado = "20250131" # se pone la del corte anterior para obtener información de ellos
 ##################################################################
 
 # Anexo 06 enviado por contabilidad (incluye ingresos diferidos)
 ##################################################################
-anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Enero 2025 - campos ampliados 03.xlsx'
+anx06_contabilidad = 'Rpt_DeudoresSBS Anexo06 - Febrero 2025 - campos ampliados 02.xlsx'
 ##################################################################
 
 # DIRECTORIO DE TRABAJO ##########################################
-directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\enero\\parte 2'
+directorio_final = 'C:\\Users\\sanmiguel38\\Desktop\\TRANSICION  ANEXO 6\\2025\\febrero\\parte 2'
 ##################################################################
 
 lista_100_provisionales = ['00087481', '00100112', '00078588', '00096775',
@@ -2739,7 +2741,7 @@ SELECT
     SUM(ProvisionesConstituidas37) as 'ProvisionesConstituidas37' 
 FROM 
     anexos_riesgos3..Anx06
-where FechaCorte1 = @fechacorte
+WHERE FechaCorte1 = @fechacorte
 
 '''
 
@@ -2748,7 +2750,7 @@ provisiones_mes_pasado = pd.read_sql_query(query, conn)
 
 mes_pasado = provisiones_mes_pasado.loc[0, 'ProvisionesConstituidas37']
 
-df_diferidos['Provisiones Requeridas 36/'].sum()
+# |df_diferidos['Provisiones Requeridas 36/'].sum()
 
 #%%
 # =============================================================================
@@ -2756,7 +2758,7 @@ df_diferidos['Provisiones Requeridas 36/'].sum()
 # =============================================================================
 
 # ===========================
-tasa_provision = 0.655 #0.6385 #0.6355 #0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
+tasa_provision = 0.688 #0.655 #0.6385 #0.6355 #0.5828 #0.6094 #0.6054 #0.608 #0.5957 #0.5679 #.575(mayo o) #0.553 #0.6048 #0.5951 #0.60 #0.575 #0.607 #0.5615 #0.60155
 # =========================== aumentar 0.0040 al total, todos los meses
 
 # cálculo de las provisiones constituidas 37/
@@ -2817,6 +2819,10 @@ suma_constituidas = df_diferidos['Provisiones Constituidas 37/'].sum()
 
 div = suma_constituidas/suma_requeridas
 print('EL PORCENTAJE DE constituidas / requeridas es: ',"{:.2f}%".format(div*100))
+
+# def cartera_atrasada(df):
+#     return df['Capital Vencido 29/'] + df['Capital en Cobranza Judicial 30/']
+# df_diferidos['Cartera Atrasada'] = df_diferidos.apply(cartera_atrasada, axis=1)   
 
 suma_atrasada = df_diferidos['Cartera Atrasada'].sum()
 div2 = suma_constituidas/suma_atrasada
@@ -2901,24 +2907,24 @@ SELECT
 
 FROM prestamo AS p
 
-INNER JOIN socio AS s             ON s.codsocio = p.codsocio
-LEFT JOIN sociocontacto AS sc     ON sc.codsocio = s.codsocio
-LEFT JOIN planilla AS pla         ON p.codplanilla = pla.codplanilla
-INNER JOIN grupocab AS pro        ON pro.codgrupocab = p.codgrupocab
-INNER JOIN distrito AS d          ON d.coddistrito = sc.coddistrito
-INNER JOIN provincia AS pv        ON pv.codprovincia = d.codprovincia
-INNER JOIN departamento AS dp     ON dp.coddepartamento = pv.coddepartamento
-INNER JOIN tablaMaestraDet AS tm  ON tm.codtabladet = p.CodEstado
-LEFT JOIN grupocab AS gpo         ON gpo.codgrupocab = pla.codgrupocab
-LEFT JOIN tablaMaestraDet AS tm2  ON tm2.codtabladet = s.codestadocivil
-LEFT JOIN tablaMaestraDet AS tm3  ON tm3.codtabladet = p.CodSituacion
---INNER JOIN tablaMaestraDet as tm3 on tm3.codtabladet = s.codcategoria
-INNER JOIN pais                   ON pais.codpais = s.codpais
-LEFT JOIN FINALIDAD AS FI         ON FI.CODFINALIDAD = P.CODFINALIDAD
-LEFT JOIN TipoCredito AS TC       ON tc.CodTipoCredito = p.CodTipoCredito
-INNER JOIN usuario AS u           ON p.CodUsuario = u.CodUsuario
-INNER JOIN TablaMaestraDet AS tm4 ON s.codestado = tm4.CodTablaDet
---LEFT JOIN PrestamoCuota as pcu on p.CodPrestamo = pcu.CodPrestamo
+INNER JOIN socio AS s                ON s.codsocio = p.codsocio
+LEFT JOIN sociocontacto AS sc        ON sc.codsocio = s.codsocio
+LEFT JOIN planilla AS pla            ON p.codplanilla = pla.codplanilla
+INNER JOIN grupocab AS pro           ON pro.codgrupocab = p.codgrupocab
+INNER JOIN distrito AS d             ON d.coddistrito = sc.coddistrito
+INNER JOIN provincia AS pv           ON pv.codprovincia = d.codprovincia
+INNER JOIN departamento AS dp        ON dp.coddepartamento = pv.coddepartamento
+INNER JOIN tablaMaestraDet AS tm     ON tm.codtabladet = p.CodEstado
+LEFT JOIN grupocab AS gpo            ON gpo.codgrupocab = pla.codgrupocab
+LEFT JOIN tablaMaestraDet AS tm2     ON tm2.codtabladet = s.codestadocivil
+LEFT JOIN tablaMaestraDet AS tm3     ON tm3.codtabladet = p.CodSituacion
+--INNER JOIN tablaMaestraDet as tm3  ON tm3.codtabladet = s.codcategoria
+INNER JOIN pais                      ON pais.codpais = s.codpais
+LEFT JOIN FINALIDAD AS FI            ON FI.CODFINALIDAD = P.CODFINALIDAD
+LEFT JOIN TipoCredito AS TC          ON tc.CodTipoCredito = p.CodTipoCredito
+INNER JOIN usuario AS u              ON p.CodUsuario = u.CodUsuario
+INNER JOIN TablaMaestraDet AS tm4    ON s.codestado = tm4.CodTablaDet
+--LEFT JOIN PrestamoCuota as pcu     ON p.CodPrestamo = pcu.CodPrestamo
 
 LEFT JOIN SolicitudCredito AS SOLICITUD ON P.CodSolicitudCredito = SOLICITUD.CodSolicitudCredito
 LEFT JOIN Usuario AS USUARIO            ON SOLICITUD.CodUsuarioSegAprob = USUARIO.CodUsuario
@@ -2987,11 +2993,11 @@ df_diferidos = df_diferidos_ampliado.copy()
 
 # Parámetros iniciales ==========================
 # FECHA PARA EL NOMBRE DEL ARCHIVO ##############
-fecha = 'Enero 2024'
+fecha = 'Febrero 2025'
 #################################################
 
 # HAY QUE SELECCIONAR EL MES PASADO #############################################################
-fecha_mes_pasado = '20241231' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
+fecha_mes_pasado = '20250131' #esta fecha hay que ponerla en el formato requerido por SQL SERVER
 #################################################################################################
 
 #%%
@@ -3141,6 +3147,7 @@ import pandas as pd
 columna_inicio = 1
 
 # Crea un objeto ExcelWriter para guardar los dataframes en un solo archivo
+# pip install xlsxwriter
 writer = pd.ExcelWriter(f'BRECHAS {fecha}.xlsx', engine = 'xlsxwriter')
 
 # Define el espacio entre las tablas
@@ -3184,7 +3191,7 @@ writer.sheets['Brechas'].write(pivot_mes_actual.shape[0] + pivot_mes_pasado.shap
                                'DIFERENCIAS PORCENTUALES DE UN MES A OTRO')                                                                           #valor en esa fila y columna
 
 # Guarda y cierra el archivo Excel
-writer.save()
+# writer.save()
 writer.close()
 
 #%% UBICACIÓN DE LOS ARCHIVOS

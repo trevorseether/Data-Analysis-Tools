@@ -17,18 +17,18 @@ import os
 from openpyxl import load_workbook
 
 #%% FECHA DE CORTE
-FECHA = 'ENERO-25' #servirá para el nombre del archivo
+FECHA = 'FEBRERO-25' #servirá para el nombre del archivo
 
 #%% IMPORTACIÓN DE ARCHIVOS
 
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2025\\enero')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\CESAR - REPORTE SALDOS TOTALES\\2025\\febrero')
 
-INSUMO           =    'CarteraTotalSM16022025.xlsx'
-MES_PASADO       =    'SALDO_COOPACSANMIGUEL - DICIEMBRE-24_INC_CVV_DETALLADO.xlsx'
+INSUMO           =    'CarteraTotalSM10032025.xlsx'
+MES_PASADO       =    'SALDO_COOPACSANMIGUEL - ENERO-25_INC_CVV_DETALLADO.xlsx'
 UTILIDAD_CASTIGO =    'Utilidad año castigo 2018 2019 2020 2021 2022 y 2023 - JGM para añadir a Saldos e Ingresos.xlsx'
 
-COBRANZA         =    'Ingresos por Cobranza Enero-25 - General.xlsx'
-cobranza_hoja    =    'IngCob Ene-25'
+COBRANZA         =    'Ingresos por Cobranza Febrero-25 - General.xlsx'
+cobranza_hoja    =    'IngCob Feb-25'
 
 #%%  IMPORTANDO LOS DATOS DE EXCEL  ##
 
@@ -168,7 +168,13 @@ df_resultado['CodFinalidad'] = np.nan
 
 def finalidad_producto(df_resultado):
     if pd.isnull(df_resultado['CodFinalidad']):
-        if ('INDEPENDIENTES - MULTI OFICIOS' in df_resultado['Finalidad TXT']):
+        if ('CAMPAÑA ESCOLAR' in df_resultado['Finalidad TXT']):
+            return '51'
+        elif ('DEPENDIENTES - RENTA 5TA' in df_resultado['Finalidad TXT']):
+            return '31'
+        elif ('INDEPENDIENTES - RENTA 4TA' in df_resultado['Finalidad TXT']):
+            return '56'
+        elif ('INDEPENDIENTES - MULTI OFICIOS' in df_resultado['Finalidad TXT']):
             return '32'
         elif (('POND' in df_resultado['OrigenPrestamo']) and \
               ('MICROEMPRESAS' in df_resultado['TipoCreditoTXT'] or ('PEQUEÑA EMPRESAS' in df_resultado['TipoCreditoTXT']))):
@@ -524,9 +530,9 @@ def asignacion_auxiliar(df_finalizado):
         return 'PEQUEÑA EMPRESA'
     elif df_finalizado['CodFinalidad'] in ['16', '17', '18', '19']:
         return 'MEDIANA EMPRESA'   
-    elif df_finalizado['CodFinalidad'] in ['30', '31', '32', '33']:
+    elif df_finalizado['CodFinalidad'] in ['30', '31', '32', '33', '56']:
         return 'LIBRE DISPONIBILIDAD.'    
-    elif df_finalizado['CodFinalidad'] in ['34', '35', '36', '37', '38', '39']:
+    elif df_finalizado['CodFinalidad'] in ['34', '35', '36', '37', '38', '39', '51']:
         return 'CONSUMO ORD.'
     elif df_finalizado['CodFinalidad'] in ['41', '45']:
         return 'GARANTIA HIPOT (INCL HIPOCONSTR)'

@@ -22,12 +22,12 @@ import datetime
 from colorama import Back # , Style, init, Fore
 
 #%% UBICACIÓN DE LOS ARCHIVOS #################################################
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\03\\10 03')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\KASHIO\\1 2025\\03\\11 03')
 ###############################################################################
 
 #%% NOMBRE ARCHIVO PRINCIPAL
 'NOMBRE DEL ARCHIVO DE HOY' ###################################################
-ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20250310.xlsx'
+ARCHIVO_HOY = 'DATA_CLIENTES_COOP.SANMIGUEL_20250311.xlsx'
 ###############################################################################
 
 #%% CREAR ARCHIVO DE VERIFICACIÓN DE CORREOS ##################################
@@ -35,7 +35,7 @@ crear_archivo         = False #True o False
 ###############################################################################
 
 'REPORTE DE MENSAJERÍA PREVENTIVA' ############################################
-mensajeria_preventiva = True #True o False
+mensajeria_preventiva = False #True o False
 ###############################################################################
 
 'filtrar solo mype' ###########################################################
@@ -362,7 +362,7 @@ kashio_para_csv['EXPIRACION'] = '31/12/2050'  #fecha arbitrariamente lejana (act
 
 #%% VERIFICADOR DE FECHAS DE VENCIMIENTO
 # Por lo menos debemos tener hasta fechas del fin de mes actual
-kashio_para_csv['VENCIMIENTO parseado'] = pd.to_datetime(kashio_para_csv['VENCIMIENTO'])
+kashio_para_csv['VENCIMIENTO parseado'] = pd.to_datetime(kashio_para_csv['VENCIMIENTO'], dayfirst=True)
 
 # Obtén la fecha actual
 # obtenemos la fecha del nombre del archivo que estamos trabajando

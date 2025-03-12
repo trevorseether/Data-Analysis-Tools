@@ -12,8 +12,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-tabla_nombre = 'Northwind..[EJEMPLO]'
-CARGA_SQL_SERVER = True
+tabla_nombre = 'Northwind..[EJEMPLO2222]'
+CARGA_SQL_SERVER = False
 
 #%% DATAFRAME DE EJEMPLO
 data = {
@@ -38,8 +38,9 @@ if CARGA_SQL_SERVER == True:
     tabla = tabla_nombre
     
     df = df.copy()
+    
     # AQUÍ SE DEBE APLICAR UN PROCESO DE LIMPIEZA DE LA TABLA PORQUE NO ACEPTA CELDAS CON VALORES NULOS
-    # EJEMPLO df = df.fillna(0)
+    df = df.fillna(0)
     
     # Limpiar/eliminar la tabla antes de insertar nuevos datos
     cursor.execute(f"IF OBJECT_ID('{tabla}') IS NOT NULL DROP TABLE {tabla}")    

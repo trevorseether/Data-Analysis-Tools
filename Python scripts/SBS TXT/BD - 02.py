@@ -20,10 +20,10 @@ warnings.filterwarnings('ignore')
 #%%
 os.chdir('C:\\Users\\sanmiguel38\\Desktop\\SBS TXT\\BD-02\\prppgs (insumo)')
 
-prppg       = 'prppg 09-2023.csv'
-fecha_corte = '20230930' # FÓRMATO SQL
+prppg       = 'prppg 03-2023.csv'
+fecha_corte = '20230331' # FÓRMATO SQL
 
-bd01 = 'C:/Users/sanmiguel38/Desktop/SBS TXT/BD-01/2023 09 30/20523941047_BD01_202309.txt'
+bd01 = 'C:/Users/sanmiguel38/Desktop/SBS TXT/BD-01/2023 03 31/20523941047_BD01_202303.txt'
 
 CREAR_TXT = True
 
