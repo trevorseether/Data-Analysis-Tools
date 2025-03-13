@@ -425,7 +425,7 @@ grouped.columns = ['DIFERENTES PRODUCTOS']
 # Filtrar los grupos con más de un producto diferente
 result = grouped[grouped['DIFERENTES PRODUCTOS'] > 1]
 print(result) #si sale vacío significa que está todo bien
-
+print('el resultado correcto debe ser un dataframe vacío')
 #%% (desactivado)EN CASO DE QUE LOS CRÉDITOS EN DÓLARES NO ESTÉN SOLARIZADOS
 #456'MULTIPLICACIÓN DE LOS SALDOS EN DÓLARES POR EL TIPO DE CAMBIO DEL MES'
 
@@ -785,7 +785,7 @@ avales_datos_separados = avales_datos_separados.rename(columns={'Dpto'          
 #UNIMOS LOS DATAFRAMES
 
 df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(int).astype(str)
-avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(int).astype(str)
+avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(str).str.split('.').str[0]
 
 df_avales_mergeado = df_avales.merge(avales_datos_separados,
                                      left_on  = ['dni para merge'], 
@@ -1039,6 +1039,33 @@ cred_duplicados = cred_duplicados[cred_duplicados.duplicated(subset = 'Cod. Pres
 if cred_duplicados.shape[0] > 0:
     print('estos son los créditos duplicados')
     print(cred_duplicados['Cod. Prestamo'])
+#%% HACEMOS UNA COPIA AQUÍ PARA EL REPORTE DE EQUIFAX
+df_equifax = df_sentinel.copy()
+
+#%%
+castigadous = df_sentinel[['Cod. Prestamo', 'MN Creditos Cartigados (*)']]
+castigadous = castigadous[ castigadous['MN Creditos Cartigados (*)'] > 0 ]
+
+def ajuste_deuda_avalada1(df_sentinel):
+    if (df_sentinel['Cod. Prestamo'] in list(castigadous['Cod. Prestamo'])) and (df_sentinel['Tipo Persona (*)'] == '3'):
+        return 1
+    else:
+        return df_sentinel['Estado']
+df_sentinel['Estado'] = df_sentinel.apply(ajuste_deuda_avalada1, axis = 1)
+
+def ajuste_deuda_avalada2(df_sentinel):
+    if (df_sentinel['Tipo Persona (*)'] == '3') and (df_sentinel['Estado'] != 1):
+        return df_sentinel['MN Deuda Avalada (*)']
+    else: 
+        return df_sentinel['MN Deuda Indirecta (avales,cartas fianza,credito) (*)']
+df_sentinel['MN Deuda Indirecta (avales,cartas fianza,credito) (*)'] = df_sentinel.apply(ajuste_deuda_avalada2, axis = 1)
+    
+def ajuste_deuda_avalada3(df_sentinel):
+    if (df_sentinel['Tipo Persona (*)'] == '3') and (df_sentinel['Estado'] != 1):
+        return 0
+    else:    
+        return df_sentinel['MN Deuda Avalada (*)']
+df_sentinel['MN Deuda Avalada (*)'] = df_sentinel.apply(ajuste_deuda_avalada3, axis = 1)
     
 #%% especificaciones finales
 
@@ -1092,7 +1119,6 @@ print("La ubicación actual es: " + ubicacion_actual)
 #                                     'Tipo Persona (*)' : str}) # esta línea es importante o no funciona
 
 #%%
-df_equifax = df_sentinel.copy()
 
 df_equifax['Estado'] = ''
 

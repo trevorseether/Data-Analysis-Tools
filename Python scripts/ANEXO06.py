@@ -2456,6 +2456,8 @@ def parse_dates(date_str):
 
 anexo06_casi['Fecha Castigo TXT'] = anexo06_casi['Fecha Castigo TXT'].apply(parse_dates)
 
+#%%
+
 
 #%% CREACIÓN DEL EXCEL
 
