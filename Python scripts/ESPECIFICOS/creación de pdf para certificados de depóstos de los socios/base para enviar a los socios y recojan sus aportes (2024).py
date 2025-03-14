@@ -235,10 +235,9 @@ base['CELULAR'] = base['CELULAR'].str.replace(r'\+51', '', regex = True)
 
 #%% CREANDO ÍNDICE
 # Definir la cantidad máxima de filas por archivo
-base = pd.read_excel('C:/Users/sanmiguel38/Desktop/PDFS CERTIFICADOS DE APORTES/INACTIVOS/correos correctos/correos correctos.xlsx',
-                     dtype = str,
-                     )
-
+# base = pd.read_excel('C:/Users/sanmiguel38/Desktop/PDFS CERTIFICADOS DE APORTES/INACTIVOS/correos correctos/correos correctos.xlsx',
+#                      dtype = str,
+#                      )
 
 max_rows_per_file = 5000
 

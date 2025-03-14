@@ -10,14 +10,14 @@ from PyPDF2 import PdfWriter, PdfReader
 import os
 
 # Cambiar al directorio donde tienes los archivos
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PDFS CERTIFICADOS DE APORTES\\ACTIVOS\\correos correctos')
+os.chdir('R:\\REPORTES DE GESTIÓN\\Insumo para Analisis\\CHERNANDEZ\\PDFS PARA ENVIO DE APORTES')
 
 # Leer el archivo Excel
-excel_file = 'output_part_1.xlsx'
+excel_file = 'output_part_4.xlsx'
 df = pd.read_excel(excel_file, dtype={'Nro Doc Identidad Unificado': str}) # ESTE ES IMPORTANTE PORQUE SERÁ LA CONTRASEÑA DEL PDF
 
 # Leer el PDF de origen
-input_pdf = 'p1.pdf'
+input_pdf = 'base4.pdf'
 pdf_reader = PdfReader(input_pdf)
 
 # Número de páginas por PDF (puedes modificar esta variable)
@@ -52,7 +52,7 @@ for index, row in df.iterrows():
     contraseña = row['Nro Doc Identidad Unificado']   # ESTA COLUMNA ES LA CONTRASEÑA
     
     # Crear un nuevo PDF y agregar las páginas correspondientes
-    output_pdf_path = f"{nombre_pdf}"
+    output_pdf_path = f"{nombre_pdf}" + '.pdf'
     pdf_writer = PdfWriter()
     
     # Agregar las páginas al PDF según el valor de nro_hojas_por_pdf
