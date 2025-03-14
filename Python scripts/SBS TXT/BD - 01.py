@@ -767,6 +767,195 @@ for I in ['CCVI', 'CCRF', 'CCVE', 'CCJU']:
     base[I] = base[I].astype(str).str.replace(r'\.0$', '', regex=True)  # Elimina .0 del final
     base[I] = base[I].replace('0', '')  # Reemplaza "0" por un espacio vacío
 
+#%% NUEVAMENTE, FUNCIÓN QUE GENERA LAS cuentas contables
+
+# TABLAS ANTIGUAS
+cuentas_01 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+                            'VIGENTE':['1411120600','1411130600',
+                                      '1411020600','1411030604',
+                                      '1411040601'],
+                            'REFINANCIADO':['1414120600','1414130600',
+                                            '1414020600','1414030604',
+                                            '1414040601'],
+                            'VENCIDO':['1415120600','1415130600',
+                                      '1415020600','1415030604',
+                                      '1415040601'],
+                            'JUDICIAL':['1416120600','1416130600',
+                                        '1416020600','1416030604',
+                                        '1416040601'],
+                            ' ':['','',
+                                        '','',
+                                        '']})
+
+cuentas_02 = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+                            'VIGENTE':['1421120600','1421130600',
+                                      '1421020600','1421030604',
+                                      '1421040601'],
+                            'REFINANCIADO':['1424120600','1424130600',
+                                            '1424020600','1424030604',
+                                            '1424040601'],
+                            'VENCIDO':['1425120600','1425130600',
+                                      '1425020600','1425030604',
+                                      '1425040601'],
+                            'JUDICIAL':['1426120600','1426130600',
+                                        '1426020600','1426030604',
+                                        '1426040601'],
+                            ' ':['','',
+                                        '','',
+                                        '']})
+
+# TBALAS NUEVAS
+cuentas_01_nuevo = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+                           'VIGENTE':['1411120600','1411130600',
+                                      '1411020600','1411030612',
+                                      '1411040601'],
+                           'REFINANCIADO':['1414120600','1414130600',
+                                           '1414020600','1414030605',
+                                           '1414040601'],
+                           'VENCIDO':['1415120600','1415130600',
+                                      '1415020600','1415030612',
+                                      '1415040601'],
+                           'JUDICIAL':['1416120600','1416130600',
+                                       '1416020600','1416030612',
+                                       '1416040601'],
+                           ' ':['','',
+                                       '','',
+                                       '']})
+
+cuentas_02_nuevo = pd.DataFrame({'TIPO CREDITO':['08','09','10','12','13'],
+                           'VIGENTE':['1421120600','1421130600',
+                                      '1421020600','1421030612',
+                                      '1421040601'],
+                           'REFINANCIADO':['1424120600','1424130600',
+                                           '1424020600','1424030605',
+                                           '1424040601'],
+                           'VENCIDO':['1425120600','1425130600',
+                                      '1425020600','1425030612',
+                                      '1425040601'],
+                           'JUDICIAL':['1426120600','1426130600',
+                                       '1426020600','1426030612',
+                                       '1426040601'],
+                           ' ':['','',
+                                       '','',
+                                       '']})
+
+print('para marzo, actualizar las cuentas contables por las nuevas')
+print('las cuentas contables antiguas solo aplican hasta diciembre del 2024')
+
+base['KVI'] = base['KVI'].astype(float)
+def CCVI(base):
+    if base['KVI'] > 0:
+        if base['MON'] == '1':
+            if base['TCR'] in ['8', '08']:
+                return '1411120600'
+            if base['TCR'] in ['9', '09']:
+                return '1411130600'
+            if base['TCR'] in ['10']:
+                return '1411020600'
+            if base['TCR'] in ['12']:
+                return '1411030604'
+            if base['TCR'] in ['13']:
+                return '1411040601'
+        if base['MON'] == '2':
+            if base['TCR'] in ['8', '08']:
+                return '1421120600'
+            if base['TCR'] in ['9', '09']:
+                return '1421130600'
+            if base['TCR'] in ['10']:
+                return '1421020600'
+            if base['TCR'] in ['12']:
+                return '1421030604'
+            if base['TCR'] in ['13']:
+                return '1421040601'
+    else:
+        return ''
+base['CCVI'] = base.apply(CCVI, axis = 1)
+
+base['KRF'] = base['KRF'].astype(float)
+def CCRF(base):
+    if base['KRF'] > 0:
+        if base['MON'] == '1':
+            if base['TCR'] in ['8', '08']:
+                return '1414120600'
+            if base['TCR'] in ['9', '09']:
+                return '1414130600'
+            if base['TCR'] in ['10']:
+                return '1414020600'
+            if base['TCR'] in ['12']:
+                return '1414030604'
+            if base['TCR'] in ['13']:
+                return '1414040601'
+        if base['MON'] == '2':
+            if base['TCR'] in ['8', '08']:
+                return '1424120600'
+            if base['TCR'] in ['9', '09']:
+                return '1424130600'
+            if base['TCR'] in ['10']:
+                return '1424020600'
+            if base['TCR'] in ['12']:
+                return '1424030604'
+            if base['TCR'] in ['13']:
+                return '1424040601'
+    else:
+        return ''
+base['CCRF'] = base.apply(CCRF, axis = 1)
+
+def CCVE(base):
+    if base['KVE'] > 0:
+        if base['MON'] == '1':
+            if base['TCR'] in ['8', '08']:
+                return '1415120600'
+            if base['TCR'] in ['9', '09']:
+                return '1415130600'
+            if base['TCR'] in ['10']:
+                return '1415020600'
+            if base['TCR'] in ['12']:
+                return '1415030604'
+            if base['TCR'] in ['13']:
+                return '1415040601'
+        if base['MON'] == '2':
+            if base['TCR'] in ['8', '08']:
+                return '1425120600'
+            if base['TCR'] in ['9', '09']:
+                return '1425130600'
+            if base['TCR'] in ['10']:
+                return '1425020600'
+            if base['TCR'] in ['12']:
+                return '1425030604'
+            if base['TCR'] in ['13']:
+                return '1425040601'
+    else:
+        return ''
+base['CCVE'] = base.apply(CCVE, axis = 1)
+
+def CCJU(base):
+    if base['KJU'] > 0:
+        if base['MON'] == '1':
+            if base['TCR'] in ['8', '08']:
+                return '1416120600'
+            if base['TCR'] in ['9', '09']:
+                return '1416130600'
+            if base['TCR'] in ['10']:
+                return '1416020600'
+            if base['TCR'] in ['12']:
+                return '1416030604'
+            if base['TCR'] in ['13']:
+                return '1416040601'
+        if base['MON'] == '2':
+            if base['TCR'] in ['8', '08']:
+                return '1426120600'
+            if base['TCR'] in ['9', '09']:
+                return '1426130600'
+            if base['TCR'] in ['10']:
+                return '1426020600'
+            if base['TCR'] in ['12']:
+                return '1426030604'
+            if base['TCR'] in ['13']:
+                return '1426040601'
+    else:
+        return ''
+base['CCJU'] = base.apply(CCJU, axis = 1)
+
 #%%
 base = base.fillna('')
 

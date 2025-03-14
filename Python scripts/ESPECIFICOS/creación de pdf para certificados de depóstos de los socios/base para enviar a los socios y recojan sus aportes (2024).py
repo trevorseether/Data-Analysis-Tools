@@ -80,9 +80,14 @@ COLUMNAS = ['CodSoc',
             'Nacionalidad TXT',
             'Email',
             # 'CASTIGADOS O VENDIDOS',
-            'Celular1'
-            # 'estado mayo 2024',
-            # 'vendidos 2024 (los que realmente no deben aparecer)'
+            'Celular1',
+            'ESTADO FEB 2025',
+            # 'vendidos 2024 (los que realmente no deben aparecer)',
+            'Direccion Completa',
+            'Distrito',
+            'Departamento',
+            'Provincia',
+            'Ubigeo'
             ]
 
 #%%
@@ -93,6 +98,8 @@ base = padron_socios[COLUMNAS]
 padron_socios[columna_aporte] = padron_socios[columna_aporte].apply(lambda x: f"{x:.2f}")
 
 base['Monto_en_texto'] = base[columna_aporte].apply(numero_a_texto)
+
+padron_socios[columna_aporte] = 'S/.' + padron_socios[columna_aporte]
 
 #%%
 # base = base[base['estado mayo 2024'] == 'INACTIVO']
@@ -212,8 +219,27 @@ base['Incremental'] = range(1, len(base) + 1)
 
 base['Nombre pdf'] = base['CodSoc'] + '_' + base['Apellidos y Nombres']
 
+#%%
+def cel_51(celular):
+    if len(celular) < 9:
+        return 0
+    if (celular[0] == '9') and (len(celular) == 9):
+        return '+51' + celular
+    elif celular[:2] == '51':
+        return '+' + celular
+    else:
+        return 0
+
+base['CELULAR'] = base['Celular1'].apply(cel_51)
+base['CELULAR'] = base['CELULAR'].str.replace(r'\+51', '', regex = True)
+
 #%% CREANDO ÍNDICE
 # Definir la cantidad máxima de filas por archivo
+base = pd.read_excel('C:/Users/sanmiguel38/Desktop/PDFS CERTIFICADOS DE APORTES/INACTIVOS/correos correctos/correos correctos.xlsx',
+                     dtype = str,
+                     )
+
+
 max_rows_per_file = 5000
 
 # Calcular el número total de archivos necesarios
@@ -221,7 +247,6 @@ total_rows = base.shape[0]
 num_files = (total_rows // max_rows_per_file) + 1
 
 # Guardar cada parte en un archivo separado
-os.chdir('activos')
 for i in range(num_files):
     start_row = i * max_rows_per_file
     end_row = start_row + max_rows_per_file
@@ -233,6 +258,6 @@ for i in range(num_files):
 
     print(f'Guardado {file_name}')
 
-base.to_excel('correos a ver.xlsx',
-              index = False)
+# base.to_excel('aportes.xlsx',
+#               index = False)
 
