@@ -16,9 +16,11 @@ import pandas as pd
 import os
 
 #%%
-os.chdir('C:\\Users\\sanmiguel38\\Desktop\\envio de pdfs padron de socios y aportes\\AHORA SÍ')
+os.chdir('C:\\Users\\sanmiguel38\\Desktop\\PDFS CERTIFICADOS DE APORTES')
 
-nombre = 'Socios habiles a DIC-23 - para envio de certif aportes.xlsx'
+nombre = 'Socios habiles a DIC-24 - para envio de certif aportes.xlsx'
+
+hoja_excel = 'Filtro Final para procesar'
 
 #%% Función personalizada para convertir números a texto con el formato deseado
 def numero_a_texto(num):
@@ -50,7 +52,8 @@ padron_socios = pd.read_excel(io       = nombre,
                                           'Nro Doc Identidad Unificado' : str,
                                           'Email'              : str,
                                           'Celular1'           : str,
-                                          'ESTADO'             : str})
+                                          'ESTADO'             : str},
+                              sheet_name = hoja_excel)
 
 #%%
 padron_socios['CodSoc']                      = padron_socios['CodSoc'].str.strip()
@@ -60,9 +63,9 @@ padron_socios['Nro Doc Identidad Unificado'] = padron_socios['Nro Doc Identidad 
 padron_socios['Email']                       = padron_socios['Email'].str.strip()
 padron_socios['Apellidos y Nombres']         = padron_socios['Apellidos y Nombres'].str.strip()
 
-#padron_socios['Celular1']                    = padron_socios['Celular1'].str.strip()
+padron_socios['Celular1']                    = padron_socios['Celular1'].str.strip()
 
-columna_aporte = 'Aporte\nFinal a DIC.23' #'Aporte\nFinal'
+columna_aporte = 'Aporte Final 2024' #'Aporte\nFinal'
 
 padron_socios[columna_aporte] = padron_socios[columna_aporte].round(2)
 padron_socios[columna_aporte] = round(padron_socios[columna_aporte],2)
@@ -76,10 +79,10 @@ COLUMNAS = ['CodSoc',
             'Nro Doc Identidad Unificado',
             'Nacionalidad TXT',
             'Email',
-            'CASTIGADOS O VENDIDOS',
-            #'Celular1'
-            'estado mayo 2024',
-            'vendidos 2024 (los que realmente no deben aparecer)'
+            # 'CASTIGADOS O VENDIDOS',
+            'Celular1'
+            # 'estado mayo 2024',
+            # 'vendidos 2024 (los que realmente no deben aparecer)'
             ]
 
 #%%
@@ -92,10 +95,10 @@ padron_socios[columna_aporte] = padron_socios[columna_aporte].apply(lambda x: f"
 base['Monto_en_texto'] = base[columna_aporte].apply(numero_a_texto)
 
 #%%
-base = base[base['estado mayo 2024'] == 'INACTIVO']
+# base = base[base['estado mayo 2024'] == 'INACTIVO']
 
-base = base[~pd.isna(base['CASTIGADOS O VENDIDOS'])]
-base = base[pd.isna(base['vendidos 2024 (los que realmente no deben aparecer)'])]
+# base = base[~pd.isna(base['CASTIGADOS O VENDIDOS'])]
+# base = base[pd.isna(base['vendidos 2024 (los que realmente no deben aparecer)'])]
 
 #%% FILTRADO
 base = base[base['Tipo Persona TXT'] == '1']
@@ -211,25 +214,25 @@ base['Nombre pdf'] = base['CodSoc'] + '_' + base['Apellidos y Nombres']
 
 #%% CREANDO ÍNDICE
 # Definir la cantidad máxima de filas por archivo
-# max_rows_per_file = 5000
+max_rows_per_file = 5000
 
-# # Calcular el número total de archivos necesarios
-# total_rows = base.shape[0]
-# num_files = (total_rows // max_rows_per_file) + 1
+# Calcular el número total de archivos necesarios
+total_rows = base.shape[0]
+num_files = (total_rows // max_rows_per_file) + 1
 
-# # Guardar cada parte en un archivo separado
-# os.chdir('activos')
-# for i in range(num_files):
-#     start_row = i * max_rows_per_file
-#     end_row = start_row + max_rows_per_file
-#     subset_df = base.iloc[start_row:end_row]
+# Guardar cada parte en un archivo separado
+os.chdir('activos')
+for i in range(num_files):
+    start_row = i * max_rows_per_file
+    end_row = start_row + max_rows_per_file
+    subset_df = base.iloc[start_row:end_row]
 
-#     # Guardar el DataFrame en un archivo Excel
-#     file_name = f'output_part_{i+1}.xlsx'
-#     subset_df.to_excel(file_name, index=False)
+    # Guardar el DataFrame en un archivo Excel
+    file_name = f'output_part_{i+1}.xlsx'
+    subset_df.to_excel(file_name, index=False)
 
-#     print(f'Guardado {file_name}')
+    print(f'Guardado {file_name}')
 
-base.to_excel('reingresantes inactivos.xlsx',
+base.to_excel('correos a ver.xlsx',
               index = False)
 
