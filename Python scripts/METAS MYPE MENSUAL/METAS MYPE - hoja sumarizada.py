@@ -18,16 +18,17 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #%% PARÁMETROS INICIALES
-ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2025\\enero'
-nombre      =  'Mype enero.xlsx'
-fecha_corte =  '2025-01-31'
+ubi         =  'C:\\Users\\sanmiguel38\\Desktop\\metas mype\\2025\\febrero'
+nombre      =  'Mype febrero.xlsx'
+fecha_corte =  '2025-02-28'
 pestaña_excel   = 'RankingMYPE'
 
 carga_sql       = True
-tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20250131]'
+tabla_principal = 'FUNCIONARIOS.[dbo].[METAS_20250228]'
 
 filas_skip      = 2
 columnas_excel  = 'K:P'
+
 #%%
 os.chdir(ubi)
 
@@ -35,7 +36,7 @@ metas = pd.read_excel(nombre,
                       
                       skiprows   = filas_skip,
                       usecols    = columnas_excel,
-                      skipfooter = 10, # filas al final para omitir
+                      #skipfooter = 10, # filas al final para omitir
                       sheet_name = pestaña_excel)
 
 metas = metas.dropna(subset=['Funcionario.1'])
@@ -117,6 +118,8 @@ if (faltantes.shape[0] == 0) and (carga_sql == True):
             sql_type = 'NVARCHAR(255)'  # Ajusta el tamaño según tus necesidades
         elif dtype == '<M8[ns]':
             sql_type = 'DATETIME'  # Ajusta el tamaño según tus necesidades
+        elif dtype == 'datetime64[s]':
+            sql_type = 'DATETIME'  # Ajusta el tamaño según tus necesidades
 
         create_table_query += f"[{column_name}] {sql_type}, "
         
@@ -154,4 +157,4 @@ elif (faltantes.shape[0] > 0) and (carga_sql == True):
 else:
     print('no se han cargado los datos')
     
-    
+

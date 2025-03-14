@@ -16,15 +16,15 @@ import pyodbc
 
 #%% INSUMOS PRINCIPALES:
 # FECHA DE CORTE ############
-FECHA_CORTE = 'Enero 2025'
+FECHA_CORTE = 'Febrero 2025'
 #############################
 
 # DIRECTORIO DE TRABAJO #######################################################
-directorio = "C:\\Users\\sanmiguel38\\Desktop\\experian rossonero\\2025\\enero"
+directorio = "C:\\Users\\sanmiguel38\\Desktop\\experian rossonero\\2025\\febrero"
 ###############################################################################
 
 # INSUMO PRINCIPAL QUE PASA CESA ##############################################
-insumo_principal = "Sentinel Ene25 - CarteraVendida para Rossonero.xlsx"
+insumo_principal = "SentinelProseva11032025.xlsx"
 ###############################################################################
 
 # AVALES OBTENIDOS DEL FINCORE #######################
@@ -34,7 +34,7 @@ avales = 'Rpt_Avales.xlsx'                           #
 ######################################################
 
 # FECHA CORTE PARA SQL SERVER ######
-f_corte_sql = '20250131'
+f_corte_sql = '20250228'
 ####################################
 
 #%% ALGUNOS DATOS DEL FINCORE: 
@@ -75,6 +75,7 @@ df_fincore = pd.read_sql_query(sql   = QUERY,
                                con   = conn, 
                                dtype = {'Nro Prestamo \nFincore' : str,
                                         'Numero de Crédito 18/'  : str})
+
 del conn  #para limpiar el explorador de variables
 
 df_fincore.dropna(subset=['Nro Prestamo \nFincore',
@@ -124,15 +125,67 @@ df_sentinel = pd.read_excel(insumo_principal,    # aqui se cambia el nombre del 
                   dtype = {
                       'CodigoSocio'                     : str,
                       'NumeroPrestamo'                  : str,
-                      'Fecha del\nPeriodo\n(*)'         : object, 
-                      'Codigo\nEntidad\n(*)'            : object,
-                      'Tipo\nDocumento\nIdentidad (*)'  : object,
-                      'N° Documento\nIdentidad (*)  DNI o RUC' : str,
-                      'Tipo Persona (*)'                : object,
-                      'Modalidad de Credito (*)'        : object
-                          }                        ,
-                               sheet_name = 'Hoja1'     )
+                      #'Fecha del\nPeriodo\n(*)'         : object, 
+                      'Periodo'                         : str,
+                      # 'Codigo\nEntidad\n(*)'            : object,
+                      'Entidad'                         : str,
+                      #'Tipo\nDocumento\nIdentidad (*)'  : object,
+                      'TipoDoctoIdentidad'              : str,
+                      #'N° Documento\nIdentidad (*)  DNI o RUC' : str,
+                      'NroDocIdentidad'                 : str,
+                      #'Tipo Persona (*)'                : object,
+                      'TipoPersona'                     : str,
+                      # 'Modalidad de Credito (*)'        : object
+                      'ModalidadCredito'                : str
+                      }                        ,
+                               sheet_name = 'Hoja1'   ,
+                               skiprows = 0)
 
+###############################################################################
+del df_sentinel['C2']
+del df_sentinel['C3']
+
+nuevos_nombres = {
+    "Periodo"               : 'Fecha del\nPeriodo\n(*)'               ,
+    "Entidad"               : 'Codigo\nEntidad\n(*)'                  ,
+    "C1"                    : "Cod. Prestamo"                         ,
+    'TipoDoctoIdentidad'    : 'Tipo\nDocumento\nIdentidad (*)'        ,
+    'NroDocIdentidad'       : 'N° Documento\nIdentidad (*)  DNI o RUC',
+    'RazonSocial'           : 'Razon Social (*)'                      ,
+    'ApellidoPaterno'       : 'Apellido Paterno (*)'                  ,
+    'ApellidoMaterno'       : 'Apellido Materno (*)'                  ,
+    'Nombres'               : 'Nombres (*)'                           ,
+    'TipoPersona'           : 'Tipo Persona (*)'                      ,
+    'ModalidadCredito'      : 'Modalidad de Credito (*)'              ,
+    'MNDeudaDirectaVigente' : 'MN Deuda Directa Vigente (*)'          ,
+    'MNDeudaDirectaRefinanciado' : 'MN Deuda Directa Refinanciada (*)',
+    'MNDeudaVencidaMenorIgual30' : 'MN Deuda Directa Venvida < = 30 (*)',
+    'MNDeudaVencidaMayor30' : 'MN Deuda Directa Vencida > 30 (*)'     ,
+    'MNDeudaJudicial'       : 'MN Deuda Directa Cobranza Judicial (*)',
+    'C4'                    : 'MN Deuda Indirecta (avales,cartas fianza,credito) (*)',
+    'C5'                    : 'MN Deuda Avalada (*)'                  ,
+    'C6'                    : 'MN Linea de Credito (*)'               ,
+    'MNDeudaCastigados'     : 'MN Creditos Cartigados (*)'            ,
+    'MEDeudaDirectaVigente' : 'ME Deuda Directa Vigente (*)'          ,
+    'MEDeudaDirectaRefinanciado' : 'ME Deuda Directa Refinanciada (*)',
+    'MEDeudaVencidaMenorIgual30' : 'ME Deuda Directa Venvida < = 30 (*)',
+    'MEDeudaVencidaMayor30' : 'ME Deuda Directa Vencida > 30 (*)'     ,
+    'MEDeudaJudicial'       : 'ME Deuda Directa Cobranza Judicial (*)',
+    'C7'                    : 'ME Deuda Indirecta (avales,cartas fianza,credito) (*)',
+    'C8'                    : 'ME Deuda Avalada (*)'                  ,
+    'C9'                    : 'ME Linea de Credito (*)'               ,
+    'MEDeudaCastigados'     : 'ME Creditos Cartigados (*)'            ,
+    'CodClasificacionCarteraALinea' : 'Calificación(*)'               ,
+    'DiasMora'              : 'N° de Días Vencidos o Morosos ( * )'   ,
+    'Direccion'             : 'Dirección'                             ,
+    'FechaVencimientoActTXT': 'Fecha de Vencimiento (*)'
+}
+
+
+# Renombrar columnas
+df_sentinel.rename(columns = nuevos_nombres, inplace=True)
+
+###############################################################################
 #limpieza de filas vacías
 df_sentinel.dropna(subset = [#'Cod. Prestamo', 
                              'N° Documento\nIdentidad (*)  DNI o RUC',
@@ -194,6 +247,8 @@ df_sentinel['Cod. Prestamo'] = df_sentinel['CodigoSocio'] + '-' + df_sentinel['N
 #filtrado de créditos de rossonero
 creditos_de_rosonero = pd.read_excel('C:/Users/sanmiguel38/Desktop/experian rossonero/CRÉDITOS VENDIDOS QUE AHORA SON DE ROSSONERO.xlsx',
                                      dtype = str)
+print('se leyeron los datos de la cartera de Rossonero')
+
 creditos_de_rosonero['Cod. Prestamo'] = creditos_de_rosonero['Cod. Prestamo'].str.strip()
 
 df_sentinel = df_sentinel[df_sentinel['Cod. Prestamo'].isin(creditos_de_rosonero['Cod. Prestamo'])]
@@ -711,8 +766,8 @@ avales_datos_separados = avales_datos_separados.rename(columns={'Dpto'          
 
 #UNIMOS LOS DATAFRAMES
 
-df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(int).astype(str)
-avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(int).astype(str)
+df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(str).str.zfill(14)
+avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(str).str.split('.').str[0].astype(str).str.zfill(14)
 
 df_avales_mergeado = df_avales.merge(avales_datos_separados,
                                      left_on  = ['dni para merge'], 

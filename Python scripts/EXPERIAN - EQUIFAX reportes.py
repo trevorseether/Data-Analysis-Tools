@@ -784,8 +784,8 @@ avales_datos_separados = avales_datos_separados.rename(columns={'Dpto'          
 
 #UNIMOS LOS DATAFRAMES
 
-df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(int).astype(str)
-avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(str).str.split('.').str[0]
+df_avales['dni para merge'] = df_avales['N° Documento\nIdentidad (*)  DNI o RUC'].astype(str).str.zfill(14)
+avales_datos_separados['dni para merge'] = avales_datos_separados['dni para merge'].astype(str).str.split('.').str[0].astype(str).str.zfill(14)
 
 df_avales_mergeado = df_avales.merge(avales_datos_separados,
                                      left_on  = ['dni para merge'], 
